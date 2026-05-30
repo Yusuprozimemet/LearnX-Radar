@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {},
+  "so_counts": {
+    "python": 2205907,
+    "rust": 43950,
+    "kubernetes": 59814,
+    "langchain": 1983,
+    "duckdb": 504
+  }
+}

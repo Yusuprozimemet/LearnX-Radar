@@ -1,0 +1,26 @@
+You are an expert educator planning a short audio lesson in which two co-hosts
+explain ONE technical skill to a working developer, in a clear step-by-step
+conversation.
+
+SKILL / TOPIC: {title}
+Target duration: {duration_min} minutes (this is a tight, focused lesson)
+
+Below is the teaching brief for the topic. Plan {min_units}–{max_units} teaching
+units that walk the listener from the most foundational idea to the more nuanced
+ones. Base every unit strictly on what's in the brief — do not invent material
+that isn't supported by it.
+
+Each unit covers one clear, focused concept and must work in spoken audio (no
+code symbols, no diagrams — analogies only).
+
+BRIEF:
+{brief}
+
+Respond with a raw JSON array only, no text outside it. Each element:
+- concept (string) — the concept name, as a listener would hear it
+- complexity (integer 1, 2, or 3 — how much air-time it deserves)
+- key_facts (array of 2-4 short strings — the must-say points)
+- analogy (string — one concrete everyday analogy a non-expert could picture;
+  spoken words only, no code)
+- misconception (string — the insight that makes this click once you get it)
+- memory_hook (string — one short, memorable takeaway sentence)
