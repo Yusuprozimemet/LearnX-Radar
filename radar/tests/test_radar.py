@@ -88,7 +88,10 @@ def test_tie_break_is_deterministic():
 def test_table_stakes_sink_below_emerging():
     """A ubiquitous skill in all 4 sources loses to a niche skill in two sources."""
     mentions = [
-        {"skill": "Python", "sources": ["HN Hiring", "Stack Overflow", "GitHub Trending", "dev.to"]},
+        {
+            "skill": "Python",
+            "sources": ["HN Hiring", "Stack Overflow", "GitHub Trending", "dev.to"],
+        },
         {"skill": "DuckDB", "sources": ["GitHub Trending", "dev.to"]},
     ]
     ranked = gap_scorer.score(mentions, EMPTY_MEMORY)
