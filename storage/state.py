@@ -12,6 +12,9 @@ from pathlib import Path
 _DIR = Path(__file__).parent
 SEEN_FILE = _DIR / "seen_skills.json"
 MEMORY_FILE = _DIR / "skill_memory.json"
+LAST_SCORED_FILE = _DIR / "last_scored.json"  # v3: this run's ranking for the dashboard
+
+LAST_SCORED_KEEP = 20  # cap the persisted ranking; the dashboard only shows a top slice
 
 MAX_SEEN = 5000  # cap so the dedup file doesn't grow forever
 
@@ -51,6 +54,29 @@ def load_memory() -> dict:
 def save_memory(memory: dict) -> None:
     MEMORY_FILE.write_text(
         json.dumps(memory, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+
+
+# --- last_scored.json : this run's ranking, so the dashboard can rebuild from
+# committed state alone (no API keys) — see dashboard/ + .github/workflows/pages.yml
+
+def load_last_scored() -> dict:
+    if not LAST_SCORED_FILE.exists():
+        return {"today_skill": None, "scored": []}
+    try:
+        return json.loads(LAST_SCORED_FILE.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {"today_skill": None, "scored": []}
+
+
+def save_last_scored(scored: list[dict], today_skill: str | None) -> None:
+    payload = {
+        "updated": date.today().isoformat(),
+        "today_skill": today_skill,
+        "scored": scored[:LAST_SCORED_KEEP],
+    }
+    LAST_SCORED_FILE.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
     )
 
 

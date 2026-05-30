@@ -42,8 +42,9 @@ def test_build_writes_all_sections(tmp_path):
     assert out.exists()
     for heading in ("Trending this week", "Your coverage", "Gap highlights", "Lesson archive"):
         assert heading in html
-    assert "DuckDB" in html and "🎧 today" in html          # today's pick marked
-    assert "lesson-20260529.mp3" in html and "<audio" in html  # archive audio player
+    assert "DuckDB" in html and "🎧 today" in html        # today's pick marked
+    assert "Kafka consumer groups" in html                # archive lists the lesson
+    assert "<audio" not in html                            # metadata-only: no players
 
 
 def test_gaps_exclude_taught_and_table_stakes(tmp_path):
@@ -60,6 +61,19 @@ def test_empty_memory_no_scored_renders(tmp_path):
     html = builder.build({"skills": {}}, None, out_path=tmp_path / "d.html").read_text("utf-8")
     assert "No lessons yet" in html
     assert "No fresh data" in html
+
+
+def test_build_from_state_reads_committed_files(tmp_path, monkeypatch):
+    import storage
+    monkeypatch.setattr(storage, "load_memory", lambda: _memory())
+    monkeypatch.setattr(
+        storage, "load_last_scored",
+        lambda: {"today_skill": "DuckDB", "scored": _scored()},
+    )
+    out = builder.build_from_state(out_path=tmp_path / "d.html")
+    html = out.read_text(encoding="utf-8")
+    assert "DuckDB" in html and "🎧 today" in html
+    assert "Kafka consumer groups" in html  # coverage + archive from memory
 
 
 def test_escapes_html(tmp_path):
