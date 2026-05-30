@@ -54,11 +54,14 @@ def save_memory(memory: dict) -> None:
     )
 
 
-def record_lesson(memory: dict, skill: str, *, title: str, difficulty: str) -> dict:
+def record_lesson(
+    memory: dict, skill: str, *, title: str, difficulty: str, summary: str = ""
+) -> dict:
     """Update the knowledge state after a lesson on `skill` is delivered.
 
-    Tracks times taught, last date, and difficulty so gap_scorer (v2) can
-    weight novelty against coverage and auto-scale difficulty next time.
+    Tracks times taught, last date, difficulty, and a one-line summary so
+    gap_scorer can space-repeat (v2) and brief_writer can bridge to related
+    prior lessons.
     """
     skills = memory.setdefault("skills", {})
     entry = skills.setdefault(
@@ -68,5 +71,8 @@ def record_lesson(memory: dict, skill: str, *, title: str, difficulty: str) -> d
     entry["times_taught"] += 1
     entry["first_taught"] = entry["first_taught"] or today
     entry["last_taught"] = today
-    entry["lessons"].append({"date": today, "title": title, "difficulty": difficulty})
+    entry["summary"] = summary or entry.get("summary", "")
+    entry["lessons"].append(
+        {"date": today, "title": title, "difficulty": difficulty, "summary": summary}
+    )
     return memory

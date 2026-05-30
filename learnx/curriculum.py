@@ -7,6 +7,8 @@ import logging
 
 import config
 from learnx.constants import (
+    DEFAULT_DIFFICULTY,
+    DIFFICULTY_CONTEXT,
     MAX_UNITS,
     MIN_UNIT_WORDS,
     MIN_UNITS,
@@ -24,12 +26,15 @@ def plan(
     brief_md: str,
     title: str,
     duration_min: int = config.LESSON_DURATION_MIN,
+    difficulty: str = DEFAULT_DIFFICULTY,
     chat_fn=chat,
 ) -> list[TeachingUnit]:
-    """Return ordered teaching units for the brief."""
+    """Return ordered teaching units for the brief, adapted to `difficulty`."""
     prompt = load_prompt("curriculum.txt").format(
         title=title,
         duration_min=duration_min,
+        difficulty=difficulty,
+        difficulty_context=DIFFICULTY_CONTEXT.get(difficulty, DIFFICULTY_CONTEXT[DEFAULT_DIFFICULTY]),
         min_units=MIN_UNITS,
         max_units=MAX_UNITS,
         brief=brief_md,
