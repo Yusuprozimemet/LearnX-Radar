@@ -16,15 +16,26 @@ from radar.prompt_loader import load_prompt
 log = logging.getLogger(__name__)
 
 
-def _prior_context(memory: dict) -> str:
-    """A one-line continuity hint if anything has been taught before, else ''."""
-    taught = list(memory.get("skills", {}).keys())
-    if not taught:
+_RECENT_LESSONS = 5  # how many prior lessons to offer as bridge candidates
+
+
+def _prior_context(memory: dict, current_skill: str) -> str:
+    """Offer recent prior lessons so the brief can bridge to a related one.
+
+    Lists each as `skill — summary` and instructs a genuine connection only when
+    one is actually related — no forced "as we discussed last time" filler.
+    """
+    skills = memory.get("skills", {})
+    prior = [(name, data.get("summary", "")) for name, data in skills.items() if name != current_skill]
+    if not prior:
         return ""
-    recent = ", ".join(taught[-3:])
+    lines = "\n".join(f"- {name}: {summary}" for name, summary in prior[-_RECENT_LESSONS:])
     return (
-        f"PREVIOUSLY TAUGHT: {recent}\n"
-        "If relevant, open by briefly connecting this skill to one of those.\n"
+        "PREVIOUSLY TAUGHT LESSONS:\n"
+        f"{lines}\n"
+        f"If one of these is genuinely related to {current_skill}, open the brief "
+        "with a single sentence bridging from it to today's topic. If none is truly "
+        "related, do not force a connection.\n"
     )
 
 
@@ -34,7 +45,7 @@ def write(skill: dict, memory: dict, chat_fn=chat) -> str:
         skill=skill["skill"],
         evidence=skill.get("evidence", ""),
         sources=", ".join(skill.get("sources", [])) or "multiple sources",
-        prior_context=_prior_context(memory),
+        prior_context=_prior_context(memory, skill["skill"]),
     )
     log.info("Writing brief for skill: %s", skill["skill"])
     brief = chat_fn([{"role": "user", "content": prompt}], max_tokens=1500).strip()

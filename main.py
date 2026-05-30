@@ -104,7 +104,8 @@ def main() -> None:
     brief_md = brief_writer.write(skill, memory)
 
     # 3. Learnx: brief -> curriculum -> dialogue -> audio.
-    units = curriculum.plan(brief_md, skill["skill"])
+    difficulty = skill.get("suggested_difficulty", config.LESSON_DIFFICULTY_DEFAULT)
+    units = curriculum.plan(brief_md, skill["skill"], difficulty=difficulty)
     lines = dialogue.generate(units, skill["skill"], hook=skill.get("evidence", ""))
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -115,7 +116,7 @@ def main() -> None:
         "title": skill["skill"],
         "skill": skill["skill"],
         "summary": skill.get("evidence", ""),
-        "difficulty": skill.get("suggested_difficulty", config.LESSON_DIFFICULTY_DEFAULT),
+        "difficulty": difficulty,
         "mp3_path": mp3_path,
         "brief_md": brief_md,
     }
@@ -134,7 +135,8 @@ def main() -> None:
         memory,
         skill["skill"],
         title=lesson["title"],
-        difficulty=skill.get("suggested_difficulty", config.LESSON_DIFFICULTY_DEFAULT),
+        difficulty=difficulty,
+        summary=lesson["summary"],
     )
     save_memory(memory)
     print("Done.")
