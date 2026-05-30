@@ -19,6 +19,7 @@ from agents import (
     hn_hiring_agent,
     stackoverflow_agent,
 )
+from dashboard import builder as dashboard
 from delivery import email_sender, telegram_sender
 from learnx import audio_builder, curriculum, dialogue
 from radar import brief_writer, gap_scorer, skill_extractor
@@ -73,6 +74,15 @@ def _persist_so_counts(memory: dict, items: list[dict]) -> None:
             counts[reading["tag"]] = reading["total"]
 
 
+def _refresh_dashboard(memory: dict, scored=None, today_skill=None) -> None:
+    """Regenerate the static dashboard; never let it fail the run."""
+    try:
+        path = dashboard.build(memory, scored, today_skill)
+        print(f"[dashboard] wrote {path}")
+    except Exception as exc:
+        print(f"[dashboard] build failed: {exc}")
+
+
 def main() -> None:
     config.validate()
     memory = load_memory()
@@ -90,6 +100,7 @@ def main() -> None:
 
     if not new_items:
         print("Nothing new in the developer world today. Done.")
+        _refresh_dashboard(memory)  # refresh coverage/archive even on a quiet day
         return
 
     # 2. Radar: extract skills, score the gap, pick today's topic.
@@ -98,6 +109,7 @@ def main() -> None:
     skill = gap_scorer.top(scored)
     if skill is None:
         print("No teachable skill gap found today. Done.")
+        _refresh_dashboard(memory, scored)
         return
     print(f"Today's skill: {skill['skill']} (score {skill.get('score')})")
 
@@ -137,8 +149,12 @@ def main() -> None:
         title=lesson["title"],
         difficulty=difficulty,
         summary=lesson["summary"],
+        audio=Path(mp3_path).name,
     )
     save_memory(memory)
+
+    # 6. Regenerate the dashboard from the updated state + this run's ranking.
+    _refresh_dashboard(memory, scored, skill["skill"])
     print("Done.")
 
 
