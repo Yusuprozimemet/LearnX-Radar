@@ -47,11 +47,18 @@ Wrap in try/except like delivery — a dashboard failure must not fail the run.
   - Publish via **`actions/deploy-pages`** artifact (no generated HTML committed
     to the repo); needs Pages enabled in repo settings (your action).
 
-## Workflow
+## Workflow — Pages publishing (decoupled)
 
-Add a Pages deploy to CI/cron: upload `dashboard/` as a Pages artifact and
-`deploy-pages` after a successful run. (Exact mechanism depends on the publish
-decision.)
+Chosen approach: **rebuild from committed state, no API keys.**
+- `main.py` persists each run's ranking to `storage/last_scored.json` (committed
+  back by the cron alongside `seen_skills`/`skill_memory`).
+- `dashboard.build_from_state()` (entry: `python -m dashboard`) renders the full
+  page from `skill_memory.json` + `last_scored.json` — no run, no secrets.
+- `.github/workflows/pages.yml` runs `python -m dashboard`, copies `index.html`
+  into `_site/`, and `deploy-pages`. Triggers: `workflow_run` after the radar
+  cron, `push` to main touching state/dashboard, and manual `workflow_dispatch`.
+- **Manual step (one-time):** enable Pages in repo Settings → Pages → Source:
+  "GitHub Actions".
 
 ## Testing (offline)
 

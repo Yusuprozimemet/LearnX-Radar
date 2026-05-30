@@ -63,6 +63,19 @@ def test_empty_memory_no_scored_renders(tmp_path):
     assert "No fresh data" in html
 
 
+def test_build_from_state_reads_committed_files(tmp_path, monkeypatch):
+    import storage
+    monkeypatch.setattr(storage, "load_memory", lambda: _memory())
+    monkeypatch.setattr(
+        storage, "load_last_scored",
+        lambda: {"today_skill": "DuckDB", "scored": _scored()},
+    )
+    out = builder.build_from_state(out_path=tmp_path / "d.html")
+    html = out.read_text(encoding="utf-8")
+    assert "DuckDB" in html and "🎧 today" in html
+    assert "Kafka consumer groups" in html  # coverage + archive from memory
+
+
 def test_escapes_html(tmp_path):
     mem = {"skills": {}}
     scored = [{

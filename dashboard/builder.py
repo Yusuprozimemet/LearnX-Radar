@@ -41,6 +41,23 @@ def build(
     return out_path
 
 
+def build_from_state(out_path: Path = OUTPUT) -> Path:
+    """Rebuild the dashboard from committed state files only — no run, no API keys.
+
+    This is what the GitHub Pages workflow calls: it reads skill_memory.json and
+    the last run's ranking (last_scored.json) and renders the full page.
+    """
+    from storage import load_last_scored, load_memory
+
+    state = load_last_scored()
+    return build(
+        load_memory(),
+        state.get("scored", []),
+        state.get("today_skill"),
+        out_path,
+    )
+
+
 def _esc(text: object) -> str:
     return html.escape(str(text))
 
