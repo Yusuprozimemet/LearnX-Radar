@@ -63,9 +63,12 @@ decision.)
 
 ## Decisions (signed off)
 
-- **Embed audio players** in the archive — `<audio src="../output/lesson-*.mp3">`
-  (resolves locally; Pages packaging of the MP3s deferred with publishing).
-  `record_lesson` now stores the MP3 filename per lesson.
+- **Metadata-only archive** — no web-hosted audio. Considered GitHub Releases /
+  GCS / R2 for MP3 hosting; chose to keep audio off the web entirely (delivered
+  via Telegram + email) so the project stays free-tier-forever with no external
+  storage credentials. The MP3 filename is still recorded per lesson as
+  provenance (`record_lesson(audio=...)`), so web hosting can be added later
+  without a schema change.
 - **Build now, wire Pages later** — `build()` + `main.py` wiring + tests done; the
   Pages publish workflow is deferred until Pages is enabled in repo settings.
 
@@ -75,7 +78,7 @@ decision.)
       four sections from memory (+ optional scored data). Verified via a rendered
       sample (`output/sample-dashboard.html`).
 - [x] Gap highlights exclude already-taught and table-stakes skills; trending
-      marks today's pick (🎧). Archive is newest-first with audio players.
+      marks today's pick (🎧). Archive is newest-first, metadata-only.
 - [x] `main.py` regenerates the page each run (happy path + quiet-day paths),
       failure-isolated like delivery.
 - [x] Offline tests pass — 40 total (4 new dashboard tests incl. HTML escaping);
