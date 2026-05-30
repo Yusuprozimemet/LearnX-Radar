@@ -20,7 +20,9 @@ log = logging.getLogger(__name__)
 _LINE_RE = re.compile(r"^(ALEX|MAYA)\s*[:\-]\s*(.+)", re.IGNORECASE)
 
 
-def generate(units: list[TeachingUnit], title: str, hook: str = "", chat_fn=chat) -> list[DialogueLine]:
+def generate(
+    units: list[TeachingUnit], title: str, hook: str = "", chat_fn=chat
+) -> list[DialogueLine]:
     """Return ordered dialogue lines: intro (0) -> units (1..N) -> outro (-1)."""
     if not units:
         return []
@@ -31,9 +33,13 @@ def generate(units: list[TeachingUnit], title: str, hook: str = "", chat_fn=chat
     tasks += [(u.unit, _unit_prompt(u, title)) for u in units]
     tasks.append((-1, _outro_prompt(title, hooks)))
 
+    def run(task: tuple[int, str]) -> tuple[int, str]:
+        unit_no, prompt = task
+        return unit_no, chat_fn([{"role": "user", "content": prompt}], max_tokens=1200)
+
     workers = min(DIALOGUE_MAX_WORKERS, len(tasks))
     with ThreadPoolExecutor(max_workers=workers) as pool:
-        results = list(pool.map(lambda t: (t[0], chat_fn([{"role": "user", "content": t[1]}], max_tokens=1200)), tasks))
+        results = list(pool.map(run, tasks))
 
     # Reassemble in lesson order: 0, 1..N, then -1.
     by_unit = {unit_no: raw for unit_no, raw in results}

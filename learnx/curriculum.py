@@ -30,11 +30,12 @@ def plan(
     chat_fn=chat,
 ) -> list[TeachingUnit]:
     """Return ordered teaching units for the brief, adapted to `difficulty`."""
+    context = DIFFICULTY_CONTEXT.get(difficulty, DIFFICULTY_CONTEXT[DEFAULT_DIFFICULTY])
     prompt = load_prompt("curriculum.txt").format(
         title=title,
         duration_min=duration_min,
         difficulty=difficulty,
-        difficulty_context=DIFFICULTY_CONTEXT.get(difficulty, DIFFICULTY_CONTEXT[DEFAULT_DIFFICULTY]),
+        difficulty_context=context,
         min_units=MIN_UNITS,
         max_units=MAX_UNITS,
         brief=brief_md,
