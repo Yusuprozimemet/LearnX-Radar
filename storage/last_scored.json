@@ -1,4 +1,272 @@
 {
-  "today_skill": null,
-  "scored": []
+  "updated": "2026-05-30",
+  "today_skill": "DuckDB",
+  "scored": [
+    {
+      "skill": "DuckDB",
+      "sources": [
+        "dev.to",
+        "Stack Overflow"
+      ],
+      "evidence": "Rising questions",
+      "frequency": 2,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "suggested_difficulty": "beginner",
+      "score": 2.0
+    },
+    {
+      "skill": "LangChain",
+      "sources": [
+        "dev.to",
+        "Stack Overflow"
+      ],
+      "evidence": "AI framework adoption",
+      "frequency": 2,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "suggested_difficulty": "beginner",
+      "score": 2.0
+    },
+    {
+      "skill": "Elixir",
+      "sources": [
+        "HN Hiring"
+      ],
+      "evidence": "Functional programming",
+      "frequency": 1,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "suggested_difficulty": "beginner",
+      "score": 2.0
+    },
+    {
+      "skill": "Kafka consumer groups",
+      "sources": [
+        "HN Hiring"
+      ],
+      "evidence": "Real-time systems",
+      "frequency": 1,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "suggested_difficulty": "beginner",
+      "score": 2.0
+    },
+    {
+      "skill": "WebAssembly",
+      "sources": [
+        "HN Hiring"
+      ],
+      "evidence": "Browser performance",
+      "frequency": 1,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "suggested_difficulty": "beginner",
+      "score": 2.0
+    },
+    {
+      "skill": "WebGPU",
+      "sources": [
+        "HN Hiring"
+      ],
+      "evidence": "Browser gaming",
+      "frequency": 1,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "suggested_difficulty": "beginner",
+      "score": 2.0
+    },
+    {
+      "skill": "Agentic coding",
+      "sources": [
+        "dev.to",
+        "GitHub Trending"
+      ],
+      "evidence": "AI agent ecosystem",
+      "frequency": 2,
+      "demand_weight": 1.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "suggested_difficulty": "beginner",
+      "score": 1.5
+    },
+    {
+      "skill": "Claude Code",
+      "sources": [
+        "GitHub Trending",
+        "dev.to"
+      ],
+      "evidence": "AI coding tools",
+      "frequency": 2,
+      "demand_weight": 1.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "suggested_difficulty": "beginner",
+      "score": 1.5
+    },
+    {
+      "skill": "Rust async/await",
+      "sources": [
+        "dev.to",
+        "GitHub Trending"
+      ],
+      "evidence": "Rust adoption",
+      "frequency": 2,
+      "demand_weight": 1.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "suggested_difficulty": "beginner",
+      "score": 1.5
+    },
+    {
+      "skill": "Async Rust",
+      "sources": [
+        "dev.to"
+      ],
+      "evidence": "Safe backend development",
+      "frequency": 1,
+      "demand_weight": 0.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "suggested_difficulty": "beginner",
+      "score": 0.5
+    },
+    {
+      "skill": "AutoGPT",
+      "sources": [
+        "dev.to"
+      ],
+      "evidence": "AI agent automation",
+      "frequency": 1,
+      "demand_weight": 0.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "suggested_difficulty": "beginner",
+      "score": 0.5
+    },
+    {
+      "skill": "Postgres data-plane",
+      "sources": [
+        "dev.to"
+      ],
+      "evidence": "Database optimization",
+      "frequency": 1,
+      "demand_weight": 0.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "suggested_difficulty": "beginner",
+      "score": 0.5
+    },
+    {
+      "skill": "Pytest",
+      "sources": [
+        "dev.to"
+      ],
+      "evidence": "Testing frameworks",
+      "frequency": 1,
+      "demand_weight": 0.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "suggested_difficulty": "beginner",
+      "score": 0.5
+    },
+    {
+      "skill": "Python Decorators",
+      "sources": [
+        "dev.to"
+      ],
+      "evidence": "Python development",
+      "frequency": 1,
+      "demand_weight": 0.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "suggested_difficulty": "beginner",
+      "score": 0.5
+    },
+    {
+      "skill": "Qdrant",
+      "sources": [
+        "dev.to"
+      ],
+      "evidence": "Vector databases",
+      "frequency": 1,
+      "demand_weight": 0.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "suggested_difficulty": "beginner",
+      "score": 0.5
+    },
+    {
+      "skill": "RAG Internals",
+      "sources": [
+        "dev.to"
+      ],
+      "evidence": "AI knowledge graph",
+      "frequency": 1,
+      "demand_weight": 0.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "suggested_difficulty": "beginner",
+      "score": 0.5
+    },
+    {
+      "skill": "Veltrix Configuration",
+      "sources": [
+        "dev.to"
+      ],
+      "evidence": "Event-driven systems",
+      "frequency": 1,
+      "demand_weight": 0.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "suggested_difficulty": "beginner",
+      "score": 0.5
+    },
+    {
+      "skill": "Kubernetes",
+      "sources": [
+        "HN Hiring",
+        "Stack Overflow"
+      ],
+      "evidence": "Cloud infrastructure",
+      "frequency": 2,
+      "demand_weight": 3.5,
+      "novelty": 1.0,
+      "table_stakes": true,
+      "suggested_difficulty": "beginner",
+      "score": 0.35000000000000003
+    },
+    {
+      "skill": "React",
+      "sources": [
+        "HN Hiring"
+      ],
+      "evidence": "Frontend development",
+      "frequency": 1,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": true,
+      "suggested_difficulty": "beginner",
+      "score": 0.2
+    },
+    {
+      "skill": "TypeScript",
+      "sources": [
+        "HN Hiring"
+      ],
+      "evidence": "Static typing",
+      "frequency": 1,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": true,
+      "suggested_difficulty": "beginner",
+      "score": 0.2
+    }
+  ]
 }

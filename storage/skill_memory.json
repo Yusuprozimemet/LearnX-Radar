@@ -1,6 +1,22 @@
 {
   "version": 1,
-  "skills": {},
+  "skills": {
+    "DuckDB": {
+      "times_taught": 1,
+      "first_taught": "2026-05-30",
+      "lessons": [
+        {
+          "date": "2026-05-30",
+          "title": "DuckDB",
+          "difficulty": "beginner",
+          "summary": "Rising questions",
+          "audio": "lesson-20260530.mp3"
+        }
+      ],
+      "last_taught": "2026-05-30",
+      "summary": "Rising questions"
+    }
+  },
   "so_counts": {
     "python": 2205907,
     "rust": 43950,
