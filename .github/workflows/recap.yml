@@ -1,0 +1,27 @@
+name: Recap bot
+
+# Polls Telegram every ~15 min and answers /recap commands. No server: each run
+# is one poll cycle that exits. Telegram tracks the confirmed offset, so no state
+# is committed. Public repo → Actions minutes are free.
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+jobs:
+  poll:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      # Only the lightweight deps the bot needs (no ffmpeg/edge-tts/pydub).
+      - run: pip install requests openai python-dotenv
+      - name: Poll for /recap commands
+        env:
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python -m recap
