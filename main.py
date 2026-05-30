@@ -28,6 +28,7 @@ from storage import (
     load_memory,
     load_seen,
     record_lesson,
+    save_brief,
     save_last_scored,
     save_memory,
     save_seen,
@@ -118,6 +119,7 @@ def main() -> None:
     print(f"Today's skill: {skill['skill']} (score {skill.get('score')})")
 
     brief_md = brief_writer.write(skill, memory)
+    brief_file = save_brief(skill["skill"], brief_md)  # committed for /recap deep Q&A
 
     # 3. Learnx: brief -> curriculum -> dialogue -> audio.
     difficulty = skill.get("suggested_difficulty", config.LESSON_DIFFICULTY_DEFAULT)
@@ -154,6 +156,7 @@ def main() -> None:
         difficulty=difficulty,
         summary=lesson["summary"],
         audio=Path(mp3_path).name,
+        brief=brief_file,
     )
     save_memory(memory)
 
