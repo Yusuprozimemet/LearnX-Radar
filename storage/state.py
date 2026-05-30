@@ -55,13 +55,19 @@ def save_memory(memory: dict) -> None:
 
 
 def record_lesson(
-    memory: dict, skill: str, *, title: str, difficulty: str, summary: str = ""
+    memory: dict,
+    skill: str,
+    *,
+    title: str,
+    difficulty: str,
+    summary: str = "",
+    audio: str = "",
 ) -> dict:
     """Update the knowledge state after a lesson on `skill` is delivered.
 
-    Tracks times taught, last date, difficulty, and a one-line summary so
-    gap_scorer can space-repeat (v2) and brief_writer can bridge to related
-    prior lessons.
+    Tracks times taught, last date, difficulty, a one-line summary, and the MP3
+    filename so gap_scorer can space-repeat (v2), brief_writer can bridge to
+    related prior lessons, and the dashboard archive (v3) can link the audio.
     """
     skills = memory.setdefault("skills", {})
     entry = skills.setdefault(
@@ -73,6 +79,12 @@ def record_lesson(
     entry["last_taught"] = today
     entry["summary"] = summary or entry.get("summary", "")
     entry["lessons"].append(
-        {"date": today, "title": title, "difficulty": difficulty, "summary": summary}
+        {
+            "date": today,
+            "title": title,
+            "difficulty": difficulty,
+            "summary": summary,
+            "audio": audio,
+        }
     )
     return memory
