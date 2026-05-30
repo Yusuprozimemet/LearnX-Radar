@@ -222,3 +222,6 @@ output/*
 !output/.gitkeep
 .tts_tmp/
 .tutor_cache/
+
+# Generated dashboard (rendered each run; published via Pages later, not committed)
+dashboard/index.html
