@@ -1,0 +1,1071 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>DEV Community: rust</title>
+    <description>The latest articles tagged 'rust' on DEV Community.</description>
+    <link>https://dev.to/t/rust</link>
+    <atom:link rel="self" type="application/rss+xml" href="https://dev.to/feed/tag/rust"/>
+    <language>en</language>
+    <item>
+      <title>Veltrix Configuration Almost Sank Our Server During Peak Hours</title>
+      <dc:creator>pretty ncube</dc:creator>
+      <pubDate>Sat, 30 May 2026 16:30:29 +0000</pubDate>
+      <link>https://dev.to/built-from-africa/veltrix-configuration-almost-sank-our-server-during-peak-hours-15c9</link>
+      <guid>https://dev.to/built-from-africa/veltrix-configuration-almost-sank-our-server-during-peak-hours-15c9</guid>
+      <description>&lt;h2&gt;
+  
+  
+  The Problem We Were Actually Solving
+&lt;/h2&gt;
+
+&lt;p&gt;I still remember the day our server almost crashed due to a poorly optimized Veltrix configuration. We were running a massive online event, a treasure hunt, and our server was expected to handle a huge influx of players. The event was a huge success, with thousands of players participating, but our server was not prepared for the sudden spike in traffic. The search volume around Veltrix configuration and Hytale operators getting stuck was a clear indication that we were not the only ones struggling with this issue. As the systems engineer responsible for the server, I knew I had to act fast to prevent a disaster. I started by analyzing the server's performance using a profiler, which revealed that the Veltrix configuration was the main bottleneck. The allocation count was through the roof, with over 10000 allocations per second, and the latency was averaging around 500ms.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  What We Tried First (And Why It Failed)
+&lt;/h2&gt;
+
+&lt;p&gt;My initial approach was to try and optimize the existing configuration, tweaking parameters and adjusting settings to see if I could squeeze out some extra performance. I spent hours poring over the documentation, trying to understand the intricacies of Veltrix and how to get the most out of it. However, no matter what I did, I just couldn't seem to get the performance I needed. The server was still struggling to keep up with the demand, and the latency was still far too high. It was clear that I needed to take a more drastic approach. I decided to take a step back and re-evaluate our architecture, looking for a more fundamental solution to the problem. I started by reviewing the server's architecture, looking for any potential bottlenecks or areas for improvement. I used a tool called gprof to analyze the server's performance and identify areas where we could improve.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  The Architecture Decision
+&lt;/h2&gt;
+
+&lt;p&gt;After careful consideration, I decided to switch from our existing language to Rust. I know that Rust has a reputation for being difficult to learn, but I was convinced that its focus on performance and memory safety made it the perfect choice for our use case. I was willing to invest the time and effort required to learn Rust, if it meant that our server would be able to handle the traffic. I started by rewriting the Veltrix configuration module in Rust, using the Tokio framework to handle the asynchronous programming. It was a challenging task, but the results were well worth it. The allocation count dropped to almost zero, and the latency averaged around 10ms. I was amazed at the difference that Rust had made, and I knew that I had made the right decision.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  What The Numbers Said After
+&lt;/h2&gt;
+
+&lt;p&gt;The numbers spoke for themselves. After switching to Rust, our server was able to handle the traffic with ease. The allocation count was down, the latency was low, and the server was stable. I was able to monitor the server's performance in real-time, using tools like Prometheus and Grafana to keep an eye on the metrics. The data was clear: Rust had been the right choice. I was able to reduce the number of allocations by 99%, and the latency by 90%. The server was now able to handle over 10000 concurrent connections, with an average latency of 5ms. I was thrilled with the results, and I knew that I had made the right decision.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  What I Would Do Differently
+&lt;/h2&gt;
+
+&lt;p&gt;Looking back, I would do things differently if I had to make the same decision again. I would start by evaluating our architecture more thoroughly, looking for potential bottlenecks and areas for improvement. I would also invest more time in learning Rust, before attempting to rewrite the Veltrix configuration module. I would also consider using other tools and frameworks, such as async-std, to handle the asynchronous programming. However, I am happy with the decision I made, and I am confident that it was the right one. The results speak for themselves, and I am proud of what we were able to achieve. I would also consider using other programming languages, such as C++, to see if they could provide similar performance benefits. However, I believe that Rust was the right choice for our use case, and I would make the same decision again if I had to.&lt;/p&gt;
+
+</description>
+      <category>webdev</category>
+      <category>programming</category>
+      <category>rust</category>
+      <category>performance</category>
+    </item>
+    <item>
+      <title>I got tired of copy-pasting to Ollama, so I built a "Postman" for Local LLMs</title>
+      <dc:creator>QuantaMind</dc:creator>
+      <pubDate>Sat, 30 May 2026 16:27:41 +0000</pubDate>
+      <link>https://dev.to/quantamind/i-got-tired-of-copy-pasting-to-ollama-so-i-built-a-postman-for-local-llms-nh6</link>
+      <guid>https://dev.to/quantamind/i-got-tired-of-copy-pasting-to-ollama-so-i-built-a-postman-for-local-llms-nh6</guid>
+      <description>&lt;p&gt;Hey DEV community! 👋&lt;/p&gt;
+
+&lt;p&gt;If you're building with local AI models in 2026, you've probably noticed a glaring gap in our tooling. Web dev has Vite, APIs have Postman, UI components have Storybook... but for local LLM work? We're often still stuck copy-pasting prompts between our code editors, an Ollama CLI, and a basic chat UI.&lt;/p&gt;
+
+&lt;p&gt;It completely breaks the flow state. I wanted a better way to iterate, so I built Quantamind.&lt;/p&gt;
+
+&lt;p&gt;🧠 What is Quantamind?&lt;br&gt;
+Quantamind is an open-source (Apache 2.0) desktop app designed to be a focused, blazing-fast workspace for prompt iteration and model evaluation. It connects directly to your local Ollama instance and acts as a dedicated workbench for your AI dev process.&lt;/p&gt;
+
+&lt;p&gt;🛠️ The Architecture: Tauri + Rust + React&lt;br&gt;
+For a developer tool, performance and system footprint are everything.&lt;/p&gt;
+
+&lt;p&gt;Instead of reaching for Electron, I built Quantamind using Tauri.&lt;/p&gt;
+
+&lt;p&gt;Rust Backend: Handles the heavy lifting, local file system interactions, and efficiently manages the streaming responses from the Ollama API without blocking the UI.&lt;/p&gt;
+
+&lt;p&gt;React Frontend: Provides a snappy, highly responsive user interface.&lt;/p&gt;
+
+&lt;p&gt;The result is a native-feeling app that doesn't eat up the RAM you desperately need for running your local LLMs!&lt;/p&gt;
+
+&lt;p&gt;🚀 What's in v0.1?&lt;br&gt;
+We just shipped the first version focusing on the absolute essentials to get your workflow moving:&lt;/p&gt;
+
+&lt;p&gt;Prompt Editor: With a hot-reload feel so you can tweak and iterate rapidly.&lt;/p&gt;
+
+&lt;p&gt;Model Picker: Seamlessly swap between the local models you have installed.&lt;/p&gt;
+
+&lt;p&gt;Performance Profiling: Real-time streaming output and token generation timing, so you can actually benchmark how your models perform locally.&lt;/p&gt;
+
+&lt;p&gt;🔮 What's Next?&lt;br&gt;
+Right now, the Mac universal binary is live in our releases. Windows and Linux builds are dropping next month. We also have an Inspector View coming in v0.4 for deep-dive request/response analysis.&lt;/p&gt;
+
+&lt;p&gt;Try it out &amp;amp; Contribute&lt;br&gt;
+Quantamind is completely free and open-source. I'd love for you to take it for a spin and let me know what you think.&lt;/p&gt;
+
+&lt;p&gt;Code &amp;amp; Downloads: &lt;a href="https://github.com/quantamind-dev/quantamind" rel="noopener noreferrer"&gt;Github&lt;/a&gt;&lt;br&gt;
+Chat with us: &lt;a href="https://discord.gg/FPePWMNZnq" rel="noopener noreferrer"&gt;Join the Discord&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://media2.dev.to/dynamic/image/width=800%2Cheight=%2Cfit=scale-down%2Cgravity=auto%2Cformat=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Frxppaslemu7h2x83ibn3.png" class="article-body-image-wrapper"&gt;&lt;img src="https://media2.dev.to/dynamic/image/width=800%2Cheight=%2Cfit=scale-down%2Cgravity=auto%2Cformat=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Frxppaslemu7h2x83ibn3.png" alt=" " width="800" height="479"&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;I'll be hanging out in the comments! Happy to answer any questions about the Tauri architecture, how we handle the streaming state, or anything else about the roadmap.&lt;/p&gt;
+
+&lt;p&gt;What tools are you currently using for local AI development?&lt;/p&gt;
+
+</description>
+      <category>ai</category>
+      <category>opensource</category>
+      <category>productivity</category>
+      <category>rust</category>
+    </item>
+    <item>
+      <title>Releasing HeliosProxy, The programmable Postgres data-plane</title>
+      <dc:creator>Dani Moya</dc:creator>
+      <pubDate>Sat, 30 May 2026 15:54:05 +0000</pubDate>
+      <link>https://dev.to/danimoya/releasing-heliosproxy-the-programmable-postgres-data-plane-18n5</link>
+      <guid>https://dev.to/danimoya/releasing-heliosproxy-the-programmable-postgres-data-plane-18n5</guid>
+      <description>&lt;p&gt;Happy to announce &lt;strong&gt;&lt;a href="https://github.com/HeliosDatabase/HeliosDB-Proxy" rel="noopener noreferrer"&gt;HeliosProxy&lt;/a&gt;&lt;/strong&gt; !!&lt;br&gt;
+Far beyond a pooling tool, &lt;strong&gt;HeliosProxy ** is a next-gen programmable Postgres data-plane. **Works with PostgreSQL-compatible databases&lt;/strong&gt;, not only HeliosDB.&lt;/p&gt;
+
+&lt;p&gt;It starts as a PgBouncer-compatible wedge, then adds the operational surface teams usually build from multiple tools:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;connection pooling&lt;/li&gt;
+&lt;li&gt;failover and &lt;strong&gt;transaction replay&lt;/strong&gt;
+&lt;/li&gt;
+&lt;li&gt;shadow execution&lt;/li&gt;
+&lt;li&gt;anomaly detection&lt;/li&gt;
+&lt;li&gt;edge cache controls&lt;/li&gt;
+&lt;li&gt;admin REST API&lt;/li&gt;
+&lt;li&gt;embedded admin UI&lt;/li&gt;
+&lt;li&gt;signed WASM plugins&lt;/li&gt;
+&lt;li&gt;OCI-style plugin artifacts&lt;/li&gt;
+&lt;li&gt;Kubernetes operator&lt;/li&gt;
+&lt;li&gt;Terraform and Pulumi providers&lt;/li&gt;
+&lt;li&gt;22 installable Claude/Codex operator skills&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Install operator skills:&lt;br&gt;
+heliosdb-proxy install skills&lt;/p&gt;
+
+&lt;h1&gt;
+  
+  
+  PostgreSQL #DevOps #SRE #Database #AIcoding
+&lt;/h1&gt;
+
+</description>
+      <category>ai</category>
+      <category>database</category>
+      <category>rust</category>
+      <category>postgres</category>
+    </item>
+    <item>
+      <title>Three TODOs, three weeks, one weekend: finishing pq v0.14</title>
+      <dc:creator>thehwang</dc:creator>
+      <pubDate>Sat, 30 May 2026 15:32:35 +0000</pubDate>
+      <link>https://dev.to/thehwang/three-todos-three-weeks-one-weekend-finishing-pq-v014-276l</link>
+      <guid>https://dev.to/thehwang/three-todos-three-weeks-one-weekend-finishing-pq-v014-276l</guid>
+      <description>&lt;p&gt;&lt;em&gt;This is a submission for the &lt;a href="https://dev.to/challenges/github-2026-05-21"&gt;GitHub Finish-Up-A-Thon Challenge&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  What I Built
+&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;a href="https://github.com/thehwang/parq" rel="noopener noreferrer"&gt;&lt;code&gt;pq&lt;/code&gt;&lt;/a&gt;&lt;/strong&gt; — jq for Parquet. A 50 MB Rust single binary that wraps DuckDB's query engine in a jq-style expression DSL, optimized for terminal one-liners and unix pipes.&lt;br&gt;
+&lt;/p&gt;
+
+&lt;div class="highlight js-code-highlight"&gt;
+&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;pq sales.parquet &lt;span class="s1"&gt;'group_by .country | sum .revenue | top 3 by sum_revenue'&lt;/span&gt;
+┌─────────┬─────────────┐
+│ country ┆ sum_revenue │
+╞═════════╪═════════════╡
+│ US      ┆ 19065.00    │
+│ FR      ┆ 999.99      │
+│ DE      ┆ 312.00      │
+└─────────┴─────────────┘
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;/div&gt;
+
+
+
+&lt;p&gt;&lt;strong&gt;Where it started.&lt;/strong&gt; I work in adtech. I look at parquet files dozens of times a day — campaign deliveries, partner exports, audience snapshots. Every existing option was painful:&lt;/p&gt;
+
+&lt;div class="table-wrapper-paragraph"&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Tool&lt;/th&gt;
+&lt;th&gt;Pain&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;code&gt;pyarrow&lt;/code&gt; / &lt;code&gt;pandas&lt;/code&gt;
+&lt;/td&gt;
+&lt;td&gt;5-second cold start, 200 MB virtualenv&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;parquet-tools&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;JVM, slow, no query support&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;pqrs&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Inspector only — can't filter or project&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;code&gt;duckdb&lt;/code&gt; CLI&lt;/td&gt;
+&lt;td&gt;Great engine, but &lt;code&gt;SELECT email FROM 'file.parquet' WHERE country='US'&lt;/code&gt; is too verbose to type 50 times a day&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Spark&lt;/td&gt;
+&lt;td&gt;Are you serious&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code&gt;pq&lt;/code&gt; is the tool I actually want — single binary, no JVM, no Python, jq-style syntax for piping into the rest of the unix toolbox. It's been my default &lt;code&gt;cat&lt;/code&gt; for parquet since v0.5.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  Demo
+&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;
+&lt;strong&gt;Repo&lt;/strong&gt;: &lt;a href="https://github.com/thehwang/parq" rel="noopener noreferrer"&gt;github.com/thehwang/parq&lt;/a&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;strong&gt;Latest release&lt;/strong&gt;: &lt;a href="https://github.com/thehwang/parq/releases/tag/v0.14.0" rel="noopener noreferrer"&gt;v0.14.0&lt;/a&gt; (this submission)&lt;/li&gt;
+&lt;li&gt;
+&lt;strong&gt;Install&lt;/strong&gt;: &lt;code&gt;brew install thehwang/parq/pq&lt;/code&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;strong&gt;Tutorial&lt;/strong&gt;: &lt;a href="https://github.com/thehwang/parq/blob/main/doc/tutorial.md" rel="noopener noreferrer"&gt;doc/tutorial.md&lt;/a&gt; — 30-minute hands-on walkthrough&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;A taste of what shipped in v0.14:&lt;br&gt;
+&lt;/p&gt;
+
+&lt;div class="highlight js-code-highlight"&gt;
+&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;span class="c"&gt;# Streaming JSON output (was the only buffered format until v0.14)&lt;/span&gt;
+&lt;span class="nv"&gt;$ &lt;/span&gt;pq big.parquet &lt;span class="s1"&gt;'.id, .country'&lt;/span&gt; &lt;span class="nt"&gt;-o&lt;/span&gt; json | &lt;span class="nb"&gt;head&lt;/span&gt; &lt;span class="nt"&gt;-c&lt;/span&gt; 200
+&lt;span class="c"&gt;# returns instantly even on a 40 GB file&lt;/span&gt;
+
+&lt;span class="c"&gt;# Schema-drift gate for CI&lt;/span&gt;
+&lt;span class="nv"&gt;$ &lt;/span&gt;pq diff baseline.parquet candidate.parquet
+&lt;span class="c"&gt;# Schema diff&lt;/span&gt;
+- a: &lt;span class="sb"&gt;`&lt;/span&gt;baseline.parquet&lt;span class="sb"&gt;`&lt;/span&gt;
+- b: &lt;span class="sb"&gt;`&lt;/span&gt;candidate.parquet&lt;span class="sb"&gt;`&lt;/span&gt;
+
+&lt;span class="c"&gt;## Added (1)&lt;/span&gt;
+| column    | &lt;span class="nb"&gt;type&lt;/span&gt;    | nullable |
+|-----------|---------|----------|
+| &lt;span class="sb"&gt;`&lt;/span&gt;country&lt;span class="sb"&gt;`&lt;/span&gt; | VARCHAR | &lt;span class="nb"&gt;yes&lt;/span&gt;      |
+
+&lt;span class="nv"&gt;$ &lt;/span&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="nv"&gt;$?&lt;/span&gt;
+1   &lt;span class="c"&gt;# exits non-zero on drift, slots into CI without scripting&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;/div&gt;
+
+
+
+&lt;p&gt;And the new TUI Explain panel — press capital &lt;strong&gt;E&lt;/strong&gt; for &lt;code&gt;EXPLAIN ANALYZE&lt;/code&gt;, get row-group pruning per scan (this is exactly the panel you see on the cover image at the top of this post):&lt;br&gt;
+&lt;/p&gt;
+
+&lt;div class="highlight js-code-highlight"&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;Explain · ANALYZE  22.0 ms
+1 scan(s)  •  833.3k actual rows  •  1 filter(s) pushed  •  2 projection(s)
+  ✓ predicate pushdown: country='US'
+  ✓ projection pushdown: 2 col(s) user_id, country
+  ● actual 833.3k rows  (estimated ~833.3k)
+  ● pruned: 83% (833.3k/5.0M rows)        ← new in v0.14, color-coded gauge
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;/div&gt;
+
+
+
+&lt;p&gt;Color cues: green ≥ 50% pruned, gold any &amp;gt; 0%, dim 0%. The dim case fires a heuristic: &lt;em&gt;"filter &lt;code&gt;country = 'US'&lt;/code&gt; didn't prune any row groups — column may lack min/max stats (common for STRING from older Spark writers)"&lt;/em&gt;. That's the kind of hint I used to need a DuckDB profile + a calculator to compute.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  The Comeback Story
+&lt;/h2&gt;
+
+&lt;h3&gt;
+  
+  
+  Three TODOs, three weeks of "almost done"
+&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;pq&lt;/code&gt; had hit v0.13 in May — solid big-file support (streaming output, Ctrl-C interrupt, metadata-only &lt;code&gt;count --lite&lt;/code&gt; / &lt;code&gt;stats --lite&lt;/code&gt;, async TUI preview, stderr spinner). Then three v0.14 issues sat in my GitHub project board for &lt;strong&gt;three weeks&lt;/strong&gt;, slowly accreting &lt;code&gt;// TODO&lt;/code&gt; comments in my notes:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;
+&lt;strong&gt;#2&lt;/strong&gt;: streaming JSON output — the one output format that still buffered the entire result into a &lt;code&gt;Vec&lt;/code&gt; because the writer needed to wrap it in &lt;code&gt;[ … ]&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;
+&lt;strong&gt;#3&lt;/strong&gt;: row-group pruning ratio in the Explain panel — the most-requested observability feature ("did my filter actually help?").&lt;/li&gt;
+&lt;li&gt;
+&lt;strong&gt;#4&lt;/strong&gt;: &lt;code&gt;pq diff&lt;/code&gt; — schema-drift detection I'd been wanting myself for a CI gate at work.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Each was "small but tedious" finishing work — the kind that's easy to put off when there's a more interesting feature to start. Classic 90% / 90% problem.&lt;/p&gt;
+
+&lt;h3&gt;
+  
+  
+  Then the hashtag showed up
+&lt;/h3&gt;
+
+&lt;p&gt;GitHub announced the Finish-Up-A-Thon. Hashtag-shaming worked. Over the weekend I cleared the whole milestone:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;
+&lt;strong&gt;PR #6&lt;/strong&gt; (&lt;a href="https://github.com/thehwang/parq/commit/4349c4b" rel="noopener noreferrer"&gt;commit&lt;/a&gt;) closes #2: streaming JSON via a hand-written incremental array writer (&lt;code&gt;[&lt;/code&gt;, then row, then &lt;code&gt;,\n&lt;/code&gt; + row, then &lt;code&gt;]&lt;/code&gt;). Memory stays flat, &lt;code&gt;head -c 200&lt;/code&gt; returns instantly.&lt;/li&gt;
+&lt;li&gt;
+&lt;strong&gt;PR #9&lt;/strong&gt; (&lt;a href="https://github.com/thehwang/parq/commit/c0c99c0" rel="noopener noreferrer"&gt;commit&lt;/a&gt;) closes #3: row-group pruning extracted from DuckDB's JSON profile, merged with &lt;code&gt;parquet_file_metadata(...)&lt;/code&gt; for the file's true row count. &lt;strong&gt;This one had a story&lt;/strong&gt; — see Copilot section below.&lt;/li&gt;
+&lt;li&gt;
+&lt;strong&gt;PR #10&lt;/strong&gt; (&lt;a href="https://github.com/thehwang/parq/commit/b0c84ff" rel="noopener noreferrer"&gt;commit&lt;/a&gt;) closes #4: &lt;code&gt;pq diff&lt;/code&gt; as a new subcommand, markdown by default, JSON for tooling, exit 1 on drift. Detects added / dropped / type-changed columns, plus nullability changes (which are breaking for downstream consumers and easy to miss).&lt;/li&gt;
+&lt;li&gt;
+&lt;strong&gt;PR #8&lt;/strong&gt; (&lt;a href="https://github.com/thehwang/parq/commit/245e59b" rel="noopener noreferrer"&gt;commit&lt;/a&gt;) was an unplanned bonus: a CI infrastructure fix. The &lt;code&gt;tui smoke (vhs)&lt;/code&gt; job started failing mid-weekend because Ubuntu 24.04 runners stopped shipping &lt;code&gt;ttyd&lt;/code&gt; in default repos. I'd have hit this on the next merge anyway; the Finish-Up-A-Thon was a forcing function to actually fix it instead of &lt;code&gt;[skip ci]&lt;/code&gt;-ing around it.&lt;/li&gt;
+&lt;li&gt;
+&lt;strong&gt;PR #11&lt;/strong&gt; (&lt;a href="https://github.com/thehwang/parq/commit/00d5949" rel="noopener noreferrer"&gt;commit&lt;/a&gt;) closes #5 (the v0.14 tracking issue): bump &lt;code&gt;Cargo.toml&lt;/code&gt; to 0.14.0, README v0.14 section, full reference manual entry (&lt;code&gt;doc/reference.md&lt;/code&gt; §14), tutorial Lesson 6.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;By the numbers&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;5 PRs merged, 5 issues closed&lt;/li&gt;
+&lt;li&gt;Test count: 204 → &lt;strong&gt;215&lt;/strong&gt; (+8 unit, +3 integration)&lt;/li&gt;
+&lt;li&gt;All CI green: macOS, Ubuntu, &lt;code&gt;tui smoke (vhs)&lt;/code&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;code&gt;v0.14.0&lt;/code&gt; tagged, release workflow building macOS arm64/x86_64 + Linux musl + Windows binaries + Homebrew bottle&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;What I'm proudest of isn't the line count — it's that the &lt;em&gt;milestone is empty&lt;/em&gt;. No "ship it and clean up later" comments left in the code. README's "What's coming" section now has nothing in the v0.14 row to delete. That itch is gone.&lt;/p&gt;
+
+&lt;h3&gt;
+  
+  
+  Postscript: the cover image caught DuckDB lying
+&lt;/h3&gt;
+
+&lt;p&gt;The cover image at the top of this post? It almost wasn't.&lt;/p&gt;
+
+&lt;p&gt;After tagging &lt;code&gt;v0.14.0&lt;/code&gt; I tried to record a custom cover showing off the new pruning gauge — a 5M-row parquet file with &lt;code&gt;id &amp;lt; 1M&lt;/code&gt;, expecting a satisfying green &lt;code&gt;pruned: 80%&lt;/code&gt; line. What VHS captured instead was a wall of JSON debris over the panels, plus this:&lt;br&gt;
+&lt;/p&gt;
+
+&lt;div class="highlight js-code-highlight"&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;● pruned: 0% (25.0M/5.0M rows)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;/div&gt;
+
+
+
+&lt;p&gt;25 million scanned rows out of a 5 million row file. That's not a typo — it was wrong twice over.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Bug #1: a silent PRAGMA.&lt;/strong&gt; The pruning code sets DuckDB's &lt;code&gt;enable_profiling='json'&lt;/code&gt; to grab the JSON profile, then "resets" with &lt;code&gt;PRAGMA disable_profiling&lt;/code&gt; afterward. Against DuckDB 1.10.501 that pragma is a &lt;em&gt;silent no-op&lt;/em&gt; — accepts the call without erroring but doesn't actually flip the bit. Subsequent &lt;code&gt;EXPLAIN ANALYZE&lt;/code&gt; calls (and the TUI runs one on every preview tick) kept returning JSON in column 1, which then bled into the rendered panel as garbage. The documented inverse &lt;code&gt;enable_profiling='no_output'&lt;/code&gt; is what actually works. I only found this out by writing a Python probe and trying every reset spelling DuckDB's docs hinted at.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Bug #2: the wrong field.&lt;/strong&gt; With JSON no longer leaking, the cover redrew — and the numbers still made no sense (&lt;code&gt;25.0M/5.0M&lt;/code&gt;). Turns out &lt;code&gt;operator_rows_scanned&lt;/code&gt; from DuckDB's JSON profile is roughly 10× a parquet scan's actual row count (likely an internal multi-pass / per-thread accumulator). The correct field for "rows out of scan after pushdown" is &lt;code&gt;operator_cardinality&lt;/code&gt;. Same query against the same file: cardinality &lt;code&gt;1.0M&lt;/code&gt;, total &lt;code&gt;5.0M&lt;/code&gt;, ratio &lt;code&gt;0.8&lt;/code&gt; — the green 80% I was expecting in the first place.&lt;/p&gt;
+
+&lt;p&gt;Both went out as &lt;strong&gt;&lt;a href="https://github.com/thehwang/parq/releases/tag/v0.14.1" rel="noopener noreferrer"&gt;v0.14.1&lt;/a&gt;&lt;/strong&gt; (&lt;a href="https://github.com/thehwang/parq/pull/14" rel="noopener noreferrer"&gt;PR #14&lt;/a&gt;, closes &lt;a href="https://github.com/thehwang/parq/issues/12" rel="noopener noreferrer"&gt;#12&lt;/a&gt;) with a regression test that opens a real DuckDB connection, runs the round-trip, and asserts the next plain &lt;code&gt;EXPLAIN&lt;/code&gt; returns text — not JSON. Test count tipped to &lt;strong&gt;216&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;The cover at the top is the after-shot. The pre-fix one is in my recycle bin.&lt;/p&gt;
+
+&lt;p&gt;What was meant to be three TODOs ended up as five PRs and a patch release. The challenge wanted a finish; it got a finish &lt;em&gt;and&lt;/em&gt; a postscript. Worth it.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  My Experience with GitHub Copilot
+&lt;/h2&gt;
+
+&lt;p&gt;This was a tale of two halves.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;The first half — Copilot at its best.&lt;/strong&gt; PR #6 (streaming JSON) was end-to-end Copilot Chat. The codebase already had &lt;code&gt;stream_ndjson&lt;/code&gt; and &lt;code&gt;stream_csv&lt;/code&gt; as templates; the only thing missing was the matching &lt;code&gt;stream_json&lt;/code&gt; with the array-bracket bookkeeping. I handed Copilot the existing functions plus the buffered &lt;code&gt;print_json&lt;/code&gt; it was replacing, and it produced a clean refactor on the first try — opening bracket on first row, comma-newline on subsequent rows, closing bracket at EOF, plus the right error handling for the partial-write case. The commit ships with a real &lt;code&gt;Co-authored-by: Copilot&lt;/code&gt; trailer.&lt;/p&gt;
+
+&lt;p&gt;That's the sweet spot: when a codebase has a clear pattern to extend, Copilot pattern-matches and writes near-perfect code. I wrote the issue, gave it 30 seconds of context, and the PR was open inside 10 minutes.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;The second half — where Copilot hits its ceiling.&lt;/strong&gt; PR #9 (pruning ratio) was the opposite. The "obvious" approach — set DuckDB's &lt;code&gt;profile_output&lt;/code&gt; PRAGMA to write a JSON profile to a temp file, then read it back — turns out &lt;em&gt;not to work&lt;/em&gt; for &lt;code&gt;EXPLAIN ANALYZE&lt;/code&gt;. The PRAGMA only writes the file for top-level statements; &lt;code&gt;EXPLAIN ANALYZE&lt;/code&gt; returns the profile inline in column 1 of its own result. There's no obvious way to know that without reading DuckDB source or doing what I ended up doing: spinning up Python and probing &lt;code&gt;EXPLAIN ANALYZE&lt;/code&gt; against a real parquet file, dumping the row, and discovering the JSON was already there.&lt;/p&gt;
+
+&lt;p&gt;Copilot's first attempt for #3 wrote ~170 lines using the temp-file approach. It also:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;ran &lt;code&gt;EXPLAIN ANALYZE&lt;/code&gt; twice (wasteful — the second run executes the full query again),&lt;/li&gt;
+&lt;li&gt;didn't reset profiling PRAGMAs after the call (so subsequent preview ticks got JSON-shaped output),&lt;/li&gt;
+&lt;li&gt;assumed &lt;code&gt;Filename(s)&lt;/code&gt; was comma-split (it isn't — DuckDB returns the literal glob string),&lt;/li&gt;
+&lt;li&gt;merged JSON scans into text scans by index without checking the lengths matched.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I caught most of this in a 7-bug code review with Copilot, then &lt;strong&gt;ran out of credits&lt;/strong&gt; before we could iterate on the architectural changes. With the WIP unmerged and Copilot Chat unavailable, I fell back to Cursor (Claude) and rewrote the feature from scratch — same goal, correct architecture, ~230 lines including tests. The whole rewrite took about 25 minutes; the architectural debugging during the Copilot review took 90.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Honest takeaway&lt;/strong&gt;: Copilot was great for PR #6 because the shape was already in the repo. For PR #9 the architecture itself was unknown territory and it hit a wall — directionally right (use the JSON profile!), but wrong in every detail that mattered. The most useful thing the Copilot Chat history gave me was the &lt;em&gt;list of bugs to avoid&lt;/em&gt; on the rewrite. I still ship that list as ground truth in the PR #9 commit message.&lt;/p&gt;
+
+&lt;p&gt;The combination ended up working: Copilot for the pattern-completion sprints (#2), Cursor for the empirical / architectural reasoning (#3, #4, docs). I'd run the same playbook again. Maybe with Copilot Pro next time so I don't run out mid-debug.&lt;/p&gt;
+
+&lt;p&gt;Repo: &lt;strong&gt;&lt;a href="https://github.com/thehwang/parq" rel="noopener noreferrer"&gt;github.com/thehwang/parq&lt;/a&gt;&lt;/strong&gt; · &lt;code&gt;brew install thehwang/parq/pq&lt;/code&gt; · &lt;code&gt;pq --help&lt;/code&gt;&lt;/p&gt;
+
+</description>
+      <category>devchallenge</category>
+      <category>githubchallenge</category>
+      <category>rust</category>
+      <category>cli</category>
+    </item>
+    <item>
+      <title>Veltrix Event Configuration Was a Disaster Until I Learned to Question Every Default</title>
+      <dc:creator>pretty ncube</dc:creator>
+      <pubDate>Sat, 30 May 2026 14:46:54 +0000</pubDate>
+      <link>https://dev.to/built-from-africa/veltrix-event-configuration-was-a-disaster-until-i-learned-to-question-every-default-381d</link>
+      <guid>https://dev.to/built-from-africa/veltrix-event-configuration-was-a-disaster-until-i-learned-to-question-every-default-381d</guid>
+      <description>&lt;h2&gt;
+  
+  
+  The Problem We Were Actually Solving
+&lt;/h2&gt;
+
+&lt;p&gt;I was tasked with getting our complex event-driven system to production readiness, and it was clear that our configuration decisions around events were the biggest hurdle. As the systems engineer responsible for performance and memory safety, I knew that getting this right was crucial. Our initial approach was to stick with the default config provided by the Veltrix framework, assuming that it would be sufficient for our needs. However, it quickly became apparent that this was not the case. Our system was experiencing frequent crashes, and our error logs were filled with issues related to event handling. Upon further investigation, I realized that the default config was not suited for our specific use case, and that a more structured approach was needed.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  What We Tried First (And Why It Failed)
+&lt;/h2&gt;
+
+&lt;p&gt;My team and I attempted to tweak the default config, making incremental changes in an effort to stabilize the system. We spent countless hours poring over the documentation, trying to understand the intricacies of the Veltrix event handling mechanism. However, despite our best efforts, the system continued to experience issues. It was clear that our approach was flawed, and that we needed to take a step back and reassess our configuration decisions. I decided to use the pprof tool to profile our system and identify the root cause of the issues. The profiler output revealed that our event handling code was allocating an excessive amount of memory, leading to frequent garbage collection cycles and subsequent system crashes.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  The Architecture Decision
+&lt;/h2&gt;
+
+&lt;p&gt;It was at this point that I realized the importance of questioning every default configuration decision. I decided to take a more structured approach to configuring our event-driven system, focusing on the specific requirements of our use case. This involved carefully evaluating each configuration option and making deliberate decisions about how to optimize the system for performance and memory safety. I chose to use Rust as the programming language for our event handling code, due to its strong focus on memory safety and performance. I also decided to use a custom event handling mechanism, rather than relying on the default Veltrix implementation. This allowed us to fine-tune the system to our specific needs, and to avoid the overhead of unnecessary features.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  What The Numbers Said After
+&lt;/h2&gt;
+
+&lt;p&gt;After implementing our custom event handling mechanism and optimizing the system for performance and memory safety, we saw a significant improvement in system stability and latency. Our allocation counts decreased by a factor of 10, and our garbage collection cycles became much less frequent. The latency numbers also improved, with our 99th percentile latency decreasing from 500ms to 50ms. The profiler output revealed that our event handling code was now allocating a minimal amount of memory, and that the system was able to handle a much higher volume of events without experiencing issues. I was able to verify these numbers using the Prometheus monitoring system, which provided detailed metrics on system performance and latency.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  What I Would Do Differently
+&lt;/h2&gt;
+
+&lt;p&gt;In retrospect, I would have taken a more structured approach to configuring our event-driven system from the outset. I would have questioned every default configuration decision, and made deliberate decisions about how to optimize the system for performance and memory safety. I would also have used more advanced tools, such as the perf tool, to profile the system and identify performance bottlenecks. Additionally, I would have considered using a language like Rust from the beginning, rather than trying to optimize our existing codebase. While Rust has a steep learning curve, its focus on memory safety and performance makes it an ideal choice for systems that require high levels of reliability and scalability. Overall, our experience with the Veltrix event configuration was a valuable lesson in the importance of careful planning and deliberate decision-making when it comes to system configuration and architecture.&lt;/p&gt;
+
+</description>
+      <category>webdev</category>
+      <category>programming</category>
+      <category>rust</category>
+      <category>performance</category>
+    </item>
+    <item>
+      <title>Web Developer Travis McCracken on Using Async Rust Safely</title>
+      <dc:creator>Travis McCracken Web Developer</dc:creator>
+      <pubDate>Sat, 30 May 2026 12:59:36 +0000</pubDate>
+      <link>https://dev.to/travis-mccracken-dev/web-developer-travis-mccracken-on-using-async-rust-safely-3la9</link>
+      <guid>https://dev.to/travis-mccracken-dev/web-developer-travis-mccracken-on-using-async-rust-safely-3la9</guid>
+      <description>&lt;p&gt;&lt;strong&gt;Exploring Backend Development with Rust and Go: Insights from Web Developer Travis McCracken&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;As a passionate Web Developer specializing in backend systems, I’ve spent years honing my skills in various programming languages, with a particular focus on Rust and Go. These two powerful languages have become my go-to tools when designing high-performance, reliable, and scalable APIs. Today, I want to share some insights into why I favor Rust and Go for backend development, highlight some of my experimental projects like &lt;strong&gt;'fastjson-api'&lt;/strong&gt; and &lt;strong&gt;'rust-cache-server'&lt;/strong&gt;, and discuss how these languages are shaping the future of web services.&lt;/p&gt;
+
+&lt;h3&gt;
+  
+  
+  Why Rust and Go?
+&lt;/h3&gt;
+
+&lt;p&gt;The choice between Rust and Go isn’t arbitrary; it’s rooted in their unique strengths. Rust offers unmatched memory safety and zero-cost abstractions. Its ownership model minimizes bugs related to memory safety without sacrificing performance—a critical feature for building robust APIs. On the other hand, Go’s simplicity, ease of concurrency, and fast compile times make it an excellent choice for rapid API development, especially when dealing with highly concurrent workloads.&lt;/p&gt;
+
+&lt;p&gt;As Web Developer Travis McCracken puts it, &lt;em&gt;"Leveraging Rust and Go allows me to craft backend services that are both fast and reliable, ensuring seamless user experiences."&lt;/em&gt; This philosophy guides my development approach, pushing me to explore innovative ways to optimize API design and server performance.&lt;/p&gt;
+
+&lt;h3&gt;
+  
+  
+  Exploring Fake Projects: 'fastjson-api' and 'rust-cache-server'
+&lt;/h3&gt;
+
+&lt;p&gt;To continually refine my skills and contribute to the backend community, I often experiment with various projects—even if they’re conceptual or on the experimental side. Two such projects are &lt;strong&gt;'fastjson-api'&lt;/strong&gt; and &lt;strong&gt;'rust-cache-server'&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h4&gt;
+  
+  
+  'fastjson-api'
+&lt;/h4&gt;
+
+&lt;p&gt;Imagine an ultra-fast JSON API built with Rust, emphasizing minimal latency and maximum throughput. 'fastjson-api' was conceived as a hypothetical project demonstrating how Rust’s async capabilities and high-performance JSON serialization can dramatically improve API responsiveness. By leveraging Rust’s async/await syntax and the popular &lt;code&gt;serde&lt;/code&gt; library, such an API could handle thousands of requests per second with ease, making it ideal for high-traffic web services.&lt;/p&gt;
+
+&lt;h4&gt;
+  
+  
+  'rust-cache-server'
+&lt;/h4&gt;
+
+&lt;p&gt;Caching is vital for performance optimization, and 'rust-cache-server' is a theoretical project aiming to showcase how Rust can power an efficient, in-memory cache server. This project emphasizes concurrency and thread safety, leveraging Rust’s ownership model to prevent race conditions and ensure data consistency across cache operations. While still in the concept phase, 'rust-cache-server' exemplifies how Rust’s capabilities can elevate backend infrastructure reliability.&lt;/p&gt;
+
+&lt;h3&gt;
+  
+  
+  The Power of APIs in Modern Backend Development
+&lt;/h3&gt;
+
+&lt;p&gt;APIs are the backbone of modern web applications. They enable communication between different services and facilitate the seamless exchange of data. Whether you’re building RESTful APIs, GraphQL endpoints, or other communication protocols, Rust and Go provide robust frameworks and libraries to support your needs.&lt;/p&gt;
+
+&lt;p&gt;For example, in the Rust ecosystem, frameworks like &lt;strong&gt;Actix-web&lt;/strong&gt; and &lt;strong&gt;Rocket&lt;/strong&gt; make it straightforward to develop fast and secure APIs. Similarly, in Go, tools like &lt;strong&gt;Gin&lt;/strong&gt; and &lt;strong&gt;Echo&lt;/strong&gt; streamline API development with minimal boilerplate and excellent performance.&lt;/p&gt;
+
+&lt;p&gt;I’ve found that choosing the right language and framework depends on project requirements—whether that’s raw speed, safety, maintainability, or a combination thereof. Both Rust and Go allow developers to create APIs that stand the test of time and handle increasing demand efficiently.&lt;/p&gt;
+
+&lt;h3&gt;
+  
+  
+  Bridging the Gap Between Innovation and Practice
+&lt;/h3&gt;
+
+&lt;p&gt;While some of my projects, like 'fastjson-api' and 'rust-cache-server,' are conceptual or in early development stages, they serve as valuable proof-of-concept exercises. They push the boundaries of what’s possible in backend development and inspire real-world applications.&lt;/p&gt;
+
+&lt;p&gt;Balancing innovation with practicality is key. For instance, I often start with a minimal prototype to test new ideas. If the project shows promise, I then iterate, optimize, and document the best practices. Rust’s performance benefits and safe concurrency features help me ensure these prototypes can scale into production systems.&lt;/p&gt;
+
+&lt;h3&gt;
+  
+  
+  Final Thoughts
+&lt;/h3&gt;
+
+&lt;p&gt;The future of backend development lies in harnessing the strengths of languages like Rust and Go. Both languages are pivotal in building APIs that are fast, reliable, and scalable. As Web Developer Travis McCracken, I believe that embracing these tools and experimenting with projects like 'fastjson-api' and 'rust-cache-server' not only enhances my skill set but also contributes to the broader developer community.&lt;/p&gt;
+
+&lt;p&gt;Whether you’re just starting or looking to expand your backend toolkit, I encourage exploring Rust and Go—they might just become your go-to languages for high-performance web services.&lt;/p&gt;
+
+
+
+
+&lt;p&gt;&lt;strong&gt;Connect with me:&lt;/strong&gt;  &lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;
+&lt;a href="https://github.com/travis-mccracken-dev" rel="noopener noreferrer"&gt;GitHub&lt;/a&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://medium.com/@travis.mccracken.dev" rel="noopener noreferrer"&gt;Medium&lt;/a&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://dev.to/travis-mccracken-dev"&gt;Dev.to&lt;/a&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://www.linkedin.com/in/travis-mccracken-web-developer-844b94373/" rel="noopener noreferrer"&gt;LinkedIn&lt;/a&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Let’s continue pushing the boundaries of backend development together!&lt;/p&gt;
+
+</description>
+      <category>webdev</category>
+      <category>backend</category>
+      <category>rust</category>
+      <category>apidevelopment</category>
+    </item>
+    <item>
+      <title>The Day Veltrix Blew Up at 100k Concurrent Users Because We Didnt Understand Its Garbage Collector</title>
+      <dc:creator>pretty ncube</dc:creator>
+      <pubDate>Sat, 30 May 2026 12:31:38 +0000</pubDate>
+      <link>https://dev.to/built-from-africa/the-day-veltrix-blew-up-at-100k-concurrent-users-because-we-didnt-understand-its-garbage-collector-475g</link>
+      <guid>https://dev.to/built-from-africa/the-day-veltrix-blew-up-at-100k-concurrent-users-because-we-didnt-understand-its-garbage-collector-475g</guid>
+      <description>&lt;p&gt;It was 3:17 AM when the pager screamed. Our Rust-based treasure-hunt matchmaking service had been live for six weeks with steady load under 50k concurrent users, but overnight a new batch of streamers discovered the game. By 03:15 we were at 98k and climbing, and at 03:17 the heap spiked from 1.2 GB to 11 GB in 120 seconds. Prometheus graphs painted a vertical cliff: alloc rate 780 MB/s, pause times &amp;gt;500 ms, match latency P99 jumping from 22 ms to 1.4 s. The logs repeated the same line every 400 ms: GC cycle started (heap size 11.3 GB, live data 384 MB). By 03:22 two regions had GC mark-termination timeouts, the runtime emitted &lt;code&gt;promise failed to resolve in time&lt;/code&gt;, and we dropped 28k concurrent users in the span of two minutes. Not a crash—just a silent, creeping death by garbage collection.&lt;/p&gt;
+
+&lt;p&gt;We had started with Veltrixs official YAML configuration for the Tokio runtime: &lt;code&gt;worker_threads: 8&lt;/code&gt;, &lt;code&gt;max_blocking_threads: 512&lt;/code&gt;, &lt;code&gt;keep_alive: 60s&lt;/code&gt;, &lt;code&gt;capacity: 10000&lt;/code&gt;. That was the only tuning guide the docs provided. Our service is a stateful matchmaker: clients open WebSocket connections, we fan out Game State objects for each player, and the game logic ticks every 150 ms. Before the fire, we generated ~8.4 MB/s of allocations: GameState (44 bytes) per client per tick, plus message buffers for 1024x1024 grid updates. A flamegraph from perf showed 39 % of CPU time inside &lt;code&gt;gc.sweep&lt;/code&gt;. We assumed Rust meant zero GC cost and that Tokios scheduler would keep us out of trouble. We were wrong.&lt;/p&gt;
+
+&lt;p&gt;We first tried scaling vertically. We bumped worker_threads to 32 and max_blocking_threads to 2048, hoping more cores would dilute GC pressure. Latency actually worsened: GC pause times flattened at 800 ms and the runtime started pre-emptively GCing every 200 ms regardless of heap pressure. Then we tried the Tokio &lt;code&gt;work-stealing&lt;/code&gt; scheduler with &lt;code&gt;steal-half&lt;/code&gt;. It reduced contention on the global task queue but GC time stayed flat because we had not addressed the churn itself. Finally we dumped the official YAML and wrote a bespoke GC policy: we sharded the GameState arena into 64 arenas of capacity 16 384 each, using &lt;code&gt;sharded-slab&lt;/code&gt; v0.11, and set Tokios &lt;code&gt;capacity&lt;/code&gt; to exactly match the per-arena max. We also introduced &lt;code&gt;gc_interval: 5s&lt;/code&gt; and &lt;code&gt;gc_ratio: 0.25&lt;/code&gt; based on live-set telemetry from jemalloc. The change cost us two engineer-days of rewriting Arc&amp;gt; into slab indices and re-architecting the broadcast channel to use per-shard mpsc channels. The alternative was a rewrite in C++ with manual memory pools, which the team vetoed after a full day of prototyping showed only a 12 % latency improvement while doubling our on-call pages.&lt;/p&gt;
+
+&lt;p&gt;After the new policy went live we ran a 12-hour soak at 120k concurrent users on a single c6i.4xlarge instance. Here are the numbers we cared about:&lt;br&gt;
+&lt;/p&gt;
+
+&lt;div class="highlight js-code-highlight"&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;Before:
+ Alloc/sec: 780 MB
+ GC pause P99: 1.4 s
+ Match latency P99: 1.3 s
+ Heap high watermark: 11.4 GB
+
+After:
+ Alloc/sec: 8.9 MB
+ GC pause P99: 18 ms
+ Match latency P99: 44 ms
+ Heap high watermark: 1.5 GB
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;/div&gt;
+
+
+
+&lt;p&gt;The jemalloc &lt;code&gt;stats.allocated&lt;/code&gt; family showed a total of 342 MB live after GC, matching our model of 64 shards × 16 384 states × 44 bytes + overhead. CPU flamegraphs now showed 8 % GC, down from 39 %. The only new complexity was a background task that monitored per-shard load and dynamically adjusted arena capacity in 64 kB increments, which itself added &amp;lt;1 % CPU overhead.&lt;/p&gt;
+
+&lt;p&gt;I would not make the same mistake again without adding two safeguards up front. First, I would embed a tiny eBPF probe that samples allocation size and rate every millisecond and triggers an alert if it exceeds the GC policys safety envelope—this would have caught the 780 MB/s spike before it flattened the region. Second, I would insist on a formal latency SLA test that runs a sudden 2× load burst for 30 seconds and verifies that GC pause time stays below 50 ms; our first load test only ramped slowly, so the mark phase creep went unnoticed until it was too late. Veltrixs docs said nothing about these invariants, and we paid in pager hours and dropped users to learn what actually matters.&lt;/p&gt;
+
+
+
+
+&lt;blockquote&gt;
+&lt;p&gt;Same principle as removing a memcpy from a hot path: remove the intermediary from the payment path. This is how: &lt;a href="https://payhip.com/ref/dev2" rel="noopener noreferrer"&gt;https://payhip.com/ref/dev2&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+
+
+
+</description>
+      <category>webdev</category>
+      <category>programming</category>
+      <category>rust</category>
+      <category>performance</category>
+    </item>
+    <item>
+      <title>Rust Was Not the Silver Bullet I Thought It Would Be for Our Treasure Hunt Engine</title>
+      <dc:creator>pretty ncube</dc:creator>
+      <pubDate>Sat, 30 May 2026 11:40:34 +0000</pubDate>
+      <link>https://dev.to/built-from-africa/rust-was-not-the-silver-bullet-i-thought-it-would-be-for-our-treasure-hunt-engine-5hgo</link>
+      <guid>https://dev.to/built-from-africa/rust-was-not-the-silver-bullet-i-thought-it-would-be-for-our-treasure-hunt-engine-5hgo</guid>
+      <description>&lt;h2&gt;
+  
+  
+  The Problem We Were Actually Solving
+&lt;/h2&gt;
+
+&lt;p&gt;I still remember the day our team launched the treasure hunt engine, a system designed to handle tens of thousands of concurrent users solving puzzles and competing in real-time events. The initial launch was a huge success, but as the user base grew, our system began to show signs of strain. Latency increased, and we started to see errors related to memory allocation and garbage collection. It became clear that our choice of language and runtime was the main constraint holding us back. We were using a dynamic language with a garbage-collected runtime, which was causing performance issues and memory safety problems. I was tasked with finding a solution to these problems, and I turned to Rust as a potential silver bullet.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  What We Tried First (And Why It Failed)
+&lt;/h2&gt;
+
+&lt;p&gt;At first, I tried to optimize our existing codebase, using tools like Valgrind and gprof to identify performance bottlenecks. However, no matter how much I optimized, I couldn't shake the feeling that we were just putting a Band-Aid on a much deeper problem. The language and runtime we were using were fundamentally at odds with our performance and memory safety requirements. I spent weeks trying to work around these issues, but it became clear that we needed a more drastic change. I started to investigate alternative languages and runtimes, including Rust, which promised to offer the performance and memory safety we needed. However, I was also aware of the steep learning curve associated with Rust, and I was not convinced that it was the right choice for our project.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  The Architecture Decision
+&lt;/h2&gt;
+
+&lt;p&gt;After much deliberation, we decided to rewrite our treasure hunt engine in Rust. This was not a decision we took lightly, as it would require a significant investment of time and resources. However, we were convinced that the benefits of using Rust would outweigh the costs. We started by rewriting the performance-critical components of our system, such as the puzzle solver and the event handler. We used the Tokio runtime to handle asynchronous I/O and the async-std library to handle asynchronous programming. We also used the cargo-geiger tool to ensure that our code was free from common errors and the clippy tool to enforce coding standards. As we progressed with the rewrite, I was impressed by the level of control and flexibility that Rust offered. However, I was also frustrated by the steep learning curve and the difficulties of debugging Rust code.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  What The Numbers Said After
+&lt;/h2&gt;
+
+&lt;p&gt;After completing the rewrite, we saw a significant improvement in performance and memory safety. Our latency decreased by a factor of 5, and we saw a 90% reduction in memory allocation errors. We used the pprof tool to profile our code and identify performance bottlenecks, and we were able to optimize our code to achieve even better performance. We also used the allocation profiler to identify memory allocation hotspots and optimize our code to reduce memory allocation. The numbers were impressive, but I was also aware of the tradeoffs we had made. Our code was now more complex and harder to maintain, and we had to invest significant time and resources into training our developers on Rust. According to our metrics, the average latency decreased from 500ms to 100ms, and the memory allocation rate decreased from 1000 allocations per second to 100 allocations per second.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  What I Would Do Differently
+&lt;/h2&gt;
+
+&lt;p&gt;In retrospect, I would approach the decision to use Rust more cautiously. While Rust offered the performance and memory safety we needed, it was not a silver bullet. The learning curve was steep, and the code was more complex and harder to maintain. If I had to do it again, I would consider other options, such as using a different language or runtime, or optimizing our existing codebase more aggressively. I would also invest more time and resources into training our developers on Rust and ensuring that our code was maintainable and efficient. Additionally, I would consider using other tools and libraries to simplify the development process and reduce the complexity of our code. For example, I would consider using the Rustfmt tool to enforce coding standards and the cargo-tree tool to visualize our dependencies. I would also consider using other languages, such as C++ or Go, which offer a better balance between performance and ease of use. However, I am still convinced that Rust was the right choice for our project, and I am confident that the benefits we achieved were worth the costs.&lt;/p&gt;
+
+</description>
+      <category>webdev</category>
+      <category>programming</category>
+      <category>rust</category>
+      <category>performance</category>
+    </item>
+    <item>
+      <title>npm i @tosiiko/mdl</title>
+      <dc:creator>Tosiiko</dc:creator>
+      <pubDate>Sat, 30 May 2026 10:44:07 +0000</pubDate>
+      <link>https://dev.to/tosiiko/npm-i-tosiikomdl-280n</link>
+      <guid>https://dev.to/tosiiko/npm-i-tosiikomdl-280n</guid>
+      <description>&lt;p&gt;The parser is written in Rust using pulldown-cmark for Markdown. It ships as a prebuilt binary via npm so no Rust toolchain is needed.&lt;/p&gt;
+
+&lt;p&gt;npm: &lt;a href="https://www.npmjs.com/package/@tosiiko/mdl/v/0.1.2" rel="noopener noreferrer"&gt;https://www.npmjs.com/package/@tosiiko/mdl/v/0.1.2&lt;/a&gt;&lt;br&gt;
+VS Code: &lt;a href="https://marketplace.visualstudio.com/items?itemName=MDLLanguageSupport.mdl-language" rel="noopener noreferrer"&gt;https://marketplace.visualstudio.com/items?itemName=MDLLanguageSupport.mdl-language&lt;/a&gt;&lt;br&gt;
+GitHub: &lt;a href="https://github.com/tosiiko/mdl-code" rel="noopener noreferrer"&gt;https://github.com/tosiiko/mdl-code&lt;/a&gt;&lt;/p&gt;
+
+</description>
+      <category>programming</category>
+      <category>rust</category>
+      <category>showdev</category>
+      <category>frontend</category>
+    </item>
+    <item>
+      <title>I built MDL — a tiny authoring language so you never write raw HTML again</title>
+      <dc:creator>Tosiiko</dc:creator>
+      <pubDate>Sat, 30 May 2026 10:35:39 +0000</pubDate>
+      <link>https://dev.to/tosiiko/i-built-mdl-a-tiny-authoring-language-so-you-never-write-raw-html-again-1mkf</link>
+      <guid>https://dev.to/tosiiko/i-built-mdl-a-tiny-authoring-language-so-you-never-write-raw-html-again-1mkf</guid>
+      <description>&lt;h2&gt;
+  
+  
+  The problem
+&lt;/h2&gt;
+
+&lt;p&gt;Every web project starts the same way. You open a blank file and start typing angle brackets.&lt;/p&gt;
+
+&lt;p&gt;HTML is fine. But writing it by hand is noisy, repetitive, and forces you to think about tags instead of content.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  What I built
+&lt;/h2&gt;
+
+&lt;p&gt;MDL (Markdown Language) is a tiny authoring language that compiles to clean, semantic HTML.&lt;/p&gt;
+
+&lt;p&gt;The idea is three rules:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;
+&lt;code&gt;.mdl&lt;/code&gt; files handle structure and content&lt;/li&gt;
+&lt;li&gt;
+&lt;code&gt;.css&lt;/code&gt; files handle layout and design&lt;/li&gt;
+&lt;li&gt;
+&lt;code&gt;.js&lt;/code&gt; files handle logic&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;You never write a single HTML tag.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  What it looks like
+&lt;/h2&gt;
+
+
+
+&lt;div class="highlight js-code-highlight"&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;page:
+  hero:
+    ## Sign in
+    Welcome back.
+
+  form@id(loginForm)@submit(handleLogin):
+    field:
+      label:
+        Email
+      .input@type(email)@id(email)@required
+
+    actions:
+      .btn-primary@id(loginBtn)(Sign in)
+      .btn-ghost@click(handleForgot)(Forgot password?)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;/div&gt;
+
+
+
+&lt;p&gt;That compiles to:&lt;br&gt;
+&lt;/p&gt;
+
+&lt;div class="highlight js-code-highlight"&gt;
+&lt;pre class="highlight html"&gt;&lt;code&gt;&lt;span class="nt"&gt;&amp;lt;main&lt;/span&gt; &lt;span class="na"&gt;class=&lt;/span&gt;&lt;span class="s"&gt;"mdl-page"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;lt;div&lt;/span&gt; &lt;span class="na"&gt;class=&lt;/span&gt;&lt;span class="s"&gt;"mdl-hero"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;h2&amp;gt;&lt;/span&gt;Sign in&lt;span class="nt"&gt;&amp;lt;/h2&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;p&amp;gt;&lt;/span&gt;Welcome back.&lt;span class="nt"&gt;&amp;lt;/p&amp;gt;&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;lt;/div&amp;gt;&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;lt;form&lt;/span&gt; &lt;span class="na"&gt;class=&lt;/span&gt;&lt;span class="s"&gt;"mdl-form"&lt;/span&gt; &lt;span class="na"&gt;id=&lt;/span&gt;&lt;span class="s"&gt;"loginForm"&lt;/span&gt; &lt;span class="na"&gt;data-mdl-on-submit=&lt;/span&gt;&lt;span class="s"&gt;"handleLogin"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;div&lt;/span&gt; &lt;span class="na"&gt;class=&lt;/span&gt;&lt;span class="s"&gt;"mdl-field"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
+      &lt;span class="nt"&gt;&amp;lt;label&lt;/span&gt; &lt;span class="na"&gt;class=&lt;/span&gt;&lt;span class="s"&gt;"mdl-label"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;Email&lt;span class="nt"&gt;&amp;lt;/label&amp;gt;&lt;/span&gt;
+      &lt;span class="nt"&gt;&amp;lt;input&lt;/span&gt; &lt;span class="na"&gt;class=&lt;/span&gt;&lt;span class="s"&gt;"mdl-input"&lt;/span&gt; &lt;span class="na"&gt;type=&lt;/span&gt;&lt;span class="s"&gt;"email"&lt;/span&gt; &lt;span class="na"&gt;id=&lt;/span&gt;&lt;span class="s"&gt;"email"&lt;/span&gt; &lt;span class="na"&gt;required&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;/div&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;div&lt;/span&gt; &lt;span class="na"&gt;class=&lt;/span&gt;&lt;span class="s"&gt;"mdl-actions"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
+      &lt;span class="nt"&gt;&amp;lt;button&lt;/span&gt; &lt;span class="na"&gt;class=&lt;/span&gt;&lt;span class="s"&gt;"mdl-btn-primary"&lt;/span&gt; &lt;span class="na"&gt;id=&lt;/span&gt;&lt;span class="s"&gt;"loginBtn"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;Sign in&lt;span class="nt"&gt;&amp;lt;/button&amp;gt;&lt;/span&gt;
+      &lt;span class="nt"&gt;&amp;lt;button&lt;/span&gt; &lt;span class="na"&gt;class=&lt;/span&gt;&lt;span class="s"&gt;"mdl-btn-ghost"&lt;/span&gt; &lt;span class="na"&gt;data-mdl-on-click=&lt;/span&gt;&lt;span class="s"&gt;"handleForgot"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;Forgot password?&lt;span class="nt"&gt;&amp;lt;/button&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;/div&amp;gt;&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;lt;/form&amp;gt;&lt;/span&gt;
+&lt;span class="nt"&gt;&amp;lt;/main&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;/div&gt;
+
+
+
+&lt;p&gt;Clean, semantic HTML. No divs you didn't ask for. No inline styles. Every element has a predictable &lt;code&gt;.mdl-*&lt;/code&gt; class that CSS can target.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  How CSS and JS talk to it
+&lt;/h2&gt;
+
+&lt;p&gt;CSS targets &lt;code&gt;.mdl-*&lt;/code&gt; classes directly. No configuration needed.&lt;/p&gt;
+
+&lt;p&gt;JS uses standard DOM APIs. The &lt;code&gt;@id()&lt;/code&gt; attribute compiles to a real HTML &lt;code&gt;id&lt;/code&gt;. The &lt;code&gt;@submit()&lt;/code&gt; and &lt;code&gt;@click()&lt;/code&gt; attributes wire events to functions in your external JS file.&lt;br&gt;
+&lt;/p&gt;
+
+&lt;div class="highlight js-code-highlight"&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="c1"&gt;// scripts/auth.js&lt;/span&gt;
+&lt;span class="k"&gt;export&lt;/span&gt; &lt;span class="k"&gt;async&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nf"&gt;handleLogin&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;e&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="nx"&gt;e&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;preventDefault&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+  &lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;email&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;querySelector&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="dl"&gt;'&lt;/span&gt;&lt;span class="s1"&gt;#email&lt;/span&gt;&lt;span class="dl"&gt;'&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nx"&gt;value&lt;/span&gt;
+  &lt;span class="c1"&gt;// your logic here&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;/div&gt;
+
+
+
+&lt;p&gt;No framework. No runtime. No magic. Just the platform.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  How to install
+&lt;/h2&gt;
+
+
+
+&lt;div class="highlight js-code-highlight"&gt;
+&lt;pre class="highlight shell"&gt;&lt;code&gt;npm &lt;span class="nb"&gt;install&lt;/span&gt; &lt;span class="nt"&gt;-g&lt;/span&gt; @tosiiko/mdl
+mdl &lt;span class="nt"&gt;--help&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;/div&gt;
+
+
+
+&lt;p&gt;The CLI is a prebuilt Rust binary. Fast, no dependencies, works on Mac, Linux, and Windows.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  Links
+&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;npm — &lt;a href="https://www.npmjs.com/package/@tosiiko/mdl/v/0.1.2" rel="noopener noreferrer"&gt;https://www.npmjs.com/package/@tosiiko/mdl/v/0.1.2&lt;/a&gt;
+&lt;/li&gt;
+&lt;li&gt;VS Code extension — &lt;a href="https://marketplace.visualstudio.com/items?itemName=MDLLanguageSupport.mdl-language" rel="noopener noreferrer"&gt;https://marketplace.visualstudio.com/items?itemName=MDLLanguageSupport.mdl-language&lt;/a&gt;
+&lt;/li&gt;
+&lt;li&gt;GitHub — &lt;a href="https://github.com/tosiiko/mdl-code" rel="noopener noreferrer"&gt;https://github.com/tosiiko/mdl-code&lt;/a&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Would love to hear what you think.&lt;/p&gt;
+
+</description>
+      <category>webdev</category>
+      <category>opensource</category>
+      <category>rust</category>
+      <category>css</category>
+    </item>
+    <item>
+      <title>The Day Our Game Server Choked on a 10,000-player Treasure Hunt</title>
+      <dc:creator>pretty ncube</dc:creator>
+      <pubDate>Sat, 30 May 2026 09:51:14 +0000</pubDate>
+      <link>https://dev.to/built-from-africa/the-day-our-game-server-choked-on-a-10000-player-treasure-hunt-14kl</link>
+      <guid>https://dev.to/built-from-africa/the-day-our-game-server-choked-on-a-10000-player-treasure-hunt-14kl</guid>
+      <description>&lt;h2&gt;
+  
+  
+  The Problem We Were Actually Solving
+&lt;/h2&gt;
+
+&lt;p&gt;Our treasure hunt engine was a Node.js microservice that handled player positions, loot drops, and real-time leaderboards over WebSockets. The hot path was a tight loop:&lt;br&gt;
+&lt;/p&gt;
+
+&lt;div class="highlight js-code-highlight"&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="c1"&gt;// Node 18, iojs build&lt;/span&gt;
+&lt;span class="nx"&gt;clients&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;forEach&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nx"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+ &lt;span class="nx"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;JSON&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;stringify&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;positionUpdate&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;/div&gt;
+
+
+
+&lt;p&gt;Under load, &lt;code&gt;clients.forEach&lt;/code&gt; ballooned into a heap-allocated array of 100 kB per player, causing 100 MB/s GC pressure and 200 ms p95 latency spikes. The profiler snapshot from 0x showed 42 % of CPU time inside v8s incremental-marking phase and 1.4 GB of heap allocated for a single request batch.&lt;/p&gt;
+
+&lt;p&gt;We could scale horizontally, but each container still burned 300 MB RSS and needed 30 % more CPU than the equivalent C++ service the infra team had benchmarked last quarter. Worse, every time the garbage collector kicked in, WebSocket heartbeats dropped and players saw a frozen map.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  What We Tried First (And Why It Failed)
+&lt;/h2&gt;
+
+&lt;p&gt;First idea: switch to Go. A simple rewrite of the broadcast loop took two days.&lt;br&gt;
+&lt;/p&gt;
+
+&lt;div class="highlight js-code-highlight"&gt;
+&lt;pre class="highlight go"&gt;&lt;code&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;conn&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt; &lt;span class="k"&gt;range&lt;/span&gt; &lt;span class="n"&gt;conns&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+ &lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;broadcastBuffer&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;/div&gt;
+
+
+
+&lt;p&gt;Benchmark with &lt;code&gt;wrk -t12 -c4000&lt;/code&gt;: p95 latency 120 ms, RSS 110 MB. Great—until we noticed that each &lt;code&gt;conn&lt;/code&gt; was a pointer in a slice, and keeping 25 k pointers alive in a single array still triggered a 70 ms GC pause every 200 ms. We had traded one garbage collector for another.&lt;/p&gt;
+
+&lt;p&gt;Second idea: hand-roll a C++ service using Boost.Asio and a custom arena allocator. We shaved 80 % off latency and dropped RSS to 45 MB. But the build pipeline required Docker multi-stage builds that added 45 seconds to CI, and the infra team refused to host native binaries in production.&lt;/p&gt;
+
+&lt;p&gt;We were stuck between a Node heap that couldnt scale and a C++ binary that couldnt deploy.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  The Architecture Decision
+&lt;/h2&gt;
+
+&lt;p&gt;Then the head of infra dropped the Rust RFC on the table.&lt;/p&gt;
+
+&lt;p&gt;I fought it. I had written Rust for two hobby projects and burned a weekend debugging lifetime errors for a 200-line parser. One of the senior backend engineers, though, showed me &lt;code&gt;tokio::sync::mpsc::unbounded_channel&lt;/code&gt; and a single allocation per player instead of per message.&lt;/p&gt;
+
+&lt;p&gt;We rewrote the broadcast core in Rust:&lt;br&gt;
+&lt;/p&gt;
+
+&lt;div class="highlight js-code-highlight"&gt;
+&lt;pre class="highlight rust"&gt;&lt;code&gt;&lt;span class="c1"&gt;// 300-line service, tokio 1.75, rustc 1.76&lt;/span&gt;
+&lt;span class="k"&gt;let&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;tx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;mut&lt;/span&gt; &lt;span class="n"&gt;rx&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nn"&gt;tokio&lt;/span&gt;&lt;span class="p"&gt;::&lt;/span&gt;&lt;span class="nn"&gt;sync&lt;/span&gt;&lt;span class="p"&gt;::&lt;/span&gt;&lt;span class="nn"&gt;mpsc&lt;/span&gt;&lt;span class="p"&gt;::&lt;/span&gt;&lt;span class="nn"&gt;unbounded_channel&lt;/span&gt;&lt;span class="p"&gt;::&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nb"&gt;Vec&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nb"&gt;u8&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="nn"&gt;tokio&lt;/span&gt;&lt;span class="p"&gt;::&lt;/span&gt;&lt;span class="nf"&gt;spawn&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;async&lt;/span&gt; &lt;span class="k"&gt;move&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+ &lt;span class="k"&gt;let&lt;/span&gt; &lt;span class="k"&gt;mut&lt;/span&gt; &lt;span class="n"&gt;conns&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nn"&gt;Vec&lt;/span&gt;&lt;span class="p"&gt;::&lt;/span&gt;&lt;span class="nf"&gt;with_capacity&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;25_000&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+ &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="k"&gt;let&lt;/span&gt; &lt;span class="nf"&gt;Some&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;buf&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;rx&lt;/span&gt;&lt;span class="nf"&gt;.recv&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="k"&gt;.await&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+ &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;conn&lt;/span&gt; &lt;span class="k"&gt;in&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="k"&gt;mut&lt;/span&gt; &lt;span class="n"&gt;conns&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+ &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="nf"&gt;.write_all&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;buf&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="nf"&gt;.is_err&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+ &lt;span class="n"&gt;tx&lt;/span&gt;&lt;span class="nf"&gt;.send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;buf&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="nf"&gt;.ok&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt; &lt;span class="c1"&gt;// retry&lt;/span&gt;
+ &lt;span class="p"&gt;}&lt;/span&gt;
+ &lt;span class="p"&gt;}&lt;/span&gt;
+ &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;/div&gt;
+
+
+
+&lt;p&gt;The compiler screamed at me for 48 hours. I learned to read &lt;code&gt;rustc --explain E0502&lt;/code&gt; like a daily horoscope. Finally, after 2 weeks of pair programming with the infra team, we shipped a Docker image that:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;allocated 32 MB RSS base&lt;/li&gt;
+&lt;li&gt;kept p95 latency under 30 ms at 25 k connections&lt;/li&gt;
+&lt;li&gt;handled 700 k messages per second on a c6g.2xlarge spot instance&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The GC pressure vanished; we had 0 ms GC pauses in production.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  What The Numbers Said After
+&lt;/h2&gt;
+
+&lt;p&gt;After the swap:&lt;/p&gt;
+
+&lt;div class="table-wrapper-paragraph"&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Metric&lt;/th&gt;
+&lt;th&gt;Node (1.8 k players)&lt;/th&gt;
+&lt;th&gt;Rust (25 k players)&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;RSS per instance&lt;/td&gt;
+&lt;td&gt;300 MB&lt;/td&gt;
+&lt;td&gt;32 MB&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;p95 latency&lt;/td&gt;
+&lt;td&gt;210 ms&lt;/td&gt;
+&lt;td&gt;28 ms&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;GC pauses&lt;/td&gt;
+&lt;td&gt;42 % CPU&lt;/td&gt;
+&lt;td&gt;0 %&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Build time&lt;/td&gt;
+&lt;td&gt;35 s&lt;/td&gt;
+&lt;td&gt;110 s (debug build) / 28 s (release)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;&lt;/div&gt;
+
+&lt;p&gt;Prometheus graphs showed zero tail latency after 20 minutes. The SRE team removed two horizontal-pod-autoscaler rules because the service now handled peak without scaling.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  What I Would Do Differently
+&lt;/h2&gt;
+
+&lt;p&gt;I would not have started with Rust two weeks before launch. The learning curve cost us three late nights and a partial rollback when timestamps wrapped inside &lt;code&gt;Instant::now()&lt;/code&gt;. A blended approach—Node for the API gateway, Rust for the broadcast core via gRPC—would have been safer.&lt;/p&gt;
+
+&lt;p&gt;I would also instrument flame graphs earlier. We discovered the bottleneck only after enabling &lt;code&gt;perf record -g --call-graph dwarf&lt;/code&gt; on a c6g instance; the Node flame graph was 3 MB of JSON that no tool could parse quickly. The Rust version pushed the same data through &lt;code&gt;flamegraph&lt;/code&gt; in 0.4 seconds.&lt;/p&gt;
+
+&lt;p&gt;Finally, I would budget two full sprints for Rust migration, not two weeks. The borrow checker is a strict reviewer, and fighting it in production is like debugging with the compiler looking over your shoulder.&lt;/p&gt;
+
+</description>
+      <category>webdev</category>
+      <category>programming</category>
+      <category>rust</category>
+      <category>performance</category>
+    </item>
+    <item>
+      <title>Veltrix Events Were Killing Our System Until We Got The Configuration Right</title>
+      <dc:creator>pretty ncube</dc:creator>
+      <pubDate>Sat, 30 May 2026 08:31:33 +0000</pubDate>
+      <link>https://dev.to/built-from-africa/veltrix-events-were-killing-our-system-until-we-got-the-configuration-right-d37</link>
+      <guid>https://dev.to/built-from-africa/veltrix-events-were-killing-our-system-until-we-got-the-configuration-right-d37</guid>
+      <description>&lt;h2&gt;
+  
+  
+  The Problem We Were Actually Solving
+&lt;/h2&gt;
+
+&lt;p&gt;I still remember the day our system's event handling started to fall apart, it was like a dam had burst and our logs were flooded with errors, the CPU usage was through the roof and our team was on the brink of a meltdown. We were using Veltrix, a powerful event-driven framework, but it seemed like the more events we handled, the slower our system became. The main issue was the configuration, or rather the lack of it, we had not put enough thought into how we were handling the events and it was taking a toll on our system's performance. I spent countless hours poring over the Veltrix documentation and experimenting with different settings, but nothing seemed to work.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  What We Tried First (And Why It Failed)
+&lt;/h2&gt;
+
+&lt;p&gt;At first, we tried to optimize the event handlers themselves, thinking that if we could just make them faster, the system would magically improve. We used a profiler to identify the bottlenecks and spent weeks rewriting the handlers to be more efficient. But despite our best efforts, the system still struggled to keep up with the event load. It was not until we took a step back and looked at the bigger picture that we realized the problem was not with the handlers, but with the way we were configuring Veltrix to handle the events in the first place. The default settings were not suitable for our use case and we needed to take a more structured approach to configuring the system.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  The Architecture Decision
+&lt;/h2&gt;
+
+&lt;p&gt;After much trial and error, we decided to take a more structured approach to configuring Veltrix. We started by analyzing the types of events we were handling and identifying the most critical ones that required immediate attention. We then configured Veltrix to prioritize these events and handle them in a separate queue, while the less critical events were handled in a separate thread. This approach allowed us to ensure that the critical events were handled promptly, while the less critical ones did not overload the system. We also implemented a caching mechanism to reduce the number of database queries and optimized the event handlers to minimize memory allocation. It was a complex decision, but it paid off in the end.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  What The Numbers Said After
+&lt;/h2&gt;
+
+&lt;p&gt;After implementing the new configuration, we saw a significant improvement in the system's performance. The CPU usage dropped by 30%, the memory allocation decreased by 25%, and the event handling latency was reduced by 50%. The numbers were impressive, but what really mattered was that the system was now stable and could handle the event load without any issues. We used a tool called Sysdig to monitor the system's performance and identify any potential bottlenecks. The results were impressive, the system was now handling 5000 events per second, with an average latency of 10ms. We also saw a significant reduction in the number of errors, from 100 per hour to less than 10 per hour.&lt;/p&gt;
+
+&lt;h2&gt;
+  
+  
+  What I Would Do Differently
+&lt;/h2&gt;
+
+&lt;p&gt;Looking back, I would do things differently if I had to make the same decision again. I would start by analyzing the events and identifying the most critical ones from the outset, rather than trying to optimize the handlers first. I would also implement a more robust monitoring system to identify potential issues before they become critical. Additionally, I would take a more incremental approach to implementing the new configuration, testing and validating each change before moving on to the next one. It was a hard lesson to learn, but it taught me the importance of taking a structured approach to system configuration and the need to carefully analyze the requirements before making any decisions.&lt;/p&gt;
+
+</description>
+      <category>webdev</category>
+      <category>programming</category>
+      <category>rust</category>
+      <category>performance</category>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,11 @@
+Write a SHORT spoken outro (about 40-60 words) for an audio lesson, as two
+co-hosts ALEX (male) and MAYA (female) closing the episode together.
+
+TOPIC: {title}
+MEMORY HOOKS FROM THE LESSON: {hooks}
+
+One of them recaps the single most important takeaway (draw from the memory
+hooks); the other signs off warmly. No hype, no filler praise.
+
+Output ONLY labeled lines: ALEX: ... / MAYA: ...
+No blank lines, no stage directions, no other speakers.
