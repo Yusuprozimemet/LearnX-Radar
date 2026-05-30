@@ -42,8 +42,9 @@ def test_build_writes_all_sections(tmp_path):
     assert out.exists()
     for heading in ("Trending this week", "Your coverage", "Gap highlights", "Lesson archive"):
         assert heading in html
-    assert "DuckDB" in html and "🎧 today" in html          # today's pick marked
-    assert "lesson-20260529.mp3" in html and "<audio" in html  # archive audio player
+    assert "DuckDB" in html and "🎧 today" in html        # today's pick marked
+    assert "Kafka consumer groups" in html                # archive lists the lesson
+    assert "<audio" not in html                            # metadata-only: no players
 
 
 def test_gaps_exclude_taught_and_table_stakes(tmp_path):
