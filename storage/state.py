@@ -6,6 +6,7 @@ source of truth; these helpers degrade gracefully if a file is missing or
 corrupt so a single bad write never wedges the daily run.
 """
 import json
+import re
 from datetime import date
 from pathlib import Path
 
@@ -13,6 +14,7 @@ _DIR = Path(__file__).parent
 SEEN_FILE = _DIR / "seen_skills.json"
 MEMORY_FILE = _DIR / "skill_memory.json"
 LAST_SCORED_FILE = _DIR / "last_scored.json"  # v3: this run's ranking for the dashboard
+BRIEFS_DIR = _DIR.parent / "briefs"  # committed full lesson briefs, for /recap deep Q&A
 
 LAST_SCORED_KEEP = 20  # cap the persisted ranking; the dashboard only shows a top slice
 
@@ -88,12 +90,14 @@ def record_lesson(
     difficulty: str,
     summary: str = "",
     audio: str = "",
+    brief: str = "",
 ) -> dict:
     """Update the knowledge state after a lesson on `skill` is delivered.
 
-    Tracks times taught, last date, difficulty, a one-line summary, and the MP3
-    filename so gap_scorer can space-repeat (v2), brief_writer can bridge to
-    related prior lessons, and the dashboard archive (v3) can link the audio.
+    Tracks times taught, last date, difficulty, a one-line summary, the MP3
+    filename, and the brief filename so gap_scorer can space-repeat (v2),
+    brief_writer can bridge to related lessons, the dashboard archive (v3) can
+    list them, and /recap can ground deep Q&A in the full brief text.
     """
     skills = memory.setdefault("skills", {})
     entry = skills.setdefault(
@@ -111,6 +115,29 @@ def record_lesson(
             "difficulty": difficulty,
             "summary": summary,
             "audio": audio,
+            "brief": brief,
         }
     )
     return memory
+
+
+# --- briefs/ : full lesson brief text, committed for /recap deep Q&A ----------
+
+def save_brief(skill: str, brief_md: str, when: date | None = None) -> str:
+    """Write the full brief to briefs/<date>-<slug>.md; return the filename."""
+    when = when or date.today()
+    slug = re.sub(r"[^a-z0-9]+", "-", skill.lower()).strip("-") or "lesson"
+    filename = f"{when:%Y%m%d}-{slug}.md"
+    BRIEFS_DIR.mkdir(parents=True, exist_ok=True)
+    (BRIEFS_DIR / filename).write_text(brief_md, encoding="utf-8")
+    return filename
+
+
+def load_brief(filename: str) -> str:
+    """Return a saved brief's text, or '' if missing/unreadable."""
+    if not filename:
+        return ""
+    try:
+        return (BRIEFS_DIR / filename).read_text(encoding="utf-8")
+    except OSError:
+        return ""
