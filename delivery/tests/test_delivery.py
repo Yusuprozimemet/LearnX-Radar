@@ -2,7 +2,11 @@
 from delivery import email_sender, telegram_sender
 
 
-def _lesson(tmp_path, summary="DuckDB is a fast in-process OLAP database.", brief="# DuckDB\n\nA database."):
+def _lesson(
+    tmp_path,
+    summary="DuckDB is a fast in-process OLAP database.",
+    brief="# DuckDB\n\nA database.",
+):
     mp3 = tmp_path / "lesson-20260530.mp3"
     mp3.write_bytes(b"ID3fakecontent")  # MIMEAudio just needs bytes
     return {
@@ -36,7 +40,10 @@ def test_caption_capped_at_limit():
 # --- email markdown -> html --------------------------------------------------
 
 def test_markdown_renders_structures():
-    md = "# Title\n## Sub\n\nA paragraph with **bold** and `code`.\n\n- one\n- two\n\n```python\nx = 1\n```"
+    md = (
+        "# Title\n## Sub\n\nA paragraph with **bold** and `code`.\n\n"
+        "- one\n- two\n\n```python\nx = 1\n```"
+    )
     out = email_sender._markdown_to_html(md)
     assert "<h1>Title</h1>" in out
     assert "<h2>Sub</h2>" in out

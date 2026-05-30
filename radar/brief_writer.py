@@ -9,7 +9,6 @@ v2 hook: when skill_memory holds prior lessons, the prompt gains a
 """
 import logging
 
-import config
 from learnx.llm import chat
 from radar.prompt_loader import load_prompt
 
@@ -26,7 +25,11 @@ def _prior_context(memory: dict, current_skill: str) -> str:
     one is actually related — no forced "as we discussed last time" filler.
     """
     skills = memory.get("skills", {})
-    prior = [(name, data.get("summary", "")) for name, data in skills.items() if name != current_skill]
+    prior = [
+        (name, data.get("summary", ""))
+        for name, data in skills.items()
+        if name != current_skill
+    ]
     if not prior:
         return ""
     lines = "\n".join(f"- {name}: {summary}" for name, summary in prior[-_RECENT_LESSONS:])
