@@ -66,17 +66,22 @@ def _markdown_to_html(md: str) -> str:
             close_list()
             continue
         if stripped.startswith("### "):
-            close_list(); out.append(f"<h3>{_inline(stripped[4:])}</h3>")
+            close_list()
+            out.append(f"<h3>{_inline(stripped[4:])}</h3>")
         elif stripped.startswith("## "):
-            close_list(); out.append(f"<h2>{_inline(stripped[3:])}</h2>")
+            close_list()
+            out.append(f"<h2>{_inline(stripped[3:])}</h2>")
         elif stripped.startswith("# "):
-            close_list(); out.append(f"<h1>{_inline(stripped[2:])}</h1>")
+            close_list()
+            out.append(f"<h1>{_inline(stripped[2:])}</h1>")
         elif stripped[:2] in ("- ", "* "):
             if not in_list:
-                out.append("<ul>"); in_list = True
+                out.append("<ul>")
+                in_list = True
             out.append(f"<li>{_inline(stripped[2:])}</li>")
         else:
-            close_list(); out.append(f"<p>{_inline(stripped)}</p>")
+            close_list()
+            out.append(f"<p>{_inline(stripped)}</p>")
 
     close_list()
     if in_code and code_buf:  # unclosed fence — flush what we have
@@ -84,9 +89,15 @@ def _markdown_to_html(md: str) -> str:
     return "\n".join(out)
 
 
+_WRAP_STYLE = (
+    "font-family:-apple-system,Segoe UI,Roboto,sans-serif;"
+    "max-width:680px;margin:auto;line-height:1.5"
+)
+
+
 def _render_html(lesson: dict) -> str:
     return f"""
-    <div style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;max-width:680px;margin:auto;line-height:1.5">
+    <div style="{_WRAP_STYLE}">
       <p style="color:#888;font-size:13px;margin:0 0 4px">
         📡 LearnX-Radar · {lesson.get('difficulty', '')} · {date.today():%b %d, %Y}
       </p>

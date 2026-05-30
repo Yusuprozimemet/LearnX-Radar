@@ -13,7 +13,6 @@ from learnx.constants import (
 )
 from learnx.models import DialogueLine
 
-
 # --- curriculum --------------------------------------------------------------
 
 def _canned_units(n=3):
@@ -77,7 +76,7 @@ def test_dialogue_orders_intro_units_outro():
 def test_dialogue_parse_ignores_unlabeled_and_other_speakers():
     raw = "ALEX: One.\n(stage note)\nSAM: nope.\nMAYA - Two.\nrandom"
     lines = dialogue._parse(raw, unit_number=1)
-    assert [(l.speaker, l.text) for l in lines] == [("ALEX", "One."), ("MAYA", "Two.")]
+    assert [(ln.speaker, ln.text) for ln in lines] == [("ALEX", "One."), ("MAYA", "Two.")]
 
 
 # --- sanitizer ---------------------------------------------------------------

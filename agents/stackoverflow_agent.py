@@ -18,7 +18,7 @@ API_URL = "https://api.stackexchange.com/2.3/questions"
 
 def fetch(prior_counts: dict[str, int] | None = None) -> list[dict]:
     prior_counts = prior_counts or {}
-    iso_week = "{0}-W{1:02d}".format(*date.today().isocalendar()[:2])
+    iso_week = "{}-W{:02d}".format(*date.today().isocalendar()[:2])
     items: list[dict] = []
     for tag in config.STACKOVERFLOW_TAGS:
         item = _fetch_tag(tag, prior_counts.get(tag), iso_week)
