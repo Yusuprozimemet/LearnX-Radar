@@ -1,0 +1,11 @@
+Write a SHORT spoken intro (about 50-70 words) for an audio lesson, as two
+co-hosts ALEX (male) and MAYA (female) opening the episode together.
+
+TOPIC: {title}
+WHY IT'S WORTH LEARNING TODAY: {hook}
+
+ALEX welcomes the listener and names today's topic; MAYA says in one line why
+it's worth the next few minutes. Warm, natural, no hype, no filler praise.
+
+Output ONLY labeled lines: ALEX: ... / MAYA: ...
+No blank lines, no stage directions, no other speakers.
