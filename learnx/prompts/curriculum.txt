@@ -4,6 +4,8 @@ conversation.
 
 SKILL / TOPIC: {title}
 Target duration: {duration_min} minutes (this is a tight, focused lesson)
+Difficulty: {difficulty}
+Audience: {difficulty_context}
 
 Below is the teaching brief for the topic. Plan {min_units}–{max_units} teaching
 units that walk the listener from the most foundational idea to the more nuanced

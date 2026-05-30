@@ -35,6 +35,19 @@ def test_curriculum_builds_units_and_budgets():
     assert abs(sum(u.word_budget for u in units) - total) <= len(units)
 
 
+def test_curriculum_injects_difficulty_context():
+    from learnx.constants import DIFFICULTY_CONTEXT
+    captured = {}
+
+    def fake(messages, **k):
+        captured["prompt"] = messages[0]["content"]
+        return _canned_units(2)
+
+    curriculum.plan("brief", "DuckDB", difficulty="advanced", chat_fn=fake)
+    assert "advanced" in captured["prompt"]
+    assert DIFFICULTY_CONTEXT["advanced"][:40] in captured["prompt"]
+
+
 def test_curriculum_clamps_complexity_and_caps_units():
     raw = json.dumps([{"concept": f"C{i}", "complexity": 9} for i in range(20)])
     units = curriculum.plan("b", "T", chat_fn=lambda *a, **k: raw)

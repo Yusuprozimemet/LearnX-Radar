@@ -1,10 +1,15 @@
 """Offline tests for the radar. gap_scorer is pure; the LLM stages are tested
 with a canned chat_fn so no network is touched."""
 import json
+from datetime import date, timedelta
 
 from radar import brief_writer, gap_scorer, skill_extractor
 
 EMPTY_MEMORY = {"version": 1, "skills": {}}
+
+
+def _ago(days: int) -> str:
+    return (date.today() - timedelta(days=days)).isoformat()
 
 
 # --- gap_scorer (pure) -------------------------------------------------------
@@ -30,13 +35,38 @@ def test_cross_source_adds_up():
     assert ranked[0]["frequency"] == 3
 
 
-def test_novelty_decay_and_difficulty():
-    memory = {"skills": {"Kafka": {"times_taught": 2}}}
-    mentions = [{"skill": "Kafka", "sources": ["HN Hiring"]}]
-    s = gap_scorer.score(mentions, memory)[0]
-    assert s["novelty"] == 1.0 / 3  # taught twice
-    assert s["suggested_difficulty"] == "advanced"
-    assert s["score"] == 2.0 * (1.0 / 3)
+def test_just_taught_is_suppressed():
+    """Taught today → ~0 novelty → won't be re-picked."""
+    memory = {"skills": {"Kafka": {"times_taught": 1, "last_taught": _ago(0)}}}
+    s = gap_scorer.score([{"skill": "Kafka", "sources": ["HN Hiring"]}], memory)[0]
+    assert s["novelty"] == 0.0
+    assert s["score"] == 0.0
+    assert s["suggested_difficulty"] == "intermediate"  # taught once → next is intermediate
+
+
+def test_resurfaces_after_interval_at_higher_difficulty():
+    """Taught once, 8 days ago (interval 7) → fully due again, now intermediate."""
+    memory = {"skills": {"Kafka": {"times_taught": 1, "last_taught": _ago(8)}}}
+    s = gap_scorer.score([{"skill": "Kafka", "sources": ["HN Hiring"]}], memory)[0]
+    assert s["novelty"] == 1.0
+    assert s["suggested_difficulty"] == "intermediate"
+
+
+def test_interval_widens_with_repetition():
+    """Same 8-day gap: taught once (interval 7) is fully due; taught twice (14) isn't."""
+    once = {"skills": {"K": {"times_taught": 1, "last_taught": _ago(8)}}}
+    twice = {"skills": {"K": {"times_taught": 2, "last_taught": _ago(8)}}}
+    n_once = gap_scorer.score([{"skill": "K", "sources": ["dev.to"]}], once)[0]["novelty"]
+    n_twice = gap_scorer.score([{"skill": "K", "sources": ["dev.to"]}], twice)[0]["novelty"]
+    assert n_once == 1.0
+    assert n_twice == 8 / 14  # interval doubled
+    assert n_twice < n_once
+
+
+def test_taught_but_missing_date_is_due():
+    memory = {"skills": {"Kafka": {"times_taught": 1}}}  # no last_taught
+    s = gap_scorer.score([{"skill": "Kafka", "sources": ["HN Hiring"]}], memory)[0]
+    assert s["novelty"] == 1.0
 
 
 def test_unseen_skill_is_beginner_full_novelty():
@@ -140,10 +170,17 @@ def test_extract_empty_items_no_call():
 
 # --- brief_writer ------------------------------------------------------------
 
-def test_prior_context_empty_then_present():
-    assert brief_writer._prior_context(EMPTY_MEMORY) == ""
-    ctx = brief_writer._prior_context({"skills": {"Async": {}, "Kafka": {}}})
-    assert "PREVIOUSLY TAUGHT" in ctx and "Kafka" in ctx
+def test_prior_context_empty_then_bridges_related():
+    assert brief_writer._prior_context(EMPTY_MEMORY, "Kafka") == ""
+    memory = {"skills": {
+        "Async I/O": {"summary": "non-blocking concurrency"},
+        "Kafka": {"summary": "log-based streaming"},  # the current skill — excluded
+    }}
+    ctx = brief_writer._prior_context(memory, "Kafka")
+    assert "PREVIOUSLY TAUGHT" in ctx
+    assert "Async I/O" in ctx and "non-blocking concurrency" in ctx
+    assert "Kafka:" not in ctx  # current skill not offered as its own bridge
+    assert "genuinely related to Kafka" in ctx
 
 
 def test_write_passes_fields_to_prompt():
