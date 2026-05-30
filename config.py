@@ -67,6 +67,13 @@ DEFAULT_SOURCE_WEIGHT = 1.0  # any source not listed above
 # How many top skill mentions to keep after extraction (focuses scoring + brief).
 MAX_SKILL_MENTIONS = 25
 
+# --- Spaced repetition (v2) ---
+# A taught skill is suppressed, then becomes eligible again after a spacing
+# interval that widens with each repetition. With base 7 + factor 2 the intervals
+# are 7, 14, 28 days... so a topic resurfaces less often the more it's been taught.
+SR_BASE_INTERVAL_DAYS = 7
+SR_SPACING_FACTOR = 2.0
+
 # Table-stakes skills: too broad/established to be a teachable "gap" (every dev
 # already knows them). They appear in every source and would otherwise dominate
 # the ranking, drowning out genuinely emerging skills. The scorer multiplies

@@ -5,12 +5,15 @@ score = demand_weight x novelty
 - demand_weight: sum of per-source weights (config.SOURCE_WEIGHTS) over the
   distinct sources that mentioned the skill. Real job-market signal (HN Hiring,
   Stack Overflow) outweighs community buzz (dev.to, GitHub Trending).
-- novelty: 1.0 if never taught; decays 1/(times_taught+1) so a skill the world
-  wants but you've never been taught scores highest. (v2 deepens this with
-  spaced-repetition timing.)
+- novelty (v2, spaced repetition): 1.0 if never taught. Once taught, a skill is
+  suppressed (~0) and recovers toward 1.0 only after a spacing interval that
+  widens with each repetition — so the radar revisits topics on a schedule
+  instead of either re-teaching daily or never again.
 
 The world-wants-but-you-lack signal is exactly the gap the radar exists to find.
 """
+from datetime import date
+
 import config
 
 _DIFFICULTY_BY_EXPOSURE = ("beginner", "intermediate", "advanced")
@@ -23,12 +26,33 @@ def _demand_weight(sources: list[str]) -> float:
     )
 
 
-def _novelty(skill: str, memory: dict) -> tuple[float, str]:
-    """Return (novelty, suggested_difficulty) from prior teaching of `skill`."""
+def _days_since(iso_date: str | None) -> int | None:
+    if not iso_date:
+        return None
+    try:
+        return (date.today() - date.fromisoformat(iso_date)).days
+    except ValueError:
+        return None
+
+
+def _novelty(skill: str, memory: dict, today_days=_days_since) -> tuple[float, str]:
+    """Return (novelty, suggested_difficulty) for `skill` given prior teaching.
+
+    Spaced repetition: novelty = clamp(days_since_last / interval, 0, 1), where
+    the interval widens with each repetition. Unseen skills are fully novel.
+    """
     entry = memory.get("skills", {}).get(skill)
     times_taught = entry["times_taught"] if entry else 0
-    novelty = 1.0 / (times_taught + 1)
+    if times_taught <= 0:
+        return 1.0, _DIFFICULTY_BY_EXPOSURE[0]
+
     difficulty = _DIFFICULTY_BY_EXPOSURE[min(times_taught, 2)]
+    days = today_days(entry.get("last_taught"))
+    if days is None:  # taught but no/invalid date — treat as due again
+        return 1.0, difficulty
+
+    interval = config.SR_BASE_INTERVAL_DAYS * (config.SR_SPACING_FACTOR ** (times_taught - 1))
+    novelty = max(0.0, min(1.0, days / interval))
     return novelty, difficulty
 
 
