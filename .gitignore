@@ -216,3 +216,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Generated lessons/briefs (state JSON in storage/ IS committed; output is not)
+output/*
+!output/.gitkeep
+.tts_tmp/
+.tutor_cache/

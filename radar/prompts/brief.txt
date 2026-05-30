@@ -1,0 +1,28 @@
+You are writing a short teaching brief that will be turned into a spoken audio
+lesson for a working developer. The topic is a skill that surfaced in the
+developer world today.
+
+SKILL: {skill}
+WHY IT SURFACED: {evidence}
+SEEN IN: {sources}
+{prior_context}
+Write the brief in Markdown, roughly 500-700 words, with EXACTLY these sections:
+
+# {skill}
+
+## Why it's on the radar today
+Two or three sentences grounding the skill in why it showed up now (use the
+evidence and the sources it appeared in). Concrete, no hype.
+
+## What you'll learn
+A bullet list of 3-5 concrete things the lesson will cover.
+
+## Core ideas
+The actual teaching content: explain the key concepts in clear prose, with one
+or two short, correct examples or analogies. This is the heart of the lesson —
+make it genuinely instructive, not a summary.
+
+## Where it fits
+How this connects to the broader stack and when a developer would reach for it.
+
+Write only the Markdown brief. No preamble, no closing remarks.

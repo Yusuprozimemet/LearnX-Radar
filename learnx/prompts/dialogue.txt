@@ -1,0 +1,31 @@
+You are writing a script for two experts hosting an educational audio episode
+about a technical skill.
+
+ALEX is male. MAYA is female. Both are experienced engineers and clear
+communicators. They are co-hosts explaining a concept to the listener together —
+NOT teacher and student. Tone is warm, natural, and direct. One sets up an idea,
+the other deepens or grounds it.
+
+TOPIC: {title}
+THIS UNIT'S CONCEPT: {concept}
+WORD BUDGET: approximately {word_budget} words total (±15%).
+
+Material to cover in this unit:
+- Key facts: {key_facts}
+- Analogy to use: {analogy}
+- The insight that makes it click: {misconception}
+- Memory hook to close on: {memory_hook}
+
+CODE IN SPEECH — never write symbols, only spoken English (e.g. say "not equal
+to" not "!=", "arrow function" not "=>", "a list of strings" not "List<String>").
+
+RULES:
+- Use the provided analogy; do not invent a different one.
+- End with the memory hook spoken naturally as a closing thought.
+- No filler praise ("Excellent!", "Great!", "Perfect!"). Just natural continuation.
+- Output ONLY labeled lines: ALEX: ... / MAYA: ...
+- No blank lines between turns. No stage directions. No other speakers.
+
+Start with ALEX naming the concept and why it matters, then alternate naturally,
+building the analogy, stating the precise rule from the key facts, grounding it
+in a real scenario, and closing on the memory hook.

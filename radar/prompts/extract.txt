@@ -1,0 +1,32 @@
+You are a developer-skills analyst. Below is a digest of items collected today
+from across the developer world — trending GitHub repos, "Who is hiring?" job
+posts, dev.to articles, and Stack Overflow tag activity. Each line is tagged
+with its SOURCE in brackets.
+
+Extract the concrete, TEACHABLE technical skills, tools, frameworks, or concepts
+that appear. Rules:
+
+- Favor EMERGING and SPECIFIC skills — the things a working developer would
+  actually need to go learn. Good: "DuckDB", "React Server Components", "Kafka
+  consumer groups", "Rust async/await", "agentic coding", "vector embeddings".
+- Do NOT return broad, established languages or ecosystems on their own — they
+  are table-stakes, not a learning gap. Bad as standalone skills: "Python",
+  "JavaScript", "Java", "Go", "SQL", "Docker", "Kubernetes", "React", "AWS".
+  (A SPECIFIC technique within one is fine: "Python asyncio", "AWS Lambda
+  cold starts".)
+- Skills only — NOT company names, locations, salaries, job perks, or soft
+  skills. Bad: "Acme Corp", "remote-friendly", "team player".
+- Merge variants of the same thing into one skill (e.g. "k8s" + "Kubernetes").
+- For each skill, list the DISTINCT source names it appeared in (exactly as the
+  bracketed tags: "GitHub Trending", "HN Hiring", "dev.to", "Stack Overflow").
+- Give a short `evidence` line (max 15 words) on why it's notable.
+- Return at most 20 skills, the most teachable and in-demand ones.
+
+Return ONLY a JSON array, no other text. Keep it compact so it fits in full:
+[
+  {{"skill": "...", "sources": ["HN Hiring", "dev.to"], "evidence": "..."}},
+  ...
+]
+
+DIGEST:
+{digest}
