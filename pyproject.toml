@@ -8,4 +8,4 @@ extend-exclude = [".venv", "venv", "output", "agents/tests/fixtures"]
 select = ["E", "F", "W", "I", "UP", "B"]
 
 [tool.pytest.ini_options]
-testpaths = ["agents", "radar", "learnx", "delivery", "dashboard"]
+testpaths = ["agents", "radar", "learnx", "delivery", "dashboard", "storage"]

@@ -1,20 +1,20 @@
 """Build the static skill-radar dashboard (v3).
 
 One self-contained HTML page, regenerated each run: trending skills this week,
-your coverage map, gap highlights, and the lesson archive (with audio players).
-Pure render from `skill_memory.json` + the current run's scored mentions — no
-backend, no JS framework, no dependencies.
+your coverage map, gap highlights, and the lesson archive. Pure render from
+`skill_memory.json` + the current run's scored mentions — no backend, no JS
+framework, no dependencies.
 
-Audio players reference the MP3s in ../output (relative to this page), so they
-play when the page is opened locally; packaging them for GitHub Pages is a
-follow-up (publishing is deferred).
+The archive is metadata-only by design: lesson audio is delivered via Telegram
+and email, not hosted on the web (keeps the project free-tier-forever, no
+external storage credentials). The MP3 filename is still recorded per lesson as
+provenance, in case web hosting is added later.
 """
 import html
 from datetime import date
 from pathlib import Path
 
 OUTPUT = Path(__file__).parent / "index.html"
-_AUDIO_DIR = "../output"  # MP3s live in output/, dashboard/ is a sibling
 _TRENDING_TOP = 12
 _GAP_TOP = 10
 
@@ -39,6 +39,23 @@ def build(
     out_path = Path(out_path)
     out_path.write_text(_page("LearnX-Radar", body), encoding="utf-8")
     return out_path
+
+
+def build_from_state(out_path: Path = OUTPUT) -> Path:
+    """Rebuild the dashboard from committed state files only — no run, no API keys.
+
+    This is what the GitHub Pages workflow calls: it reads skill_memory.json and
+    the last run's ranking (last_scored.json) and renders the full page.
+    """
+    from storage import load_last_scored, load_memory
+
+    state = load_last_scored()
+    return build(
+        load_memory(),
+        state.get("scored", []),
+        state.get("today_skill"),
+        out_path,
+    )
 
 
 def _esc(text: object) -> str:
@@ -120,17 +137,14 @@ def _archive_html(skills: dict) -> str:
 
     cards = []
     for lesson in lessons:
-        audio = lesson.get("audio")
-        player = (
-            f"<audio controls src='{_AUDIO_DIR}/{_esc(audio)}'></audio>" if audio else ""
-        )
         cards.append(
             "<div class='card'>"
             f"<div class='meta'>{_esc(lesson.get('date', ''))} · "
             f"{_esc(lesson.get('difficulty', ''))}</div>"
             f"<div class='title'>{_esc(lesson.get('title', ''))}</div>"
             f"<p>{_esc(lesson.get('summary', ''))}</p>"
-            f"{player}</div>"
+            "<div class='meta'>🎧 delivered via Telegram &amp; email</div>"
+            "</div>"
         )
     return _section("🗂️ Lesson archive", "".join(cards))
 
@@ -155,7 +169,6 @@ def _page(title: str, body: str) -> str:
   .muted {{ color:#999; }}
   .card {{ border:1px solid #eee; border-radius:8px; padding:.8rem 1rem; margin:.6rem 0; }}
   .card .meta {{ color:#888; font-size:.8rem; }} .card .title {{ font-weight:600; }}
-  audio {{ width:100%; margin-top:.5rem; }}
 </style></head><body>
 <h1>📡 LearnX-Radar</h1>
 <p class="sub">Skill radar · generated {date.today():%b %d, %Y}</p>

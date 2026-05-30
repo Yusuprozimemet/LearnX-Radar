@@ -47,11 +47,18 @@ Wrap in try/except like delivery — a dashboard failure must not fail the run.
   - Publish via **`actions/deploy-pages`** artifact (no generated HTML committed
     to the repo); needs Pages enabled in repo settings (your action).
 
-## Workflow
+## Workflow — Pages publishing (decoupled)
 
-Add a Pages deploy to CI/cron: upload `dashboard/` as a Pages artifact and
-`deploy-pages` after a successful run. (Exact mechanism depends on the publish
-decision.)
+Chosen approach: **rebuild from committed state, no API keys.**
+- `main.py` persists each run's ranking to `storage/last_scored.json` (committed
+  back by the cron alongside `seen_skills`/`skill_memory`).
+- `dashboard.build_from_state()` (entry: `python -m dashboard`) renders the full
+  page from `skill_memory.json` + `last_scored.json` — no run, no secrets.
+- `.github/workflows/pages.yml` runs `python -m dashboard`, copies `index.html`
+  into `_site/`, and `deploy-pages`. Triggers: `workflow_run` after the radar
+  cron, `push` to main touching state/dashboard, and manual `workflow_dispatch`.
+- **Manual step (one-time):** enable Pages in repo Settings → Pages → Source:
+  "GitHub Actions".
 
 ## Testing (offline)
 
@@ -63,9 +70,12 @@ decision.)
 
 ## Decisions (signed off)
 
-- **Embed audio players** in the archive — `<audio src="../output/lesson-*.mp3">`
-  (resolves locally; Pages packaging of the MP3s deferred with publishing).
-  `record_lesson` now stores the MP3 filename per lesson.
+- **Metadata-only archive** — no web-hosted audio. Considered GitHub Releases /
+  GCS / R2 for MP3 hosting; chose to keep audio off the web entirely (delivered
+  via Telegram + email) so the project stays free-tier-forever with no external
+  storage credentials. The MP3 filename is still recorded per lesson as
+  provenance (`record_lesson(audio=...)`), so web hosting can be added later
+  without a schema change.
 - **Build now, wire Pages later** — `build()` + `main.py` wiring + tests done; the
   Pages publish workflow is deferred until Pages is enabled in repo settings.
 
@@ -75,7 +85,7 @@ decision.)
       four sections from memory (+ optional scored data). Verified via a rendered
       sample (`output/sample-dashboard.html`).
 - [x] Gap highlights exclude already-taught and table-stakes skills; trending
-      marks today's pick (🎧). Archive is newest-first with audio players.
+      marks today's pick (🎧). Archive is newest-first, metadata-only.
 - [x] `main.py` regenerates the page each run (happy path + quiet-day paths),
       failure-isolated like delivery.
 - [x] Offline tests pass — 40 total (4 new dashboard tests incl. HTML escaping);
