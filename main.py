@@ -28,6 +28,7 @@ from storage import (
     load_memory,
     load_seen,
     record_lesson,
+    save_last_scored,
     save_memory,
     save_seen,
 )
@@ -107,6 +108,9 @@ def main() -> None:
     mentions = skill_extractor.extract(new_items)
     scored = gap_scorer.score(mentions, memory)
     skill = gap_scorer.top(scored)
+    # Persist the ranking so the dashboard can rebuild from committed state alone
+    # (the Pages workflow has no API keys to re-run the radar).
+    save_last_scored(scored, skill["skill"] if skill else None)
     if skill is None:
         print("No teachable skill gap found today. Done.")
         _refresh_dashboard(memory, scored)

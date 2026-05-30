@@ -1,0 +1,49 @@
+name: Deploy dashboard to Pages
+
+# Decoupled from the cron: rebuilds the dashboard from committed state
+# (skill_memory.json + last_scored.json) — no API keys needed. Publishes after
+# each radar run (workflow_run), on manual dispatch, and when state/dashboard
+# code changes land on main.
+on:
+  workflow_run:
+    workflows: ["LearnX-Radar"]
+    types: [completed]
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "storage/skill_memory.json"
+      - "storage/last_scored.json"
+      - "dashboard/**"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build dashboard from committed state
+        run: |
+          python -m dashboard
+          mkdir -p _site
+          cp dashboard/index.html _site/index.html
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4
