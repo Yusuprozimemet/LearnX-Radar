@@ -4,8 +4,6 @@ name: Recap bot
 # is one poll cycle that exits. Telegram tracks the confirmed offset, so no state
 # is committed. Public repo → Actions minutes are free.
 on:
-  schedule:
-    - cron: "*/15 * * * *"
   workflow_dispatch:
 
 jobs:

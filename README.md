@@ -1,58 +1,106 @@
 # LearnX-Radar
 
-A self-updating curriculum engine that watches the developer world for emerging
-skill gaps and auto-generates a personalized audio lesson, delivered every
-morning — without a human author.
+LearnX-Radar is a self-updating curriculum engine that watches developer
+signals for emerging skill gaps and auto-generates a personalized audio lesson.
+It also provides a /recap Telegram Q&A bot and a static dashboard built from
+the recorded state.
 
-It combines two systems: **Daily-CronJob** (scheduled scrape → summarize →
-deliver) and **LearnX-CLI** (markdown → audio lesson via LLM + TTS). A cron run
-detects rising skills, writes a teaching brief, turns it into an MP3 lesson, and
-sends it to Telegram and email. See [plan/plan.md](plan/plan.md) for the full design.
+![LearnX-Radar overview](image.png)
+
+## What it does
+
+- Collects signals from GitHub Trending, Hacker News Who is Hiring, dev.to RSS,
+       and Stack Overflow tag deltas.
+- Extracts skills, scores gaps, and selects a daily topic.
+- Writes a teaching brief, plans a curriculum, generates dialogue, and builds
+       one MP3 via edge-tts.
+- Delivers the lesson to Telegram (audio + summary) and email (brief + MP3).
+- Persists a knowledge memory and full briefs for recap Q&A.
+- Builds a static dashboard from committed state.
 
 ## Pipeline
 
 ```
-scrape → dedup → extract skills → score gaps → write brief
-       → plan curriculum → generate dialogue → build audio
-       → deliver (Telegram + email) → persist state
+scrape -> dedup -> extract skills -> score gaps -> write brief
+                      -> plan curriculum -> generate dialogue -> build audio
+                      -> deliver (Telegram + email) -> persist state -> refresh dashboard
 ```
 
-## Layout
+## Repository layout
 
 ```
-agents/     data collection — github_trending, hn_hiring, devto, stackoverflow
-radar/      skill_extractor, gap_scorer, brief_writer
-learnx/     audio pipeline — llm, curriculum, dialogue, audio_builder
-delivery/   telegram_sender, email_sender
-storage/    state I/O + seen_skills.json, skill_memory.json
-dashboard/  static skill-radar site (v3)
-specs/      day-by-day specs (written before code)
-plan/       design docs
-config.py   sources, limits, model
-main.py     orchestrator / entry point
+agents/     source collectors (GitHub, HN, dev.to, Stack Overflow)
+radar/      skill extraction, gap scoring, brief writing
+learnx/     curriculum, dialogue, audio_builder, LLM client
+delivery/   Telegram and email delivery
+recap/      /recap Telegram Q&A bot (polling)
+dashboard/  static dashboard builder
+storage/    state files (seen_skills.json, skill_memory.json, last_scored.json)
+briefs/     full lesson briefs (used by recap)
+output/     generated MP3 files and sample outputs
+config.py   central configuration and model selection
+main.py     daily pipeline entry point
 ```
 
 ## Stack
 
-- **LLM:** NVIDIA NIM (`z-ai/glm-5.1`), OpenAI-compatible, free tier — every LLM call.
-- **TTS:** edge-tts (no API key). Requires `ffmpeg` on PATH for assembly.
-- **Delivery:** Telegram bot + Gmail SMTP.
-- **Schedule:** GitHub Actions cron, 06:00 UTC weekdays.
+- LLM: NVIDIA NIM (OpenAI-compatible) using `meta/llama-3.3-70b-instruct`
+       configured in [config.py](config.py).
+- TTS: edge-tts plus pydub; ffmpeg required for audio assembly.
+- Delivery: Telegram Bot API and Gmail SMTP.
+- Schedule: radar workflow runs at 06:00 UTC on weekdays; recap workflow is
+       manual by default; dashboard deploys via GitHub Pages.
 
-## Setup
+## Configuration
 
-```bash
+- Required env vars: `NVIDIA_API_KEY`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`,
+       `GMAIL_APP_PASSWORD`, `EMAIL_FROM`, `EMAIL_TO`.
+- Optional: `GITHUB_TOKEN` (higher GitHub API rate limits).
+- Use [.env.example](.env.example) as the template.
+
+## Local usage
+
+```
 pip install -r requirements.txt
-cp .env.example .env   # fill in NVIDIA_API_KEY, Telegram, Gmail
+# copy the example env file to .env and fill in values
 python main.py
 ```
 
-In CI, the `.env` values come from GitHub repo secrets (see
+Other entry points:
+
+```
+python -m recap
+python -m dashboard
+```
+
+In CI, the env values come from GitHub repo secrets (see
 [.github/workflows/radar.yml](.github/workflows/radar.yml)).
 
-## Status
+## Workflows
 
-Scaffold in place. Module bodies that talk to live endpoints or the LLM raise
-`NotImplementedError` and are filled in spec-by-spec — see
-[specs/v1/README.md](specs/v1/README.md). The orchestration in `main.py` is the
-contract those stubs implement.
+- Radar run: [.github/workflows/radar.yml](.github/workflows/radar.yml) runs
+       `python main.py` and commits updated state files and briefs.
+- Recap bot: [.github/workflows/recap.yml](.github/workflows/recap.yml) runs
+       `python -m recap` on manual dispatch. Add a cron schedule if you want
+       automatic polling.
+- Pages: [.github/workflows/pages.yml](.github/workflows/pages.yml) runs
+       `python -m dashboard` and publishes the static HTML.
+
+## State and outputs
+
+- [storage/seen_skills.json](storage/seen_skills.json): dedup of source items
+       already taught.
+- [storage/skill_memory.json](storage/skill_memory.json): lesson history and
+       spaced repetition data.
+- [storage/last_scored.json](storage/last_scored.json): latest scoring for the
+       dashboard.
+- [briefs](briefs): full lesson briefs used by recap Q&A.
+- [output](output): generated MP3 lessons (for example, lesson-YYYYMMDD.mp3).
+- [dashboard/index.html](dashboard/index.html): generated static dashboard.
+
+## Tests
+
+```
+pytest
+ruff check .
+```
