@@ -1,7 +1,46 @@
 """Offline tests for state I/O — redirect file paths to tmp, no real writes."""
-from datetime import date
+import json
+from datetime import date, timedelta
 
 from storage import state
+
+
+def _iso(days_ago: int) -> str:
+    return (date.today() - timedelta(days=days_ago)).isoformat()
+
+
+def test_load_seen_migrates_legacy_list_to_empty_map(tmp_path, monkeypatch):
+    # Pre-windowing files were a bare list of IDs with no dates; nothing to window
+    # on, so they migrate to an empty map (a safe one-time reset — see load_seen).
+    f = tmp_path / "seen.json"
+    f.write_text(json.dumps(["gh:foo/bar", "hn:1"]), encoding="utf-8")
+    monkeypatch.setattr(state, "SEEN_FILE", f)
+    assert state.load_seen() == {}
+
+
+def test_filter_new_suppresses_recent_but_lets_expired_resurface(monkeypatch):
+    monkeypatch.setattr(state, "SEEN_TTL_DAYS", 14)
+    seen = {"gh:recent": _iso(1), "gh:expired": _iso(15)}
+    items = [{"id": "gh:recent"}, {"id": "gh:expired"}, {"id": "dev:brand-new"}]
+    out = [i["id"] for i in state.filter_new(items, seen)]
+    assert out == ["gh:expired", "dev:brand-new"]  # recent gone, expired+new pass
+
+
+def test_mark_seen_stamps_today_in_place():
+    seen = {"old": _iso(5)}
+    state.mark_seen(seen, ["a", "b"])
+    assert seen["a"] == date.today().isoformat()
+    assert seen["b"] == date.today().isoformat()
+    assert seen["old"] == _iso(5)  # untouched
+
+
+def test_save_seen_prunes_expired_entries(tmp_path, monkeypatch):
+    f = tmp_path / "seen.json"
+    monkeypatch.setattr(state, "SEEN_FILE", f)
+    monkeypatch.setattr(state, "SEEN_TTL_DAYS", 14)
+    state.save_seen({"keep": _iso(2), "drop": _iso(20)})
+    written = json.loads(f.read_text(encoding="utf-8"))
+    assert "keep" in written and "drop" not in written
 
 
 def test_last_scored_roundtrip_and_trim(tmp_path, monkeypatch):
