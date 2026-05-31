@@ -1,120 +1,58 @@
 {
   "2026-05-31": {
-    "today_skill": "Agentic coding",
+    "today_skill": "AI automation for speech language pathologists",
     "scored": [
+      {
+        "skill": "AI automation for speech language pathologists",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Automating therapy progress notes",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "AI-Native Network Security Monitoring",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Shift from traditional IDS",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "AI-powered products on Raspberry Pi",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "19 products on a $35 device",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
       {
         "skill": "Agentic coding",
         "sources": [
-          "GitHub Trending",
           "dev.to"
         ],
-        "evidence": "Agent-native platform, agent cost governance",
-        "frequency": 2,
-        "demand_weight": 1.5,
-        "novelty": 1.0,
-        "table_stakes": false,
-        "known": false,
-        "goal_match": false,
-        "suggested_difficulty": "beginner",
-        "score": 1.5
-      },
-      {
-        "skill": "Autonomous agents",
-        "sources": [
-          "GitHub Trending",
-          "dev.to"
-        ],
-        "evidence": "Agent-native platform, autonomous agents",
-        "frequency": 2,
-        "demand_weight": 1.5,
-        "novelty": 1.0,
-        "table_stakes": false,
-        "known": false,
-        "goal_match": false,
-        "suggested_difficulty": "beginner",
-        "score": 1.5
-      },
-      {
-        "skill": "Diffusion model GUI",
-        "sources": [
-          "GitHub Trending"
-        ],
-        "evidence": "ComfyUI for diffusion models",
-        "frequency": 1,
-        "demand_weight": 1.0,
-        "novelty": 1.0,
-        "table_stakes": false,
-        "known": false,
-        "goal_match": false,
-        "suggested_difficulty": "beginner",
-        "score": 1.0
-      },
-      {
-        "skill": "Modular game engine",
-        "sources": [
-          "GitHub Trending"
-        ],
-        "evidence": "Bevy game engine built in Rust",
-        "frequency": 1,
-        "demand_weight": 1.0,
-        "novelty": 1.0,
-        "table_stakes": false,
-        "known": false,
-        "goal_match": false,
-        "suggested_difficulty": "beginner",
-        "score": 1.0
-      },
-      {
-        "skill": "OpenTelemetry Collector",
-        "sources": [
-          "GitHub Trending"
-        ],
-        "evidence": "Grafana's OpenTelemetry Collector distribution",
-        "frequency": 1,
-        "demand_weight": 1.0,
-        "novelty": 1.0,
-        "table_stakes": false,
-        "known": false,
-        "goal_match": false,
-        "suggested_difficulty": "beginner",
-        "score": 1.0
-      },
-      {
-        "skill": "Rust async/await",
-        "sources": [
-          "GitHub Trending"
-        ],
-        "evidence": "Tokio runtime for Rust",
-        "frequency": 1,
-        "demand_weight": 1.0,
-        "novelty": 1.0,
-        "table_stakes": false,
-        "known": false,
-        "goal_match": false,
-        "suggested_difficulty": "beginner",
-        "score": 1.0
-      },
-      {
-        "skill": "Terraform",
-        "sources": [
-          "GitHub Trending"
-        ],
-        "evidence": "Infrastructure as code with Terraform",
-        "frequency": 1,
-        "demand_weight": 1.0,
-        "novelty": 1.0,
-        "table_stakes": false,
-        "known": false,
-        "goal_match": false,
-        "suggested_difficulty": "beginner",
-        "score": 1.0
-      },
-      {
-        "skill": "AI agent cost governance",
-        "sources": [
-          "dev.to"
-        ],
-        "evidence": "Agent-gov platform for cost governance",
+        "evidence": "Notable in AI development",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -125,11 +63,11 @@
         "score": 0.5
       },
       {
-        "skill": "Go APIs",
+        "skill": "AuditReplay API integration",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Go APIs used in stack",
+        "evidence": "Automated security audit replay",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -140,11 +78,11 @@
         "score": 0.5
       },
       {
-        "skill": "LLM APIs",
+        "skill": "Autonomous content pipeline",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Free LLM APIs for use without credit card",
+        "evidence": "Cost-effective content creation",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -155,11 +93,11 @@
         "score": 0.5
       },
       {
-        "skill": "Power Retention mechanism",
+        "skill": "Claude Code",
         "sources": [
           "dev.to"
         ],
-        "evidence": "New architecture for AI",
+        "evidence": "Configurable AI assistant",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -170,11 +108,11 @@
         "score": 0.5
       },
       {
-        "skill": "Python Decorators",
+        "skill": "Concurrency design",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Python Decorators explained",
+        "evidence": "Capability-focused approach",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -185,11 +123,11 @@
         "score": 0.5
       },
       {
-        "skill": "Redis in Rust",
+        "skill": "Data Lakehouse architecture",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Caching strategies with Redis",
+        "evidence": "Modern data team decision",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -200,11 +138,11 @@
         "score": 0.5
       },
       {
-        "skill": "Rust template engine",
+        "skill": "Frontend architecture design",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Rust template engine chosen",
+        "evidence": "File organization best practices",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -215,11 +153,11 @@
         "score": 0.5
       },
       {
-        "skill": "State Space Models",
+        "skill": "GraphQL API debugging",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Challenging Transformers for long-context inference",
+        "evidence": "Catching silent errors",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -230,11 +168,11 @@
         "score": 0.5
       },
       {
-        "skill": "Stream Processing Engine",
+        "skill": "Holiday-aware deadline calculations",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Building a Stream Processing Engine from scratch",
+        "evidence": "Laravel implementation",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -245,11 +183,11 @@
         "score": 0.5
       },
       {
-        "skill": "Transformer architecture",
+        "skill": "Kimball Dimensional Modeling",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Transformer's limitations and new architecture",
+        "evidence": "Data engineering interviews",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -260,11 +198,11 @@
         "score": 0.5
       },
       {
-        "skill": "Vector embeddings",
+        "skill": "Luau development",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Embedding-based semantic search",
+        "evidence": "Roblox development",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -275,11 +213,11 @@
         "score": 0.5
       },
       {
-        "skill": "Windowing in stream processing",
+        "skill": "Metaverse ads management",
         "sources": [
           "dev.to"
         ],
-        "evidence": "How windowing actually works",
+        "evidence": "Agency collaboration insights",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -290,19 +228,64 @@
         "score": 0.5
       },
       {
-        "skill": "Kafka consumer groups",
+        "skill": "Personal Knowledge Graph",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Kafka broker misconfiguration",
+        "evidence": "Structured knowledge management",
         "frequency": 1,
         "demand_weight": 0.5,
-        "novelty": 0.0,
+        "novelty": 1.0,
         "table_stakes": false,
         "known": false,
         "goal_match": false,
-        "suggested_difficulty": "intermediate",
-        "score": 0.0
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "RAG (Retrieval-Augmented Generation)",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Emerging AI technology",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Transcribing voice notes",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Free transcription tools",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "VS Code and Git automation",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Professional automation",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
       }
     ]
   }

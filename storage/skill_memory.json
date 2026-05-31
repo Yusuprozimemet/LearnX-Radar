@@ -15,6 +15,22 @@
       ],
       "last_taught": "2026-05-30",
       "summary": "Rising questions"
+    },
+    "AI automation for speech language pathologists": {
+      "times_taught": 1,
+      "first_taught": "2026-05-31",
+      "lessons": [
+        {
+          "date": "2026-05-31",
+          "title": "AI automation for speech language pathologists",
+          "difficulty": "beginner",
+          "summary": "Automating therapy progress notes",
+          "audio": "lesson-20260531-ai-automation-for-speech-language-pathologists.mp3",
+          "brief": "20260531-ai-automation-for-speech-language-pathologists.md"
+        }
+      ],
+      "last_taught": "2026-05-31",
+      "summary": "Automating therapy progress notes"
     }
   },
   "so_counts": {
