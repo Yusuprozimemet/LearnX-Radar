@@ -2,8 +2,9 @@
 
 LearnX-Radar is a self-updating curriculum engine that watches developer
 signals for emerging skill gaps and auto-generates a personalized audio lesson.
-Each lesson links to a Perplexity thread pre-loaded with the brief for follow-up
-Q&A, plus a static dashboard built from the recorded state.
+Each lesson links to a Perplexity thread pre-loaded with the brief *text* for
+follow-up Q&A (and a recall quiz), plus a static dashboard built from the
+recorded state.
 
 ![LearnX-Radar overview](image.png)
 
@@ -15,8 +16,8 @@ Q&A, plus a static dashboard built from the recorded state.
 - Writes a teaching brief, plans a curriculum, generates dialogue, and builds
        one MP3 via edge-tts.
 - Delivers the lesson to Telegram (audio + summary) and email (brief + MP3).
-- Persists a knowledge memory and full briefs (linked from each lesson for
-       Perplexity follow-up Q&A).
+- Persists a knowledge memory and full briefs (whose text seeds each lesson's
+       Perplexity follow-up Q&A and recall quiz).
 - Redacts PII (emails, phone numbers, handles) from collected text at ingestion.
 - Builds a static dashboard from committed state.
 - Publishes a podcast RSS feed so the daily lesson lands in your podcast app.

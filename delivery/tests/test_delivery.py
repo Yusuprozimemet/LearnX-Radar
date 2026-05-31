@@ -24,21 +24,39 @@ def _lesson(
 
 # --- followup links ----------------------------------------------------------
 
-def test_perplexity_url_unchanged():
-    """Regression guard: the follow-up link must stay intact (day11 only adds quiz)."""
-    url = followup.perplexity_url("DuckDB", "20260530-duckdb.md")
+_BRIEF = (
+    "# DuckDB\n## Core ideas\nDuckDB is an in-process OLAP database that runs "
+    "analytical SQL on local files like Parquet without a server.\n"
+)
+
+
+def test_perplexity_url_embeds_brief_text():
+    """The follow-up link must seed Perplexity with the brief TEXT, not a URL —
+    Perplexity won't reliably fetch an external link, so the text is inlined."""
+    url = followup.perplexity_url("DuckDB", _BRIEF)
     q = unquote(url)
     assert url.startswith("https://www.perplexity.ai/search/new?q=")
     assert "answer my follow-up questions" in q
-    assert "20260530-duckdb.md" in q
+    assert "in-process OLAP database" in q  # brief text is embedded
+    assert "raw.githubusercontent.com" not in q  # no link to scrape
 
 
-def test_quiz_url_is_recall_quiz_on_brief():
-    url = followup.quiz_url("DuckDB", "20260530-duckdb.md")
+def test_quiz_url_is_recall_quiz_on_brief_text():
+    url = followup.quiz_url("DuckDB", _BRIEF)
     q = unquote(url)
     assert url.startswith("https://www.perplexity.ai/search/new?q=")
     assert "ONE AT A TIME" in q
-    assert "20260530-duckdb.md" in q
+    assert "in-process OLAP database" in q  # brief text grounds the quiz
+    assert "raw.githubusercontent.com" not in q
+
+
+def test_condense_trims_long_brief_to_budget(monkeypatch):
+    """A long brief is flattened and trimmed so the deep-link URL stays bounded."""
+    monkeypatch.setattr(followup.config, "FOLLOWUP_BRIEF_CHARS", 200)
+    long_brief = "# T\n" + ("Sentence number filler here. " * 80)
+    out = followup._condense(long_brief, 200)
+    assert len(out) <= 201  # budget (+1 for a sentence-ending period)
+    assert "\n" not in out  # markdown/newlines flattened to single-line prose
 
 
 # --- telegram reply markup (buttons) -----------------------------------------
@@ -50,15 +68,15 @@ def _buttons(markup: dict) -> list[str]:
 
 def test_reply_markup_followup_only_without_prior():
     markup = telegram_sender._reply_markup(
-        {"skill": "DuckDB", "brief_file": "b.md"}
+        {"skill": "DuckDB", "brief_md": _BRIEF}
     )
     assert _buttons(markup) == ["🔎 Ask follow-ups on Perplexity"]
 
 
 def test_reply_markup_adds_quiz_when_prior_exists():
     markup = telegram_sender._reply_markup(
-        {"skill": "DuckDB", "brief_file": "b.md",
-         "quiz_skill": "Kafka", "quiz_brief": "k.md"}
+        {"skill": "DuckDB", "brief_md": _BRIEF,
+         "quiz_skill": "Kafka", "quiz_brief_md": _BRIEF}
     )
     assert _buttons(markup) == ["🔎 Ask follow-ups on Perplexity", "🧠 Quiz me on this"]
 
@@ -70,15 +88,15 @@ def test_reply_markup_empty_without_brief():
 # --- email buttons -----------------------------------------------------------
 
 def test_email_buttons_followup_only_without_prior():
-    html = email_sender._followup_button({"skill": "DuckDB", "brief_file": "b.md"})
+    html = email_sender._followup_button({"skill": "DuckDB", "brief_md": _BRIEF})
     assert "Ask follow-ups on Perplexity" in html
     assert "Quiz me on this" not in html
 
 
 def test_email_buttons_add_quiz_when_prior_exists():
     html = email_sender._followup_button(
-        {"skill": "DuckDB", "brief_file": "b.md",
-         "quiz_skill": "Kafka", "quiz_brief": "k.md"}
+        {"skill": "DuckDB", "brief_md": _BRIEF,
+         "quiz_skill": "Kafka", "quiz_brief_md": _BRIEF}
     )
     assert "Ask follow-ups on Perplexity" in html and "Quiz me on this" in html
 
