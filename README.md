@@ -94,8 +94,9 @@ In CI, the env values come from GitHub repo secrets (see
 - [storage/skill_memory.json](storage/skill_memory.json): lesson history and
        spaced repetition data.
 - [storage/last_scored.json](storage/last_scored.json): latest scoring for the
-       dashboard. A same-day re-run only overwrites it when its ranking is at
-       least as rich, so a thin dev.to-only re-run can't flatten the board.
+       dashboard. Scored from the full scrape each run (not just post-dedup
+       items), so the board always shows the complete demand picture and updates
+       on every run.
 - [briefs](briefs): full lesson briefs, linked from each lesson for Perplexity Q&A.
 - [output](output): generated MP3 lessons (for example, lesson-YYYYMMDD.mp3).
 - [dashboard/index.html](dashboard/index.html): generated static dashboard.
