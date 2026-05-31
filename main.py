@@ -22,7 +22,7 @@ from agents import (
 from dashboard import builder as dashboard
 from delivery import email_sender, telegram_sender
 from learnx import audio_builder, curriculum, dialogue
-from radar import brief_writer, gap_scorer, skill_extractor
+from radar import brief_writer, gap_scorer, privacy, skill_extractor
 from storage import (
     filter_new,
     load_memory,
@@ -63,6 +63,12 @@ def _scrape(memory: dict) -> list[dict]:
         items.extend(fetched)
     except Exception as exc:
         print(f"[stackoverflow] fetch failed: {exc}")
+
+    # Redact PII (emails/phones/handles) from every item's free text at ingestion,
+    # before dedup, the LLM, persistence, delivery, or the Perplexity link see it.
+    for item in items:
+        item["title"] = privacy.scrub(item.get("title", ""))
+        item["text"] = privacy.scrub(item.get("text", ""))
 
     return items
 
@@ -119,7 +125,7 @@ def main() -> None:
     print(f"Today's skill: {skill['skill']} (score {skill.get('score')})")
 
     brief_md = brief_writer.write(skill, memory)
-    brief_file = save_brief(skill["skill"], brief_md)  # committed for /recap deep Q&A
+    brief_file = save_brief(skill["skill"], brief_md)  # committed; linked for Perplexity Q&A
 
     # 3. Learnx: brief -> curriculum -> dialogue -> audio.
     difficulty = skill.get("suggested_difficulty", config.LESSON_DIFFICULTY_DEFAULT)
@@ -137,6 +143,7 @@ def main() -> None:
         "difficulty": difficulty,
         "mp3_path": mp3_path,
         "brief_md": brief_md,
+        "brief_file": brief_file,
     }
 
     # 4. Deliver (each channel independent).

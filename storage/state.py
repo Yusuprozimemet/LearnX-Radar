@@ -14,7 +14,7 @@ _DIR = Path(__file__).parent
 SEEN_FILE = _DIR / "seen_skills.json"
 MEMORY_FILE = _DIR / "skill_memory.json"
 LAST_SCORED_FILE = _DIR / "last_scored.json"  # v3: this run's ranking for the dashboard
-BRIEFS_DIR = _DIR.parent / "briefs"  # committed full lesson briefs, for /recap deep Q&A
+BRIEFS_DIR = _DIR.parent / "briefs"  # committed briefs, linked from lessons for Perplexity Q&A
 
 LAST_SCORED_KEEP = 20  # cap the persisted ranking; the dashboard only shows a top slice
 
@@ -97,7 +97,7 @@ def record_lesson(
     Tracks times taught, last date, difficulty, a one-line summary, the MP3
     filename, and the brief filename so gap_scorer can space-repeat (v2),
     brief_writer can bridge to related lessons, the dashboard archive (v3) can
-    list them, and /recap can ground deep Q&A in the full brief text.
+    list them, and each lesson can link to the full brief for Perplexity Q&A.
     """
     skills = memory.setdefault("skills", {})
     entry = skills.setdefault(
@@ -121,7 +121,7 @@ def record_lesson(
     return memory
 
 
-# --- briefs/ : full lesson brief text, committed for /recap deep Q&A ----------
+# --- briefs/ : full lesson brief text, linked from lessons for Perplexity Q&A ----------
 
 def save_brief(skill: str, brief_md: str, when: date | None = None) -> str:
     """Write the full brief to briefs/<date>-<slug>.md; return the filename."""
