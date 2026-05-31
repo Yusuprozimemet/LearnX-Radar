@@ -128,8 +128,12 @@ def main() -> None:
         _refresh_dashboard(memory)  # refresh coverage/archive even on a quiet day
         return
 
-    # 2. Radar: extract skills, score the gap, pick today's topic.
-    mentions = skill_extractor.extract(new_items)
+    # 2. Radar: score ALL scraped items so the dashboard always shows the full
+    # demand picture and updates on every run. (Scoring only new_items made a
+    # same-day re-run thin — dev.to is the only source with fresh items between
+    # trend refreshes — which flattened the board to all-0.5.) novelty already
+    # sinks recently-taught skills, so top() still picks a genuine gap to teach.
+    mentions = skill_extractor.extract(items)
     profile = {"known": config.KNOWN_SKILLS, "goals": config.LEARNING_GOALS}
     scored = gap_scorer.score(mentions, memory, profile)
     skill = gap_scorer.top(scored)

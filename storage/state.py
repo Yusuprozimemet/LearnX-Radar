@@ -115,23 +115,6 @@ def save_memory(memory: dict) -> None:
 # --- last_scored.json : this run's ranking, so the dashboard can rebuild from
 # committed state alone (no API keys) — see dashboard/ + .github/workflows/pages.yml
 
-def _ranking_quality(scored: list[dict]) -> tuple[float, int, int]:
-    """A comparable 'richness' for a ranking; higher is richer.
-
-    Guards against a degraded re-run clobbering a good board. A same-day re-run
-    often sees only fresh dev.to items (the trend sources — GitHub/HN/SO — are
-    unchanged since the morning run, so dedup drops them), flattening the ranking
-    to every skill at 0.5 from one source. Ranked by top score, then the number
-    of distinct sources represented, then entry count — so that thin run sorts
-    below the richer earlier one and is kept out.
-    """
-    if not scored:
-        return (0.0, 0, 0)
-    top = max(s.get("score", 0.0) for s in scored)
-    sources = {src for s in scored for src in s.get("sources", [])}
-    return (top, len(sources), len(scored))
-
-
 def load_last_scored() -> dict:
     if not LAST_SCORED_FILE.exists():
         return {"today_skill": None, "scored": []}
@@ -142,14 +125,6 @@ def load_last_scored() -> dict:
 
 
 def save_last_scored(scored: list[dict], today_skill: str | None) -> None:
-    # Keep the richer ranking when re-run the same day (don't let a thin dev.to-
-    # only re-run flatten the board the dashboard rebuilds from). A fresh day
-    # always writes, even if thin, so the board can't get stuck on stale data.
-    existing = load_last_scored()
-    if existing.get("updated") == date.today().isoformat() and (
-        _ranking_quality(existing.get("scored", [])) > _ranking_quality(scored)
-    ):
-        return
     payload = {
         "updated": date.today().isoformat(),
         "today_skill": today_skill,
@@ -161,8 +136,7 @@ def save_last_scored(scored: list[dict], today_skill: str | None) -> None:
 
 
 # --- trending_history.json : one ranking per day, so the dashboard can replay a
-# chosen day. A re-run replaces today's entry only if it is at least as rich
-# (see _ranking_quality); oldest days roll off the cap.
+# chosen day. Overwrites today's entry on re-run; oldest days roll off the cap.
 
 def load_trending_history() -> dict:
     """Return {date: {"today_skill": str|None, "scored": [...]}} or {} if missing/corrupt."""
@@ -181,11 +155,7 @@ def save_trending_history(
     """Record this run's ranking under its date, trimming to HISTORY_KEEP_DAYS."""
     when = when or date.today()
     history = load_trending_history()
-    key = when.isoformat()
-    prior = history.get(key)
-    if prior and _ranking_quality(prior.get("scored", [])) > _ranking_quality(scored):
-        return  # a thinner same-day re-run shouldn't overwrite a richer one
-    history[key] = {
+    history[when.isoformat()] = {
         "today_skill": today_skill,
         "scored": scored[:LAST_SCORED_KEEP],
     }
