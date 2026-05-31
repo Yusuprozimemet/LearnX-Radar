@@ -99,9 +99,10 @@ _WRAP_STYLE = (
 def _followup_button(lesson: dict) -> str:
     """An 'Ask on Perplexity' button linking to a thread seeded with the brief."""
     brief_file = lesson.get("brief_file")
-    if not brief_file:
+    skill = lesson.get("skill")
+    if not brief_file or not skill:
         return ""
-    url = followup.perplexity_url(lesson["skill"], brief_file)
+    url = followup.perplexity_url(skill, brief_file)
     style = (
         "background:#1f6feb;color:#fff;padding:10px 18px;"
         "border-radius:6px;text-decoration:none;display:inline-block"

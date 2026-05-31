@@ -66,9 +66,21 @@ def _scrape(memory: dict) -> list[dict]:
 
     # Redact PII (emails/phones/handles) from every item's free text at ingestion,
     # before dedup, the LLM, persistence, delivery, or the Perplexity link see it.
+    free_text_fields = {"title", "text", "meta"}
+    known_sources = {"GitHub Trending", "HN Hiring", "dev.to", "Stack Overflow"}
+    safe_exempt = {"id", "source", "url"}
     for item in items:
-        item["title"] = privacy.scrub(item.get("title", ""))
-        item["text"] = privacy.scrub(item.get("text", ""))
+        fields = free_text_fields
+        if item.get("source") not in known_sources:
+            fields = [
+                key
+                for key, value in item.items()
+                if isinstance(value, str) and key not in safe_exempt
+            ]
+        for field in fields:
+            value = item.get(field)
+            if isinstance(value, str):
+                item[field] = privacy.scrub(value)
 
     return items
 

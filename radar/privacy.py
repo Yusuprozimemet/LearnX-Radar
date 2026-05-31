@@ -20,6 +20,8 @@ _PHONE = re.compile(r"(?<!\w)\+?\d[\d\s().-]{7,}\d(?!\w)")
 # @handle (twitter/telegram/etc.), 2+ chars. Lookbehind avoids matching the
 # local part of an email (already redacted) and code like "list@2".
 _HANDLE = re.compile(r"(?<![\w@/])@[A-Za-z][A-Za-z0-9_]{1,}")
+_CODE_FENCE = re.compile(r"^\s*```")
+_DECORATOR_LINE = re.compile(r"^@[A-Za-z_][A-Za-z0-9_]*(?:\(.*\))?$")
 
 
 def scrub(text: str) -> str:
@@ -28,5 +30,18 @@ def scrub(text: str) -> str:
         return text
     text = _EMAIL.sub("[email]", text)
     text = _PHONE.sub("[phone]", text)
-    text = _HANDLE.sub("[handle]", text)
-    return text
+    if "@" not in text:
+        return text
+    lines: list[str] = []
+    in_code = False
+    for line in text.splitlines(keepends=True):
+        stripped = line.strip()
+        if _CODE_FENCE.match(stripped):
+            in_code = not in_code
+            lines.append(line)
+            continue
+        if in_code or _DECORATOR_LINE.match(stripped):
+            lines.append(line)
+            continue
+        lines.append(_HANDLE.sub("[handle]", line))
+    return "".join(lines)

@@ -35,11 +35,12 @@ def _caption(lesson: dict) -> str:
 def _reply_markup(lesson: dict) -> dict:
     """Inline keyboard with a Perplexity follow-up button, when a brief exists."""
     brief_file = lesson.get("brief_file")
-    if not brief_file:
+    skill = lesson.get("skill")
+    if not brief_file or not skill:
         return {}
     button = {
         "text": "🔎 Ask follow-ups on Perplexity",
-        "url": followup.perplexity_url(lesson["skill"], brief_file),
+        "url": followup.perplexity_url(skill, brief_file),
     }
     return {"reply_markup": json.dumps({"inline_keyboard": [[button]]})}
 
