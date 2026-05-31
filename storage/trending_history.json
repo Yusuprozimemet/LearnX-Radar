@@ -1,39 +1,67 @@
 {
   "2026-05-31": {
-    "today_skill": "AI agent development",
+    "today_skill": "Kafka consumer groups",
     "scored": [
       {
-        "skill": "AI agent development",
+        "skill": "Kafka consumer groups",
         "sources": [
-          "dev.to"
+          "HN Hiring"
         ],
-        "evidence": "AI agent marketplace",
+        "evidence": "Mentioned in job post",
         "frequency": 1,
-        "demand_weight": 0.5,
+        "demand_weight": 2.0,
         "novelty": 1.0,
         "table_stakes": false,
         "suggested_difficulty": "beginner",
-        "score": 0.5
+        "score": 2.0
       },
       {
         "skill": "Agentic coding",
         "sources": [
+          "GitHub Trending",
           "dev.to"
         ],
-        "evidence": "AI agent development",
-        "frequency": 1,
-        "demand_weight": 0.5,
+        "evidence": "Emerging concept",
+        "frequency": 2,
+        "demand_weight": 1.5,
         "novelty": 1.0,
         "table_stakes": false,
         "suggested_difficulty": "beginner",
-        "score": 0.5
+        "score": 1.5
       },
       {
         "skill": "Claude Code",
         "sources": [
+          "GitHub Trending",
           "dev.to"
         ],
-        "evidence": "Python project ideas",
+        "evidence": "Emerging concept",
+        "frequency": 2,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "suggested_difficulty": "beginner",
+        "score": 1.5
+      },
+      {
+        "skill": "LangChain",
+        "sources": [
+          "Stack Overflow"
+        ],
+        "evidence": "Rising questions",
+        "frequency": 1,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "suggested_difficulty": "beginner",
+        "score": 1.5
+      },
+      {
+        "skill": "Anthropic Claude 4 API",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Used in project",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -42,11 +70,11 @@
         "score": 0.5
       },
       {
-        "skill": "DMARC record",
+        "skill": "Axum",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Email security",
+        "evidence": "Used in project",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -55,11 +83,11 @@
         "score": 0.5
       },
       {
-        "skill": "Docker Compose patterns",
+        "skill": "Cloudflare Workers",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Microservices architecture",
+        "evidence": "Used in project",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -68,11 +96,11 @@
         "score": 0.5
       },
       {
-        "skill": "Indexing strategies",
+        "skill": "Docker Compose",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Database performance",
+        "evidence": "Best practice",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -81,11 +109,11 @@
         "score": 0.5
       },
       {
-        "skill": "LLM API",
+        "skill": "Git Branching",
         "sources": [
           "dev.to"
         ],
-        "evidence": "DX and pricing",
+        "evidence": "Best practice",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -94,11 +122,11 @@
         "score": 0.5
       },
       {
-        "skill": "Multi-agent orchestration",
+        "skill": "KV",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Open-source AgentForge",
+        "evidence": "Used in project",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -107,11 +135,11 @@
         "score": 0.5
       },
       {
-        "skill": "Python decorators",
+        "skill": "Next.js SSG",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Python programming",
+        "evidence": "Used in project",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -120,11 +148,24 @@
         "score": 0.5
       },
       {
-        "skill": "React Server Components",
+        "skill": "OpenAI GPT-4.1 API",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Building dark mode",
+        "evidence": "Used in project",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Python Decorators",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Best practice",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -137,7 +178,7 @@
         "sources": [
           "dev.to"
         ],
-        "evidence": "Building SQL lexer",
+        "evidence": "Best practice",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -150,7 +191,7 @@
         "sources": [
           "dev.to"
         ],
-        "evidence": "Building SQL lexer",
+        "evidence": "Used in project",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -159,11 +200,11 @@
         "score": 0.5
       },
       {
-        "skill": "TLS fingerprinting",
+        "skill": "SQL Lexer",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Bypassing Cloudflare WAF",
+        "evidence": "Used in project",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -172,11 +213,11 @@
         "score": 0.5
       },
       {
-        "skill": "openpyxl",
+        "skill": "Stripe",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Building Excel reports",
+        "evidence": "Used in project",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -185,59 +226,43 @@
         "score": 0.5
       },
       {
-        "skill": "AWS Lambda cold starts",
-        "sources": [],
-        "evidence": "None",
-        "frequency": 0,
-        "demand_weight": 0,
+        "skill": "Tauri v2",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Used in project",
+        "frequency": 1,
+        "demand_weight": 0.5,
         "novelty": 1.0,
         "table_stakes": false,
         "suggested_difficulty": "beginner",
-        "score": 0.0
-      },
-      {
-        "skill": "DuckDB",
-        "sources": [],
-        "evidence": "None",
-        "frequency": 0,
-        "demand_weight": 0,
-        "novelty": 0.14285714285714285,
-        "table_stakes": false,
-        "suggested_difficulty": "intermediate",
-        "score": 0.0
-      },
-      {
-        "skill": "Kafka consumer groups",
-        "sources": [],
-        "evidence": "None",
-        "frequency": 0,
-        "demand_weight": 0,
-        "novelty": 1.0,
-        "table_stakes": false,
-        "suggested_difficulty": "beginner",
-        "score": 0.0
-      },
-      {
-        "skill": "Python asyncio",
-        "sources": [],
-        "evidence": "None",
-        "frequency": 0,
-        "demand_weight": 0,
-        "novelty": 1.0,
-        "table_stakes": false,
-        "suggested_difficulty": "beginner",
-        "score": 0.0
+        "score": 0.5
       },
       {
         "skill": "Vector embeddings",
-        "sources": [],
-        "evidence": "None",
-        "frequency": 0,
-        "demand_weight": 0,
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Used in project",
+        "frequency": 1,
+        "demand_weight": 0.5,
         "novelty": 1.0,
         "table_stakes": false,
         "suggested_difficulty": "beginner",
-        "score": 0.0
+        "score": 0.5
+      },
+      {
+        "skill": "libvips",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Used in project",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
       }
     ]
   }

@@ -47,6 +47,22 @@
       ],
       "last_taught": "2026-05-31",
       "summary": "AI agent marketplace"
+    },
+    "Kafka consumer groups": {
+      "times_taught": 1,
+      "first_taught": "2026-05-31",
+      "lessons": [
+        {
+          "date": "2026-05-31",
+          "title": "Kafka consumer groups",
+          "difficulty": "beginner",
+          "summary": "Mentioned in job post",
+          "audio": "lesson-20260531.mp3",
+          "brief": "20260531-kafka-consumer-groups.md"
+        }
+      ],
+      "last_taught": "2026-05-31",
+      "summary": "Mentioned in job post"
     }
   },
   "so_counts": {
