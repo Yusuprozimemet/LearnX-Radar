@@ -1,13 +1,154 @@
 {
   "2026-05-31": {
-    "today_skill": "AI query routing",
+    "today_skill": "WebAssembly",
     "scored": [
       {
-        "skill": "AI query routing",
+        "skill": "WebAssembly",
+        "sources": [
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "Job postings, AI articles",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 2.5
+      },
+      {
+        "skill": "WebGPU",
+        "sources": [
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "Job postings, AI articles",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 2.5
+      },
+      {
+        "skill": "Agentic coding",
+        "sources": [
+          "GitHub Trending",
+          "dev.to"
+        ],
+        "evidence": "Claude Code",
+        "frequency": 2,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 1.5
+      },
+      {
+        "skill": "Claude Code",
+        "sources": [
+          "GitHub Trending",
+          "dev.to"
+        ],
+        "evidence": "Agentic coding tool",
+        "frequency": 2,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 1.5
+      },
+      {
+        "skill": "React Server Components",
+        "sources": [
+          "GitHub Trending",
+          "dev.to"
+        ],
+        "evidence": "Open-source projects",
+        "frequency": 2,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 1.5
+      },
+      {
+        "skill": "Tokio",
+        "sources": [
+          "GitHub Trending",
+          "dev.to"
+        ],
+        "evidence": "Rust framework",
+        "frequency": 2,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 1.5
+      },
+      {
+        "skill": "LangChain",
+        "sources": [
+          "Stack Overflow"
+        ],
+        "evidence": "Rising questions",
+        "frequency": 1,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 1.5
+      },
+      {
+        "skill": "Langchain",
+        "sources": [
+          "Stack Overflow"
+        ],
+        "evidence": "Rising questions",
+        "frequency": 1,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 1.5
+      },
+      {
+        "skill": "Rust async/await",
+        "sources": [
+          "GitHub Trending"
+        ],
+        "evidence": "Bevy engine",
+        "frequency": 1,
+        "demand_weight": 1.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 1.0
+      },
+      {
+        "skill": "AWS Lambda cold starts",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Used for routing AI queries",
+        "evidence": "Serverless optimization",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -18,116 +159,11 @@
         "score": 0.5
       },
       {
-        "skill": "Agentic Workflows",
+        "skill": "Agent Substrate",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Used in AI agents",
-        "frequency": 1,
-        "demand_weight": 0.5,
-        "novelty": 1.0,
-        "table_stakes": false,
-        "known": false,
-        "goal_match": false,
-        "suggested_difficulty": "beginner",
-        "score": 0.5
-      },
-      {
-        "skill": "BizNode workflow chains",
-        "sources": [
-          "dev.to"
-        ],
-        "evidence": "Used for business workflows",
-        "frequency": 1,
-        "demand_weight": 0.5,
-        "novelty": 1.0,
-        "table_stakes": false,
-        "known": false,
-        "goal_match": false,
-        "suggested_difficulty": "beginner",
-        "score": 0.5
-      },
-      {
-        "skill": "Cat plots",
-        "sources": [
-          "dev.to"
-        ],
-        "evidence": "Used for data visualization",
-        "frequency": 1,
-        "demand_weight": 0.5,
-        "novelty": 1.0,
-        "table_stakes": false,
-        "known": false,
-        "goal_match": false,
-        "suggested_difficulty": "beginner",
-        "score": 0.5
-      },
-      {
-        "skill": "Claude Code plugin",
-        "sources": [
-          "dev.to"
-        ],
-        "evidence": "Used for project automation",
-        "frequency": 1,
-        "demand_weight": 0.5,
-        "novelty": 1.0,
-        "table_stakes": false,
-        "known": false,
-        "goal_match": false,
-        "suggested_difficulty": "beginner",
-        "score": 0.5
-      },
-      {
-        "skill": "Client-side storage",
-        "sources": [
-          "dev.to"
-        ],
-        "evidence": "Used for secure tracking",
-        "frequency": 1,
-        "demand_weight": 0.5,
-        "novelty": 1.0,
-        "table_stakes": false,
-        "known": false,
-        "goal_match": false,
-        "suggested_difficulty": "beginner",
-        "score": 0.5
-      },
-      {
-        "skill": "Concurrency design",
-        "sources": [
-          "dev.to"
-        ],
-        "evidence": "Used for capability design",
-        "frequency": 1,
-        "demand_weight": 0.5,
-        "novelty": 1.0,
-        "table_stakes": false,
-        "known": false,
-        "goal_match": false,
-        "suggested_difficulty": "beginner",
-        "score": 0.5
-      },
-      {
-        "skill": "Emoji filtering",
-        "sources": [
-          "dev.to"
-        ],
-        "evidence": "Used for chat filtering",
-        "frequency": 1,
-        "demand_weight": 0.5,
-        "novelty": 1.0,
-        "table_stakes": false,
-        "known": false,
-        "goal_match": false,
-        "suggested_difficulty": "beginner",
-        "score": 0.5
-      },
-      {
-        "skill": "Gacha simulator",
-        "sources": [
-          "dev.to"
-        ],
-        "evidence": "Used for gaming",
+        "evidence": "Agentic AI isolation",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -142,67 +178,7 @@
         "sources": [
           "dev.to"
         ],
-        "evidence": "Used for building AI agents",
-        "frequency": 1,
-        "demand_weight": 0.5,
-        "novelty": 1.0,
-        "table_stakes": false,
-        "known": false,
-        "goal_match": false,
-        "suggested_difficulty": "beginner",
-        "score": 0.5
-      },
-      {
-        "skill": "HEIC to JPG conversion",
-        "sources": [
-          "dev.to"
-        ],
-        "evidence": "Used for client-side conversion",
-        "frequency": 1,
-        "demand_weight": 0.5,
-        "novelty": 1.0,
-        "table_stakes": false,
-        "known": false,
-        "goal_match": false,
-        "suggested_difficulty": "beginner",
-        "score": 0.5
-      },
-      {
-        "skill": "Hosted Mock APIs",
-        "sources": [
-          "dev.to"
-        ],
-        "evidence": "Used for local development",
-        "frequency": 1,
-        "demand_weight": 0.5,
-        "novelty": 1.0,
-        "table_stakes": false,
-        "known": false,
-        "goal_match": false,
-        "suggested_difficulty": "beginner",
-        "score": 0.5
-      },
-      {
-        "skill": "LLM temperature adjustment",
-        "sources": [
-          "dev.to"
-        ],
-        "evidence": "Used for fine-tuning LLMs",
-        "frequency": 1,
-        "demand_weight": 0.5,
-        "novelty": 1.0,
-        "table_stakes": false,
-        "known": false,
-        "goal_match": false,
-        "suggested_difficulty": "beginner",
-        "score": 0.5
-      },
-      {
-        "skill": "Local storage",
-        "sources": [
-          "dev.to"
-        ],
-        "evidence": "Used for client-side tracking",
+        "evidence": "AI tutorials",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -217,7 +193,7 @@
         "sources": [
           "dev.to"
         ],
-        "evidence": "Used for mocking APIs",
+        "evidence": "Mocking libraries",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -228,11 +204,11 @@
         "score": 0.5
       },
       {
-        "skill": "Nvidia tech",
+        "skill": "PostGIS",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Used for heavier AI queries",
+        "evidence": "Geospatial articles",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -243,11 +219,11 @@
         "score": 0.5
       },
       {
-        "skill": "Pity tracker",
+        "skill": "Python asyncio",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Used for gaming",
+        "evidence": "Asyncio tutorials",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -258,11 +234,11 @@
         "score": 0.5
       },
       {
-        "skill": "SEO optimization",
+        "skill": "Replit agents",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Used for clean SEO",
+        "evidence": "Financial identity integration",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
@@ -271,6 +247,66 @@
         "goal_match": false,
         "suggested_difficulty": "beginner",
         "score": 0.5
+      },
+      {
+        "skill": "Rust/Tokio",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Rust tutorials",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Vector embeddings",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "AI articles",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Visa payment infrastructure",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Replit agents integration",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "DuckDB",
+        "sources": [
+          "Stack Overflow"
+        ],
+        "evidence": "Rising questions",
+        "frequency": 1,
+        "demand_weight": 1.5,
+        "novelty": 0.14285714285714285,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "intermediate",
+        "score": 0.21428571428571427
       }
     ]
   }

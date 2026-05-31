@@ -79,6 +79,22 @@
       ],
       "last_taught": "2026-05-31",
       "summary": "Transform AI applications"
+    },
+    "WebAssembly": {
+      "times_taught": 1,
+      "first_taught": "2026-05-31",
+      "lessons": [
+        {
+          "date": "2026-05-31",
+          "title": "WebAssembly",
+          "difficulty": "beginner",
+          "summary": "Job postings, AI articles",
+          "audio": "lesson-20260531-webassembly.mp3",
+          "brief": "20260531-webassembly.md"
+        }
+      ],
+      "last_taught": "2026-05-31",
+      "summary": "Job postings, AI articles"
     }
   },
   "so_counts": {
