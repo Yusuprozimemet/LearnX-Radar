@@ -122,7 +122,11 @@ def _radar_svg(scored: list[dict]) -> str:
         return cx + radius * math.cos(angle), cy + radius * math.sin(angle)
 
     def polygon(radius_at) -> str:
-        return " ".join(f"{coord(i, radius_at(i))[0]:.1f},{coord(i, radius_at(i))[1]:.1f}" for i in range(n))
+        pairs = []
+        for i in range(n):
+            x, y = coord(i, radius_at(i))
+            pairs.append(f"{x:.1f},{y:.1f}")
+        return " ".join(pairs)
 
     rings = "".join(
         f"<polygon points='{polygon(lambda i, f=frac: _RADAR_R * f)}' fill='none' stroke='#eee' />"
@@ -131,7 +135,9 @@ def _radar_svg(scored: list[dict]) -> str:
     spokes, labels = [], []
     for i, s in enumerate(pts):
         ex, ey = coord(i, _RADAR_R)
-        spokes.append(f"<line x1='{cx:.1f}' y1='{cy:.1f}' x2='{ex:.1f}' y2='{ey:.1f}' stroke='#eee' />")
+        spokes.append(
+            f"<line x1='{cx:.1f}' y1='{cy:.1f}' x2='{ex:.1f}' y2='{ey:.1f}' stroke='#eee' />"
+        )
         lx, ly = coord(i, _RADAR_R + 16)
         anchor = "middle" if abs(lx - cx) < 1 else ("end" if lx < cx else "start")
         labels.append(
@@ -147,10 +153,12 @@ def _radar_svg(scored: list[dict]) -> str:
         for i in range(n)
     )
     return (
-        f"<svg viewBox='0 0 {_RADAR_SIZE} {_RADAR_SIZE}' width='100%' style='max-width:360px;display:block;margin:0 auto' "
+        f"<svg viewBox='0 0 {_RADAR_SIZE} {_RADAR_SIZE}' width='100%' "
+        f"style='max-width:360px;display:block;margin:0 auto' "
         f"role='img' aria-label='Top trending skills radar'>"
         f"{rings}{''.join(spokes)}"
-        f"<polygon points='{data}' fill='rgba(37,99,235,0.15)' stroke='#2563eb' stroke-width='1.5' />"
+        f"<polygon points='{data}' fill='rgba(37,99,235,0.15)' "
+        f"stroke='#2563eb' stroke-width='1.5' />"
         f"{dots}{''.join(labels)}</svg>"
     )
 
@@ -171,7 +179,8 @@ def _trending_html(history: dict) -> str:
     selector = ""
     if len(dates) > 1:
         options = "".join(
-            f"<option value='{_esc(d)}'{' selected' if d == latest else ''}>{_esc(_date_label(d))}</option>"
+            f"<option value='{_esc(d)}'{' selected' if d == latest else ''}>"
+            f"{_esc(_date_label(d))}</option>"
             for d in dates
         )
         selector = (

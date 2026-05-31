@@ -14,7 +14,8 @@ _DIR = Path(__file__).parent
 SEEN_FILE = _DIR / "seen_skills.json"
 MEMORY_FILE = _DIR / "skill_memory.json"
 LAST_SCORED_FILE = _DIR / "last_scored.json"  # v3: this run's ranking for the dashboard
-HISTORY_FILE = _DIR / "trending_history.json"  # v3: per-day rankings, so the dashboard date-picker can replay any day
+# v3: per-day rankings, so the dashboard date-picker can replay any day
+HISTORY_FILE = _DIR / "trending_history.json"
 BRIEFS_DIR = _DIR.parent / "briefs"  # committed briefs, linked from lessons for Perplexity Q&A
 
 LAST_SCORED_KEEP = 20  # cap the persisted ranking; the dashboard only shows a top slice
