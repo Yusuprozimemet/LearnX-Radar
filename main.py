@@ -25,6 +25,7 @@ from learnx import audio_builder, curriculum, dialogue
 from radar import brief_writer, gap_scorer, privacy, skill_extractor
 from storage import (
     filter_new,
+    load_brief,
     load_memory,
     load_seen,
     previous_lesson,
@@ -172,11 +173,15 @@ def main() -> None:
 
     # Recall quiz targets the PREVIOUS lesson (real spaced retrieval). memory has no
     # entry for today yet (record_lesson runs below), so this is genuinely prior;
-    # absent on day one, so the senders' quiz button simply won't render.
+    # absent on day one, so the senders' quiz button simply won't render. We load the
+    # prior brief's text (not just its filename) so the quiz deep link embeds it as
+    # Perplexity context — a missing/empty brief leaves the button unrendered.
     prev = previous_lesson(memory)
     if prev and prev.get("brief"):
-        lesson["quiz_skill"] = prev["skill"]
-        lesson["quiz_brief"] = prev["brief"]
+        prev_brief_md = load_brief(prev["brief"])
+        if prev_brief_md:
+            lesson["quiz_skill"] = prev["skill"]
+            lesson["quiz_brief_md"] = prev_brief_md
 
     # 4. Deliver (each channel independent).
     for name, sender in (("telegram", telegram_sender), ("email", email_sender)):
