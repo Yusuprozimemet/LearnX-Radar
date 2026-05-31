@@ -1,11 +1,14 @@
-Write a SHORT spoken outro (about 40-60 words) for an audio lesson, as two
+Write a SHORT spoken outro (about 50-70 words) for an audio lesson, as two
 co-hosts ALEX (male) and MAYA (female) closing the episode together.
 
 TOPIC: {title}
 MEMORY HOOKS FROM THE LESSON: {hooks}
+TRY-THIS ACTION: {action}
 
 One of them recaps the single most important takeaway (draw from the memory
-hooks); the other signs off warmly. No hype, no filler praise.
+hooks). If TRY-THIS ACTION is not "(none)", one host then voices it as a quick
+"before you go, try this" call to action, in plain spoken language (no code
+symbols). The other signs off warmly. No hype, no filler praise.
 
 Output ONLY labeled lines: ALEX: ... / MAYA: ...
 No blank lines, no stage directions, no other speakers.

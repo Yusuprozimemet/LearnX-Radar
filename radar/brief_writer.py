@@ -8,6 +8,7 @@ v2 hook: when skill_memory holds prior lessons, the prompt gains a
 "connects to what you learned" line. For v1 (empty memory) that stays blank.
 """
 import logging
+import re
 
 from learnx.llm import chat
 from radar.prompt_loader import load_prompt
@@ -16,6 +17,18 @@ log = logging.getLogger(__name__)
 
 
 _RECENT_LESSONS = 5  # how many prior lessons to offer as bridge candidates
+
+# Pull the "Do this in 5 minutes" section body so the audio outro can voice it.
+_ACTION_RE = re.compile(
+    r"^#+\s*Do this in 5 minutes\s*$(.*?)(?=^#+\s|\Z)",
+    re.IGNORECASE | re.MULTILINE | re.DOTALL,
+)
+
+
+def action_step(brief_md: str) -> str:
+    """Return the body text under the brief's 'Do this in 5 minutes' heading, or ''."""
+    match = _ACTION_RE.search(brief_md or "")
+    return match.group(1).strip() if match else ""
 
 
 def _prior_context(memory: dict, current_skill: str) -> str:

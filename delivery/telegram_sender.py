@@ -33,16 +33,26 @@ def _caption(lesson: dict) -> str:
 
 
 def _reply_markup(lesson: dict) -> dict:
-    """Inline keyboard with a Perplexity follow-up button, when a brief exists."""
+    """Inline keyboard: a follow-up button (today's brief) and, when a previous
+    lesson exists, a recall-quiz button (the prior lesson's brief)."""
+    rows = []
     brief_file = lesson.get("brief_file")
     skill = lesson.get("skill")
-    if not brief_file or not skill:
+    if brief_file and skill:
+        rows.append([{
+            "text": "🔎 Ask follow-ups on Perplexity",
+            "url": followup.perplexity_url(skill, brief_file),
+        }])
+    quiz_brief = lesson.get("quiz_brief")
+    quiz_skill = lesson.get("quiz_skill")
+    if quiz_brief and quiz_skill:
+        rows.append([{
+            "text": "🧠 Quiz me on this",
+            "url": followup.quiz_url(quiz_skill, quiz_brief),
+        }])
+    if not rows:
         return {}
-    button = {
-        "text": "🔎 Ask follow-ups on Perplexity",
-        "url": followup.perplexity_url(skill, brief_file),
-    }
-    return {"reply_markup": json.dumps({"inline_keyboard": [[button]]})}
+    return {"reply_markup": json.dumps({"inline_keyboard": rows})}
 
 
 def send(lesson: dict) -> None:

@@ -21,9 +21,13 @@ _LINE_RE = re.compile(r"^(ALEX|MAYA)\s*[:\-]\s*(.+)", re.IGNORECASE)
 
 
 def generate(
-    units: list[TeachingUnit], title: str, hook: str = "", chat_fn=chat
+    units: list[TeachingUnit], title: str, hook: str = "", action: str = "", chat_fn=chat
 ) -> list[DialogueLine]:
-    """Return ordered dialogue lines: intro (0) -> units (1..N) -> outro (-1)."""
+    """Return ordered dialogue lines: intro (0) -> units (1..N) -> outro (-1).
+
+    `action` (v4) is the brief's "Do this in 5 minutes" step; when given, the outro
+    closes by voicing it as a quick call to action.
+    """
     if not units:
         return []
 
@@ -31,7 +35,7 @@ def generate(
     # Each task is (unit_number, prompt). Run them all concurrently.
     tasks: list[tuple[int, str]] = [(0, _intro_prompt(title, hook or units[0].concept))]
     tasks += [(u.unit, _unit_prompt(u, title)) for u in units]
-    tasks.append((-1, _outro_prompt(title, hooks)))
+    tasks.append((-1, _outro_prompt(title, hooks, action)))
 
     def run(task: tuple[int, str]) -> tuple[int, str]:
         unit_no, prompt = task
@@ -80,5 +84,7 @@ def _intro_prompt(title: str, hook: str) -> str:
     return load_prompt("intro.txt").format(title=title, hook=hook)
 
 
-def _outro_prompt(title: str, hooks: str) -> str:
-    return load_prompt("outro.txt").format(title=title, hooks=hooks or "(none)")
+def _outro_prompt(title: str, hooks: str, action: str = "") -> str:
+    return load_prompt("outro.txt").format(
+        title=title, hooks=hooks or "(none)", action=action or "(none)"
+    )

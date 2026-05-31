@@ -45,6 +45,18 @@ BRIEFS_RAW_BASE = (
     "https://raw.githubusercontent.com/Yusuprozimemet/LearnX-Radar/main/briefs"
 )
 
+# --- Podcast feed (v4) ---
+# Lesson MP3s are hosted as assets on a single rolling GitHub Release (tag below),
+# uploaded by the radar workflow. The feed's <enclosure> points at this base +
+# the lesson's audio filename. Releases keep audio out of git history and need no
+# credential beyond the workflow's GITHUB_TOKEN. The public Pages site (where the
+# feed and dashboard are published) is SITE_URL.
+RELEASES_TAG = "lessons"
+RELEASES_AUDIO_BASE = (
+    f"https://github.com/Yusuprozimemet/LearnX-Radar/releases/download/{RELEASES_TAG}"
+)
+SITE_URL = "https://yusuprozimemet.github.io/LearnX-Radar/"
+
 # --- Data sources (all free, no paid APIs) ---
 # Languages/topics to watch on GitHub Trending — proxy for emerging tools.
 TRENDING_LANGUAGES = ["python", "typescript", "rust", "go"]
@@ -93,6 +105,20 @@ TABLE_STAKES_SKILLS = {
     "docker", "kubernetes", "react", "node.js", "nodejs", "aws",
 }
 TABLE_STAKES_PENALTY = 0.1  # 0 = drop entirely; 1 = no penalty
+
+# --- Personalization: the profile the radar scores against (v4) ---
+# Tunable here like SOURCE_WEIGHTS / TABLE_STAKES_SKILLS — gap_scorer reads them as
+# extra score multipliers. Leave both collections empty to disable personalization
+# (the pipeline then behaves exactly as v3: global scoring, identical for everyone).
+#
+# KNOWN_SKILLS: skills you already have. Sunk like table-stakes so the radar stops
+# offering them. Matched exactly, normalized (lowercased + stripped). EDIT THESE.
+KNOWN_SKILLS = {"python", "fastapi", "docker"}
+# LEARNING_GOALS: topics on your learning path. A skill matching any goal (substring,
+# either direction, normalized) is boosted so your goals surface sooner. EDIT THESE.
+LEARNING_GOALS = ["distributed systems", "rust", "llm agents"]
+KNOWN_PENALTY = 0.1   # multiplier for a KNOWN_SKILLS hit (0 = drop; 1 = no effect)
+GOAL_BOOST = 1.5      # multiplier when a skill matches a LEARNING_GOALS entry
 
 # --- Lesson generation ---
 LESSON_DURATION_MIN = 5  # target audio length for a daily lesson
