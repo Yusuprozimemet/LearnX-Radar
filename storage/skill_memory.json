@@ -63,6 +63,22 @@
       ],
       "last_taught": "2026-05-31",
       "summary": "Mentioned in job post"
+    },
+    "Agentic coding": {
+      "times_taught": 1,
+      "first_taught": "2026-05-31",
+      "lessons": [
+        {
+          "date": "2026-05-31",
+          "title": "Agentic coding",
+          "difficulty": "beginner",
+          "summary": "Agent-native platform, agent cost governance",
+          "audio": "lesson-20260531.mp3",
+          "brief": "20260531-agentic-coding.md"
+        }
+      ],
+      "last_taught": "2026-05-31",
+      "summary": "Agent-native platform, agent cost governance"
     }
   },
   "so_counts": {

@@ -1,162 +1,171 @@
 {
   "2026-05-31": {
-    "today_skill": "Kafka consumer groups",
+    "today_skill": "Agentic coding",
     "scored": [
-      {
-        "skill": "Kafka consumer groups",
-        "sources": [
-          "HN Hiring"
-        ],
-        "evidence": "Mentioned in job post",
-        "frequency": 1,
-        "demand_weight": 2.0,
-        "novelty": 1.0,
-        "table_stakes": false,
-        "suggested_difficulty": "beginner",
-        "score": 2.0
-      },
       {
         "skill": "Agentic coding",
         "sources": [
           "GitHub Trending",
           "dev.to"
         ],
-        "evidence": "Emerging concept",
+        "evidence": "Agent-native platform, agent cost governance",
         "frequency": 2,
         "demand_weight": 1.5,
         "novelty": 1.0,
         "table_stakes": false,
+        "known": false,
+        "goal_match": false,
         "suggested_difficulty": "beginner",
         "score": 1.5
       },
       {
-        "skill": "Claude Code",
+        "skill": "Autonomous agents",
         "sources": [
           "GitHub Trending",
           "dev.to"
         ],
-        "evidence": "Emerging concept",
+        "evidence": "Agent-native platform, autonomous agents",
         "frequency": 2,
         "demand_weight": 1.5,
         "novelty": 1.0,
         "table_stakes": false,
+        "known": false,
+        "goal_match": false,
         "suggested_difficulty": "beginner",
         "score": 1.5
       },
       {
-        "skill": "LangChain",
+        "skill": "Diffusion model GUI",
         "sources": [
-          "Stack Overflow"
+          "GitHub Trending"
         ],
-        "evidence": "Rising questions",
+        "evidence": "ComfyUI for diffusion models",
         "frequency": 1,
-        "demand_weight": 1.5,
+        "demand_weight": 1.0,
         "novelty": 1.0,
         "table_stakes": false,
+        "known": false,
+        "goal_match": false,
         "suggested_difficulty": "beginner",
-        "score": 1.5
+        "score": 1.0
       },
       {
-        "skill": "Anthropic Claude 4 API",
+        "skill": "Modular game engine",
+        "sources": [
+          "GitHub Trending"
+        ],
+        "evidence": "Bevy game engine built in Rust",
+        "frequency": 1,
+        "demand_weight": 1.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 1.0
+      },
+      {
+        "skill": "OpenTelemetry Collector",
+        "sources": [
+          "GitHub Trending"
+        ],
+        "evidence": "Grafana's OpenTelemetry Collector distribution",
+        "frequency": 1,
+        "demand_weight": 1.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 1.0
+      },
+      {
+        "skill": "Rust async/await",
+        "sources": [
+          "GitHub Trending"
+        ],
+        "evidence": "Tokio runtime for Rust",
+        "frequency": 1,
+        "demand_weight": 1.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 1.0
+      },
+      {
+        "skill": "Terraform",
+        "sources": [
+          "GitHub Trending"
+        ],
+        "evidence": "Infrastructure as code with Terraform",
+        "frequency": 1,
+        "demand_weight": 1.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 1.0
+      },
+      {
+        "skill": "AI agent cost governance",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Used in project",
+        "evidence": "Agent-gov platform for cost governance",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
         "table_stakes": false,
-        "suggested_difficulty": "beginner",
-        "score": 0.5
-      },
-      {
-        "skill": "Axum",
-        "sources": [
-          "dev.to"
-        ],
-        "evidence": "Used in project",
-        "frequency": 1,
-        "demand_weight": 0.5,
-        "novelty": 1.0,
-        "table_stakes": false,
-        "suggested_difficulty": "beginner",
-        "score": 0.5
-      },
-      {
-        "skill": "Cloudflare Workers",
-        "sources": [
-          "dev.to"
-        ],
-        "evidence": "Used in project",
-        "frequency": 1,
-        "demand_weight": 0.5,
-        "novelty": 1.0,
-        "table_stakes": false,
-        "suggested_difficulty": "beginner",
-        "score": 0.5
-      },
-      {
-        "skill": "Docker Compose",
-        "sources": [
-          "dev.to"
-        ],
-        "evidence": "Best practice",
-        "frequency": 1,
-        "demand_weight": 0.5,
-        "novelty": 1.0,
-        "table_stakes": false,
-        "suggested_difficulty": "beginner",
-        "score": 0.5
-      },
-      {
-        "skill": "Git Branching",
-        "sources": [
-          "dev.to"
-        ],
-        "evidence": "Best practice",
-        "frequency": 1,
-        "demand_weight": 0.5,
-        "novelty": 1.0,
-        "table_stakes": false,
-        "suggested_difficulty": "beginner",
-        "score": 0.5
-      },
-      {
-        "skill": "KV",
-        "sources": [
-          "dev.to"
-        ],
-        "evidence": "Used in project",
-        "frequency": 1,
-        "demand_weight": 0.5,
-        "novelty": 1.0,
-        "table_stakes": false,
-        "suggested_difficulty": "beginner",
-        "score": 0.5
-      },
-      {
-        "skill": "Next.js SSG",
-        "sources": [
-          "dev.to"
-        ],
-        "evidence": "Used in project",
-        "frequency": 1,
-        "demand_weight": 0.5,
-        "novelty": 1.0,
-        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
         "suggested_difficulty": "beginner",
         "score": 0.5
       },
       {
-        "skill": "OpenAI GPT-4.1 API",
+        "skill": "Go APIs",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Used in project",
+        "evidence": "Go APIs used in stack",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
         "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "LLM APIs",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Free LLM APIs for use without credit card",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Power Retention mechanism",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "New architecture for AI",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
         "suggested_difficulty": "beginner",
         "score": 0.5
       },
@@ -165,76 +174,88 @@
         "sources": [
           "dev.to"
         ],
-        "evidence": "Best practice",
+        "evidence": "Python Decorators explained",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
         "table_stakes": false,
+        "known": false,
+        "goal_match": false,
         "suggested_difficulty": "beginner",
         "score": 0.5
       },
       {
-        "skill": "Rust Spans",
+        "skill": "Redis in Rust",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Best practice",
+        "evidence": "Caching strategies with Redis",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
         "table_stakes": false,
+        "known": false,
+        "goal_match": false,
         "suggested_difficulty": "beginner",
         "score": 0.5
       },
       {
-        "skill": "Rust async/await",
+        "skill": "Rust template engine",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Used in project",
+        "evidence": "Rust template engine chosen",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
         "table_stakes": false,
+        "known": false,
+        "goal_match": false,
         "suggested_difficulty": "beginner",
         "score": 0.5
       },
       {
-        "skill": "SQL Lexer",
+        "skill": "State Space Models",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Used in project",
+        "evidence": "Challenging Transformers for long-context inference",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
         "table_stakes": false,
+        "known": false,
+        "goal_match": false,
         "suggested_difficulty": "beginner",
         "score": 0.5
       },
       {
-        "skill": "Stripe",
+        "skill": "Stream Processing Engine",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Used in project",
+        "evidence": "Building a Stream Processing Engine from scratch",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
         "table_stakes": false,
+        "known": false,
+        "goal_match": false,
         "suggested_difficulty": "beginner",
         "score": 0.5
       },
       {
-        "skill": "Tauri v2",
+        "skill": "Transformer architecture",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Used in project",
+        "evidence": "Transformer's limitations and new architecture",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
         "table_stakes": false,
+        "known": false,
+        "goal_match": false,
         "suggested_difficulty": "beginner",
         "score": 0.5
       },
@@ -243,26 +264,45 @@
         "sources": [
           "dev.to"
         ],
-        "evidence": "Used in project",
+        "evidence": "Embedding-based semantic search",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
         "table_stakes": false,
+        "known": false,
+        "goal_match": false,
         "suggested_difficulty": "beginner",
         "score": 0.5
       },
       {
-        "skill": "libvips",
+        "skill": "Windowing in stream processing",
         "sources": [
           "dev.to"
         ],
-        "evidence": "Used in project",
+        "evidence": "How windowing actually works",
         "frequency": 1,
         "demand_weight": 0.5,
         "novelty": 1.0,
         "table_stakes": false,
+        "known": false,
+        "goal_match": false,
         "suggested_difficulty": "beginner",
         "score": 0.5
+      },
+      {
+        "skill": "Kafka consumer groups",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Kafka broker misconfiguration",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 0.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "intermediate",
+        "score": 0.0
       }
     ]
   }
