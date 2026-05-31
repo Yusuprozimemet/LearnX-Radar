@@ -38,11 +38,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Build dashboard from committed state
+      - name: Build dashboard + podcast feed from committed state
         run: |
           python -m dashboard
           mkdir -p _site
           cp dashboard/index.html _site/index.html
+          cp dashboard/podcast.xml _site/podcast.xml
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

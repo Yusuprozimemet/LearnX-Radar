@@ -106,7 +106,7 @@ LinkedIn, Indeed, and Glassdoor are excluded — APIs are locked or ToS-restrict
 
 ---
 
-## Three Build Phases
+## Build Phases
 
 ### v1 — Daily Tech Lesson (foundation)
 
@@ -156,6 +156,57 @@ and what gaps remain — in one place.
   at build time
 
 **Output:** a personal skill radar you can open in a browser and share as a portfolio signal.
+
+---
+
+### v4 — Personal tutor (relevance, retention, reach)
+
+**Goal:** turn the global, one-way, unverified radar into a tutor that adapts to
+*you*, helps you *retain* what it teaches, and *reaches* you wherever you listen.
+The radar is already a strong broadcasting pipeline; v4 makes it personal without
+breaking the free-tier, one-shot-cron, no-inbound-server discipline.
+
+Four slices, each a self-contained spec (`specs/v4/`):
+
+1. **Personalization (`day10-personalization.md`)** — scoring gains a sense of
+   *me*. New `config.py` constants `KNOWN_SKILLS`, `LEARNING_GOALS` (+ a
+   `GOAL_BOOST`) feed `gap_scorer.score()` as extra multipliers: known skills sink
+   like table-stakes (you already have them), goal-relevant skills rise. Today the
+   only "what does the user know" signal is the *global* `TABLE_STAKES_SKILLS`,
+   identical for everyone — this generalizes it to a personal profile. Lives in
+   `config.py` alongside `SOURCE_WEIGHTS`, so no new file or dependency.
+
+2. **Actionable briefs (`day11-actionable-briefs.md`)** — the brief gains a
+   **"Do this in 5 minutes"** section: one concrete exercise, a code snippet, one
+   repo/doc to skim. Fixes the all-prose, nothing-to-do briefs the current prompt
+   produces. A `radar/prompts/brief.txt` change plus the dialogue/audio carrying it
+   through to the outro.
+
+3. **Recall quiz via Perplexity (`day11` companion)** — a *second*, additive
+   Perplexity deep link `quiz_url()` that asks Perplexity to run a short
+   active-recall quiz (open-ended, one question at a time, graded against the
+   brief). The existing "Ask follow-ups" link is **unchanged**. The quiz targets the
+   *previous* lesson's brief (genuine spaced retrieval); it no-ops on day one. Zero
+   new infrastructure — it is just another URL button. The auto-persisting
+   `getUpdates` mastery loop is noted as a future upgrade, explicitly out of scope.
+
+4. **Podcast feed (`day12-podcast-feed.md`)** — emit a static `podcast.xml` (served
+   by the existing Pages workflow) whose `<enclosure>`s point at the daily MP3
+   hosted as a **GitHub Release asset**. Releases keep audio out of git history
+   (no repo bloat), give a stable URL, and need no new credentials (the workflow's
+   `GITHUB_TOKEN` suffices) — unlike Pages (1 GB cap) or committing into the repo
+   (unbounded history growth) or GCS (needs a billing account + key). The daily
+   lesson lands in a real podcast app for the commute.
+
+**Output:** a daily lesson that is about *your* trajectory, ends with something to
+*do*, lets you *test* yourself, and arrives in your podcast app — not just a feed
+that talks at you.
+
+> **What v4 deliberately does NOT add:** a skill knowledge-graph, multi-source RAG,
+> RLHF, or a continuous/webhook bot. Time-based spaced repetition plus the profile
+> already give adaptive scheduling; the rest is complexity without a problem to
+> solve yet. The auto-grading inbound loop (daily `getUpdates` poll) is the one
+> future piece worth designing carefully, and is held back to its own later spec.
 
 ---
 
@@ -217,3 +268,5 @@ linked to Perplexity. One choke point keeps PII out of every downstream sink.
   other and increase in depth.
 - v3: A public GitHub Pages dashboard shows a personal skill coverage map against
   what the developer job market is currently demanding.
+- v4: Lessons skip what you already know, lean toward your stated goals, end with a
+  5-minute action, offer a one-tap recall quiz, and arrive in your podcast app.

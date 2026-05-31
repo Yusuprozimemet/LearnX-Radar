@@ -63,14 +63,40 @@ def _table_stakes_penalty(skill: str) -> float:
     return 1.0
 
 
-def score(mentions: list[dict], memory: dict) -> list[dict]:
-    """Return mentions enriched with scoring fields, ranked high to low."""
+def _known_penalty(skill: str, known: set[str]) -> float:
+    """Sink skills the user already has (the personal analogue of table-stakes)."""
+    if skill.strip().lower() in {k.strip().lower() for k in known}:
+        return config.KNOWN_PENALTY
+    return 1.0
+
+
+def _goal_match(skill: str, goals: list[str]) -> bool:
+    """True if the skill relates to any learning goal (substring, either way)."""
+    s = skill.strip().lower()
+    return any(
+        (g := goal.strip().lower()) and (g in s or s in g)
+        for goal in goals
+    )
+
+
+def score(mentions: list[dict], memory: dict, profile: dict | None = None) -> list[dict]:
+    """Return mentions enriched with scoring fields, ranked high to low.
+
+    `profile` (v4) personalizes the ranking: {"known": set, "goals": list}. Known
+    skills sink (you already have them); goal-relevant skills rise. When None, both
+    factors are 1.0 and the result is identical to the global v3 scoring.
+    """
+    known = profile.get("known", set()) if profile else set()
+    goals = profile.get("goals", []) if profile else []
     scored: list[dict] = []
     for m in mentions:
         sources = m.get("sources", [])
         demand_weight = _demand_weight(sources)
         novelty, difficulty = _novelty(m["skill"], memory)
         penalty = _table_stakes_penalty(m["skill"])
+        known_pen = _known_penalty(m["skill"], known)
+        goal_hit = _goal_match(m["skill"], goals)
+        boost = config.GOAL_BOOST if goal_hit else 1.0
         scored.append(
             {
                 **m,
@@ -78,8 +104,10 @@ def score(mentions: list[dict], memory: dict) -> list[dict]:
                 "demand_weight": demand_weight,
                 "novelty": novelty,
                 "table_stakes": penalty < 1.0,
+                "known": known_pen < 1.0,
+                "goal_match": goal_hit,
                 "suggested_difficulty": difficulty,
-                "score": demand_weight * novelty * penalty,
+                "score": demand_weight * novelty * penalty * known_pen * boost,
             }
         )
     # Deterministic order: score desc, then frequency desc, then skill name asc.

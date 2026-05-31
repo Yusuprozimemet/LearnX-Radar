@@ -96,21 +96,35 @@ _WRAP_STYLE = (
 )
 
 
+def _button(url: str, label: str, bg: str) -> str:
+    style = (
+        f"background:{bg};color:#fff;padding:10px 18px;border-radius:6px;"
+        "text-decoration:none;display:inline-block;margin-right:8px"
+    )
+    return f'<a href="{url}" style="{style}">{label}</a>'
+
+
 def _followup_button(lesson: dict) -> str:
-    """An 'Ask on Perplexity' button linking to a thread seeded with the brief."""
+    """A follow-up button (today's brief) and, when a previous lesson exists, a
+    recall-quiz button (the prior lesson's brief)."""
+    buttons = []
     brief_file = lesson.get("brief_file")
     skill = lesson.get("skill")
-    if not brief_file or not skill:
+    if brief_file and skill:
+        buttons.append(_button(
+            followup.perplexity_url(skill, brief_file),
+            "🔎 Ask follow-ups on Perplexity", "#1f6feb",
+        ))
+    quiz_brief = lesson.get("quiz_brief")
+    quiz_skill = lesson.get("quiz_skill")
+    if quiz_brief and quiz_skill:
+        buttons.append(_button(
+            followup.quiz_url(quiz_skill, quiz_brief),
+            "🧠 Quiz me on this", "#8250df",
+        ))
+    if not buttons:
         return ""
-    url = followup.perplexity_url(skill, brief_file)
-    style = (
-        "background:#1f6feb;color:#fff;padding:10px 18px;"
-        "border-radius:6px;text-decoration:none;display:inline-block"
-    )
-    return (
-        f'<p style="margin:16px 0">'
-        f'<a href="{url}" style="{style}">🔎 Ask follow-ups on Perplexity</a></p>'
-    )
+    return f'<p style="margin:16px 0">{"".join(buttons)}</p>'
 
 
 def _render_html(lesson: dict) -> str:

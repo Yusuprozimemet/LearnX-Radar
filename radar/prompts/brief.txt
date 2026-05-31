@@ -6,7 +6,7 @@ SKILL: {skill}
 WHY IT SURFACED: {evidence}
 SEEN IN: {sources}
 {prior_context}
-Write the brief in Markdown, roughly 500-700 words, with EXACTLY these sections:
+Write the brief in Markdown, roughly 550-750 words, with EXACTLY these sections:
 
 # {skill}
 
@@ -24,5 +24,12 @@ make it genuinely instructive, not a summary.
 
 ## Where it fits
 How this connects to the broader stack and when a developer would reach for it.
+
+## Do this in 5 minutes
+ONE concrete, runnable exercise the reader can do right now to get hands-on — a
+command to run, a tiny code snippet to type and execute, or one specific repo or
+doc page to open and skim. Be specific and immediately actionable; include a short
+code block when the skill is code-shaped. No "explore the ecosystem" filler, no
+multi-step project — just one small thing they can finish in five minutes.
 
 Write only the Markdown brief. No preamble, no closing remarks.

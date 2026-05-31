@@ -32,3 +32,21 @@ def test_record_lesson_stores_audio_and_summary():
     assert entry["times_taught"] == 1
     assert entry["summary"] == "streaming"
     assert entry["lessons"][-1]["audio"] == "lesson-20260530.mp3"
+
+
+def test_previous_lesson_none_when_empty():
+    assert state.previous_lesson({"version": 1, "skills": {}}) is None
+
+
+def test_previous_lesson_is_most_recent_across_skills():
+    memory = {"skills": {
+        "Kafka": {"lessons": [{"date": "2026-05-20", "brief": "k.md"}]},
+        "Rust": {"lessons": [
+            {"date": "2026-05-22", "brief": "r1.md"},
+            {"date": "2026-05-29", "brief": "r2.md"},  # newest overall
+        ]},
+    }}
+    prev = state.previous_lesson(memory)
+    assert prev["skill"] == "Rust"
+    assert prev["brief"] == "r2.md"
+    assert prev["date"] == "2026-05-29"
