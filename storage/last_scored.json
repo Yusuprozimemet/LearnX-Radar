@@ -1,154 +1,13 @@
 {
   "updated": "2026-05-31",
-  "today_skill": "AI agents",
+  "today_skill": "AI query routing",
   "scored": [
     {
-      "skill": "AI agents",
-      "sources": [
-        "dev.to",
-        "HN Hiring"
-      ],
-      "evidence": "New trend",
-      "frequency": 2,
-      "demand_weight": 2.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "suggested_difficulty": "beginner",
-      "score": 2.5
-    },
-    {
-      "skill": "Rust programming",
-      "sources": [
-        "dev.to",
-        "Stack Overflow"
-      ],
-      "evidence": "Rising questions",
-      "frequency": 2,
-      "demand_weight": 2.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "suggested_difficulty": "beginner",
-      "score": 2.0
-    },
-    {
-      "skill": "AWS Lambda cold starts",
-      "sources": [
-        "HN Hiring"
-      ],
-      "evidence": "Job requirement",
-      "frequency": 1,
-      "demand_weight": 2.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "suggested_difficulty": "beginner",
-      "score": 2.0
-    },
-    {
-      "skill": "Kafka consumer groups",
-      "sources": [
-        "HN Hiring"
-      ],
-      "evidence": "Job requirement",
-      "frequency": 1,
-      "demand_weight": 2.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "suggested_difficulty": "beginner",
-      "score": 2.0
-    },
-    {
-      "skill": "Agentic coding",
-      "sources": [
-        "GitHub Trending",
-        "dev.to"
-      ],
-      "evidence": "New tooling",
-      "frequency": 2,
-      "demand_weight": 1.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "suggested_difficulty": "beginner",
-      "score": 1.5
-    },
-    {
-      "skill": "Claude Code",
-      "sources": [
-        "GitHub Trending",
-        "dev.to"
-      ],
-      "evidence": "New tooling",
-      "frequency": 2,
-      "demand_weight": 1.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "suggested_difficulty": "beginner",
-      "score": 1.5
-    },
-    {
-      "skill": "React Server Components",
-      "sources": [
-        "GitHub Trending",
-        "dev.to"
-      ],
-      "evidence": "New feature",
-      "frequency": 2,
-      "demand_weight": 1.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "suggested_difficulty": "beginner",
-      "score": 1.5
-    },
-    {
-      "skill": "Rust async/await",
-      "sources": [
-        "GitHub Trending",
-        "dev.to"
-      ],
-      "evidence": "New library",
-      "frequency": 2,
-      "demand_weight": 1.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "suggested_difficulty": "beginner",
-      "score": 1.5
-    },
-    {
-      "skill": "Langchain",
-      "sources": [
-        "Stack Overflow"
-      ],
-      "evidence": "Rising questions",
-      "frequency": 1,
-      "demand_weight": 1.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "suggested_difficulty": "beginner",
-      "score": 1.5
-    },
-    {
-      "skill": "Caching strategies",
+      "skill": "AI query routing",
       "sources": [
         "dev.to"
       ],
-      "evidence": "New technique",
+      "evidence": "Used for routing AI queries",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -159,11 +18,11 @@
       "score": 0.5
     },
     {
-      "skill": "Langchain integration",
+      "skill": "Agentic Workflows",
       "sources": [
         "dev.to"
       ],
-      "evidence": "New technique",
+      "evidence": "Used in AI agents",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -174,11 +33,11 @@
       "score": 0.5
     },
     {
-      "skill": "Postgres",
+      "skill": "BizNode workflow chains",
       "sources": [
         "dev.to"
       ],
-      "evidence": "New tutorial",
+      "evidence": "Used for business workflows",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -189,11 +48,11 @@
       "score": 0.5
     },
     {
-      "skill": "Python asyncio",
+      "skill": "Cat plots",
       "sources": [
         "dev.to"
       ],
-      "evidence": "New tutorial",
+      "evidence": "Used for data visualization",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -204,11 +63,11 @@
       "score": 0.5
     },
     {
-      "skill": "Redis",
+      "skill": "Claude Code plugin",
       "sources": [
         "dev.to"
       ],
-      "evidence": "New tutorial",
+      "evidence": "Used for project automation",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -219,11 +78,11 @@
       "score": 0.5
     },
     {
-      "skill": "Rust Tokio",
+      "skill": "Client-side storage",
       "sources": [
         "dev.to"
       ],
-      "evidence": "New library",
+      "evidence": "Used for secure tracking",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -234,11 +93,11 @@
       "score": 0.5
     },
     {
-      "skill": "SQL Lexer",
+      "skill": "Concurrency design",
       "sources": [
         "dev.to"
       ],
-      "evidence": "New technique",
+      "evidence": "Used for capability design",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -249,11 +108,11 @@
       "score": 0.5
     },
     {
-      "skill": "Vector embeddings",
+      "skill": "Emoji filtering",
       "sources": [
         "dev.to"
       ],
-      "evidence": "New technique",
+      "evidence": "Used for chat filtering",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -264,11 +123,11 @@
       "score": 0.5
     },
     {
-      "skill": "Veltrix",
+      "skill": "Gacha simulator",
       "sources": [
         "dev.to"
       ],
-      "evidence": "New technique",
+      "evidence": "Used for gaming",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -279,35 +138,139 @@
       "score": 0.5
     },
     {
-      "skill": "DuckDB",
+      "skill": "Google Gen AI SDK",
       "sources": [
-        "dev.to",
-        "Stack Overflow"
+        "dev.to"
       ],
-      "evidence": "Rising questions",
-      "frequency": 2,
-      "demand_weight": 2.0,
-      "novelty": 0.14285714285714285,
+      "evidence": "Used for building AI agents",
+      "frequency": 1,
+      "demand_weight": 0.5,
+      "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "suggested_difficulty": "intermediate",
-      "score": 0.2857142857142857
+      "suggested_difficulty": "beginner",
+      "score": 0.5
     },
     {
-      "skill": "Kubernetes",
+      "skill": "HEIC to JPG conversion",
       "sources": [
-        "Stack Overflow"
+        "dev.to"
       ],
-      "evidence": "Rising questions",
+      "evidence": "Used for client-side conversion",
       "frequency": 1,
-      "demand_weight": 1.5,
+      "demand_weight": 0.5,
       "novelty": 1.0,
-      "table_stakes": true,
+      "table_stakes": false,
       "known": false,
       "goal_match": false,
       "suggested_difficulty": "beginner",
-      "score": 0.15000000000000002
+      "score": 0.5
+    },
+    {
+      "skill": "Hosted Mock APIs",
+      "sources": [
+        "dev.to"
+      ],
+      "evidence": "Used for local development",
+      "frequency": 1,
+      "demand_weight": 0.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "suggested_difficulty": "beginner",
+      "score": 0.5
+    },
+    {
+      "skill": "LLM temperature adjustment",
+      "sources": [
+        "dev.to"
+      ],
+      "evidence": "Used for fine-tuning LLMs",
+      "frequency": 1,
+      "demand_weight": 0.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "suggested_difficulty": "beginner",
+      "score": 0.5
+    },
+    {
+      "skill": "Local storage",
+      "sources": [
+        "dev.to"
+      ],
+      "evidence": "Used for client-side tracking",
+      "frequency": 1,
+      "demand_weight": 0.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "suggested_difficulty": "beginner",
+      "score": 0.5
+    },
+    {
+      "skill": "MSW",
+      "sources": [
+        "dev.to"
+      ],
+      "evidence": "Used for mocking APIs",
+      "frequency": 1,
+      "demand_weight": 0.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "suggested_difficulty": "beginner",
+      "score": 0.5
+    },
+    {
+      "skill": "Nvidia tech",
+      "sources": [
+        "dev.to"
+      ],
+      "evidence": "Used for heavier AI queries",
+      "frequency": 1,
+      "demand_weight": 0.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "suggested_difficulty": "beginner",
+      "score": 0.5
+    },
+    {
+      "skill": "Pity tracker",
+      "sources": [
+        "dev.to"
+      ],
+      "evidence": "Used for gaming",
+      "frequency": 1,
+      "demand_weight": 0.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "suggested_difficulty": "beginner",
+      "score": 0.5
+    },
+    {
+      "skill": "SEO optimization",
+      "sources": [
+        "dev.to"
+      ],
+      "evidence": "Used for clean SEO",
+      "frequency": 1,
+      "demand_weight": 0.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "suggested_difficulty": "beginner",
+      "score": 0.5
     }
   ]
 }

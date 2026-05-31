@@ -47,10 +47,26 @@
       ],
       "last_taught": "2026-05-31",
       "summary": "New trend"
+    },
+    "AI query routing": {
+      "times_taught": 1,
+      "first_taught": "2026-05-31",
+      "lessons": [
+        {
+          "date": "2026-05-31",
+          "title": "AI query routing",
+          "difficulty": "beginner",
+          "summary": "Used for routing AI queries",
+          "audio": "lesson-20260531-ai-query-routing.mp3",
+          "brief": "20260531-ai-query-routing.md"
+        }
+      ],
+      "last_taught": "2026-05-31",
+      "summary": "Used for routing AI queries"
     }
   },
   "so_counts": {
-    "python": 2205901,
+    "python": 2205900,
     "rust": 43950,
     "kubernetes": 59812,
     "langchain": 1983,
