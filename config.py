@@ -9,9 +9,15 @@ NVIDIA_MODEL below is the only edit needed (see plan/plan.md).
 """
 import os
 
-from dotenv import load_dotenv
+# python-dotenv is optional: it only loads .env for local runs. The dashboard /
+# podcast-feed build (`python -m dashboard`) imports this module for its constants
+# in a dependency-free CI job where dotenv isn't installed — don't hard-fail there.
+try:
+    from dotenv import load_dotenv
 
-load_dotenv()  # no-op in CI where .env doesn't exist
+    load_dotenv()  # loads .env locally; no-op in CI where .env doesn't exist
+except ModuleNotFoundError:
+    pass
 
 # --- LLM: NVIDIA NIM (OpenAI-compatible, free tier, 40 RPM) ---
 NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY")
