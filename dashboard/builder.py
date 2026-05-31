@@ -22,8 +22,10 @@ _TRENDING_TOP = 12
 _GAP_TOP = 10
 _ARCHIVE_RECENT = 5  # lessons shown before the rest collapse into a dropdown
 _RADAR_AXES = 6      # how many top skills get an axis on the radar
-_RADAR_SIZE = 340    # SVG viewBox (square)
-_RADAR_R = 120       # outer-ring radius within the viewBox
+_RADAR_W = 480       # SVG viewBox width — wider than tall so side labels fit
+_RADAR_H = 320       # SVG viewBox height
+_RADAR_R = 110       # outer-ring radius within the viewBox
+_RADAR_LABEL_MAX = 20  # chars before a label is truncated (full text on hover)
 
 
 def build(
@@ -114,7 +116,7 @@ def _radar_svg(scored: list[dict]) -> str:
     if len(pts) < 3:
         return "<p class='muted'>Need at least 3 scored skills to draw the radar.</p>"
     n = len(pts)
-    cx = cy = _RADAR_SIZE / 2
+    cx, cy = _RADAR_W / 2, _RADAR_H / 2
     top = max(s.get("score", 0.0) for s in pts) or 1.0
 
     def coord(i: int, radius: float) -> tuple[float, float]:
@@ -138,11 +140,14 @@ def _radar_svg(scored: list[dict]) -> str:
         spokes.append(
             f"<line x1='{cx:.1f}' y1='{cy:.1f}' x2='{ex:.1f}' y2='{ey:.1f}' stroke='#eee' />"
         )
-        lx, ly = coord(i, _RADAR_R + 16)
+        lx, ly = coord(i, _RADAR_R + 14)
         anchor = "middle" if abs(lx - cx) < 1 else ("end" if lx < cx else "start")
+        full = str(s["skill"])
+        shown = full if len(full) <= _RADAR_LABEL_MAX else full[: _RADAR_LABEL_MAX - 1] + "…"
+        title = f"<title>{_esc(full)}</title>" if shown != full else ""
         labels.append(
             f"<text x='{lx:.1f}' y='{ly:.1f}' text-anchor='{anchor}' "
-            f"dominant-baseline='middle' font-size='11' fill='#555'>{_esc(s['skill'])}</text>"
+            f"dominant-baseline='middle' font-size='11' fill='#555'>{title}{_esc(shown)}</text>"
         )
     data = polygon(lambda i: _RADAR_R * (pts[i].get("score", 0.0) / top))
     dots = "".join(
@@ -153,8 +158,8 @@ def _radar_svg(scored: list[dict]) -> str:
         for i in range(n)
     )
     return (
-        f"<svg viewBox='0 0 {_RADAR_SIZE} {_RADAR_SIZE}' width='100%' "
-        f"style='max-width:360px;display:block;margin:0 auto' "
+        f"<svg viewBox='0 0 {_RADAR_W} {_RADAR_H}' width='100%' "
+        f"style='max-width:480px;display:block;margin:0 auto' "
         f"role='img' aria-label='Top trending skills radar'>"
         f"{rings}{''.join(spokes)}"
         f"<polygon points='{data}' fill='rgba(37,99,235,0.15)' "
