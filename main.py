@@ -34,6 +34,7 @@ from storage import (
     save_memory,
     save_seen,
     save_trending_history,
+    slugify,
 )
 
 OUTPUT_DIR = Path(__file__).parent / "output"
@@ -154,7 +155,9 @@ def main() -> None:
     )
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    mp3_path = str(OUTPUT_DIR / f"lesson-{date.today():%Y%m%d}.mp3")
+    # Per-lesson filename (date + skill slug, like the brief) so several lessons on
+    # the same day get distinct files/URLs/GUIDs instead of clobbering one another.
+    mp3_path = str(OUTPUT_DIR / f"lesson-{date.today():%Y%m%d}-{slugify(skill['skill'])}.mp3")
     asyncio.run(audio_builder.build(lines, mp3_path))
 
     lesson = {

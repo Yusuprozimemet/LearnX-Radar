@@ -36,8 +36,15 @@ Release asset under a single rolling tag (e.g. `lessons`), creating it once:
 ```
 
 The asset download URL is then deterministic:
-`https://github.com/<owner>/LearnX-Radar/releases/download/lessons/lesson-YYYYMMDD.mp3`.
+`https://github.com/<owner>/LearnX-Radar/releases/download/lessons/<audio>`.
 Add `RELEASES_AUDIO_BASE` to `config.py` next to `BRIEFS_RAW_BASE`.
+
+**Per-lesson filename.** The MP3 is named `lesson-{YYYYMMDD}-{slug}.mp3` (date + skill
+slug, like the brief), NOT just `lesson-{YYYYMMDD}.mp3`. A per-day name collides when
+more than one lesson is produced the same day (e.g. a manual dispatch alongside the
+cron): the upload `--clobber`s the asset and the feed emits duplicate `<guid>`s, so
+clients show one episode with the wrong audio. The slug (via `storage.slugify`, shared
+with `save_brief`) keeps each lesson's file, enclosure URL, and GUID unique.
 
 ## Feed builder (`feed.py` or `dashboard/feed.py`)
 
@@ -72,6 +79,17 @@ demands it (verify against a real client first; most accept a missing/0 length).
 
 The feed URL is the Pages-published `…github.io/LearnX-Radar/podcast.xml`. Add it
 to a podcast app via "add by URL". Document this in the README.
+
+## Dashboard integration
+
+Hosting audio on Releases also unlocks in-page playback (the old "metadata-only"
+dashboard predated having anywhere to host audio). The dashboard therefore:
+
+- embeds an `<audio controls preload="none">` per archived lesson, streaming the
+  MP3 from `RELEASES_AUDIO_BASE/<audio>` (falls back to the delivery note when a
+  lesson has no recorded audio);
+- shows header links to the podcast feed (`config.FEED_URL`) and the Releases page
+  (`config.RELEASES_PAGE_URL`) so the audio is reachable from the page itself.
 
 ## Testing (offline)
 
