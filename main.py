@@ -32,6 +32,7 @@ from storage import (
     save_last_scored,
     save_memory,
     save_seen,
+    save_trending_history,
 )
 
 OUTPUT_DIR = Path(__file__).parent / "output"
@@ -130,6 +131,9 @@ def main() -> None:
     # Persist the ranking so the dashboard can rebuild from committed state alone
     # (the Pages workflow has no API keys to re-run the radar).
     save_last_scored(scored, skill["skill"] if skill else None)
+    # Also append today's ranking to the per-day archive so the dashboard's date
+    # picker can replay any past day (last_scored.json only holds the latest run).
+    save_trending_history(scored, skill["skill"] if skill else None)
     if skill is None:
         print("No teachable skill gap found today. Done.")
         _refresh_dashboard(memory, scored)
