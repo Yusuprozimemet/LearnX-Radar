@@ -22,6 +22,7 @@ from storage.state import (
     save_memory,
     save_seen,
     save_trending_history,
+    slugify,
 )
 
 __all__ = [
@@ -38,4 +39,5 @@ __all__ = [
     "save_trending_history",
     "save_brief",
     "load_brief",
+    "slugify",
 ]
