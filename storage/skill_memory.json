@@ -63,6 +63,22 @@
       ],
       "last_taught": "2026-05-31",
       "summary": "Used for routing AI queries"
+    },
+    "AI application design": {
+      "times_taught": 1,
+      "first_taught": "2026-05-31",
+      "lessons": [
+        {
+          "date": "2026-05-31",
+          "title": "AI application design",
+          "difficulty": "beginner",
+          "summary": "Transform AI applications",
+          "audio": "lesson-20260531-ai-application-design.mp3",
+          "brief": "20260531-ai-application-design.md"
+        }
+      ],
+      "last_taught": "2026-05-31",
+      "summary": "Transform AI applications"
     }
   },
   "so_counts": {
