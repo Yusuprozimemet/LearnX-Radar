@@ -7,7 +7,7 @@ corrupt so a single bad write never wedges the daily run.
 """
 import json
 import re
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 _DIR = Path(__file__).parent
@@ -22,6 +22,7 @@ LAST_SCORED_KEEP = 20  # cap the persisted ranking; the dashboard only shows a t
 HISTORY_KEEP_DAYS = 60  # cap the per-day archive so the embedded page payload stays bounded
 
 MAX_SEEN = 5000  # cap so the dedup file doesn't grow forever
+SEEN_TTL_DAYS = 14  # a sighting expires after this many days; see the seen_skills section
 
 
 def slugify(text: str) -> str:
@@ -31,25 +32,67 @@ def slugify(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-") or "lesson"
 
 
-# --- seen_skills.json : dedup of source items already taught -----------------
+# --- seen_skills.json : dedup of source items already processed --------------
+#
+# Maps item-id -> ISO date last seen. The window (SEEN_TTL_DAYS) matters because
+# the trend sources use time-stable IDs — a repo (gh:owner/repo), a hiring-thread
+# comment (hn:id), a tag-week (so:tag:week) reappear run after run. Without a
+# window they'd be suppressed forever after the first sighting, starving the
+# ranking down to dev.to alone. Expiring a sighting lets a still-trending repo or
+# still-hot tag re-enter as fresh demand signal. Re-teaching the same *skill* is a
+# separate concern handled by gap_scorer novelty, so this window can be short.
 
-def load_seen() -> set[str]:
+def _seen_cutoff() -> str:
+    """The ISO date before which a sighting is considered expired."""
+    return (date.today() - timedelta(days=SEEN_TTL_DAYS)).isoformat()
+
+
+def load_seen() -> dict[str, str]:
+    """Map of item-id -> ISO date last seen.
+
+    Legacy list-format files (bare IDs, no dates) can't be windowed, so they're
+    migrated to an empty map — a one-time reset. That's safe: novelty already
+    prevents re-teaching a recently taught skill, and from the next run on every
+    ID carries a date the window can act on.
+    """
     if not SEEN_FILE.exists():
-        return set()
+        return {}
     try:
-        return set(json.loads(SEEN_FILE.read_text(encoding="utf-8")))
+        data = json.loads(SEEN_FILE.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError):
-        return set()
+        return {}
+    return data if isinstance(data, dict) else {}
 
 
-def save_seen(seen: set[str]) -> None:
-    trimmed = list(seen)[-MAX_SEEN:]
-    SEEN_FILE.write_text(json.dumps(trimmed, indent=0), encoding="utf-8")
+def mark_seen(seen: dict[str, str], ids, when: str | None = None) -> None:
+    """Stamp each id in `ids` as seen on `when` (default today), mutating `seen`.
+
+    Only newly processed items are stamped; items filtered out as still-seen keep
+    their original date, so the window runs from first sighting — a repo that
+    keeps trending re-surfaces every SEEN_TTL_DAYS instead of being locked out.
+    """
+    when = when or date.today().isoformat()
+    for i in ids:
+        seen[i] = when
 
 
-def filter_new(items: list[dict], seen: set[str]) -> list[dict]:
-    """Return only items whose 'id' isn't already in seen."""
-    return [item for item in items if item["id"] not in seen]
+def save_seen(seen: dict[str, str]) -> None:
+    """Persist, dropping entries past the TTL and capping at the newest MAX_SEEN."""
+    cutoff = _seen_cutoff()
+    live = {i: w for i, w in seen.items() if w >= cutoff}
+    if len(live) > MAX_SEEN:
+        newest = sorted(live.items(), key=lambda kv: kv[1], reverse=True)[:MAX_SEEN]
+        live = dict(newest)
+    SEEN_FILE.write_text(
+        json.dumps(live, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+
+
+def filter_new(items: list[dict], seen: dict[str, str]) -> list[dict]:
+    """Return items not seen within the TTL window (`seen` maps id -> last-seen date)."""
+    cutoff = _seen_cutoff()
+    fresh = {i for i, when in seen.items() if when >= cutoff}
+    return [item for item in items if item["id"] not in fresh]
 
 
 # --- skill_memory.json : knowledge state (v2) --------------------------------

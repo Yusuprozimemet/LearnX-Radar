@@ -83,7 +83,7 @@ GitHub Actions (cron 06:00 UTC, every day)
        ├── email_sender.py             → daily digest email with lesson preview
        └── followup.py                 → Perplexity deep link seeded with the brief
   └── storage/
-       ├── seen_skills.json            → dedup: skills already turned into lessons
+       ├── seen_skills.json            → dedup: id→last-seen-date map, expires after 14 days
        └── skill_memory.json           → knowledge state: concepts covered, dates, scores
 ```
 
@@ -250,8 +250,13 @@ no billing). Delivery: Telegram + Gmail (free).
 **Standalone first** — no external platform dependencies. The app delivers value
 entirely through Telegram, email, and a GitHub Pages dashboard.
 
-**Dedup at two levels** — `seen_skills.json` prevents re-fetching the same source item;
-`skill_memory.json` prevents re-teaching a concept too soon. These are separate concerns.
+**Dedup at two levels** — `seen_skills.json` prevents re-processing the same source item,
+but only for a window (`SEEN_TTL_DAYS`, 14): the trend sources use time-stable IDs
+(`gh:owner/repo`, `so:tag:week`), so a permanent seen-set would suppress them forever and
+collapse the ranking to dev.to-only — the window lets a still-trending item re-surface.
+`skill_memory.json` (spaced-repetition novelty) prevents re-teaching a concept too soon.
+These are separate concerns: the window can be short because novelty, not dedup, is what
+stops a skill being re-taught.
 
 **PII redaction at ingestion** — collected source text (especially HN job posts) can
 carry contact PII. `radar/privacy.py` scrubs emails, phone numbers, and `@handles` in

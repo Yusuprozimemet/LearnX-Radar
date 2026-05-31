@@ -15,6 +15,7 @@ from storage.state import (
     load_memory,
     load_seen,
     load_trending_history,
+    mark_seen,
     previous_lesson,
     record_lesson,
     save_brief,
@@ -28,6 +29,7 @@ from storage.state import (
 __all__ = [
     "load_seen",
     "save_seen",
+    "mark_seen",
     "filter_new",
     "load_memory",
     "save_memory",

@@ -87,7 +87,9 @@ In CI, the env values come from GitHub repo secrets (see
 ## State and outputs
 
 - [storage/seen_skills.json](storage/seen_skills.json): dedup of source items
-       already taught.
+       already processed — a map of `id -> last-seen date`. A sighting expires
+       after `SEEN_TTL_DAYS` (14) so trend sources (a repo still trending, a tag
+       still hot) re-enter as fresh signal instead of being suppressed forever.
 - [storage/skill_memory.json](storage/skill_memory.json): lesson history and
        spaced repetition data.
 - [storage/last_scored.json](storage/last_scored.json): latest scoring for the
@@ -124,7 +126,8 @@ beyond the workflow's built-in `GITHUB_TOKEN`.
        [storage/seen_skills.json](storage/seen_skills.json).
 - Text is processed by the NVIDIA NIM LLM, and each lesson links out to
        Perplexity — treat both as third parties.
-- Dedup state is capped (5000 entries) so it does not grow without bound.
+- Dedup state expires after 14 days and is capped (5000 entries) so it does not
+       grow without bound.
 
 ## Tests
 
