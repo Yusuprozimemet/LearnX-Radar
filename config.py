@@ -116,7 +116,12 @@ TABLE_STAKES_PENALTY = 0.1  # 0 = drop entirely; 1 = no penalty
 KNOWN_SKILLS = {"python", "fastapi", "docker"}
 # LEARNING_GOALS: topics on your learning path. A skill matching any goal (substring,
 # either direction, normalized) is boosted so your goals surface sooner. EDIT THESE.
-LEARNING_GOALS = ["distributed systems", "rust", "llm agents"]
+# COMPOSITION: the scorer multiplies GOAL_BOOST with TABLE_STAKES_PENALTY and
+# KNOWN_PENALTY (score = demand x novelty x table_stakes x known x goal). So a skill
+# that is BOTH a goal and table-stakes/known is still sunk (1.5 x 0.1 = 0.15) — the
+# penalty overrides the boost. Keep these examples disjoint from TABLE_STAKES_SKILLS
+# and KNOWN_SKILLS (e.g. "rust" would be a no-op here, since it is table-stakes).
+LEARNING_GOALS = ["distributed systems", "wasm", "llm agents"]
 KNOWN_PENALTY = 0.1   # multiplier for a KNOWN_SKILLS hit (0 = drop; 1 = no effect)
 GOAL_BOOST = 1.5      # multiplier when a skill matches a LEARNING_GOALS entry
 
