@@ -1,0 +1,244 @@
+{
+  "2026-05-31": {
+    "today_skill": "AI agent development",
+    "scored": [
+      {
+        "skill": "AI agent development",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "AI agent marketplace",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Agentic coding",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "AI agent development",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Claude Code",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Python project ideas",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "DMARC record",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Email security",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Docker Compose patterns",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Microservices architecture",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Indexing strategies",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Database performance",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "LLM API",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "DX and pricing",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Multi-agent orchestration",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Open-source AgentForge",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Python decorators",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Python programming",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "React Server Components",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Building dark mode",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Rust Spans",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Building SQL lexer",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Rust async/await",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Building SQL lexer",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "TLS fingerprinting",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Bypassing Cloudflare WAF",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "openpyxl",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Building Excel reports",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "AWS Lambda cold starts",
+        "sources": [],
+        "evidence": "None",
+        "frequency": 0,
+        "demand_weight": 0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.0
+      },
+      {
+        "skill": "DuckDB",
+        "sources": [],
+        "evidence": "None",
+        "frequency": 0,
+        "demand_weight": 0,
+        "novelty": 0.14285714285714285,
+        "table_stakes": false,
+        "suggested_difficulty": "intermediate",
+        "score": 0.0
+      },
+      {
+        "skill": "Kafka consumer groups",
+        "sources": [],
+        "evidence": "None",
+        "frequency": 0,
+        "demand_weight": 0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.0
+      },
+      {
+        "skill": "Python asyncio",
+        "sources": [],
+        "evidence": "None",
+        "frequency": 0,
+        "demand_weight": 0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.0
+      },
+      {
+        "skill": "Vector embeddings",
+        "sources": [],
+        "evidence": "None",
+        "frequency": 0,
+        "demand_weight": 0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.0
+      }
+    ]
+  }
+}

@@ -31,11 +31,27 @@
       ],
       "last_taught": "2026-05-31",
       "summary": "ETL pipelines"
+    },
+    "AI agent development": {
+      "times_taught": 1,
+      "first_taught": "2026-05-31",
+      "lessons": [
+        {
+          "date": "2026-05-31",
+          "title": "AI agent development",
+          "difficulty": "beginner",
+          "summary": "AI agent marketplace",
+          "audio": "lesson-20260531.mp3",
+          "brief": "20260531-ai-agent-development.md"
+        }
+      ],
+      "last_taught": "2026-05-31",
+      "summary": "AI agent marketplace"
     }
   },
   "so_counts": {
-    "python": 2205901,
-    "rust": 43951,
+    "python": 2205902,
+    "rust": 43950,
     "kubernetes": 59812,
     "langchain": 1983,
     "duckdb": 504

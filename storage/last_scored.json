@@ -1,13 +1,13 @@
 {
   "updated": "2026-05-31",
-  "today_skill": "Airbyte",
+  "today_skill": "AI agent development",
   "scored": [
     {
-      "skill": "Airbyte",
+      "skill": "AI agent development",
       "sources": [
         "dev.to"
       ],
-      "evidence": "ETL pipelines",
+      "evidence": "AI agent marketplace",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -16,11 +16,11 @@
       "score": 0.5
     },
     {
-      "skill": "CLIP",
+      "skill": "Agentic coding",
       "sources": [
         "dev.to"
       ],
-      "evidence": "video thumbnail automation",
+      "evidence": "AI agent development",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -29,11 +29,11 @@
       "score": 0.5
     },
     {
-      "skill": "Edge Analytics",
+      "skill": "Claude Code",
       "sources": [
         "dev.to"
       ],
-      "evidence": "offline-first data sync engine",
+      "evidence": "Python project ideas",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -42,11 +42,11 @@
       "score": 0.5
     },
     {
-      "skill": "FFmpeg",
+      "skill": "DMARC record",
       "sources": [
         "dev.to"
       ],
-      "evidence": "video thumbnail automation",
+      "evidence": "Email security",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -55,11 +55,11 @@
       "score": 0.5
     },
     {
-      "skill": "FastAPI",
+      "skill": "Docker Compose patterns",
       "sources": [
         "dev.to"
       ],
-      "evidence": "flagged as malware",
+      "evidence": "Microservices architecture",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -68,11 +68,11 @@
       "score": 0.5
     },
     {
-      "skill": "Fivetran",
+      "skill": "Indexing strategies",
       "sources": [
         "dev.to"
       ],
-      "evidence": "ETL pipelines",
+      "evidence": "Database performance",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -81,11 +81,11 @@
       "score": 0.5
     },
     {
-      "skill": "JavaScript Closures",
+      "skill": "LLM API",
       "sources": [
         "dev.to"
       ],
-      "evidence": "game server collapsed",
+      "evidence": "DX and pricing",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -94,11 +94,11 @@
       "score": 0.5
     },
     {
-      "skill": "Kubernetes Audit Logging",
+      "skill": "Multi-agent orchestration",
       "sources": [
         "dev.to"
       ],
-      "evidence": "security incident simulation",
+      "evidence": "Open-source AgentForge",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -107,11 +107,11 @@
       "score": 0.5
     },
     {
-      "skill": "OpenCV",
+      "skill": "Python decorators",
       "sources": [
         "dev.to"
       ],
-      "evidence": "video thumbnail automation",
+      "evidence": "Python programming",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -120,11 +120,11 @@
       "score": 0.5
     },
     {
-      "skill": "Postgres Pool",
+      "skill": "React Server Components",
       "sources": [
         "dev.to"
       ],
-      "evidence": "died at 3 AM",
+      "evidence": "Building dark mode",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -133,37 +133,11 @@
       "score": 0.5
     },
     {
-      "skill": "PySceneDetect",
+      "skill": "Rust Spans",
       "sources": [
         "dev.to"
       ],
-      "evidence": "video thumbnail automation",
-      "frequency": 1,
-      "demand_weight": 0.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "suggested_difficulty": "beginner",
-      "score": 0.5
-    },
-    {
-      "skill": "Python Decorators",
-      "sources": [
-        "dev.to"
-      ],
-      "evidence": "explained simply",
-      "frequency": 1,
-      "demand_weight": 0.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "suggested_difficulty": "beginner",
-      "score": 0.5
-    },
-    {
-      "skill": "React Micro Frontend",
-      "sources": [
-        "dev.to"
-      ],
-      "evidence": "permission-based routing",
+      "evidence": "Building SQL lexer",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -176,7 +150,7 @@
       "sources": [
         "dev.to"
       ],
-      "evidence": "production-oriented AI chatbot",
+      "evidence": "Building SQL lexer",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -185,11 +159,11 @@
       "score": 0.5
     },
     {
-      "skill": "Tauri v2",
+      "skill": "TLS fingerprinting",
       "sources": [
         "dev.to"
       ],
-      "evidence": "snap layout overlay",
+      "evidence": "Bypassing Cloudflare WAF",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -198,11 +172,11 @@
       "score": 0.5
     },
     {
-      "skill": "Veltrix Configuration",
+      "skill": "openpyxl",
       "sources": [
         "dev.to"
       ],
-      "evidence": "Hytale headache",
+      "evidence": "Building Excel reports",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -211,56 +185,59 @@
       "score": 0.5
     },
     {
-      "skill": "hls.js",
-      "sources": [
-        "dev.to"
-      ],
-      "evidence": "custom HLS player",
-      "frequency": 1,
-      "demand_weight": 0.5,
+      "skill": "AWS Lambda cold starts",
+      "sources": [],
+      "evidence": "None",
+      "frequency": 0,
+      "demand_weight": 0,
       "novelty": 1.0,
       "table_stakes": false,
       "suggested_difficulty": "beginner",
-      "score": 0.5
+      "score": 0.0
     },
     {
-      "skill": "n8n",
-      "sources": [
-        "dev.to"
-      ],
-      "evidence": "ETL pipelines",
-      "frequency": 1,
-      "demand_weight": 0.5,
+      "skill": "DuckDB",
+      "sources": [],
+      "evidence": "None",
+      "frequency": 0,
+      "demand_weight": 0,
+      "novelty": 0.14285714285714285,
+      "table_stakes": false,
+      "suggested_difficulty": "intermediate",
+      "score": 0.0
+    },
+    {
+      "skill": "Kafka consumer groups",
+      "sources": [],
+      "evidence": "None",
+      "frequency": 0,
+      "demand_weight": 0,
       "novelty": 1.0,
       "table_stakes": false,
       "suggested_difficulty": "beginner",
-      "score": 0.5
+      "score": 0.0
     },
     {
-      "skill": "Go",
-      "sources": [
-        "dev.to"
-      ],
-      "evidence": "basement water monitor circuit",
-      "frequency": 1,
-      "demand_weight": 0.5,
+      "skill": "Python asyncio",
+      "sources": [],
+      "evidence": "None",
+      "frequency": 0,
+      "demand_weight": 0,
       "novelty": 1.0,
-      "table_stakes": true,
+      "table_stakes": false,
       "suggested_difficulty": "beginner",
-      "score": 0.05
+      "score": 0.0
     },
     {
-      "skill": "Rust",
-      "sources": [
-        "dev.to"
-      ],
-      "evidence": "basement water monitor circuit",
-      "frequency": 1,
-      "demand_weight": 0.5,
+      "skill": "Vector embeddings",
+      "sources": [],
+      "evidence": "None",
+      "frequency": 0,
+      "demand_weight": 0,
       "novelty": 1.0,
-      "table_stakes": true,
+      "table_stakes": false,
       "suggested_difficulty": "beginner",
-      "score": 0.05
+      "score": 0.0
     }
   ]
 }
