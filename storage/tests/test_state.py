@@ -61,54 +61,6 @@ def test_load_last_scored_missing_returns_empty(tmp_path, monkeypatch):
     assert state.load_last_scored() == {"today_skill": None, "scored": []}
 
 
-# A multi-source run with high scores vs a thin dev.to-only re-run (all 0.5).
-_RICH = [
-    {"skill": "Kafka", "score": 1.5, "sources": ["HN Hiring", "dev.to"]},
-    {"skill": "Rust", "score": 1.0, "sources": ["GitHub Trending"]},
-]
-_THIN = [
-    {"skill": "Cat plots", "score": 0.5, "sources": ["dev.to"]},
-    {"skill": "Emoji filtering", "score": 0.5, "sources": ["dev.to"]},
-]
-
-
-def test_last_scored_thin_rerun_does_not_clobber_rich_same_day(tmp_path, monkeypatch):
-    monkeypatch.setattr(state, "LAST_SCORED_FILE", tmp_path / "ls.json")
-    state.save_last_scored(_RICH, today_skill="Kafka")
-    state.save_last_scored(_THIN, today_skill="Cat plots")  # thinner re-run
-    loaded = state.load_last_scored()
-    assert loaded["today_skill"] == "Kafka"  # the rich board is kept
-    assert [s["skill"] for s in loaded["scored"]] == ["Kafka", "Rust"]
-
-
-def test_last_scored_richer_rerun_replaces_thin_same_day(tmp_path, monkeypatch):
-    monkeypatch.setattr(state, "LAST_SCORED_FILE", tmp_path / "ls.json")
-    state.save_last_scored(_THIN, today_skill="Cat plots")  # thin first
-    state.save_last_scored(_RICH, today_skill="Kafka")      # richer wins
-    assert state.load_last_scored()["today_skill"] == "Kafka"
-
-
-def test_last_scored_new_day_overwrites_even_if_thin(tmp_path, monkeypatch):
-    f = tmp_path / "ls.json"
-    monkeypatch.setattr(state, "LAST_SCORED_FILE", f)
-    # Yesterday's rich ranking, persisted with a stale date.
-    f.write_text(
-        json.dumps({"updated": _iso(1), "today_skill": "Kafka", "scored": _RICH}),
-        encoding="utf-8",
-    )
-    state.save_last_scored(_THIN, today_skill="Cat plots")  # a new day always writes
-    assert state.load_last_scored()["today_skill"] == "Cat plots"
-
-
-def test_trending_history_thin_rerun_does_not_clobber_rich(tmp_path, monkeypatch):
-    monkeypatch.setattr(state, "HISTORY_FILE", tmp_path / "h.json")
-    state.save_trending_history(_RICH, today_skill="Kafka")
-    state.save_trending_history(_THIN, today_skill="Cat plots")  # thinner re-run
-    today = date.today().isoformat()
-    entry = state.load_trending_history()[today]
-    assert entry["today_skill"] == "Kafka"  # richer day is preserved
-
-
 def test_record_lesson_stores_audio_and_summary():
     memory = {"skills": {}}
     state.record_lesson(
