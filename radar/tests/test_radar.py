@@ -3,6 +3,7 @@ with a canned chat_fn so no network is touched."""
 import json
 from datetime import date, timedelta
 
+import config
 from radar import brief_writer, gap_scorer, skill_extractor
 
 EMPTY_MEMORY = {"version": 1, "skills": {}}
@@ -120,6 +121,66 @@ def test_empty_inputs():
     assert gap_scorer.top([]) is None
 
 
+# --- personalization (v4 / day10) --------------------------------------------
+
+def test_no_profile_is_v3_behavior():
+    """profile=None: nothing is personalized, score is the plain v3 formula."""
+    s = gap_scorer.score([{"skill": "Redis", "sources": ["HN Hiring"]}], EMPTY_MEMORY)[0]
+    assert s["known"] is False
+    assert s["goal_match"] is False
+    assert s["score"] == 2.0  # demand 2.0 * novelty 1.0, untouched
+
+
+def test_known_skill_sinks_below_unknown():
+    """A skill the user already has loses to an equally-demanded unknown one."""
+    profile = {"known": {"Redis"}, "goals": []}
+    ranked = gap_scorer.score(
+        [
+            {"skill": "Redis", "sources": ["HN Hiring"]},
+            {"skill": "Pulsar", "sources": ["HN Hiring"]},
+        ],
+        EMPTY_MEMORY,
+        profile,
+    )
+    assert ranked[0]["skill"] == "Pulsar"
+    redis = next(s for s in ranked if s["skill"] == "Redis")
+    assert redis["known"] is True
+    assert redis["score"] == 2.0 * config.KNOWN_PENALTY
+
+
+def test_goal_match_outranks_non_goal():
+    """A goal-relevant skill beats an equally-demanded skill off your path."""
+    profile = {"known": set(), "goals": ["streaming"]}
+    ranked = gap_scorer.score(
+        [
+            {"skill": "Kafka streaming", "sources": ["dev.to"]},
+            {"skill": "Webpack", "sources": ["dev.to"]},
+        ],
+        EMPTY_MEMORY,
+        profile,
+    )
+    assert ranked[0]["skill"] == "Kafka streaming"
+    assert ranked[0]["goal_match"] is True
+    assert ranked[0]["score"] == 0.5 * config.GOAL_BOOST
+
+
+def test_goal_match_is_case_insensitive_both_directions():
+    assert gap_scorer._goal_match("Rust async", ["RUST"]) is True       # goal in skill
+    assert gap_scorer._goal_match("LLM", ["llm agents"]) is True        # skill in goal
+    assert gap_scorer._goal_match("Webpack", ["rust", "kafka"]) is False
+    assert gap_scorer._goal_match("anything", [""]) is False            # empty goal ignored
+
+
+def test_known_and_table_stakes_compose():
+    """Both penalties apply; score stays non-negative."""
+    profile = {"known": {"python"}, "goals": []}
+    s = gap_scorer.score([{"skill": "Python", "sources": ["HN Hiring"]}], EMPTY_MEMORY, profile)[0]
+    assert s["table_stakes"] is True
+    assert s["known"] is True
+    assert s["score"] == 2.0 * config.TABLE_STAKES_PENALTY * config.KNOWN_PENALTY
+    assert s["score"] >= 0
+
+
 # --- skill_extractor ---------------------------------------------------------
 
 def test_build_digest_caps_text():
@@ -184,6 +245,22 @@ def test_prior_context_empty_then_bridges_related():
     assert "Async I/O" in ctx and "non-blocking concurrency" in ctx
     assert "Kafka:" not in ctx  # current skill not offered as its own bridge
     assert "genuinely related to Kafka" in ctx
+
+
+def test_action_step_extracts_section():
+    brief = (
+        "# DuckDB\n## Core ideas\nstuff\n\n"
+        "## Do this in 5 minutes\nRun `pip install duckdb` then `duckdb -c \"select 42\"`.\n\n"
+        "## Where it fits\nmore"
+    )
+    action = brief_writer.action_step(brief)
+    assert "pip install duckdb" in action
+    assert "Core ideas" not in action and "Where it fits" not in action
+
+
+def test_action_step_missing_section_is_empty():
+    assert brief_writer.action_step("# DuckDB\n## Core ideas\nno action here") == ""
+    assert brief_writer.action_step("") == ""
 
 
 def test_write_passes_fields_to_prompt():
