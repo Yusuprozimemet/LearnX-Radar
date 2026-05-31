@@ -1,103 +1,154 @@
 {
   "updated": "2026-05-31",
-  "today_skill": "AI automation for speech language pathologists",
+  "today_skill": "AI agents",
   "scored": [
     {
-      "skill": "AI automation for speech language pathologists",
+      "skill": "AI agents",
       "sources": [
-        "dev.to"
+        "dev.to",
+        "HN Hiring"
       ],
-      "evidence": "Automating therapy progress notes",
-      "frequency": 1,
-      "demand_weight": 0.5,
+      "evidence": "New trend",
+      "frequency": 2,
+      "demand_weight": 2.5,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
       "suggested_difficulty": "beginner",
-      "score": 0.5
+      "score": 2.5
     },
     {
-      "skill": "AI-Native Network Security Monitoring",
+      "skill": "Rust programming",
       "sources": [
-        "dev.to"
+        "dev.to",
+        "Stack Overflow"
       ],
-      "evidence": "Shift from traditional IDS",
-      "frequency": 1,
-      "demand_weight": 0.5,
+      "evidence": "Rising questions",
+      "frequency": 2,
+      "demand_weight": 2.0,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
       "suggested_difficulty": "beginner",
-      "score": 0.5
+      "score": 2.0
     },
     {
-      "skill": "AI-powered products on Raspberry Pi",
+      "skill": "AWS Lambda cold starts",
       "sources": [
-        "dev.to"
+        "HN Hiring"
       ],
-      "evidence": "19 products on a $35 device",
+      "evidence": "Job requirement",
       "frequency": 1,
-      "demand_weight": 0.5,
+      "demand_weight": 2.0,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
       "suggested_difficulty": "beginner",
-      "score": 0.5
+      "score": 2.0
+    },
+    {
+      "skill": "Kafka consumer groups",
+      "sources": [
+        "HN Hiring"
+      ],
+      "evidence": "Job requirement",
+      "frequency": 1,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "suggested_difficulty": "beginner",
+      "score": 2.0
     },
     {
       "skill": "Agentic coding",
       "sources": [
+        "GitHub Trending",
         "dev.to"
       ],
-      "evidence": "Notable in AI development",
-      "frequency": 1,
-      "demand_weight": 0.5,
+      "evidence": "New tooling",
+      "frequency": 2,
+      "demand_weight": 1.5,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
       "suggested_difficulty": "beginner",
-      "score": 0.5
-    },
-    {
-      "skill": "AuditReplay API integration",
-      "sources": [
-        "dev.to"
-      ],
-      "evidence": "Automated security audit replay",
-      "frequency": 1,
-      "demand_weight": 0.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "suggested_difficulty": "beginner",
-      "score": 0.5
-    },
-    {
-      "skill": "Autonomous content pipeline",
-      "sources": [
-        "dev.to"
-      ],
-      "evidence": "Cost-effective content creation",
-      "frequency": 1,
-      "demand_weight": 0.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "suggested_difficulty": "beginner",
-      "score": 0.5
+      "score": 1.5
     },
     {
       "skill": "Claude Code",
       "sources": [
+        "GitHub Trending",
         "dev.to"
       ],
-      "evidence": "Configurable AI assistant",
+      "evidence": "New tooling",
+      "frequency": 2,
+      "demand_weight": 1.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "suggested_difficulty": "beginner",
+      "score": 1.5
+    },
+    {
+      "skill": "React Server Components",
+      "sources": [
+        "GitHub Trending",
+        "dev.to"
+      ],
+      "evidence": "New feature",
+      "frequency": 2,
+      "demand_weight": 1.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "suggested_difficulty": "beginner",
+      "score": 1.5
+    },
+    {
+      "skill": "Rust async/await",
+      "sources": [
+        "GitHub Trending",
+        "dev.to"
+      ],
+      "evidence": "New library",
+      "frequency": 2,
+      "demand_weight": 1.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "suggested_difficulty": "beginner",
+      "score": 1.5
+    },
+    {
+      "skill": "Langchain",
+      "sources": [
+        "Stack Overflow"
+      ],
+      "evidence": "Rising questions",
+      "frequency": 1,
+      "demand_weight": 1.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "suggested_difficulty": "beginner",
+      "score": 1.5
+    },
+    {
+      "skill": "Caching strategies",
+      "sources": [
+        "dev.to"
+      ],
+      "evidence": "New technique",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -108,11 +159,11 @@
       "score": 0.5
     },
     {
-      "skill": "Concurrency design",
+      "skill": "Langchain integration",
       "sources": [
         "dev.to"
       ],
-      "evidence": "Capability-focused approach",
+      "evidence": "New technique",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -123,11 +174,11 @@
       "score": 0.5
     },
     {
-      "skill": "Data Lakehouse architecture",
+      "skill": "Postgres",
       "sources": [
         "dev.to"
       ],
-      "evidence": "Modern data team decision",
+      "evidence": "New tutorial",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -138,11 +189,11 @@
       "score": 0.5
     },
     {
-      "skill": "Frontend architecture design",
+      "skill": "Python asyncio",
       "sources": [
         "dev.to"
       ],
-      "evidence": "File organization best practices",
+      "evidence": "New tutorial",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -153,11 +204,11 @@
       "score": 0.5
     },
     {
-      "skill": "GraphQL API debugging",
+      "skill": "Redis",
       "sources": [
         "dev.to"
       ],
-      "evidence": "Catching silent errors",
+      "evidence": "New tutorial",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -168,11 +219,11 @@
       "score": 0.5
     },
     {
-      "skill": "Holiday-aware deadline calculations",
+      "skill": "Rust Tokio",
       "sources": [
         "dev.to"
       ],
-      "evidence": "Laravel implementation",
+      "evidence": "New library",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -183,11 +234,11 @@
       "score": 0.5
     },
     {
-      "skill": "Kimball Dimensional Modeling",
+      "skill": "SQL Lexer",
       "sources": [
         "dev.to"
       ],
-      "evidence": "Data engineering interviews",
+      "evidence": "New technique",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -198,11 +249,11 @@
       "score": 0.5
     },
     {
-      "skill": "Luau development",
+      "skill": "Vector embeddings",
       "sources": [
         "dev.to"
       ],
-      "evidence": "Roblox development",
+      "evidence": "New technique",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -213,11 +264,11 @@
       "score": 0.5
     },
     {
-      "skill": "Metaverse ads management",
+      "skill": "Veltrix",
       "sources": [
         "dev.to"
       ],
-      "evidence": "Agency collaboration insights",
+      "evidence": "New technique",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -228,64 +279,35 @@
       "score": 0.5
     },
     {
-      "skill": "Personal Knowledge Graph",
+      "skill": "DuckDB",
       "sources": [
-        "dev.to"
+        "dev.to",
+        "Stack Overflow"
       ],
-      "evidence": "Structured knowledge management",
-      "frequency": 1,
-      "demand_weight": 0.5,
-      "novelty": 1.0,
+      "evidence": "Rising questions",
+      "frequency": 2,
+      "demand_weight": 2.0,
+      "novelty": 0.14285714285714285,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "suggested_difficulty": "beginner",
-      "score": 0.5
+      "suggested_difficulty": "intermediate",
+      "score": 0.2857142857142857
     },
     {
-      "skill": "RAG (Retrieval-Augmented Generation)",
+      "skill": "Kubernetes",
       "sources": [
-        "dev.to"
+        "Stack Overflow"
       ],
-      "evidence": "Emerging AI technology",
+      "evidence": "Rising questions",
       "frequency": 1,
-      "demand_weight": 0.5,
+      "demand_weight": 1.5,
       "novelty": 1.0,
-      "table_stakes": false,
+      "table_stakes": true,
       "known": false,
       "goal_match": false,
       "suggested_difficulty": "beginner",
-      "score": 0.5
-    },
-    {
-      "skill": "Transcribing voice notes",
-      "sources": [
-        "dev.to"
-      ],
-      "evidence": "Free transcription tools",
-      "frequency": 1,
-      "demand_weight": 0.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "suggested_difficulty": "beginner",
-      "score": 0.5
-    },
-    {
-      "skill": "VS Code and Git automation",
-      "sources": [
-        "dev.to"
-      ],
-      "evidence": "Professional automation",
-      "frequency": 1,
-      "demand_weight": 0.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "suggested_difficulty": "beginner",
-      "score": 0.5
+      "score": 0.15000000000000002
     }
   ]
 }

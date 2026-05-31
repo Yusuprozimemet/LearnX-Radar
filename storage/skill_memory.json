@@ -31,10 +31,26 @@
       ],
       "last_taught": "2026-05-31",
       "summary": "Automating therapy progress notes"
+    },
+    "AI agents": {
+      "times_taught": 1,
+      "first_taught": "2026-05-31",
+      "lessons": [
+        {
+          "date": "2026-05-31",
+          "title": "AI agents",
+          "difficulty": "beginner",
+          "summary": "New trend",
+          "audio": "lesson-20260531-ai-agents.mp3",
+          "brief": "20260531-ai-agents.md"
+        }
+      ],
+      "last_taught": "2026-05-31",
+      "summary": "New trend"
     }
   },
   "so_counts": {
-    "python": 2205902,
+    "python": 2205901,
     "rust": 43950,
     "kubernetes": 59812,
     "langchain": 1983,
