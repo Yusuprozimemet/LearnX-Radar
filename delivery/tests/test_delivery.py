@@ -1,5 +1,8 @@
 """Offline tests for delivery. Pure helpers only — no network, no SMTP send."""
-from delivery import email_sender, telegram_sender
+import json
+from urllib.parse import unquote
+
+from delivery import email_sender, followup, telegram_sender
 
 
 def _lesson(
@@ -17,6 +20,71 @@ def _lesson(
         "mp3_path": str(mp3),
         "brief_md": brief,
     }
+
+
+# --- followup links ----------------------------------------------------------
+
+def test_perplexity_url_unchanged():
+    """Regression guard: the follow-up link must stay intact (day11 only adds quiz)."""
+    url = followup.perplexity_url("DuckDB", "20260530-duckdb.md")
+    q = unquote(url)
+    assert url.startswith("https://www.perplexity.ai/search/new?q=")
+    assert "answer my follow-up questions" in q
+    assert "20260530-duckdb.md" in q
+
+
+def test_quiz_url_is_recall_quiz_on_brief():
+    url = followup.quiz_url("DuckDB", "20260530-duckdb.md")
+    q = unquote(url)
+    assert url.startswith("https://www.perplexity.ai/search/new?q=")
+    assert "ONE AT A TIME" in q
+    assert "20260530-duckdb.md" in q
+
+
+# --- telegram reply markup (buttons) -----------------------------------------
+
+def _buttons(markup: dict) -> list[str]:
+    rows = json.loads(markup["reply_markup"])["inline_keyboard"]
+    return [btn["text"] for row in rows for btn in row]
+
+
+def test_reply_markup_followup_only_without_prior():
+    markup = telegram_sender._reply_markup(
+        {"skill": "DuckDB", "brief_file": "b.md"}
+    )
+    assert _buttons(markup) == ["🔎 Ask follow-ups on Perplexity"]
+
+
+def test_reply_markup_adds_quiz_when_prior_exists():
+    markup = telegram_sender._reply_markup(
+        {"skill": "DuckDB", "brief_file": "b.md",
+         "quiz_skill": "Kafka", "quiz_brief": "k.md"}
+    )
+    assert _buttons(markup) == ["🔎 Ask follow-ups on Perplexity", "🧠 Quiz me on this"]
+
+
+def test_reply_markup_empty_without_brief():
+    assert telegram_sender._reply_markup({"title": "x"}) == {}
+
+
+# --- email buttons -----------------------------------------------------------
+
+def test_email_buttons_followup_only_without_prior():
+    html = email_sender._followup_button({"skill": "DuckDB", "brief_file": "b.md"})
+    assert "Ask follow-ups on Perplexity" in html
+    assert "Quiz me on this" not in html
+
+
+def test_email_buttons_add_quiz_when_prior_exists():
+    html = email_sender._followup_button(
+        {"skill": "DuckDB", "brief_file": "b.md",
+         "quiz_skill": "Kafka", "quiz_brief": "k.md"}
+    )
+    assert "Ask follow-ups on Perplexity" in html and "Quiz me on this" in html
+
+
+def test_email_buttons_empty_without_brief():
+    assert email_sender._followup_button({"title": "x"}) == ""
 
 
 # --- telegram caption --------------------------------------------------------

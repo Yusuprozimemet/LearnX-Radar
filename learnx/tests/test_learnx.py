@@ -73,6 +73,13 @@ def test_dialogue_orders_intro_units_outro():
     assert {ln.speaker for ln in lines} == {"ALEX", "MAYA"}
 
 
+def test_outro_prompt_voices_action_when_given():
+    with_action = dialogue._outro_prompt("DuckDB", "hook", action="Run a query")
+    assert "Run a query" in with_action
+    without = dialogue._outro_prompt("DuckDB", "hook")
+    assert "(none)" in without  # action placeholder collapses to (none)
+
+
 def test_dialogue_parse_ignores_unlabeled_and_other_speakers():
     raw = "ALEX: One.\n(stage note)\nSAM: nope.\nMAYA - Two.\nrandom"
     lines = dialogue._parse(raw, unit_number=1)

@@ -27,6 +27,7 @@ from storage import (
     filter_new,
     load_memory,
     load_seen,
+    previous_lesson,
     record_lesson,
     save_brief,
     save_last_scored,
@@ -126,7 +127,8 @@ def main() -> None:
 
     # 2. Radar: extract skills, score the gap, pick today's topic.
     mentions = skill_extractor.extract(new_items)
-    scored = gap_scorer.score(mentions, memory)
+    profile = {"known": config.KNOWN_SKILLS, "goals": config.LEARNING_GOALS}
+    scored = gap_scorer.score(mentions, memory, profile)
     skill = gap_scorer.top(scored)
     # Persist the ranking so the dashboard can rebuild from committed state alone
     # (the Pages workflow has no API keys to re-run the radar).
@@ -146,7 +148,10 @@ def main() -> None:
     # 3. Learnx: brief -> curriculum -> dialogue -> audio.
     difficulty = skill.get("suggested_difficulty", config.LESSON_DIFFICULTY_DEFAULT)
     units = curriculum.plan(brief_md, skill["skill"], difficulty=difficulty)
-    lines = dialogue.generate(units, skill["skill"], hook=skill.get("evidence", ""))
+    action = brief_writer.action_step(brief_md)  # voiced in the outro as a call to action
+    lines = dialogue.generate(
+        units, skill["skill"], hook=skill.get("evidence", ""), action=action
+    )
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     mp3_path = str(OUTPUT_DIR / f"lesson-{date.today():%Y%m%d}.mp3")
@@ -161,6 +166,14 @@ def main() -> None:
         "brief_md": brief_md,
         "brief_file": brief_file,
     }
+
+    # Recall quiz targets the PREVIOUS lesson (real spaced retrieval). memory has no
+    # entry for today yet (record_lesson runs below), so this is genuinely prior;
+    # absent on day one, so the senders' quiz button simply won't render.
+    prev = previous_lesson(memory)
+    if prev and prev.get("brief"):
+        lesson["quiz_skill"] = prev["skill"]
+        lesson["quiz_brief"] = prev["brief"]
 
     # 4. Deliver (each channel independent).
     for name, sender in (("telegram", telegram_sender), ("email", email_sender)):

@@ -19,6 +19,7 @@ Q&A, plus a static dashboard built from the recorded state.
        Perplexity follow-up Q&A).
 - Redacts PII (emails, phone numbers, handles) from collected text at ingestion.
 - Builds a static dashboard from committed state.
+- Publishes a podcast RSS feed so the daily lesson lands in your podcast app.
 
 ## Pipeline
 
@@ -94,6 +95,23 @@ In CI, the env values come from GitHub repo secrets (see
 - [briefs](briefs): full lesson briefs, linked from each lesson for Perplexity Q&A.
 - [output](output): generated MP3 lessons (for example, lesson-YYYYMMDD.mp3).
 - [dashboard/index.html](dashboard/index.html): generated static dashboard.
+- `dashboard/podcast.xml`: generated podcast feed (lesson MP3s hosted as assets on
+       the `lessons` GitHub Release; built from committed state, published via Pages).
+
+## Podcast feed
+
+The daily MP3 is uploaded as an asset on a single rolling GitHub Release (tag
+`lessons`) by the radar workflow, and `podcast.xml` is published alongside the
+dashboard on GitHub Pages. Subscribe in any podcast app (Pocket Casts, Apple
+Podcasts, AntennaPod) by adding the feed URL:
+
+```
+https://yusuprozimemet.github.io/LearnX-Radar/podcast.xml
+```
+
+Audio is hosted on Releases (not committed to the repo and not on Pages) so it
+never bloats git history or hits the Pages size cap — and it needs no credential
+beyond the workflow's built-in `GITHUB_TOKEN`.
 
 ## Data and privacy
 

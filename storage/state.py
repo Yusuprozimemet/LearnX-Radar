@@ -155,6 +155,21 @@ def record_lesson(
     return memory
 
 
+def previous_lesson(memory: dict) -> dict | None:
+    """The most recently taught lesson across all skills, or None if none yet.
+
+    Used for the recall quiz (v4): real retrieval practice tests a *prior* lesson.
+    Called before today's `record_lesson`, so the latest stored entry is genuinely
+    the previous lesson. Returns the lesson dict plus its owning `skill`.
+    """
+    best: dict | None = None
+    for skill, data in memory.get("skills", {}).items():
+        for lesson in data.get("lessons", []):
+            if best is None or lesson.get("date", "") > best.get("date", ""):
+                best = {**lesson, "skill": skill}
+    return best
+
+
 # --- briefs/ : full lesson brief text, linked from lessons for Perplexity Q&A ----------
 
 def save_brief(skill: str, brief_md: str, when: date | None = None) -> str:

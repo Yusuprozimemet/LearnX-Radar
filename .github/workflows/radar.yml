@@ -35,6 +35,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python main.py
 
+      - name: Publish lesson audio to Releases
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          f=$(ls -1 output/lesson-*.mp3 2>/dev/null | tail -1) || true
+          if [ -z "$f" ]; then echo "no lesson produced today — nothing to publish"; exit 0; fi
+          gh release view lessons >/dev/null 2>&1 || \
+            gh release create lessons -t "LearnX-Radar lessons" -n "Daily lesson audio (podcast feed enclosures)."
+          gh release upload lessons "$f" --clobber
+
       - name: Commit updated state
         run: |
           git config user.name  "github-actions[bot]"
