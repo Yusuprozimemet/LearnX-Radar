@@ -14,9 +14,11 @@ _DIR = Path(__file__).parent
 SEEN_FILE = _DIR / "seen_skills.json"
 MEMORY_FILE = _DIR / "skill_memory.json"
 LAST_SCORED_FILE = _DIR / "last_scored.json"  # v3: this run's ranking for the dashboard
+HISTORY_FILE = _DIR / "trending_history.json"  # v3: per-day rankings, so the dashboard date-picker can replay any day
 BRIEFS_DIR = _DIR.parent / "briefs"  # committed briefs, linked from lessons for Perplexity Q&A
 
 LAST_SCORED_KEEP = 20  # cap the persisted ranking; the dashboard only shows a top slice
+HISTORY_KEEP_DAYS = 60  # cap the per-day archive so the embedded page payload stays bounded
 
 MAX_SEEN = 5000  # cap so the dedup file doesn't grow forever
 
@@ -79,6 +81,37 @@ def save_last_scored(scored: list[dict], today_skill: str | None) -> None:
     }
     LAST_SCORED_FILE.write_text(
         json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+
+
+# --- trending_history.json : one ranking per day, so the dashboard can replay a
+# chosen day. Overwrites today's entry on re-run; oldest days roll off the cap.
+
+def load_trending_history() -> dict:
+    """Return {date: {"today_skill": str|None, "scored": [...]}} or {} if missing/corrupt."""
+    if not HISTORY_FILE.exists():
+        return {}
+    try:
+        data = json.loads(HISTORY_FILE.read_text(encoding="utf-8"))
+        return data if isinstance(data, dict) else {}
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def save_trending_history(
+    scored: list[dict], today_skill: str | None, when: date | None = None
+) -> None:
+    """Record this run's ranking under its date, trimming to HISTORY_KEEP_DAYS."""
+    when = when or date.today()
+    history = load_trending_history()
+    history[when.isoformat()] = {
+        "today_skill": today_skill,
+        "scored": scored[:LAST_SCORED_KEEP],
+    }
+    for stale in sorted(history, reverse=True)[HISTORY_KEEP_DAYS:]:
+        del history[stale]
+    HISTORY_FILE.write_text(
+        json.dumps(history, ensure_ascii=False, indent=2), encoding="utf-8"
     )
 
 

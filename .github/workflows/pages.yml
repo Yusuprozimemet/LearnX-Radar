@@ -14,6 +14,7 @@ on:
     paths:
       - "storage/skill_memory.json"
       - "storage/last_scored.json"
+      - "storage/trending_history.json"
       - "dashboard/**"
 
 permissions:

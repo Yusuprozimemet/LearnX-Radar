@@ -14,11 +14,13 @@ from storage.state import (
     load_last_scored,
     load_memory,
     load_seen,
+    load_trending_history,
     record_lesson,
     save_brief,
     save_last_scored,
     save_memory,
     save_seen,
+    save_trending_history,
 )
 
 __all__ = [
@@ -30,6 +32,8 @@ __all__ = [
     "record_lesson",
     "load_last_scored",
     "save_last_scored",
+    "load_trending_history",
+    "save_trending_history",
     "save_brief",
     "load_brief",
 ]
