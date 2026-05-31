@@ -27,6 +27,7 @@ from storage import (
     filter_new,
     load_memory,
     load_seen,
+    mark_seen,
     previous_lesson,
     record_lesson,
     save_brief,
@@ -186,7 +187,7 @@ def main() -> None:
             print(f"[{name}] send failed: {exc}")
 
     # 5. Persist state only after the lesson was produced.
-    seen.update(item["id"] for item in new_items)
+    mark_seen(seen, (item["id"] for item in new_items))
     save_seen(seen)
     record_lesson(
         memory,
