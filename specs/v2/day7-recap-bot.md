@@ -1,5 +1,13 @@
 # v2 / Day 7 — `/recap` Telegram Q&A bot
 
+> **SUPERSEDED (2026-05-31).** This bot was removed. Follow-up Q&A is now a
+> Perplexity deep link seeded with the committed brief — see
+> [`specs/v3/day9-followup-and-privacy.md`](../v3/day9-followup-and-privacy.md).
+> Reasons: the polling workflow only answered after a manual dispatch (no cron),
+> replies were a single ungrounded LLM call capped at summaries, and a deep link
+> needs zero infrastructure while giving the user full, continuable Q&A over the
+> whole brief. The spec below is kept as a record of the original design.
+
 **Goal:** ask the bot about past lessons from Telegram. Send `/recap <question>`
 and get an answer grounded in your learning history (`skill_memory.json`).
 

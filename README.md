@@ -2,8 +2,8 @@
 
 LearnX-Radar is a self-updating curriculum engine that watches developer
 signals for emerging skill gaps and auto-generates a personalized audio lesson.
-It also provides a /recap Telegram Q&A bot and a static dashboard built from
-the recorded state.
+Each lesson links to a Perplexity thread pre-loaded with the brief for follow-up
+Q&A, plus a static dashboard built from the recorded state.
 
 ![LearnX-Radar overview](image.png)
 
@@ -15,7 +15,9 @@ the recorded state.
 - Writes a teaching brief, plans a curriculum, generates dialogue, and builds
        one MP3 via edge-tts.
 - Delivers the lesson to Telegram (audio + summary) and email (brief + MP3).
-- Persists a knowledge memory and full briefs for recap Q&A.
+- Persists a knowledge memory and full briefs (linked from each lesson for
+       Perplexity follow-up Q&A).
+- Redacts PII (emails, phone numbers, handles) from collected text at ingestion.
 - Builds a static dashboard from committed state.
 
 ## Pipeline
@@ -32,11 +34,10 @@ scrape -> dedup -> extract skills -> score gaps -> write brief
 agents/     source collectors (GitHub, HN, dev.to, Stack Overflow)
 radar/      skill extraction, gap scoring, brief writing
 learnx/     curriculum, dialogue, audio_builder, LLM client
-delivery/   Telegram and email delivery
-recap/      /recap Telegram Q&A bot (polling)
+delivery/   Telegram and email delivery (+ Perplexity follow-up link)
 dashboard/  static dashboard builder
 storage/    state files (seen_skills.json, skill_memory.json, last_scored.json)
-briefs/     full lesson briefs (used by recap)
+briefs/     full lesson briefs (linked from lessons for Perplexity Q&A)
 output/     generated MP3 files and sample outputs
 config.py   central configuration and model selection
 main.py     daily pipeline entry point
@@ -48,8 +49,8 @@ main.py     daily pipeline entry point
        configured in [config.py](config.py).
 - TTS: edge-tts plus pydub; ffmpeg required for audio assembly.
 - Delivery: Telegram Bot API and Gmail SMTP.
-- Schedule: radar workflow runs at 06:00 UTC on weekdays; recap workflow is
-       manual by default; dashboard deploys via GitHub Pages.
+- Schedule: radar workflow runs at 06:00 UTC every day; dashboard deploys via
+       GitHub Pages.
 
 ## Configuration
 
@@ -69,7 +70,6 @@ python main.py
 Other entry points:
 
 ```
-python -m recap
 python -m dashboard
 ```
 
@@ -80,9 +80,6 @@ In CI, the env values come from GitHub repo secrets (see
 
 - Radar run: [.github/workflows/radar.yml](.github/workflows/radar.yml) runs
        `python main.py` and commits updated state files and briefs.
-- Recap bot: [.github/workflows/recap.yml](.github/workflows/recap.yml) runs
-       `python -m recap` on manual dispatch. Add a cron schedule if you want
-       automatic polling.
 - Pages: [.github/workflows/pages.yml](.github/workflows/pages.yml) runs
        `python -m dashboard` and publishes the static HTML.
 
@@ -94,9 +91,22 @@ In CI, the env values come from GitHub repo secrets (see
        spaced repetition data.
 - [storage/last_scored.json](storage/last_scored.json): latest scoring for the
        dashboard.
-- [briefs](briefs): full lesson briefs used by recap Q&A.
+- [briefs](briefs): full lesson briefs, linked from each lesson for Perplexity Q&A.
 - [output](output): generated MP3 lessons (for example, lesson-YYYYMMDD.mp3).
 - [dashboard/index.html](dashboard/index.html): generated static dashboard.
+
+## Data and privacy
+
+- All sources are public (GitHub Trending, HN "Who is Hiring?", dev.to RSS,
+       Stack Overflow tag counts). No accounts or private data are scraped.
+- PII (emails, phone numbers, @handles) is redacted from collected text at
+       ingestion in [radar/privacy.py](radar/privacy.py) — before dedup, before
+       the LLM, and before anything is persisted, delivered, or linked to
+       Perplexity. Only `hn:<id>`-style keys (no source text) are persisted to
+       [storage/seen_skills.json](storage/seen_skills.json).
+- Text is processed by the NVIDIA NIM LLM, and each lesson links out to
+       Perplexity — treat both as third parties.
+- Dedup state is capped (5000 entries) so it does not grow without bound.
 
 ## Tests
 

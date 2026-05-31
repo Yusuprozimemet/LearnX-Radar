@@ -63,13 +63,14 @@ in `config.py`.
 ## Architecture
 
 ```
-GitHub Actions (cron 06:00 UTC, weekdays)
+GitHub Actions (cron 06:00 UTC, every day)
   └── agents/
        ├── github_trending_agent.py    → top repos by language/topic (no auth)
        ├── hn_hiring_agent.py          → "Who is Hiring?" thread keyword extraction
        ├── devto_agent.py              → dev.to RSS top posts by tag
        ├── stackoverflow_agent.py      → SO tags API — frequency delta week-over-week
   └── radar/
+       ├── privacy.py                  → redact PII (emails/phones/handles) at ingestion
        ├── skill_extractor.py          → extract skill/tool mentions across all sources
        ├── gap_scorer.py               → score by novelty + frequency + memory coverage
        ├── brief_writer.py             → synthesize a teaching markdown brief from top gap
@@ -79,7 +80,8 @@ GitHub Actions (cron 06:00 UTC, weekdays)
        ├── audio_builder.py            → TTS via edge-tts (no API key)
   └── delivery/
        ├── telegram_sender.py          → send MP3 + summary to Telegram
-       └── email_sender.py             → daily digest email with lesson preview
+       ├── email_sender.py             → daily digest email with lesson preview
+       └── followup.py                 → Perplexity deep link seeded with the brief
   └── storage/
        ├── seen_skills.json            → dedup: skills already turned into lessons
        └── skill_memory.json           → knowledge state: concepts covered, dates, scores
@@ -130,7 +132,9 @@ LinkedIn, Indeed, and Glassdoor are excluded — APIs are locked or ToS-restrict
   lesson connects that to Kafka consumer groups"
 - Difficulty auto-scales: beginner on first encounter, intermediate on second, advanced
   on third
-- Telegram bot gains `/recap` command — ask the Q&A engine about any past lesson
+- Follow-up Q&A: each lesson links to a Perplexity thread pre-loaded with the committed
+  brief (replaced the original `/recap` Telegram bot — see the v2 day-7 spec's
+  superseded note and `specs/v3/day9-followup-and-privacy.md`)
 
 **Output:** lessons that feel like a coherent curriculum, not random daily trivia.
 
@@ -183,9 +187,10 @@ LearnX-Radar/
 **Spec-driven development** — same discipline as LearnX-CLI. Every feature gets a written
 spec before a line of code. Specs live in `specs/v1/`, `specs/v2/`, `specs/v3/`.
 
-**Single LLM provider, single model** — NVIDIA NIM / GLM-5.1 handles every LLM task in
-the pipeline. No provider-switching logic, no fallback complexity. If the model name
-changes (as GLM-5 → GLM-5.1 shows can happen), one constant in `config.py` fixes it.
+**Single LLM provider, single model** — NVIDIA NIM (`meta/llama-3.3-70b-instruct`)
+handles every LLM task in the pipeline. No provider-switching logic, no fallback
+complexity. If the model name changes (as GLM-5.1 → llama-3.3-70b already showed can
+happen), one constant in `config.py` fixes it.
 
 **No paid APIs in the critical path** — the pipeline must run on the GitHub Actions
 free tier indefinitely. TTS: edge-tts (no key). LLM: NVIDIA NIM free tier (40 RPM,
@@ -196,6 +201,11 @@ entirely through Telegram, email, and a GitHub Pages dashboard.
 
 **Dedup at two levels** — `seen_skills.json` prevents re-fetching the same source item;
 `skill_memory.json` prevents re-teaching a concept too soon. These are separate concerns.
+
+**PII redaction at ingestion** — collected source text (especially HN job posts) can
+carry contact PII. `radar/privacy.py` scrubs emails, phone numbers, and `@handles` in
+`main._scrape()`, before anything is deduped, sent to the LLM, persisted, delivered, or
+linked to Perplexity. One choke point keeps PII out of every downstream sink.
 
 ---
 
