@@ -1,4 +1,5 @@
 """Offline tests for the dashboard renderer. Pure HTML, no network."""
+import config
 from dashboard import builder
 
 
@@ -44,7 +45,8 @@ def test_build_writes_all_sections(tmp_path):
         assert heading in html
     assert "DuckDB" in html and "🎧 today" in html        # today's pick marked
     assert "Kafka consumer groups" in html                # archive lists the lesson
-    assert "<audio" not in html                            # metadata-only: no players
+    # archive now embeds a player streaming the MP3 from its Release asset
+    assert f"{config.RELEASES_AUDIO_BASE}/lesson-20260529.mp3" in html
 
 
 def test_radar_drawn_when_enough_scored_skills(tmp_path):
@@ -123,6 +125,28 @@ def test_build_from_state_reads_committed_files(tmp_path, monkeypatch):
     html = out.read_text(encoding="utf-8")
     assert "DuckDB" in html and "🎧 today" in html
     assert "Kafka consumer groups" in html  # coverage + archive from memory
+
+
+def test_archive_player_uses_release_url(tmp_path):
+    html = builder.build(_memory(), [], out_path=tmp_path / "d.html").read_text("utf-8")
+    assert "<audio" in html
+    assert f"src='{config.RELEASES_AUDIO_BASE}/lesson-20260529.mp3'" in html
+
+
+def test_archive_no_audio_falls_back_to_delivery_note(tmp_path):
+    mem = {"skills": {"X": {"times_taught": 1, "last_taught": "2026-05-10",
+                            "lessons": [{"date": "2026-05-10", "title": "X",
+                                         "difficulty": "beginner", "summary": "s",
+                                         "audio": ""}]}}}
+    html = builder.build(mem, [], out_path=tmp_path / "d.html").read_text("utf-8")
+    assert "<audio" not in html
+    assert "delivered via Telegram" in html
+
+
+def test_header_has_feed_and_releases_links(tmp_path):
+    html = builder.build({"skills": {}}, [], out_path=tmp_path / "d.html").read_text("utf-8")
+    assert config.FEED_URL in html
+    assert config.RELEASES_PAGE_URL in html
 
 
 def test_escapes_html(tmp_path):

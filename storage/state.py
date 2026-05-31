@@ -24,6 +24,13 @@ HISTORY_KEEP_DAYS = 60  # cap the per-day archive so the embedded page payload s
 MAX_SEEN = 5000  # cap so the dedup file doesn't grow forever
 
 
+def slugify(text: str) -> str:
+    """Filesystem/URL-safe slug for a skill name (e.g. 'Kafka consumer groups'
+    -> 'kafka-consumer-groups'). Shared by brief and audio filenames so each
+    lesson gets a unique, collision-free name even when several land the same day."""
+    return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-") or "lesson"
+
+
 # --- seen_skills.json : dedup of source items already taught -----------------
 
 def load_seen() -> set[str]:
@@ -175,8 +182,7 @@ def previous_lesson(memory: dict) -> dict | None:
 def save_brief(skill: str, brief_md: str, when: date | None = None) -> str:
     """Write the full brief to briefs/<date>-<slug>.md; return the filename."""
     when = when or date.today()
-    slug = re.sub(r"[^a-z0-9]+", "-", skill.lower()).strip("-") or "lesson"
-    filename = f"{when:%Y%m%d}-{slug}.md"
+    filename = f"{when:%Y%m%d}-{slugify(skill)}.md"
     BRIEFS_DIR.mkdir(parents=True, exist_ok=True)
     (BRIEFS_DIR / filename).write_text(brief_md, encoding="utf-8")
     return filename

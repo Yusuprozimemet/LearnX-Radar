@@ -51,17 +51,18 @@ BRIEFS_RAW_BASE = (
     "https://raw.githubusercontent.com/Yusuprozimemet/LearnX-Radar/main/briefs"
 )
 
-# --- Podcast feed (v4) ---
+# --- Podcast feed + audio hosting (v4) ---
 # Lesson MP3s are hosted as assets on a single rolling GitHub Release (tag below),
-# uploaded by the radar workflow. The feed's <enclosure> points at this base +
-# the lesson's audio filename. Releases keep audio out of git history and need no
-# credential beyond the workflow's GITHUB_TOKEN. The public Pages site (where the
-# feed and dashboard are published) is SITE_URL.
+# uploaded by the radar workflow. The feed's <enclosure> and the dashboard's audio
+# player both point at RELEASES_AUDIO_BASE + the lesson's audio filename. Releases
+# keep audio out of git history and need no credential beyond GITHUB_TOKEN.
+REPO_URL = "https://github.com/Yusuprozimemet/LearnX-Radar"
 RELEASES_TAG = "lessons"
-RELEASES_AUDIO_BASE = (
-    f"https://github.com/Yusuprozimemet/LearnX-Radar/releases/download/{RELEASES_TAG}"
-)
+RELEASES_AUDIO_BASE = f"{REPO_URL}/releases/download/{RELEASES_TAG}"
+RELEASES_PAGE_URL = f"{REPO_URL}/releases"  # human-facing list of all lesson assets
+# The public Pages site (dashboard + feed are published here).
 SITE_URL = "https://yusuprozimemet.github.io/LearnX-Radar/"
+FEED_URL = f"{SITE_URL}podcast.xml"
 
 # --- Data sources (all free, no paid APIs) ---
 # Languages/topics to watch on GitHub Trending — proxy for emerging tools.

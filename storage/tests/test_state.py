@@ -34,6 +34,16 @@ def test_record_lesson_stores_audio_and_summary():
     assert entry["lessons"][-1]["audio"] == "lesson-20260530.mp3"
 
 
+def test_slugify_makes_unique_safe_names():
+    assert state.slugify("Kafka consumer groups") == "kafka-consumer-groups"
+    assert state.slugify("C# / .NET") == "c-net"
+    assert state.slugify("") == "lesson"  # never empty (used in filenames)
+    # distinct skills on the same day yield distinct audio filenames (the bug fix)
+    a = f"lesson-20260531-{state.slugify('Airbyte')}.mp3"
+    b = f"lesson-20260531-{state.slugify('Kafka consumer groups')}.mp3"
+    assert a != b
+
+
 def test_previous_lesson_none_when_empty():
     assert state.previous_lesson({"version": 1, "skills": {}}) is None
 
