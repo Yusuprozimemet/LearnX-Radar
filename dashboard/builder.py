@@ -17,6 +17,8 @@ import math
 from datetime import date
 from pathlib import Path
 
+import config
+
 OUTPUT = Path(__file__).parent / "index.html"
 _TRENDING_TOP = 12
 _GAP_TOP = 10
@@ -266,7 +268,7 @@ def _archive_html(skills: dict) -> str:
             f"{_esc(lesson.get('difficulty', ''))}</div>"
             f"<div class='title'>{_esc(lesson.get('title', ''))}</div>"
             f"<p>{_esc(lesson.get('summary', ''))}</p>"
-            "<div class='meta'>🎧 delivered via Telegram &amp; email</div>"
+            f"{_player(lesson)}"
             "</div>"
         )
         for lesson in lessons
@@ -281,6 +283,19 @@ def _archive_html(skills: dict) -> str:
             + "</details>"
         )
     return _section("🗂️ Lesson archive", inner)
+
+
+def _player(lesson: dict) -> str:
+    """Inline audio player for a lesson, streaming the MP3 from its GitHub Release
+    asset. Falls back to the delivery note when a lesson has no recorded audio."""
+    audio = lesson.get("audio")
+    if not audio:
+        return "<div class='meta'>🎧 delivered via Telegram &amp; email</div>"
+    src = f"{config.RELEASES_AUDIO_BASE}/{audio}"
+    return (
+        f"<audio controls preload='none' src='{_esc(src)}' "
+        "style='width:100%;margin-top:.5rem'></audio>"
+    )
 
 
 def _section(title: str, inner: str) -> str:
@@ -306,8 +321,14 @@ def _page(title: str, body: str) -> str:
   .ctrl {{ display:inline-block; color:#666; font-size:.9rem; margin-bottom:.8rem; }}
   .ctrl select {{ font:inherit; margin-left:.3rem; padding:.15rem .3rem; }}
   details > summary {{ cursor:pointer; color:#2563eb; margin:.6rem 0; }}
+  .nav {{ margin:.5rem 0 0; font-size:.9rem; }} .nav a {{ color:#2563eb; margin-right:1rem; }}
+  audio {{ outline:none; }}
 </style></head><body>
 <h1>📡 LearnX-Radar</h1>
 <p class="sub">Skill radar · generated {date.today():%b %d, %Y}</p>
+<p class="nav">
+  <a href="{_esc(config.FEED_URL)}">🎧 Podcast feed</a>
+  <a href="{_esc(config.RELEASES_PAGE_URL)}">📦 All lesson audio (Releases)</a>
+</p>
 {body}
 </body></html>"""
