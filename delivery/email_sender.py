@@ -15,6 +15,7 @@ from email.mime.text import MIMEText
 from pathlib import Path
 
 import config
+from delivery import followup
 
 SMTP_HOST = "smtp.gmail.com"
 SMTP_PORT = 465
@@ -95,6 +96,22 @@ _WRAP_STYLE = (
 )
 
 
+def _followup_button(lesson: dict) -> str:
+    """An 'Ask on Perplexity' button linking to a thread seeded with the brief."""
+    brief_file = lesson.get("brief_file")
+    if not brief_file:
+        return ""
+    url = followup.perplexity_url(lesson["skill"], brief_file)
+    style = (
+        "background:#1f6feb;color:#fff;padding:10px 18px;"
+        "border-radius:6px;text-decoration:none;display:inline-block"
+    )
+    return (
+        f'<p style="margin:16px 0">'
+        f'<a href="{url}" style="{style}">🔎 Ask follow-ups on Perplexity</a></p>'
+    )
+
+
 def _render_html(lesson: dict) -> str:
     return f"""
     <div style="{_WRAP_STYLE}">
@@ -103,6 +120,7 @@ def _render_html(lesson: dict) -> str:
       </p>
       <p style="color:#444">{_inline(lesson.get('summary', ''))}</p>
       <p style="color:#666;font-size:13px">🎧 Audio lesson attached below.</p>
+      {_followup_button(lesson)}
       <hr style="border:none;border-top:1px solid #eee">
       {_markdown_to_html(lesson.get('brief_md', ''))}
     </div>"""

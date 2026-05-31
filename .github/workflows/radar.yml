@@ -2,7 +2,7 @@ name: LearnX-Radar
 
 on:
   schedule:
-    - cron: "0 6 * * 1-5"  # 06:00 UTC, weekdays (see plan/plan.md)
+    - cron: "0 6 * * *"  # 06:00 UTC, every day
   workflow_dispatch:        # allow manual runs from the Actions tab
 
 permissions:
