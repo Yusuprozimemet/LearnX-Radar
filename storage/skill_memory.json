@@ -15,12 +15,28 @@
       ],
       "last_taught": "2026-05-30",
       "summary": "Rising questions"
+    },
+    "Airbyte": {
+      "times_taught": 1,
+      "first_taught": "2026-05-31",
+      "lessons": [
+        {
+          "date": "2026-05-31",
+          "title": "Airbyte",
+          "difficulty": "beginner",
+          "summary": "ETL pipelines",
+          "audio": "lesson-20260531.mp3",
+          "brief": "20260531-airbyte.md"
+        }
+      ],
+      "last_taught": "2026-05-31",
+      "summary": "ETL pipelines"
     }
   },
   "so_counts": {
-    "python": 2205907,
-    "rust": 43950,
-    "kubernetes": 59814,
+    "python": 2205901,
+    "rust": 43951,
+    "kubernetes": 59812,
     "langchain": 1983,
     "duckdb": 504
   }

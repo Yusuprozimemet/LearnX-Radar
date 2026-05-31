@@ -1,135 +1,13 @@
 {
-  "updated": "2026-05-30",
-  "today_skill": "DuckDB",
+  "updated": "2026-05-31",
+  "today_skill": "Airbyte",
   "scored": [
     {
-      "skill": "DuckDB",
-      "sources": [
-        "dev.to",
-        "Stack Overflow"
-      ],
-      "evidence": "Rising questions",
-      "frequency": 2,
-      "demand_weight": 2.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "suggested_difficulty": "beginner",
-      "score": 2.0
-    },
-    {
-      "skill": "LangChain",
-      "sources": [
-        "dev.to",
-        "Stack Overflow"
-      ],
-      "evidence": "AI framework adoption",
-      "frequency": 2,
-      "demand_weight": 2.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "suggested_difficulty": "beginner",
-      "score": 2.0
-    },
-    {
-      "skill": "Elixir",
-      "sources": [
-        "HN Hiring"
-      ],
-      "evidence": "Functional programming",
-      "frequency": 1,
-      "demand_weight": 2.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "suggested_difficulty": "beginner",
-      "score": 2.0
-    },
-    {
-      "skill": "Kafka consumer groups",
-      "sources": [
-        "HN Hiring"
-      ],
-      "evidence": "Real-time systems",
-      "frequency": 1,
-      "demand_weight": 2.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "suggested_difficulty": "beginner",
-      "score": 2.0
-    },
-    {
-      "skill": "WebAssembly",
-      "sources": [
-        "HN Hiring"
-      ],
-      "evidence": "Browser performance",
-      "frequency": 1,
-      "demand_weight": 2.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "suggested_difficulty": "beginner",
-      "score": 2.0
-    },
-    {
-      "skill": "WebGPU",
-      "sources": [
-        "HN Hiring"
-      ],
-      "evidence": "Browser gaming",
-      "frequency": 1,
-      "demand_weight": 2.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "suggested_difficulty": "beginner",
-      "score": 2.0
-    },
-    {
-      "skill": "Agentic coding",
-      "sources": [
-        "dev.to",
-        "GitHub Trending"
-      ],
-      "evidence": "AI agent ecosystem",
-      "frequency": 2,
-      "demand_weight": 1.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "suggested_difficulty": "beginner",
-      "score": 1.5
-    },
-    {
-      "skill": "Claude Code",
-      "sources": [
-        "GitHub Trending",
-        "dev.to"
-      ],
-      "evidence": "AI coding tools",
-      "frequency": 2,
-      "demand_weight": 1.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "suggested_difficulty": "beginner",
-      "score": 1.5
-    },
-    {
-      "skill": "Rust async/await",
-      "sources": [
-        "dev.to",
-        "GitHub Trending"
-      ],
-      "evidence": "Rust adoption",
-      "frequency": 2,
-      "demand_weight": 1.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "suggested_difficulty": "beginner",
-      "score": 1.5
-    },
-    {
-      "skill": "Async Rust",
+      "skill": "Airbyte",
       "sources": [
         "dev.to"
       ],
-      "evidence": "Safe backend development",
+      "evidence": "ETL pipelines",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -138,11 +16,11 @@
       "score": 0.5
     },
     {
-      "skill": "AutoGPT",
+      "skill": "CLIP",
       "sources": [
         "dev.to"
       ],
-      "evidence": "AI agent automation",
+      "evidence": "video thumbnail automation",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -151,11 +29,11 @@
       "score": 0.5
     },
     {
-      "skill": "Postgres data-plane",
+      "skill": "Edge Analytics",
       "sources": [
         "dev.to"
       ],
-      "evidence": "Database optimization",
+      "evidence": "offline-first data sync engine",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -164,11 +42,102 @@
       "score": 0.5
     },
     {
-      "skill": "Pytest",
+      "skill": "FFmpeg",
       "sources": [
         "dev.to"
       ],
-      "evidence": "Testing frameworks",
+      "evidence": "video thumbnail automation",
+      "frequency": 1,
+      "demand_weight": 0.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "suggested_difficulty": "beginner",
+      "score": 0.5
+    },
+    {
+      "skill": "FastAPI",
+      "sources": [
+        "dev.to"
+      ],
+      "evidence": "flagged as malware",
+      "frequency": 1,
+      "demand_weight": 0.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "suggested_difficulty": "beginner",
+      "score": 0.5
+    },
+    {
+      "skill": "Fivetran",
+      "sources": [
+        "dev.to"
+      ],
+      "evidence": "ETL pipelines",
+      "frequency": 1,
+      "demand_weight": 0.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "suggested_difficulty": "beginner",
+      "score": 0.5
+    },
+    {
+      "skill": "JavaScript Closures",
+      "sources": [
+        "dev.to"
+      ],
+      "evidence": "game server collapsed",
+      "frequency": 1,
+      "demand_weight": 0.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "suggested_difficulty": "beginner",
+      "score": 0.5
+    },
+    {
+      "skill": "Kubernetes Audit Logging",
+      "sources": [
+        "dev.to"
+      ],
+      "evidence": "security incident simulation",
+      "frequency": 1,
+      "demand_weight": 0.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "suggested_difficulty": "beginner",
+      "score": 0.5
+    },
+    {
+      "skill": "OpenCV",
+      "sources": [
+        "dev.to"
+      ],
+      "evidence": "video thumbnail automation",
+      "frequency": 1,
+      "demand_weight": 0.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "suggested_difficulty": "beginner",
+      "score": 0.5
+    },
+    {
+      "skill": "Postgres Pool",
+      "sources": [
+        "dev.to"
+      ],
+      "evidence": "died at 3 AM",
+      "frequency": 1,
+      "demand_weight": 0.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "suggested_difficulty": "beginner",
+      "score": 0.5
+    },
+    {
+      "skill": "PySceneDetect",
+      "sources": [
+        "dev.to"
+      ],
+      "evidence": "video thumbnail automation",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -181,7 +150,7 @@
       "sources": [
         "dev.to"
       ],
-      "evidence": "Python development",
+      "evidence": "explained simply",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -190,11 +159,11 @@
       "score": 0.5
     },
     {
-      "skill": "Qdrant",
+      "skill": "React Micro Frontend",
       "sources": [
         "dev.to"
       ],
-      "evidence": "Vector databases",
+      "evidence": "permission-based routing",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -203,11 +172,24 @@
       "score": 0.5
     },
     {
-      "skill": "RAG Internals",
+      "skill": "Rust async/await",
       "sources": [
         "dev.to"
       ],
-      "evidence": "AI knowledge graph",
+      "evidence": "production-oriented AI chatbot",
+      "frequency": 1,
+      "demand_weight": 0.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "suggested_difficulty": "beginner",
+      "score": 0.5
+    },
+    {
+      "skill": "Tauri v2",
+      "sources": [
+        "dev.to"
+      ],
+      "evidence": "snap layout overlay",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -220,7 +202,7 @@
       "sources": [
         "dev.to"
       ],
-      "evidence": "Event-driven systems",
+      "evidence": "Hytale headache",
       "frequency": 1,
       "demand_weight": 0.5,
       "novelty": 1.0,
@@ -229,44 +211,56 @@
       "score": 0.5
     },
     {
-      "skill": "Kubernetes",
+      "skill": "hls.js",
       "sources": [
-        "HN Hiring",
-        "Stack Overflow"
+        "dev.to"
       ],
-      "evidence": "Cloud infrastructure",
-      "frequency": 2,
-      "demand_weight": 3.5,
+      "evidence": "custom HLS player",
+      "frequency": 1,
+      "demand_weight": 0.5,
       "novelty": 1.0,
-      "table_stakes": true,
+      "table_stakes": false,
       "suggested_difficulty": "beginner",
-      "score": 0.35000000000000003
+      "score": 0.5
     },
     {
-      "skill": "React",
+      "skill": "n8n",
       "sources": [
-        "HN Hiring"
+        "dev.to"
       ],
-      "evidence": "Frontend development",
+      "evidence": "ETL pipelines",
       "frequency": 1,
-      "demand_weight": 2.0,
+      "demand_weight": 0.5,
       "novelty": 1.0,
-      "table_stakes": true,
+      "table_stakes": false,
       "suggested_difficulty": "beginner",
-      "score": 0.2
+      "score": 0.5
     },
     {
-      "skill": "TypeScript",
+      "skill": "Go",
       "sources": [
-        "HN Hiring"
+        "dev.to"
       ],
-      "evidence": "Static typing",
+      "evidence": "basement water monitor circuit",
       "frequency": 1,
-      "demand_weight": 2.0,
+      "demand_weight": 0.5,
       "novelty": 1.0,
       "table_stakes": true,
       "suggested_difficulty": "beginner",
-      "score": 0.2
+      "score": 0.05
+    },
+    {
+      "skill": "Rust",
+      "sources": [
+        "dev.to"
+      ],
+      "evidence": "basement water monitor circuit",
+      "frequency": 1,
+      "demand_weight": 0.5,
+      "novelty": 1.0,
+      "table_stakes": true,
+      "suggested_difficulty": "beginner",
+      "score": 0.05
     }
   ]
 }
