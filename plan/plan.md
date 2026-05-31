@@ -176,7 +176,7 @@ Four slices, each a self-contained spec (`specs/v4/`):
    identical for everyone — this generalizes it to a personal profile. Lives in
    `config.py` alongside `SOURCE_WEIGHTS`, so no new file or dependency.
 
-2. **Actionable briefs (`day11-actionable-briefs.md`)** — the brief gains a
+2. **Actionable briefs (`day11-actionable-briefs-and-quiz.md`)** — the brief gains a
    **"Do this in 5 minutes"** section: one concrete exercise, a code snippet, one
    repo/doc to skim. Fixes the all-prose, nothing-to-do briefs the current prompt
    produces. A `radar/prompts/brief.txt` change plus the dialogue/audio carrying it

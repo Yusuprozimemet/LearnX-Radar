@@ -23,9 +23,12 @@ A new "Personalization" section:
 # them. Matched exactly, normalized (lowercased, stripped), same as TABLE_STAKES.
 KNOWN_SKILLS = {"python", "fastapi", "docker"}          # example; user edits
 
-# Topics on your learning path — skills matching any of these (substring, both
-# directions, normalized) get boosted so your goals surface sooner.
-LEARNING_GOALS = ["distributed systems", "rust", "llm agents"]  # example
+# Topics on your learning path — skills matching any of these get boosted so your
+# goals surface sooner. Entries are compared NORMALIZED (lowercased + stripped) by
+# substring, both directions, so casing/whitespace in the goal list does not matter.
+# Keep examples disjoint from TABLE_STAKES_SKILLS / KNOWN_SKILLS (a goal that is also
+# table-stakes/known is a no-op, since the penalty multiplies away the boost).
+LEARNING_GOALS = ["distributed systems", "wasm", "llm agents"]  # example
 
 KNOWN_PENALTY = 0.1   # multiplier for a KNOWN_SKILLS hit (0 = drop; 1 = no effect)
 GOAL_BOOST    = 1.5   # multiplier when a skill matches a LEARNING_GOALS entry

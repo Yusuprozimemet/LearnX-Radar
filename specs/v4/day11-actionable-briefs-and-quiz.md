@@ -23,20 +23,47 @@ terminal or a scratch file, include a code/command snippet when the skill is
 code-shaped. `brief_writer.write()` is otherwise unchanged (still one LLM call;
 bump `max_tokens` only if briefs truncate — verify against a live run).
 
+### Extracting the action
+
+The brief stays a single markdown string (`write()` does not change its return
+type). A separate, deterministic helper pulls the action out of it:
+
+- `brief_writer.action_step(brief_md) -> str` — a regex captures the body under the
+  `## Do this in 5 minutes` heading up to the next heading (or end of document),
+  returning the stripped text or `""` when the section is absent.
+
+`main()` calls `action_step(brief_md)` and threads the result into the audio path
+(see below); it is not stored on the `lesson` payload, since the only consumer is
+the outro. (An empty action simply yields no call-to-action line.)
+
 ### Carry it into the audio
 
 The curriculum/dialogue path turns the brief into the spoken lesson. The
-"Do this in 5 minutes" action should land in the **outro** so the lesson ends on a
-call to action ("before you go, try this: …"). Check whether `learnx/prompts/
-outro.txt` already summarizes the brief tail; if it drops the action, add one line
-instructing the outro to voice the 5-minute action. No structural change to
-`curriculum.py` / `dialogue.py` expected — this is a prompt tweak.
+"Do this in 5 minutes" action lands in the **outro** so the lesson ends on a call
+to action ("before you go, try this: …").
+
+This is a small **structural** change, not a pure prompt tweak (the outro only ever
+saw the units' memory-hooks, never the brief tail):
+
+- `dialogue.generate(units, title, hook="", action="", chat_fn=chat)` gains an
+  `action` parameter (default `""` keeps callers/tests back-compatible).
+- The internal `dialogue._outro_prompt(title, hooks, action="")` passes `action`
+  into `outro.txt`, which gains an `{action}` placeholder. The outro is instructed
+  to voice it as a "before you go, try this" line when present, and to omit it when
+  `action` is `(none)`.
+- `main()` is the caller that wires it: `action = brief_writer.action_step(brief_md)`
+  then `dialogue.generate(..., action=action)`. `curriculum.py` is **not** touched.
 
 ### Testing (offline)
 
-- `brief_writer` test (mocked `chat_fn`): prompt text now contains the
+- `brief_writer.write` (mocked `chat_fn`): prompt text now contains the
   "Do this in 5 minutes" instruction.
-- Existing brief tests still pass (section is additive).
+- `brief_writer.action_step`: extracts the section body from a brief that has it;
+  returns `""` for a brief missing the section and for empty input.
+- `dialogue._outro_prompt`: includes the action text when given; collapses to
+  `(none)` when omitted.
+- Existing brief/dialogue tests still pass (the section and `action` param are
+  additive).
 
 ---
 

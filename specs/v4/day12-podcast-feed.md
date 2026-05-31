@@ -47,12 +47,21 @@ hand-writes HTML):
 - `build_feed(memory) -> str` reads `skill_memory.json` lessons (each already has
   `date`, `title`, `audio` filename, `summary`) and emits an RSS 2.0 document with
   the iTunes namespace.
+- The `<channel>` MUST carry the RSS-required fields so podcast clients accept the
+  feed: `<title>`, `<link>` (the Pages site, `config.SITE_URL`), `<description>`,
+  and `<language>` (plus `itunes:author` / `itunes:explicit` for podcast clients).
+  These come from module constants / `config`, written before any `<item>`.
 - One `<item>` per lesson: `<title>`, `<description>` (summary), `<pubDate>`,
   `<guid>` (the audio filename), and `<enclosure url=… type="audio/mpeg"
   length=…/>` where `url = RELEASES_AUDIO_BASE + "/" + lesson["audio"]`.
-- Skip lessons whose `audio` is empty.
+- Skip lessons whose `audio` is "empty" — meaning the key is missing, `None`, or
+  the empty string `""`. `lesson.get("audio")` covers all three (each is falsy);
+  tests assert the missing-key and `""` cases are skipped.
+- An empty `memory` (no lessons) yields a well-formed `<channel>` with the required
+  fields and no `<item>`s — never a crash.
 - Write `podcast.xml` next to `dashboard/index.html` so the **existing Pages
-  workflow publishes it** with no change (the feed XML is tiny — no space concern).
+  workflow publishes it** (the workflow's copy step gains one `cp podcast.xml` line;
+  the feed XML is tiny — no space concern).
 
 `length` (bytes): use the local MP3 size during an in-run build; for the Pages
 rebuild-from-state path the file isn't present, so `length` is optional in RSS —
