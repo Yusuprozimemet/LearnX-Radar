@@ -44,9 +44,16 @@ EMAIL_TO = os.getenv("EMAIL_TO")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 
 # --- Follow-up Q&A (Perplexity deep link) ---
-# Each delivered lesson links to a Perplexity thread pre-loaded with that day's
-# committed brief, so the user can ask follow-up questions there (replaces the
-# old /recap bot). This is the raw base URL for the briefs/ directory.
+# Each delivered lesson links to a Perplexity thread that already contains the
+# lesson brief *text* as context, so the user can ask follow-ups / be quizzed
+# there (replaces the old /recap bot). We embed the text rather than linking the
+# raw brief URL because Perplexity will not reliably fetch an external link, so a
+# "read this URL" prompt left it ungrounded. The brief is trimmed to
+# FOLLOWUP_BRIEF_CHARS so the encoded query keeps the whole deep-link URL within
+# what a Telegram inline button (and Perplexity's query box) accept.
+FOLLOWUP_BRIEF_CHARS = 1200
+# Raw base URL for the committed briefs/ directory (still committed as the full
+# source of truth and referenced from docs; no longer embedded in the deep link).
 BRIEFS_RAW_BASE = (
     "https://raw.githubusercontent.com/Yusuprozimemet/LearnX-Radar/main/briefs"
 )

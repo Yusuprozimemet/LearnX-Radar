@@ -106,16 +106,17 @@ def _button(url: str, label: str, bg: str) -> str:
 
 def _followup_button(lesson: dict) -> str:
     """A follow-up button (today's brief) and, when a previous lesson exists, a
-    recall-quiz button (the prior lesson's brief)."""
+    recall-quiz button (the prior lesson's brief). Both deep links embed the
+    brief *text* so Perplexity has grounding without scraping a URL."""
     buttons = []
-    brief_file = lesson.get("brief_file")
+    brief_md = lesson.get("brief_md")
     skill = lesson.get("skill")
-    if brief_file and skill:
+    if brief_md and skill:
         buttons.append(_button(
-            followup.perplexity_url(skill, brief_file),
+            followup.perplexity_url(skill, brief_md),
             "🔎 Ask follow-ups on Perplexity", "#1f6feb",
         ))
-    quiz_brief = lesson.get("quiz_brief")
+    quiz_brief = lesson.get("quiz_brief_md")
     quiz_skill = lesson.get("quiz_skill")
     if quiz_brief and quiz_skill:
         buttons.append(_button(

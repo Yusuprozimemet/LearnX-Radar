@@ -34,16 +34,17 @@ def _caption(lesson: dict) -> str:
 
 def _reply_markup(lesson: dict) -> dict:
     """Inline keyboard: a follow-up button (today's brief) and, when a previous
-    lesson exists, a recall-quiz button (the prior lesson's brief)."""
+    lesson exists, a recall-quiz button (the prior lesson's brief). Both deep
+    links embed the brief *text* so Perplexity has grounding without scraping."""
     rows = []
-    brief_file = lesson.get("brief_file")
+    brief_md = lesson.get("brief_md")
     skill = lesson.get("skill")
-    if brief_file and skill:
+    if brief_md and skill:
         rows.append([{
             "text": "🔎 Ask follow-ups on Perplexity",
-            "url": followup.perplexity_url(skill, brief_file),
+            "url": followup.perplexity_url(skill, brief_md),
         }])
-    quiz_brief = lesson.get("quiz_brief")
+    quiz_brief = lesson.get("quiz_brief_md")
     quiz_skill = lesson.get("quiz_skill")
     if quiz_brief and quiz_skill:
         rows.append([{
