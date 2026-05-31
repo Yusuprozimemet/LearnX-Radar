@@ -223,5 +223,6 @@ output/*
 .tts_tmp/
 .tutor_cache/
 
-# Generated dashboard (rendered each run; published via Pages later, not committed)
+# Generated dashboard + podcast feed (rendered each run; published via Pages, not committed)
 dashboard/index.html
+dashboard/podcast.xml
