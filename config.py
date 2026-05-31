@@ -37,6 +37,14 @@ EMAIL_TO = os.getenv("EMAIL_TO")
 # the built-in GITHUB_TOKEN is passed automatically. Not required locally.
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 
+# --- Follow-up Q&A (Perplexity deep link) ---
+# Each delivered lesson links to a Perplexity thread pre-loaded with that day's
+# committed brief, so the user can ask follow-up questions there (replaces the
+# old /recap bot). This is the raw base URL for the briefs/ directory.
+BRIEFS_RAW_BASE = (
+    "https://raw.githubusercontent.com/Yusuprozimemet/LearnX-Radar/main/briefs"
+)
+
 # --- Data sources (all free, no paid APIs) ---
 # Languages/topics to watch on GitHub Trending — proxy for emerging tools.
 TRENDING_LANGUAGES = ["python", "typescript", "rust", "go"]

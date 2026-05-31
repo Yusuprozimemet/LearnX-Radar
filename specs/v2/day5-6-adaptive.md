@@ -86,5 +86,6 @@ live requires two seeded runs; not run to save tokens/time.
 
 ## Out of scope
 
-- `/recap` Telegram Q&A bot (deferred — different architecture).
+- Follow-up Q&A (deferred to day 7 as a `/recap` Telegram bot; later superseded
+  by a Perplexity deep link — see `specs/v3/day9-followup-and-privacy.md`).
 - v3 dashboard.
