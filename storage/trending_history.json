@@ -309,5 +309,267 @@
         "score": 0.21428571428571427
       }
     ]
+  },
+  "2026-06-01": {
+    "today_skill": "AWS Lambda cold starts",
+    "scored": [
+      {
+        "skill": "AWS Lambda cold starts",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "Job requirements",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 2.0
+      },
+      {
+        "skill": "Kafka consumer groups",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "Job requirements",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 2.0
+      },
+      {
+        "skill": "Agentic coding",
+        "sources": [
+          "GitHub Trending",
+          "dev.to"
+        ],
+        "evidence": "AI coding tools",
+        "frequency": 2,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 1.5
+      },
+      {
+        "skill": "React Server Components",
+        "sources": [
+          "GitHub Trending"
+        ],
+        "evidence": "Modern React app",
+        "frequency": 1,
+        "demand_weight": 1.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 1.0
+      },
+      {
+        "skill": "LangChain",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Build AI agents",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "LangChain",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "AI agents",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Next.js",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Lightweight desktop client",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "OpenTelemetry",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Observability mesh",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Postgres",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Row-Level Security",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Python asyncio",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Async programming",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Rust async/await",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Runtime engineering",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "SQLite",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Local task tracker",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Tauri",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Lightweight desktop client",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Vector embeddings",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "AI models",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "DuckDB",
+        "sources": [
+          "Stack Overflow"
+        ],
+        "evidence": "Rising questions",
+        "frequency": 1,
+        "demand_weight": 1.5,
+        "novelty": 0.2857142857142857,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "intermediate",
+        "score": 0.42857142857142855
+      },
+      {
+        "skill": "Rust",
+        "sources": [
+          "dev.to",
+          "Stack Overflow"
+        ],
+        "evidence": "Runtime engineering",
+        "frequency": 2,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": true,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.2
+      },
+      {
+        "skill": "Kubernetes",
+        "sources": [
+          "Stack Overflow"
+        ],
+        "evidence": "Rising questions",
+        "frequency": 1,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": true,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.15000000000000002
+      }
+    ]
   }
 }
