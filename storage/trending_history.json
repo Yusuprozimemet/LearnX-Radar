@@ -571,5 +571,316 @@
         "score": 0.15000000000000002
       }
     ]
+  },
+  "2026-06-02": {
+    "today_skill": "Agentic coding",
+    "scored": [
+      {
+        "skill": "Agentic coding",
+        "sources": [
+          "GitHub Trending",
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "Emerging technique",
+        "frequency": 3,
+        "demand_weight": 3.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 3.5
+      },
+      {
+        "skill": "Kafka consumer groups",
+        "sources": [
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "Real-time data processing",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 2.5
+      },
+      {
+        "skill": "Rust async/await",
+        "sources": [
+          "GitHub Trending",
+          "Stack Overflow"
+        ],
+        "evidence": "Growing popularity",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 2.5
+      },
+      {
+        "skill": "Claude Code",
+        "sources": [
+          "GitHub Trending",
+          "dev.to"
+        ],
+        "evidence": "AI-powered coding assistant",
+        "frequency": 2,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 1.5
+      },
+      {
+        "skill": "React Server Components",
+        "sources": [
+          "GitHub Trending",
+          "dev.to"
+        ],
+        "evidence": "Server-side rendering",
+        "frequency": 2,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 1.5
+      },
+      {
+        "skill": "LangChain",
+        "sources": [
+          "Stack Overflow"
+        ],
+        "evidence": "Language model integration",
+        "frequency": 1,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 1.5
+      },
+      {
+        "skill": "DuckDB",
+        "sources": [
+          "Stack Overflow"
+        ],
+        "evidence": "Columnar database",
+        "frequency": 1,
+        "demand_weight": 1.5,
+        "novelty": 0.42857142857142855,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "intermediate",
+        "score": 0.6428571428571428
+      },
+      {
+        "skill": "AI model switching",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Cost optimization",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Azure AI Foundry",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "AI model deployment",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "BoxAgnts runtime",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "AI agent development",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "CloudZero",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Cloud cost optimization",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Data engineering",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Data pipeline development",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "FinOps tools",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Cloud cost management",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "GitHub Actions",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "CI/CD pipeline automation",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "JVM garbage collection",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Performance optimization",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Persistent agent memory",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "AI agent development",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Python FastAPI",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Web development framework",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "TWAIN scanner integration",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Document scanning",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Tauri",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Desktop application development",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Tauri v2 state management",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "Desktop application development",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      }
+    ]
   }
 }
