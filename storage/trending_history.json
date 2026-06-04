@@ -1196,5 +1196,298 @@
         "score": 0.14285714285714285
       }
     ]
+  },
+  "2026-06-04": {
+    "today_skill": "Rust async/await",
+    "scored": [
+      {
+        "skill": "Rust async/await",
+        "sources": [
+          "GitHub Trending",
+          "Stack Overflow"
+        ],
+        "evidence": "new projects",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 2.5
+      },
+      {
+        "skill": "Kafka consumer groups",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "new job posts",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 2.0
+      },
+      {
+        "skill": "Python asyncio",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "new job posts",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 2.0
+      },
+      {
+        "skill": "Langchain",
+        "sources": [
+          "Stack Overflow"
+        ],
+        "evidence": "rising questions",
+        "frequency": 1,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 1.5
+      },
+      {
+        "skill": "DuckDB",
+        "sources": [
+          "Stack Overflow"
+        ],
+        "evidence": "rising questions",
+        "frequency": 1,
+        "demand_weight": 1.5,
+        "novelty": 0.7142857142857143,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "intermediate",
+        "score": 1.0714285714285714
+      },
+      {
+        "skill": "MCP Toolbox",
+        "sources": [
+          "GitHub Trending"
+        ],
+        "evidence": "new tools",
+        "frequency": 1,
+        "demand_weight": 1.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 1.0
+      },
+      {
+        "skill": "React Server Components",
+        "sources": [
+          "GitHub Trending"
+        ],
+        "evidence": "new repos",
+        "frequency": 1,
+        "demand_weight": 1.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 1.0
+      },
+      {
+        "skill": "TanStack Query",
+        "sources": [
+          "GitHub Trending"
+        ],
+        "evidence": "new libraries",
+        "frequency": 1,
+        "demand_weight": 1.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 1.0
+      },
+      {
+        "skill": "AWS Lambda cold starts",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "new job posts",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 0.42857142857142855,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "intermediate",
+        "score": 0.8571428571428571
+      },
+      {
+        "skill": "Agentic coding",
+        "sources": [
+          "dev.to",
+          "HN Hiring"
+        ],
+        "evidence": "new articles",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 0.2857142857142857,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "intermediate",
+        "score": 0.7142857142857142
+      },
+      {
+        "skill": "WebAssembly",
+        "sources": [
+          "GitHub Trending"
+        ],
+        "evidence": "new projects",
+        "frequency": 1,
+        "demand_weight": 1.0,
+        "novelty": 0.5714285714285714,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "intermediate",
+        "score": 0.5714285714285714
+      },
+      {
+        "skill": "AutoGen",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "new comparisons",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "ClickHouse Monitoring",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "new challenges",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "LangGraph",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "new comparisons",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Model Context Protocol (MCP)",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "new explanations",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Python Decorators",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "new tutorials",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "SSH Reverse Tunneling",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "new tutorials",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Vector embeddings",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "new explanations",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Kubernetes",
+        "sources": [
+          "Stack Overflow",
+          "HN Hiring"
+        ],
+        "evidence": "rising questions",
+        "frequency": 2,
+        "demand_weight": 3.5,
+        "novelty": 1.0,
+        "table_stakes": true,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.35000000000000003
+      }
+    ]
   }
 }
