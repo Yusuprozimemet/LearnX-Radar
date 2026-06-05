@@ -3,10 +3,18 @@ with a canned chat_fn so no network is touched."""
 import json
 from datetime import date, timedelta
 
+import pytest
+
 import config
 from radar import brief_writer, gap_scorer, skill_extractor
 
 EMPTY_MEMORY = {"version": 1, "skills": {}}
+
+
+@pytest.fixture(autouse=True)
+def _no_live_exa(monkeypatch):
+    """Keep grounding tests hermetic — never let _ground hit the live Exa API."""
+    monkeypatch.setattr(config, "EXA_API_KEY", None, raising=False)
 
 
 def _ago(days: int) -> str:
@@ -274,3 +282,104 @@ def test_write_passes_fields_to_prompt():
     out = brief_writer.write(skill, EMPTY_MEMORY, chat_fn=fake_chat)
     assert out.startswith("# DuckDB")
     assert "DuckDB" in captured["prompt"] and "fast OLAP" in captured["prompt"]
+
+
+# --- brief grounding (v7 Day 24) ---------------------------------------------
+
+_SKILL = {"skill": "DuckDB", "evidence": "fast OLAP engine", "sources": ["HN Hiring"]}
+_ITEMS = [
+    {"id": "a", "source": "HN Front Page", "title": "DuckDB hits 1.0",
+     "url": "http://x/duckdb", "text": "DuckDB OLAP analytics", "meta": ""},
+    {"id": "b", "source": "Reddit", "title": "cat pics",
+     "url": "http://x/cats", "text": "unrelated fluff", "meta": ""},
+]
+
+
+def test_select_sources_reads_relevant_top_n(monkeypatch):
+    monkeypatch.setattr(config, "GROUNDING_READ_TOP_N", 1)
+    reads = []
+
+    def fake_reader(url):
+        reads.append(url)
+        return {"id": "web", "source": "Web", "title": "DuckDB docs",
+                "url": url, "text": "DuckDB is an in-process OLAP database.", "meta": "x"}
+
+    sel = brief_writer._select_sources(_SKILL, _ITEMS, reader=fake_reader)
+    assert reads == ["http://x/duckdb"]          # read the relevant item, not the cat one
+    assert len(sel) == 1
+    assert sel[0]["url"] == "http://x/duckdb"
+    assert "in-process OLAP" in sel[0]["text"]   # full read content, not the snippet
+
+
+def test_select_sources_scrubs_fetched_text(monkeypatch):
+    monkeypatch.setattr(config, "GROUNDING_READ_TOP_N", 1)
+
+    def leaky_reader(url):
+        return {"id": "w", "source": "Web", "title": "t", "url": url,
+                "text": "Ask the maintainer at dev@duckdb.org for DuckDB help.", "meta": ""}
+
+    sel = brief_writer._select_sources(_SKILL, _ITEMS, reader=leaky_reader)
+    assert "dev@duckdb.org" not in sel[0]["text"] and "[email]" in sel[0]["text"]
+
+
+def test_select_sources_falls_back_to_snippet_on_read_failure(monkeypatch):
+    monkeypatch.setattr(config, "GROUNDING_READ_TOP_N", 1)
+    sel = brief_writer._select_sources(_SKILL, _ITEMS, reader=lambda u: None)
+    assert sel[0]["text"] == "DuckDB OLAP analytics"  # the original snippet survives
+    assert sel[0]["url"] == "http://x/duckdb"
+
+
+def test_select_sources_empty_when_disabled(monkeypatch):
+    monkeypatch.setattr(config, "GROUNDING_ENABLED", False)
+    assert brief_writer._select_sources(_SKILL, _ITEMS, reader=lambda u: None) == []
+
+
+def test_select_sources_empty_when_no_items():
+    assert brief_writer._select_sources(_SKILL, [], reader=lambda u: None) == []
+
+
+def test_sources_section_uses_real_urls_only():
+    """The appended Sources list is authored from data — never the LLM's URLs."""
+    sel = [{"url": "http://x/duckdb"}, {"url": "http://x/two"}, {"url": ""}]
+    section = brief_writer._sources_section(sel)
+    assert section.startswith("\n\n## Sources\n")
+    assert "1. http://x/duckdb" in section and "2. http://x/two" in section
+    assert "3." not in section  # empty-url source skipped
+    assert brief_writer._sources_section([]) == ""
+
+
+def test_write_grounded_appends_real_sources_and_keeps_action(monkeypatch):
+    monkeypatch.setattr(config, "GROUNDING_READ_TOP_N", 1)
+    monkeypatch.setattr(
+        brief_writer.research.web, "read",
+        lambda url: {"id": "w", "source": "Web", "title": "DuckDB docs",
+                     "url": url, "text": "DuckDB columnar OLAP.", "meta": ""},
+    )
+    captured = {}
+
+    def fake_chat(messages, **k):
+        captured["prompt"] = messages[0]["content"]
+        # The LLM tries to fabricate a source URL; our code must NOT use it.
+        return ("# DuckDB\n## Do this in 5 minutes\nRun `pip install duckdb`.\n"
+                "## Sources\n1. https://hallucinated.example/duckdb")
+
+    out = brief_writer.write(_SKILL, EMPTY_MEMORY, _ITEMS, chat_fn=fake_chat)
+    assert "http://x/duckdb" in captured["prompt"]   # grounding reached the prompt
+    assert "[n]" in captured["prompt"]               # citation instruction present
+    # Deterministic Sources appended from the REAL url; action step still parses
+    # (it stops at the appended ## Sources heading).
+    assert out.rstrip().endswith("## Sources\n1. http://x/duckdb")
+    assert "pip install duckdb" in brief_writer.action_step(out)
+
+
+def test_write_ungrounded_fallback_uses_placeholder_and_no_sources(monkeypatch):
+    captured = {}
+
+    def fake_chat(messages, **k):
+        captured["prompt"] = messages[0]["content"]
+        return "# DuckDB\n"
+
+    # No items → grounding empty → placeholder injected, no Sources appended.
+    out = brief_writer.write(_SKILL, EMPTY_MEMORY, [], chat_fn=fake_chat)
+    assert brief_writer._NO_GROUNDING in captured["prompt"]
+    assert "## Sources" not in out

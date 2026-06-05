@@ -16,7 +16,10 @@ import config
 from agents import (
     devto_agent,
     github_trending_agent,
+    hn_front_agent,
     hn_hiring_agent,
+    lobsters_agent,
+    reddit_agent,
     stackoverflow_agent,
 )
 from dashboard import builder as dashboard
@@ -59,6 +62,9 @@ def _scrape(memory: dict) -> list[dict]:
         ("github_trending", github_trending_agent),
         ("hn_hiring", hn_hiring_agent),
         ("devto", devto_agent),
+        ("reddit", reddit_agent),
+        ("hn_front", hn_front_agent),
+        ("lobsters", lobsters_agent),
     )
     for name, agent in no_arg_sources:
         try:
@@ -78,7 +84,10 @@ def _scrape(memory: dict) -> list[dict]:
     # Redact PII (emails/phones/handles) from every item's free text at ingestion,
     # before dedup, the LLM, persistence, delivery, or the Perplexity link see it.
     free_text_fields = {"title", "text", "meta"}
-    known_sources = {"GitHub Trending", "HN Hiring", "dev.to", "Stack Overflow"}
+    known_sources = {
+        "GitHub Trending", "HN Hiring", "dev.to", "Stack Overflow",
+        "Reddit", "HN Front Page", "Lobste.rs",
+    }
     safe_exempt = {"id", "source", "url"}
     for item in items:
         fields = free_text_fields
@@ -214,7 +223,7 @@ def main() -> None:
         return
     print(f"Today's skill: {skill['skill']} (score {skill.get('score')})")
 
-    brief_md = brief_writer.write(skill, memory)
+    brief_md = brief_writer.write(skill, memory, items)
     brief_file = save_brief(skill["skill"], brief_md)  # committed; linked for Perplexity Q&A
 
     # 3. Learnx: brief -> curriculum -> dialogue -> audio.
