@@ -1,6 +1,6 @@
 """Rank skill mentions by where the biggest learning gap is. Pure, no LLM.
 
-score = demand_weight x novelty
+score = demand_weight x novelty x table_stakes x known x goal x momentum
 
 - demand_weight: sum of per-source weights (config.SOURCE_WEIGHTS) over the
   distinct sources that mentioned the skill. Real job-market signal (HN Hiring,
@@ -9,12 +9,18 @@ score = demand_weight x novelty
   suppressed (~0) and recovers toward 1.0 only after a spacing interval that
   widens with each repetition — so the radar revisits topics on a schedule
   instead of either re-teaching daily or never again.
+- momentum (v7 Day26): rewards skills RISING across days (vs one-day spikes), from
+  trending_history matched by canonical name. Orthogonal to novelty.
 
 The world-wants-but-you-lack signal is exactly the gap the radar exists to find.
 """
 from datetime import date
 
 import config
+
+# Reuse the SAME canonicalization extraction used to merge variants, so cross-day
+# matching links the same skill across days (e.g. k8s <-> Kubernetes).
+from radar.skill_extractor import _canonical
 
 _DIFFICULTY_BY_EXPOSURE = ("beginner", "intermediate", "advanced")
 
@@ -79,12 +85,58 @@ def _goal_match(skill: str, goals: list[str]) -> bool:
     )
 
 
-def score(mentions: list[dict], memory: dict, profile: dict | None = None) -> list[dict]:
+def _momentum(skill: str, demand_weight: float, history: dict | None) -> float:
+    """Multiplier rewarding a skill that's RISEN across recent days, not just today.
+
+    Looks back over MOMENTUM_WINDOW_DAYS of `history` (one ranking per day), matched
+    by canonical name. Seen only today -> SPIKE_DAMP. Seen across prior days -> boost
+    scaled by recurrence, full only if today's demand also accelerates vs the prior
+    average (flat/declining halves the boost). Returns 1.0 when disabled / no history.
+    """
+    if not config.MOMENTUM_ENABLED or not history:
+        return 1.0
+    canon = _canonical(skill)
+    today = date.today().isoformat()
+    days = [d for d in sorted(history, reverse=True) if d != today][
+        : config.MOMENTUM_WINDOW_DAYS
+    ]
+    if not days:
+        return 1.0  # no prior history to judge against
+
+    prior_demand: list[float] = []
+    for d in days:
+        for row in history[d].get("scored", []):
+            if _canonical(str(row.get("skill", ""))) == canon:
+                dw = row.get("demand_weight")
+                if isinstance(dw, (int, float)):
+                    prior_demand.append(dw)
+                break
+
+    if not prior_demand:
+        return config.MOMENTUM_SPIKE_DAMP  # appears only today -> one-day spike
+
+    recurrence = len(prior_demand) / len(days)  # of days we have, how often present
+    boost = 1.0 + (config.MOMENTUM_MAX_BOOST - 1.0) * recurrence
+    prior_avg = sum(prior_demand) / len(prior_demand)
+    if demand_weight <= prior_avg:  # sustained but not accelerating -> half the boost
+        boost = 1.0 + (boost - 1.0) * 0.5
+    return boost
+
+
+def score(
+    mentions: list[dict],
+    memory: dict,
+    profile: dict | None = None,
+    history: dict | None = None,
+) -> list[dict]:
     """Return mentions enriched with scoring fields, ranked high to low.
 
     `profile` (v4) personalizes the ranking: {"known": set, "goals": list}. Known
     skills sink (you already have them); goal-relevant skills rise. When None, both
     factors are 1.0 and the result is identical to the global v3 scoring.
+
+    `history` (v7 Day26) is trending_history (prior-day rankings) for the momentum
+    multiplier; when None or MOMENTUM_ENABLED is False, momentum is 1.0 (no effect).
     """
     known = profile.get("known", set()) if profile else set()
     goals = profile.get("goals", []) if profile else []
@@ -97,6 +149,7 @@ def score(mentions: list[dict], memory: dict, profile: dict | None = None) -> li
         known_pen = _known_penalty(m["skill"], known)
         goal_hit = _goal_match(m["skill"], goals)
         boost = config.GOAL_BOOST if goal_hit else 1.0
+        momentum = _momentum(m["skill"], demand_weight, history)
         scored.append(
             {
                 **m,
@@ -106,8 +159,10 @@ def score(mentions: list[dict], memory: dict, profile: dict | None = None) -> li
                 "table_stakes": penalty < 1.0,
                 "known": known_pen < 1.0,
                 "goal_match": goal_hit,
+                "momentum": momentum,
+                "canonical": _canonical(m["skill"]),
                 "suggested_difficulty": difficulty,
-                "score": demand_weight * novelty * penalty * known_pen * boost,
+                "score": demand_weight * novelty * penalty * known_pen * boost * momentum,
             }
         )
     # Deterministic order: score desc, then frequency desc, then skill name asc.
