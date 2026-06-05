@@ -93,28 +93,33 @@ def _summary(theme: str, new_words: list[dict]) -> str:
 
 
 def _render_markdown(lesson: DutchLesson) -> str:
+    """Render the lesson as markdown. Convention: **Dutch is bold**, _English is
+    italic_ — both the email (markdown->HTML) and Telegram (markdown->Telegram HTML)
+    renderers map these to <b>/<i>, so Dutch and English read distinctly."""
     by_id = {s["id"]: s for s in lesson.sentences}
     out: list[str] = [f"## 🇳🇱 Dutch ({lesson.cefr}) — {lesson.theme}", ""]
 
     out.append("**Nieuwe woorden (new words)**")
     for w in lesson.new_words:
-        line = f"- **{w['nl']}** — {w.get('en', '')}"
+        en = w.get("en", "")
+        line = f"- **{w['nl']}**" + (f" — _{en}_" if en else "")
         s = by_id.get(w["id"])
         if s:
-            line += f"  \n  _{s['nl']}_" + (f" — {s['en']}" if s.get("en") else "")
+            line += f"  \n  **{s['nl']}**" + (f" — _{s['en']}_" if s.get("en") else "")
         out.append(line)
     out.append("")
 
     if lesson.review_words:
         out.append("**Herhaling (review)**")
         for w in lesson.review_words:
-            out.append(f"- {w['nl']} — {w.get('en', '')}")
+            en = w.get("en", "")
+            out.append(f"- **{w['nl']}**" + (f" — _{en}_" if en else ""))
         out.append("")
 
     if lesson.dialogue:
         out.append("**Gesprek (dialogue)**")
         for d in lesson.dialogue:
-            line = f"- {d['speaker']}: {d['nl']}"
+            line = f"- {d['speaker']}: **{d['nl']}**"
             if d.get("en"):
                 line += f" — _{d['en']}_"
             out.append(line)
