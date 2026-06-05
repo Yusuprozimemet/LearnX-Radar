@@ -6,6 +6,13 @@ SKILL: {skill}
 WHY IT SURFACED: {evidence}
 SEEN IN: {sources}
 {prior_context}
+GROUNDING SOURCES (real material collected today). Base your facts on these —
+prefer their concrete details, versions, names, and examples over generic
+knowledge, and do NOT state specifics they don't support. Cite them inline as [n]
+using their numbers where a claim rests on one. NEVER invent a URL or a source not
+listed here, and do NOT write a Sources list yourself — it is appended for you:
+{grounding}
+
 Write the brief in Markdown, roughly 550-750 words, with EXACTLY these sections:
 
 # {skill}
@@ -31,5 +38,8 @@ command to run, a tiny code snippet to type and execute, or one specific repo or
 doc page to open and skim. Be specific and immediately actionable; include a short
 code block when the skill is code-shaped. No "explore the ecosystem" filler, no
 multi-step project — just one small thing they can finish in five minutes.
+
+Do NOT write a "## Sources" section — it is appended automatically from the real
+URLs. If no grounding sources were provided above, use no [n] markers anywhere.
 
 Write only the Markdown brief. No preamble, no closing remarks.

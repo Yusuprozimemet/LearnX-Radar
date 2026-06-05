@@ -43,6 +43,12 @@ EMAIL_TO = os.getenv("EMAIL_TO")
 # the built-in GITHUB_TOKEN is passed automatically. Not required locally.
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 
+# --- Exa web search (optional) — brief grounding, v7 Day 24 ---
+# Free key at https://exa.ai. Absent -> the exa channel yields nothing and brief
+# grounding falls back to reading the day's own source URLs (keyless, via Jina).
+# Never required; the run continues without it.
+EXA_API_KEY = os.getenv("EXA_API_KEY")
+
 # --- Follow-up Q&A (Perplexity deep link) ---
 # Each delivered lesson links to a Perplexity thread that already contains the
 # lesson brief *text* as context, so the user can ask follow-ups / be quizzed
@@ -86,6 +92,32 @@ STACKOVERFLOW_TAGS = ["python", "rust", "kubernetes", "langchain", "duckdb"]
 # Hacker News "Who is Hiring?" — employer skill demand via the Algolia API.
 HN_HIRING_LIMIT = 100  # comments to scan from the latest hiring thread
 
+# Reddit — open-vocabulary discovery via public weekly RSS (no auth; .rss, not
+# .json, which 403s from datacenter IPs). Lanes: AI, software dev, full-stack,
+# frontend, backend (infra + data layer), python, java, typescript, plus SaaS /
+# startups for product/market-trend discovery. Tune freely — these are the
+# discovery surface, not a fixed answer.
+REDDIT_SUBREDDITS = [
+    "artificial",       # AI
+    "ExperiencedDevs",  # software development (high-signal)
+    "webdev",           # full stack
+    "Frontend",         # frontend
+    "devops",           # backend — infra / CI-CD
+    "Database",         # backend — database / data layer
+    "Python",           # python
+    "java",             # java
+    "typescript",       # typescript
+    "SaaS",             # SaaS — product/market discovery
+    "startups",         # startups — product/market discovery
+]
+REDDIT_LIMIT = 15  # top posts per subreddit per week
+
+# Hacker News front page (Algolia) — what devs are reading right now.
+# No extra config; the front_page tag returns ~30 stories.
+
+# Lobste.rs — curated, invite-only community; higher signal/noise than dev.to.
+LOBSTERS_LIMIT = 25  # hottest stories pulled from the front-page RSS
+
 # --- Gap scoring: per-source weight (favors real job-market demand over buzz) ---
 # Tunable here without touching gap_scorer logic. Used as:
 #   demand_weight = sum(weight of each distinct source mentioning a skill)
@@ -94,6 +126,9 @@ SOURCE_WEIGHTS = {
     "HN Hiring": 2.0,        # real employer demand — strongest signal
     "Stack Overflow": 1.5,   # rising developer questions — real friction
     "GitHub Trending": 1.0,  # emerging tools, but buzz-driven
+    "Lobste.rs": 1.0,        # curated discussion, high signal/noise
+    "HN Front Page": 1.0,    # broad dev attention right now
+    "Reddit": 0.75,          # community discovery, noisier than HN/Lobsters
     "dev.to": 0.5,           # community chatter — noisiest
 }
 DEFAULT_SOURCE_WEIGHT = 1.0  # any source not listed above
@@ -142,6 +177,24 @@ GOAL_BOOST = 1.5      # multiplier when a skill matches a LEARNING_GOALS entry
 # --- Lesson generation ---
 LESSON_DURATION_MIN = 5  # target audio length for a daily lesson
 LESSON_DIFFICULTY_DEFAULT = "beginner"  # auto-scales in v2 from skill_memory
+
+# --- Brief grounding (v7 Day 24) ---
+# Ground the brief in the REAL text of the sources that surfaced the skill (+ fresh
+# Exa results when EXA_API_KEY is set), instead of writing it from the skill name
+# alone. brief_writer selects candidate sources, full-reads the top N via the
+# keyless Jina reader, and feeds numbered [n] context into Radar's brief prompt.
+# See specs/v7/day24-brief-grounding.md.
+GROUNDING_ENABLED = True        # False -> legacy ungrounded brief (skill + evidence)
+GROUNDING_CANDIDATES = 12       # candidate sources ranked before deciding what to read
+# GROUNDING_READ_TOP_N: how many candidates to FULL-READ (Jina) per brief. Set from
+# the exp_grounding.py sweep (N in {0,2,3,5,8} over 3 real skills), NOT a guess.
+# Finding: brief quality plateaus at N=3 (stable length, all sources cited); N=8 is
+# wasteful (model ignores ~3 of 8 sources, brief gets shorter, +60% context tokens).
+# Read latency is small (~8s at N=5) so latency doesn't bind. Chosen 5 = the N=3
+# plateau + headroom for the blocked/empty Jina reads that occur in production.
+GROUNDING_READ_TOP_N = 5
+GROUNDING_TEXT_CHARS = 1500     # per-source text cap fed into the brief prompt
+GROUNDING_HTTP_TIMEOUT_S = 20   # per Jina/Exa request
 
 # --- Dutch coach (v5) ---
 # A second learning track that rides the same daily run: a small A2 Dutch lesson
