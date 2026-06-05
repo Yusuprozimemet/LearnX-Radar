@@ -61,6 +61,30 @@ def test_build_feed_file_writes(tmp_path, monkeypatch):
     monkeypatch.setattr("storage.load_memory", lambda: _memory(
         {"Rust": [{"date": "2026-05-29", "title": "Rust", "audio": "r.mp3"}]}
     ))
+    monkeypatch.setattr("storage.load_dutch_memory", lambda: {"lessons": []})
     path = feed.build_feed_file(out)
     assert path.exists()
     assert ET.fromstring(path.read_text(encoding="utf-8")).find("channel").find("item") is not None
+
+
+# --- Dutch episodes in the feed (v5) -----------------------------------------
+
+def test_dutch_lessons_interleave_by_date():
+    memory = _memory({
+        "Rust": [{"date": "2026-05-29", "title": "Rust", "audio": "lesson-20260529.mp3"}],
+    })
+    dutch = {"lessons": [
+        {"date": "2026-05-30", "theme": "tech", "summary": "files", "audio": "dutch-20260530.mp3"},
+    ]}
+    items = ET.fromstring(feed.build_feed(memory, dutch)).find("channel").findall("item")
+    titles = [i.find("title").text for i in items]
+    assert titles[0].startswith("🇳🇱")          # Dutch (2026-05-30) is newest → first
+    assert titles[1] == "Rust"
+    # unique guids across both sources (filenames differ: lesson-* vs dutch-*)
+    guids = [i.find("guid").text for i in items]
+    assert sorted(guids) == ["dutch-20260530.mp3", "lesson-20260529.mp3"]
+
+
+def test_feed_without_dutch_is_unchanged():
+    memory = _memory({"Rust": [{"date": "2026-05-29", "title": "Rust", "audio": "r.mp3"}]})
+    assert feed.build_feed(memory) == feed.build_feed(memory, None)

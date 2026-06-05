@@ -36,14 +36,25 @@ def _rfc822(iso_date: str) -> str:
     return format_datetime(dt)
 
 
-def _lessons(memory: dict) -> list[dict]:
-    """Every lesson with an audio file, newest first (standard podcast order)."""
+def _lessons(memory: dict, dutch: dict | None = None) -> list[dict]:
+    """Every lesson with an audio file, newest first (standard podcast order).
+
+    Dev lessons (skill_memory) and Dutch lessons (dutch_memory, v5) interleave by
+    date in one feed. Their audio filenames differ (lesson-* vs dutch-*), so guids
+    never collide; Dutch episodes get a 🇳🇱-prefixed title for scannability.
+    """
     items = [
         lesson
         for data in memory.get("skills", {}).values()
         for lesson in data.get("lessons", [])
         if lesson.get("audio")
     ]
+    if dutch:
+        for lesson in dutch.get("lessons", []):
+            if not lesson.get("audio"):
+                continue
+            title = lesson.get("summary") or f"Dutch — {lesson.get('theme', '')}".strip(" —")
+            items.append({**lesson, "title": f"🇳🇱 {title}"})
     items.sort(key=lambda lesson: lesson.get("date", ""), reverse=True)
     return items
 
@@ -64,12 +75,12 @@ def _item(lesson: dict) -> str:
     )
 
 
-def build_feed(memory: dict) -> str:
-    """Return the podcast RSS 2.0 document for all recorded lessons.
+def build_feed(memory: dict, dutch: dict | None = None) -> str:
+    """Return the podcast RSS 2.0 document for all recorded lessons (dev + Dutch).
 
     With no lessons yet, this is a well-formed channel with no <item>s (no crash).
     """
-    items = [_item(lesson) for lesson in _lessons(memory)]
+    items = [_item(lesson) for lesson in _lessons(memory, dutch)]
     head = [
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">',
@@ -90,5 +101,7 @@ def build_feed_file(out_path: Path = OUTPUT) -> Path:
     import storage
 
     out_path = Path(out_path)
-    out_path.write_text(build_feed(storage.load_memory()), encoding="utf-8")
+    out_path.write_text(
+        build_feed(storage.load_memory(), storage.load_dutch_memory()), encoding="utf-8"
+    )
     return out_path

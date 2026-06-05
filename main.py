@@ -21,17 +21,23 @@ from agents import (
 )
 from dashboard import builder as dashboard
 from delivery import email_sender, telegram_sender
+from dutch import audio as dutch_audio
+from dutch import lesson as dutch_lesson
+from dutch import wordlist as dutch_wordlist
 from learnx import audio_builder, curriculum, dialogue
 from radar import brief_writer, gap_scorer, privacy, skill_extractor
 from storage import (
     filter_new,
     load_brief,
+    load_dutch_memory,
     load_memory,
     load_seen,
     mark_seen,
     previous_lesson,
+    record_dutch_lesson,
     record_lesson,
     save_brief,
+    save_dutch_memory,
     save_last_scored,
     save_memory,
     save_seen,
@@ -102,10 +108,69 @@ def _persist_so_counts(memory: dict, items: list[dict]) -> None:
 def _refresh_dashboard(memory: dict, scored=None, today_skill=None) -> None:
     """Regenerate the static dashboard; never let it fail the run."""
     try:
-        path = dashboard.build(memory, scored, today_skill)
+        dutch = load_dutch_memory() if config.DUTCH_ENABLED else None
+        path = dashboard.build(memory, scored, today_skill, dutch=dutch)
         print(f"[dashboard] wrote {path}")
     except Exception as exc:
         print(f"[dashboard] build failed: {exc}")
+
+
+def _build_dutch(today_skill: str | None) -> tuple[dict | None, dict | None]:
+    """Build the daily Dutch lesson (v5): (delivery_payload, persist_state).
+
+    Fully isolated — disabled via config or any failure returns (None, None) so the
+    dev lesson always ships. The quiz targets YESTERDAY's words, read from memory
+    here before record_dutch_lesson (in the persist step) overwrites last_words.
+    """
+    if not config.DUTCH_ENABLED:
+        return None, None
+    try:
+        today = date.today()
+        dmem = load_dutch_memory()
+        bank = dutch_wordlist.load()
+        theme = dutch_wordlist.theme_for(today)
+        new_w, review_w = dutch_wordlist.select_for_today(
+            bank,
+            dmem,
+            today,
+            theme=theme,
+            new_count=config.DUTCH_NEW_WORDS_PER_DAY,
+            review_max=config.DUTCH_REVIEW_WORDS_MAX,
+        )
+        if not new_w and not review_w:
+            print("[dutch] no words to teach today")
+            return None, None
+        topic = today_skill if (theme == "tech" and config.DUTCH_THEME_TECH_TIE_IN) else None
+        dlesson = dutch_lesson.build(
+            new_w,
+            review_w,
+            theme=theme,
+            topic=topic,
+            cefr=dmem.get("cefr", config.DUTCH_CEFR_START),
+        )
+        dutch_mp3: str | None = str(OUTPUT_DIR / f"dutch-{today:%Y%m%d}.mp3")
+        try:
+            asyncio.run(dutch_audio.build(dlesson, dutch_mp3))
+        except Exception as exc:
+            print(f"[dutch] audio failed: {exc}")
+            dutch_mp3 = None
+        payload = {
+            "markdown": dlesson.markdown,
+            "mp3_path": dutch_mp3,
+            "quiz_words": dutch_wordlist.entries_for(bank, dmem.get("last_words", [])),
+        }
+        state = {
+            "memory": dmem,
+            "word_ids": [w["id"] for w in new_w + review_w],
+            "theme": theme,
+            "audio": Path(dutch_mp3).name if dutch_mp3 else "",
+            "summary": dlesson.summary,
+        }
+        print(f"[dutch] {theme} lesson: {len(new_w)} new, {len(review_w)} review")
+        return payload, state
+    except Exception as exc:
+        print(f"[dutch] build failed: {exc}")
+        return None, None
 
 
 def main() -> None:
@@ -188,6 +253,12 @@ def main() -> None:
             lesson["quiz_skill"] = prev["skill"]
             lesson["quiz_brief_md"] = prev_brief_md
 
+    # 3c. Dutch coach (v5): build an independent A2 Dutch lesson and attach it to the
+    # payload so each sender appends it. Isolated — never blocks the dev lesson.
+    dutch_payload, dutch_state = _build_dutch(skill["skill"])
+    if dutch_payload:
+        lesson["dutch"] = dutch_payload
+
     # 4. Deliver (each channel independent).
     for name, sender in (("telegram", telegram_sender), ("email", email_sender)):
         try:
@@ -208,6 +279,20 @@ def main() -> None:
         brief=brief_file,
     )
     save_memory(memory)
+
+    # 5b. Persist Dutch spaced-repetition state (separate file, separate concern).
+    if dutch_state:
+        try:
+            record_dutch_lesson(
+                dutch_state["memory"],
+                word_ids=dutch_state["word_ids"],
+                theme=dutch_state["theme"],
+                audio=dutch_state["audio"],
+                summary=dutch_state["summary"],
+            )
+            save_dutch_memory(dutch_state["memory"])
+        except Exception as exc:
+            print(f"[dutch] persist failed: {exc}")
 
     # 6. Regenerate the dashboard from the updated state + this run's ranking.
     _refresh_dashboard(memory, scored, skill["skill"])

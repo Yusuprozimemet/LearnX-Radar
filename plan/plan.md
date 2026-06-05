@@ -210,6 +210,115 @@ that talks at you.
 
 ---
 
+### v5 — Dutch coach (a second learning track)
+
+**Goal:** the same daily engine that teaches you an emerging dev skill also helps
+you learn **Dutch** (A2, with room to grow). It rides the existing run — same LLM,
+same edge-tts, same Telegram/email/podcast delivery, same spaced-repetition idea
+and dashboard — so it adds a *domain*, not a parallel app. No new credentials or
+services.
+
+The defining choice: **vocabulary is anchored to a curated, pre-verified word
+list** (`dutch/wordlist.json`), so the words you learn are always correct. The LLM
+only writes example sentences and a short dialogue *around* a fixed set of words —
+it never invents vocabulary. This sidesteps the one real risk of an LLM teaching a
+language (plausible-but-wrong words/genders).
+
+Three slices, each a self-contained spec (`specs/v5/`):
+
+1. **Foundation (`day16-dutch-foundation.md`)** — `dutch/` module + the curated
+   A2 word bank. Each morning it picks a small themed word set (themes
+   **alternate** day-to-day: everyday/survival Dutch vs. tech-flavored Dutch tied
+   to the day's dev topic) and makes one LLM call to wrap those exact words in A2
+   example sentences + a short dialogue. A 🇳🇱 section is appended to the existing
+   email and sent as a Telegram message. No memory yet.
+
+2. **Audio + spaced repetition + quiz (`day17-dutch-audio-srs-quiz.md`)** —
+   `storage/dutch_memory.json` (mirrors `skill_memory.json`) tracks every word with
+   spaced-repetition due dates, so each day mixes *new* words with the words *due
+   for review*; it also tracks a CEFR level and a streak. The Dutch dialogue is
+   rendered to a second MP3 via edge-tts **Dutch voices** (slower rate for A2),
+   delivered alongside the dev lesson and carried into the podcast feed. A Dutch
+   `quiz_url()` (same Perplexity deep-link pattern) quizzes you on *yesterday's*
+   words — genuine spaced retrieval.
+
+3. **Dashboard Dutch tab (`day18-dutch-dashboard-tab.md`)** — the static page
+   gains a top **nav toggle** between **Radar** and **Dutch** (vanilla DOM-swap,
+   same technique as the date picker). The Dutch tab shows progress (streak, CEFR,
+   words learned), the count due for review, recent words, and a Dutch lesson
+   archive with an inline audio player. Built from committed state alone
+   (`dutch_memory.json`), so the keyless Pages workflow renders it like everything
+   else.
+
+**Output:** every morning you get a dev lesson *and* a Dutch lesson — words you can
+read, hear, review on a spaced schedule, and self-test — across email, Telegram,
+and your podcast app, with both tracks visible on one dashboard.
+
+> **What v5 deliberately does NOT add:** an LLM that invents Dutch vocabulary
+> (the curated list is the guardrail), speech recognition, or any
+> inbound/answer-checking server. Grammar, reading, and KNM are the next track
+> (v6); retention in v5 comes from spaced repetition + the self-directed Perplexity
+> quiz, consistent with the rest of the project's one-shot-cron, no-inbound
+> discipline.
+
+---
+
+### v6 — Inburgering B1 track (the language skills + KNM)
+
+**Goal:** turn the v5 vocab+listening coach into a **systematic path toward the
+inburgering B1 exam**. v5 covers ~2 of the 6 exam parts (listening, and reading in
+passing); v6 adds the rest in stages, with a measurable monthly sense of progress.
+Target level is **B1** (the standard learning route); pace is **adaptive** (starts
+gentle, ramps with streak + review accuracy).
+
+> **Scope honesty:** this app is a daily *supplement*, not a replacement for a
+> course or DUO's official practice exams (*oefenexamens*). It keeps you practising
+> every day and measures progress; the official prep and a teacher remain the
+> backbone for a high-stakes exam.
+
+**Two enabling changes carried from v5:**
+
+- **B1 word bank.** The A2 seed (`dutch/wordlist.json`, ~112 words) grows toward the
+  B1 range (~2,500–3,200) in reviewed batches via `dutch/build_wordlist.py` — a data
+  effort, generated-then-frozen, never a runtime LLM call (the v5 guardrail holds).
+- **Adaptive pacing.** `DUTCH_NEW_WORDS_PER_DAY` becomes a function of streak +
+  recent review accuracy (≈5/day → ≈12/day), with a CEFR auto-advance A2→B1 as
+  mastery accrues. This refines the v5 day-17 selection rather than replacing it.
+
+**The skill slices (each its own spec in `specs/v6/`):**
+
+1. **KNM — Knowledge of Dutch Society.** One bite-sized fact + a question each
+   morning, cycling the official KNM themes (work & income, health & care, housing,
+   education, politics & constitution, history, geography…). Self-contained, grounded
+   in a curated KNM fact bank (same "frozen, reviewed data" discipline as the word
+   list, so facts can't be hallucinated), delivered in the 🇳🇱 block and tracked on
+   the Dutch dashboard tab. A whole exam part with low build cost — the chosen
+   *first* addition.
+
+2. **Reading — comprehensible input.** A short daily text that scales A2→B1, built
+   mostly from words already in memory plus a few new ones (i+1), with an English
+   gloss and 1–2 comprehension questions. Consolidates vocabulary far faster than
+   isolated words and directly rehearses the *Lezen* exam skill.
+
+3. **Grammar — weekly focus, practised in context.** A rotating weekly grammar point
+   (word order/V2, perfect & imperfect tense, separable verbs, `omdat/want`,
+   relative `die/dat`, `om…te`, comparatives…) woven into that week's sentences,
+   dialogue, and reading — grammar *used*, not drilled cold. A small curated grammar
+   syllabus drives the rotation; the LLM applies it, never defines it.
+
+**Output:** a daily lesson that now exercises listening, reading, vocabulary,
+grammar, and Dutch-society knowledge — a coherent B1/inburgering curriculum you feel
+improving month over month.
+
+> **Held for a later track (v7):** active *production* — daily writing prompts
+> (*Schrijven*) and speaking/shadowing exercises (*Spreken*) — plus **monthly scored
+> mock exams** mapping to the six exam parts. These are where self-checking is
+> hardest (no inbound channel), so they get their own careful design. The roadmap
+> still names them so the v6 data model (mastery %, per-skill tracking) is built to
+> accommodate them.
+
+---
+
 ## Repo Structure
 
 ```
@@ -217,9 +326,10 @@ LearnX-Radar/
   agents/                  # data collection (from Daily-CronJob pattern)
   radar/                   # skill extraction, gap scoring, brief writing
   learnx/                  # audio pipeline (from LearnX-CLI)
+  dutch/                   # Dutch coach: curated wordlist + lesson + audio (v5)
   delivery/                # Telegram, email
-  storage/                 # seen_skills.json, skill_memory.json
-  dashboard/               # static site generator (v3)
+  storage/                 # seen_skills.json, skill_memory.json, dutch_memory.json
+  dashboard/               # static site generator (v3); Radar/Dutch tabs (v5)
   specs/                   # day-by-day specs (written before code, LearnX-CLI style)
   plan/                    # this file and future phase plans
   .github/workflows/       # cron job + CI + GitHub Pages deploy
@@ -275,3 +385,10 @@ linked to Perplexity. One choke point keeps PII out of every downstream sink.
   what the developer job market is currently demanding.
 - v4: Lessons skip what you already know, lean toward your stated goals, end with a
   5-minute action, offer a one-tap recall quiz, and arrive in your podcast app.
+- v5: Alongside the dev lesson, a daily A2 Dutch lesson arrives — correct-by-design
+  words (curated list), example sentences, a spoken Dutch MP3, spaced-repetition
+  review, and a self-test — with a Dutch tab on the dashboard tracking your streak.
+- v6: The Dutch track becomes a systematic path to **inburgering B1** — adaptive
+  pacing, a growing B1 word bank, plus daily KNM (Dutch society), reading, and a
+  weekly grammar focus. After 1–2 months the monthly mock + mastery % show real,
+  measurable improvement across the exam skills.

@@ -40,16 +40,18 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          f=$(ls -1 output/lesson-*.mp3 2>/dev/null | tail -1) || true
-          if [ -z "$f" ]; then echo "no lesson produced today — nothing to publish"; exit 0; fi
+          shopt -s nullglob
+          files=(output/lesson-*.mp3 output/dutch-*.mp3)   # dev + Dutch (v5) lessons
+          if [ ${#files[@]} -eq 0 ]; then echo "no audio produced today — nothing to publish"; exit 0; fi
           gh release view lessons >/dev/null 2>&1 || \
             gh release create lessons -t "LearnX-Radar lessons" -n "Daily lesson audio (podcast feed enclosures)."
-          gh release upload lessons "$f" --clobber
+          gh release upload lessons "${files[@]}" --clobber
 
       - name: Commit updated state
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add storage/seen_skills.json storage/skill_memory.json storage/last_scored.json storage/trending_history.json briefs/
+          git add storage/dutch_memory.json 2>/dev/null || true   # v5: present once Dutch has run
           git diff --staged --quiet || git commit -m "chore: update radar state [skip ci]"
           git push

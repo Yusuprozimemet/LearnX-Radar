@@ -18,6 +18,7 @@ from datetime import date
 from pathlib import Path
 
 import config
+from dutch import wordlist as dutch_wordlist
 
 OUTPUT = Path(__file__).parent / "index.html"
 _TRENDING_TOP = 12
@@ -36,18 +37,20 @@ def build(
     today_skill: str | None = None,
     out_path: Path = OUTPUT,
     history: dict | None = None,
+    dutch: dict | None = None,
 ) -> Path:
     """Render the dashboard to `out_path` and return it.
 
     `history` is {date: {"today_skill": str|None, "scored": [...]}} for the date
     picker. When absent (e.g. the live in-run build), today's `scored` is wrapped
-    into a single-day history so the page still renders the current day.
+    into a single-day history so the page still renders the current day. `dutch` is
+    the Dutch SR memory (v5); when present a second tab renders the Dutch progress.
     """
     scored = scored or []
     if not history:
         history = {date.today().isoformat(): {"today_skill": today_skill, "scored": scored}}
     skills = memory.get("skills", {})
-    body = "\n".join(
+    radar_body = "\n".join(
         [
             _trending_html(history),
             _coverage_html(skills),
@@ -55,6 +58,7 @@ def build(
             _archive_html(skills),
         ]
     )
+    body = _tabs(radar_body, _dutch_html(dutch or {}))
     out_path = Path(out_path)
     out_path.write_text(_page("LearnX-Radar", body), encoding="utf-8")
     return out_path
@@ -64,8 +68,9 @@ def build_from_state(out_path: Path = OUTPUT) -> Path:
     """Rebuild the dashboard from committed state files only — no run, no API keys.
 
     This is what the GitHub Pages workflow calls: it reads skill_memory.json, the
-    per-day rankings (trending_history.json) and the last run's ranking
-    (last_scored.json, as a fallback before any history accrues).
+    per-day rankings (trending_history.json), the last run's ranking
+    (last_scored.json, as a fallback before any history accrues), and the Dutch SR
+    memory (dutch_memory.json) for the Dutch tab.
     """
     import storage
 
@@ -76,7 +81,97 @@ def build_from_state(out_path: Path = OUTPUT) -> Path:
         state.get("today_skill"),
         out_path,
         history=storage.load_trending_history(),
+        dutch=storage.load_dutch_memory(),
     )
+
+
+def _tabs(radar_body: str, dutch_body: str) -> str:
+    """Top Radar/Dutch nav + the two tab panels. Radar shows by default; clicking a
+    link swaps panels (vanilla DOM, same technique as the trending date picker)."""
+    nav = (
+        "<p class='nav tabs'>"
+        "<a href='#' data-tab='radar' class='active'>📡 Radar</a>"
+        "<a href='#' data-tab='dutch'>🇳🇱 Dutch</a>"
+        "</p>"
+    )
+    script = (
+        "<script>(function(){"
+        "var links=document.querySelectorAll('.tabs a');"
+        "function show(t){"
+        "document.getElementById('tab-radar').style.display=(t==='radar')?'':'none';"
+        "document.getElementById('tab-dutch').style.display=(t==='dutch')?'':'none';"
+        "links.forEach(function(a){a.classList.toggle('active',a.getAttribute('data-tab')===t);});}"
+        "links.forEach(function(a){a.addEventListener('click',function(e){"
+        "e.preventDefault();show(a.getAttribute('data-tab'));});});"
+        "})();</script>"
+    )
+    return (
+        nav
+        + f"<div id='tab-radar'>{radar_body}</div>"
+        + f"<div id='tab-dutch' style='display:none'>{dutch_body}</div>"
+        + script
+    )
+
+
+def _dutch_html(dutch: dict) -> str:
+    """The Dutch tab: progress stats, recent words, and a Dutch lesson archive.
+
+    Pure render from dutch_memory.json joined with the committed word bank (for the
+    nl/en text, which the SR memory doesn't store). Empty state when nothing yet.
+    """
+    words = dutch.get("words", {})
+    lessons = dutch.get("lessons", [])
+    if not words and not lessons:
+        return _section("🇳🇱 Dutch", "<p class='muted'>No Dutch lessons yet.</p>")
+
+    bank = {w["id"]: w for w in dutch_wordlist.load()}
+    today = date.today().isoformat()
+    due = sum(1 for e in words.values() if e.get("due", "") and e["due"] <= today)
+    progress = (
+        "<div class='stats'>"
+        f"<span>Level <strong>{_esc(dutch.get('cefr', 'A2'))}</strong></span>"
+        f"<span>Streak <strong>{_esc(dutch.get('streak', 0))}</strong> day(s)</span>"
+        f"<span>Words learned <strong>{len(words)}</strong></span>"
+        f"<span>Due for review today <strong>{due}</strong></span>"
+        "</div>"
+    )
+
+    ordered = sorted(words.items(), key=lambda kv: kv[1].get("introduced", ""), reverse=True)
+    rows = []
+    for wid, entry in ordered[:15]:
+        info = bank.get(wid, {})
+        rows.append(
+            "<tr><td>{nl}</td><td>{en}</td><td>{reps}</td><td>{due}</td></tr>".format(
+                nl=_esc(info.get("nl", wid)),
+                en=_esc(info.get("en", "")),
+                reps=entry.get("reps", 1),
+                due=_esc(entry.get("due", "—")),
+            )
+        )
+    table = (
+        "<table><tr><th>Word</th><th>Meaning</th><th>Reps</th><th>Next review</th></tr>"
+        + "".join(rows)
+        + "</table>"
+    )
+
+    sections = [_section("🇳🇱 Dutch progress", progress), _section("🆕 Recent words", table)]
+
+    if lessons:
+        ordered_lessons = sorted(lessons, key=lambda lesson: lesson.get("date", ""), reverse=True)
+        cards = [
+            (
+                "<div class='card'>"
+                f"<div class='meta'>{_esc(lesson.get('date', ''))} · "
+                f"{_esc(lesson.get('theme', ''))}</div>"
+                f"<div class='title'>{_esc(lesson.get('summary', '') or 'Dutch lesson')}</div>"
+                f"{_player(lesson)}"
+                "</div>"
+            )
+            for lesson in ordered_lessons[:_ARCHIVE_RECENT]
+        ]
+        sections.append(_section("🗂️ Dutch lessons", "".join(cards)))
+
+    return "\n".join(sections)
 
 
 def _esc(text: object) -> str:
@@ -322,6 +417,10 @@ def _page(title: str, body: str) -> str:
   .ctrl select {{ font:inherit; margin-left:.3rem; padding:.15rem .3rem; }}
   details > summary {{ cursor:pointer; color:#2563eb; margin:.6rem 0; }}
   .nav {{ margin:.5rem 0 0; font-size:.9rem; }} .nav a {{ color:#2563eb; margin-right:1rem; }}
+  .tabs {{ border-bottom:1px solid #eee; padding-bottom:.4rem; }}
+  .tabs a {{ text-decoration:none; }} .tabs a.active {{ font-weight:700; color:#1f2328; }}
+  .stats {{ display:flex; flex-wrap:wrap; gap:1.2rem; color:#555; font-size:.95rem; }}
+  .stats strong {{ color:#1f2328; }}
   audio {{ outline:none; }}
 </style></head><body>
 <h1>📡 LearnX-Radar</h1>
