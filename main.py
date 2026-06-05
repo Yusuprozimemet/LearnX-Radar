@@ -35,6 +35,7 @@ from storage import (
     load_dutch_memory,
     load_memory,
     load_seen,
+    load_trending_history,
     mark_seen,
     previous_lesson,
     record_dutch_lesson,
@@ -209,7 +210,9 @@ def main() -> None:
     # sinks recently-taught skills, so top() still picks a genuine gap to teach.
     mentions = skill_extractor.extract(items)
     profile = {"known": config.KNOWN_SKILLS, "goals": config.LEARNING_GOALS}
-    scored = gap_scorer.score(mentions, memory, profile)
+    # Prior-day rankings power the momentum multiplier (today isn't written until
+    # save_trending_history below, so this is strictly history).
+    scored = gap_scorer.score(mentions, memory, profile, history=load_trending_history())
     # Map-reduce extraction maximizes recall (many candidates); MAX_SKILL_MENTIONS
     # is now a POST-SCORING keep so the brief/dashboard stay focused on the top N.
     skill = gap_scorer.top(scored)
