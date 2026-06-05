@@ -159,13 +159,29 @@
       ],
       "last_taught": "2026-06-04",
       "summary": "new projects"
+    },
+    "Cursor": {
+      "times_taught": 1,
+      "first_taught": "2026-06-05",
+      "lessons": [
+        {
+          "date": "2026-06-05",
+          "title": "Cursor",
+          "difficulty": "beginner",
+          "summary": "AI coding tool",
+          "audio": "lesson-20260605-cursor.mp3",
+          "brief": "20260605-cursor.md"
+        }
+      ],
+      "last_taught": "2026-06-05",
+      "summary": "AI coding tool"
     }
   },
   "so_counts": {
-    "python": 2205893,
+    "python": 2205897,
     "rust": 43952,
-    "kubernetes": 59813,
-    "langchain": 1983,
+    "kubernetes": 59812,
+    "langchain": 1982,
     "duckdb": 504
   }
 }

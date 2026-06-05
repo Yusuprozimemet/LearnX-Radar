@@ -1489,5 +1489,315 @@
         "score": 0.35000000000000003
       }
     ]
+  },
+  "2026-06-05": {
+    "today_skill": "Cursor",
+    "scored": [
+      {
+        "skill": "Cursor",
+        "sources": [
+          "dev.to",
+          "HN Hiring"
+        ],
+        "evidence": "AI coding tool",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 2.5
+      },
+      {
+        "skill": "MCP server",
+        "sources": [
+          "dev.to",
+          "GitHub Trending"
+        ],
+        "evidence": "emerging tech",
+        "frequency": 2,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 1.5
+      },
+      {
+        "skill": "LangChain",
+        "sources": [
+          "Stack Overflow"
+        ],
+        "evidence": "rising questions",
+        "frequency": 1,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 1.5
+      },
+      {
+        "skill": "Langchain",
+        "sources": [
+          "Stack Overflow"
+        ],
+        "evidence": "library questions",
+        "frequency": 1,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 1.5
+      },
+      {
+        "skill": "DuckDB",
+        "sources": [
+          "Stack Overflow"
+        ],
+        "evidence": "rising questions",
+        "frequency": 1,
+        "demand_weight": 1.5,
+        "novelty": 0.8571428571428571,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "intermediate",
+        "score": 1.2857142857142856
+      },
+      {
+        "skill": "Claude Code",
+        "sources": [
+          "dev.to",
+          "HN Hiring"
+        ],
+        "evidence": "AI coding assistant",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 0.2857142857142857,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "intermediate",
+        "score": 0.7142857142857142
+      },
+      {
+        "skill": "Agentic coding",
+        "sources": [
+          "dev.to",
+          "GitHub Trending"
+        ],
+        "evidence": "new paradigm",
+        "frequency": 2,
+        "demand_weight": 1.5,
+        "novelty": 0.42857142857142855,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "intermediate",
+        "score": 0.6428571428571428
+      },
+      {
+        "skill": "Agent Config Builder",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "AI tooling",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "BoxAgnts Runtime",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "MCP implementation",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Kafka consumer groups",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "messaging pattern",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "MongoDB-to-PostgreSQL migration",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "database migration",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Nginx/Pingora",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "load balancing",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Python asyncio",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "library usage",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Python-to-Rust transpiler",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "language conversion",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Python/Flask",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "web development",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "React Server Components",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "new feature",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Tauri",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "alternative to Electron",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Vector embeddings",
+        "sources": [
+          "dev.to"
+        ],
+        "evidence": "AI applications",
+        "frequency": 1,
+        "demand_weight": 0.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.5
+      },
+      {
+        "skill": "Rust",
+        "sources": [
+          "dev.to",
+          "Stack Overflow"
+        ],
+        "evidence": "growing interest",
+        "frequency": 2,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": true,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.2
+      },
+      {
+        "skill": "Kubernetes",
+        "sources": [
+          "Stack Overflow"
+        ],
+        "evidence": "established usage",
+        "frequency": 1,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": true,
+        "known": false,
+        "goal_match": false,
+        "suggested_difficulty": "beginner",
+        "score": 0.15000000000000002
+      }
+    ]
   }
 }
