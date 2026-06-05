@@ -99,3 +99,63 @@ def test_previous_lesson_is_most_recent_across_skills():
     assert prev["skill"] == "Rust"
     assert prev["brief"] == "r2.md"
     assert prev["date"] == "2026-05-29"
+
+
+# --- dutch_memory.json : Dutch vocab spaced repetition (v5) -------------------
+
+def test_dutch_memory_roundtrip_and_default(tmp_path, monkeypatch):
+    monkeypatch.setattr(state, "DUTCH_MEMORY_FILE", tmp_path / "nope.json")
+    fresh = state.load_dutch_memory()
+    assert fresh["version"] == 1 and fresh["words"] == {} and fresh["streak"] == 0
+
+    f = tmp_path / "dutch.json"
+    monkeypatch.setattr(state, "DUTCH_MEMORY_FILE", f)
+    state.save_dutch_memory({"version": 1, "cefr": "A2", "words": {"a": {"reps": 1}}})
+    loaded = state.load_dutch_memory()
+    assert loaded["words"]["a"]["reps"] == 1
+    assert loaded["streak"] == 0  # missing keys backfilled to the default shape
+
+
+def test_dutch_memory_corrupt_returns_default(tmp_path, monkeypatch):
+    f = tmp_path / "dutch.json"
+    f.write_text("{not json", encoding="utf-8")
+    monkeypatch.setattr(state, "DUTCH_MEMORY_FILE", f)
+    assert state.load_dutch_memory()["words"] == {}
+
+
+def test_dutch_due_words_only_due_oldest_first():
+    today = date(2026, 6, 5)
+    memory = {"words": {
+        "due_old": {"due": "2026-06-01"},
+        "due_today": {"due": "2026-06-05"},
+        "later": {"due": "2026-06-20"},
+    }}
+    assert state.dutch_due_words(memory, today) == ["due_old", "due_today"]
+
+
+def test_record_dutch_lesson_new_then_review_widens_interval():
+    memory = state._default_dutch_memory()
+    day1 = date(2026, 6, 1)
+    state.record_dutch_lesson(memory, word_ids=["a"], theme="everyday", when=day1)
+    a = memory["words"]["a"]
+    assert a["reps"] == 1
+    assert a["introduced"] == "2026-06-01"
+    assert a["due"] == "2026-06-02"          # base interval = 1 day after first
+    assert memory["streak"] == 1
+    assert memory["last_words"] == ["a"]
+    assert memory["lessons"][-1]["theme"] == "everyday"
+
+    # consecutive next day, re-serving 'a' as review -> reps 2, wider interval
+    day2 = date(2026, 6, 2)
+    state.record_dutch_lesson(memory, word_ids=["a"], theme="tech", when=day2)
+    a = memory["words"]["a"]
+    assert a["reps"] == 2
+    assert a["due"] > "2026-06-03"           # interval widened beyond 1 day
+    assert memory["streak"] == 2             # consecutive day -> streak grows
+
+
+def test_record_dutch_lesson_streak_resets_after_gap():
+    memory = state._default_dutch_memory()
+    state.record_dutch_lesson(memory, word_ids=["a"], theme="everyday", when=date(2026, 6, 1))
+    state.record_dutch_lesson(memory, word_ids=["b"], theme="everyday", when=date(2026, 6, 5))
+    assert memory["streak"] == 1  # gap of >1 day resets

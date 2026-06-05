@@ -157,3 +157,59 @@ def test_escapes_html(tmp_path):
     }]
     html = builder.build(mem, scored, out_path=tmp_path / "d.html").read_text("utf-8")
     assert "<templates>" not in html and "&lt;templates&gt;" in html
+
+
+# --- Dutch tab (v5) ----------------------------------------------------------
+
+def _dutch_memory():
+    return {
+        "version": 1,
+        "cefr": "A2",
+        "streak": 3,
+        "words": {
+            "afspraak": {"introduced": "2026-06-04", "reps": 1, "due": "2000-01-01"},  # overdue
+            "bestand": {"introduced": "2026-06-05", "reps": 2, "due": "2999-01-01"},
+        },
+        "lessons": [
+            {"date": "2026-06-05", "theme": "tech", "audio": "dutch-20260605.mp3",
+             "words": ["bestand"], "summary": "files"},
+        ],
+    }
+
+
+def test_tabs_render_with_radar_default(tmp_path):
+    html = builder.build(
+        _memory(), _scored(), today_skill="DuckDB", out_path=tmp_path / "d.html",
+        dutch=_dutch_memory(),
+    ).read_text("utf-8")
+    # both tabs present, radar visible, dutch hidden by default
+    assert "data-tab='radar'" in html and "data-tab='dutch'" in html
+    assert "id='tab-radar'" in html
+    assert "id='tab-dutch' style='display:none'" in html
+
+
+def test_dutch_tab_shows_progress_words_and_archive(tmp_path):
+    html = builder.build(
+        _memory(), _scored(), out_path=tmp_path / "d.html", dutch=_dutch_memory()
+    ).read_text("utf-8")
+    assert "Dutch progress" in html
+    assert "Words learned" in html and "Streak" in html
+    # one of the two words is overdue → "Due for review today" count is at least 1
+    assert "Due for review today" in html
+    # recent-words table joins the SR memory with the committed bank for nl/en text
+    assert "de afspraak" in html and "the appointment" in html
+    # Dutch lesson archive streams its MP3 from the Release asset
+    assert f"{config.RELEASES_AUDIO_BASE}/dutch-20260605.mp3" in html
+
+
+def test_dutch_tab_empty_state(tmp_path):
+    html = builder.build(
+        _memory(), _scored(), out_path=tmp_path / "d.html", dutch={}
+    ).read_text("utf-8")
+    assert "No Dutch lessons yet" in html  # empty Dutch memory → friendly empty state
+
+
+def test_build_without_dutch_still_renders_radar(tmp_path):
+    # old callers that pass no dutch arg must still work (back-compat)
+    html = builder.build(_memory(), _scored(), out_path=tmp_path / "d.html").read_text("utf-8")
+    assert "Trending today" in html and "No Dutch lessons yet" in html
