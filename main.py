@@ -210,7 +210,10 @@ def main() -> None:
     mentions = skill_extractor.extract(items)
     profile = {"known": config.KNOWN_SKILLS, "goals": config.LEARNING_GOALS}
     scored = gap_scorer.score(mentions, memory, profile)
+    # Map-reduce extraction maximizes recall (many candidates); MAX_SKILL_MENTIONS
+    # is now a POST-SCORING keep so the brief/dashboard stay focused on the top N.
     skill = gap_scorer.top(scored)
+    scored = scored[: config.MAX_SKILL_MENTIONS]
     # Persist the ranking so the dashboard can rebuild from committed state alone
     # (the Pages workflow has no API keys to re-run the radar).
     save_last_scored(scored, skill["skill"] if skill else None)
