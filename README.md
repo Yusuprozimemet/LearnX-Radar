@@ -6,6 +6,11 @@ Each lesson links to a Perplexity thread pre-loaded with the brief *text* for
 follow-up Q&A (and a recall quiz), plus a static dashboard built from the
 recorded state.
 
+It also runs a second daily track — a **Dutch coach** (v5) — that rides the same
+pipeline to teach Dutch (A2, heading toward inburgering B1): a small themed
+vocabulary lesson with example sentences, a spoken Dutch MP3, spaced-repetition
+review, and a recall quiz. See [Dutch coach](#dutch-coach-v5).
+
 ![LearnX-Radar overview](image.png)
 
 ## What it does
@@ -15,20 +20,27 @@ recorded state.
 - Extracts skills, scores gaps, and selects a daily topic.
 - Writes a teaching brief, plans a curriculum, generates dialogue, and builds
        one MP3 via edge-tts.
-- Delivers the lesson to Telegram (audio + summary) and email (brief + MP3).
+- Builds a second, independent **Dutch lesson** (vocab + sentences + dialogue +
+       Dutch-voice MP3) from a curated word bank, with spaced-repetition review.
+- Delivers both lessons to Telegram (audio + summary) and email (brief + MP3s).
 - Persists a knowledge memory and full briefs (whose text seeds each lesson's
        Perplexity follow-up Q&A and recall quiz).
 - Redacts PII (emails, phone numbers, handles) from collected text at ingestion.
-- Builds a static dashboard from committed state.
-- Publishes a podcast RSS feed so the daily lesson lands in your podcast app.
+- Builds a static dashboard from committed state, with a Radar / Dutch tab toggle.
+- Publishes a podcast RSS feed so the daily lessons land in your podcast app.
 
 ## Pipeline
 
 ```
 scrape -> dedup -> extract skills -> score gaps -> write brief
                       -> plan curriculum -> generate dialogue -> build audio
+                      -> build Dutch lesson (vocab + sentences + Dutch audio)
                       -> deliver (Telegram + email) -> persist state -> refresh dashboard
 ```
+
+The Dutch branch is independent and fully guarded: any failure there is logged and
+skipped so the developer lesson always ships. Set `DUTCH_ENABLED = False` in
+[config.py](config.py) to turn the track off.
 
 ## Repository layout
 
@@ -36,9 +48,11 @@ scrape -> dedup -> extract skills -> score gaps -> write brief
 agents/     source collectors (GitHub, HN, dev.to, Stack Overflow)
 radar/      skill extraction, gap scoring, brief writing
 learnx/     curriculum, dialogue, audio_builder, LLM client
+dutch/      Dutch coach: curated wordlist, lesson builder, Dutch audio (v5)
 delivery/   Telegram and email delivery (+ Perplexity follow-up link)
-dashboard/  static dashboard builder
-storage/    state files (seen_skills.json, skill_memory.json, last_scored.json)
+dashboard/  static dashboard builder (Radar / Dutch tabs)
+storage/    state files (seen_skills.json, skill_memory.json, last_scored.json,
+            dutch_memory.json)
 briefs/     full lesson briefs (linked from lessons for Perplexity Q&A)
 output/     generated MP3 files and sample outputs
 config.py   central configuration and model selection
@@ -49,7 +63,8 @@ main.py     daily pipeline entry point
 
 - LLM: NVIDIA NIM (OpenAI-compatible) using `meta/llama-3.3-70b-instruct`
        configured in [config.py](config.py).
-- TTS: edge-tts plus pydub; ffmpeg required for audio assembly.
+- TTS: edge-tts plus pydub (English co-host voices for dev lessons, `nl-NL` voices
+       for Dutch lessons); ffmpeg required for audio assembly.
 - Delivery: Telegram Bot API and Gmail SMTP.
 - Schedule: radar workflow runs at 06:00 UTC every day; dashboard deploys via
        GitHub Pages.
@@ -59,7 +74,37 @@ main.py     daily pipeline entry point
 - Required env vars: `NVIDIA_API_KEY`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`,
        `GMAIL_APP_PASSWORD`, `EMAIL_FROM`, `EMAIL_TO`.
 - Optional: `GITHUB_TOKEN` (higher GitHub API rate limits).
+- The Dutch coach needs **no new secrets** — it reuses the same LLM and edge-tts.
+       Tune it via the `DUTCH_*` constants in [config.py](config.py) (enable/disable,
+       words per day, review cap, voices); `DUTCH_ENABLED = True` by default.
 - Use [.env.example](.env.example) as the template.
+
+## Dutch coach (v5)
+
+A second daily track that teaches Dutch (A2, heading toward inburgering B1) using the
+same engine. Each run it:
+
+- Selects a small themed word set — themes **alternate** day to day (everyday Dutch
+       vs. tech-flavoured Dutch tied to the day's developer topic).
+- Makes one LLM call to wrap those **exact** words in A2 example sentences and a short
+       dialogue, then renders a Dutch-voice MP3 via edge-tts.
+- Mixes in words **due for spaced-repetition review** and tracks a streak + CEFR level
+       in [storage/dutch_memory.json](storage/dutch_memory.json).
+- Appends a 🇳🇱 section to the email, sends a separate Dutch message/audio to Telegram,
+       and adds a "Quiz me in Dutch" Perplexity link covering *yesterday's* words.
+
+**Correct by design:** vocabulary is anchored to a frozen, human-reviewed word bank
+([dutch/wordlist.json](dutch/wordlist.json)). The LLM only writes sentences around fixed
+words and never invents vocabulary — any generated word that isn't in the bank is
+dropped, so a bad generation falls back to the verified gloss rather than a wrong word.
+Grow the bank with the one-time generator (reviewed before committing):
+
+```
+python -m dutch.build_wordlist --theme everyday --cefr A2 --count 40
+```
+
+The roadmap (KNM, reading, grammar, adaptive pacing toward B1) lives in
+[specs/v5](specs/v5) and [specs/v6](specs/v6); see [plan/plan.md](plan/plan.md).
 
 ## Local usage
 
@@ -93,22 +138,27 @@ In CI, the env values come from GitHub repo secrets (see
        still hot) re-enter as fresh signal instead of being suppressed forever.
 - [storage/skill_memory.json](storage/skill_memory.json): lesson history and
        spaced repetition data.
+- [storage/dutch_memory.json](storage/dutch_memory.json): Dutch vocab
+       spaced-repetition state — per-word due dates, streak, CEFR level, and a Dutch
+       lesson archive. Created on the first Dutch run and committed by the workflow.
 - [storage/last_scored.json](storage/last_scored.json): latest scoring for the
        dashboard. Scored from the full scrape each run (not just post-dedup
        items), so the board always shows the complete demand picture and updates
        on every run.
 - [briefs](briefs): full lesson briefs, linked from each lesson for Perplexity Q&A.
-- [output](output): generated MP3 lessons (for example, lesson-YYYYMMDD.mp3).
+- [output](output): generated MP3 lessons — the developer lesson
+       (`lesson-YYYYMMDD-<slug>.mp3`) and the Dutch lesson (`dutch-YYYYMMDD.mp3`).
 - [dashboard/index.html](dashboard/index.html): generated static dashboard.
 - `dashboard/podcast.xml`: generated podcast feed (lesson MP3s hosted as assets on
        the `lessons` GitHub Release; built from committed state, published via Pages).
 
 ## Podcast feed
 
-The daily MP3 is uploaded as an asset on a single rolling GitHub Release (tag
-`lessons`) by the radar workflow, and `podcast.xml` is published alongside the
-dashboard on GitHub Pages. Subscribe in any podcast app (Pocket Casts, Apple
-Podcasts, AntennaPod) by adding the feed URL:
+The daily MP3s (developer lesson + Dutch lesson) are uploaded as assets on a single
+rolling GitHub Release (tag `lessons`) by the radar workflow, and `podcast.xml` is
+published alongside the dashboard on GitHub Pages — Dutch episodes interleave with
+the dev lessons by date. Subscribe in any podcast app (Pocket Casts, Apple Podcasts,
+AntennaPod) by adding the feed URL:
 
 ```
 https://yusuprozimemet.github.io/LearnX-Radar/podcast.xml
