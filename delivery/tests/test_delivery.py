@@ -201,10 +201,28 @@ def test_email_attaches_second_dutch_mp3(tmp_path, monkeypatch):
     assert names == ["dutch-20260605.mp3", "lesson-20260530.mp3"]
 
 
-def test_telegram_dutch_markup_and_plain_text():
+def test_telegram_dutch_markup_and_html():
     markup = telegram_sender._dutch_reply_markup({"quiz_words": _DUTCH_WORDS})
     assert _buttons(markup) == ["🇳🇱 Quiz me in Dutch"]
     assert telegram_sender._dutch_reply_markup({}) == {}  # no words -> no button
-    plain = telegram_sender._plain(_DUTCH_MD, 1024)
-    assert "**" not in plain and "##" not in plain  # markdown markers stripped
-    assert "de afspraak" in plain
+    out = telegram_sender._dutch_html(_DUTCH_MD, 1024)
+    assert "<b>de afspraak</b>" in out          # Dutch word rendered bold
+    assert "**" not in out and "##" not in out  # raw markdown markers gone
+    assert "<b>Nieuwe woorden</b>" in out       # heading/label bolded
+
+
+def test_telegram_dutch_html_italicises_english_and_keeps_tags_intact():
+    md = (
+        "**Nieuwe woorden**\n"
+        "- **de afspraak** — _the appointment_\n"
+        "  **Ik heb een afspraak.** — _I have one._"
+    )
+    out = telegram_sender._dutch_html(md, 1024)
+    assert "<i>the appointment</i>" in out      # English italicised
+    assert "<b>Ik heb een afspraak.</b>" in out  # Dutch sentence bold
+    # trimming happens at a line boundary, so tags are never split
+    short = telegram_sender._dutch_html(md, 150)
+    assert "<b>de afspraak</b>" in short          # kept the early lines
+    assert "Ik heb een afspraak" not in short      # dropped the later line (trimmed)
+    assert short.count("<b>") == short.count("</b>")  # tags balanced (no mid-tag cut)
+    assert short.count("<i>") == short.count("</i>")

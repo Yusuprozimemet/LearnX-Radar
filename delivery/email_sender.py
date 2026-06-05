@@ -22,9 +22,10 @@ SMTP_PORT = 465
 
 
 def _inline(text: str) -> str:
-    """Escape HTML, then apply inline markdown (**bold**, `code`)."""
+    """Escape HTML, then apply inline markdown (**bold**, _italic_, `code`)."""
     text = html.escape(text)
     text = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", text)
+    text = re.sub(r"(?<!\w)_(.+?)_(?!\w)", r"<em>\1</em>", text)  # _italic_ (not mid-word)
     text = re.sub(r"`(.+?)`", r"<code>\1</code>", text)
     return text
 
