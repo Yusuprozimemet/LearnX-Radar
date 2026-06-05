@@ -175,10 +175,26 @@
       ],
       "last_taught": "2026-06-05",
       "summary": "AI coding tool"
+    },
+    "Kafka consumer groups": {
+      "times_taught": 1,
+      "first_taught": "2026-06-05",
+      "lessons": [
+        {
+          "date": "2026-06-05",
+          "title": "Kafka consumer groups",
+          "difficulty": "beginner",
+          "summary": "Used in multiple companies",
+          "audio": "lesson-20260605-kafka-consumer-groups.mp3",
+          "brief": "20260605-kafka-consumer-groups.md"
+        }
+      ],
+      "last_taught": "2026-06-05",
+      "summary": "Used in multiple companies"
     }
   },
   "so_counts": {
-    "python": 2205897,
+    "python": 2205900,
     "rust": 43952,
     "kubernetes": 59812,
     "langchain": 1982,
