@@ -8,7 +8,15 @@ from pathlib import Path
 
 import feedparser
 
-from agents import devto_agent, github_trending_agent, hn_hiring_agent, stackoverflow_agent
+from agents import (
+    devto_agent,
+    github_trending_agent,
+    hn_front_agent,
+    hn_hiring_agent,
+    lobsters_agent,
+    reddit_agent,
+    stackoverflow_agent,
+)
 
 FIXTURES = Path(__file__).parent / "fixtures"
 
@@ -90,6 +98,46 @@ def test_stackoverflow_delta(monkeypatch):
     assert item["id"].startswith("so:python:")
     assert "delta 7" in item["text"]
     assert item["_so_count"] == {"tag": "python", "total": 2_205_907}
+
+
+def test_reddit_parse():
+    content = (FIXTURES / "reddit_python.xml").read_bytes()
+    items = reddit_agent._parse(content, "Python")
+    _assert_contract(items)
+    for item in items:
+        assert item["id"].startswith("rd:")
+        assert item["source"] == "Reddit"
+        assert item["meta"].startswith("reddit · r/")
+        assert "<" not in item["text"]  # HTML stripped from <content>
+        assert len(item["text"]) <= 300
+
+
+def test_hn_front_parse():
+    hits = json.loads((FIXTURES / "hn_front_page.json").read_text(encoding="utf-8"))["hits"]
+    items = hn_front_agent._items_from_hits(hits)
+    _assert_contract(items)
+    for item in items:
+        assert item["id"].startswith("hnfp:")
+        assert item["url"].startswith("http")
+        assert "<" not in item["text"]  # any story_text HTML stripped
+
+
+def test_hn_front_ask_hn_falls_back_to_item_url():
+    """Ask/Show HN hits have no external `url` -> link to the HN discussion."""
+    items = hn_front_agent._items_from_hits(
+        [{"objectID": "12345", "title": "Ask HN: best Rust web framework?", "url": None}]
+    )
+    assert items[0]["url"] == "https://news.ycombinator.com/item?id=12345"
+
+
+def test_lobsters_parse():
+    feed = feedparser.parse(str(FIXTURES / "lobsters.xml"))
+    items = lobsters_agent._items_from_feed(feed)
+    _assert_contract(items)
+    for item in items:
+        assert item["id"].startswith("lob:")
+        assert item["source"] == "Lobste.rs"
+        assert "<" not in item["text"]  # HTML stripped from summary
 
 
 def test_stackoverflow_first_run_has_no_delta(monkeypatch):

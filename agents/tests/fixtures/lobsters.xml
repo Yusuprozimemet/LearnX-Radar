@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Lobsters</title>
+    <link>https://lobste.rs/</link>
+    <atom:link href="https://Lobste.rs/rss" rel="self"/>
+    <description></description>
+    <pubDate>Fri, 05 Jun 2026 03:27:32 -0500</pubDate>
+    <ttl>120</ttl>
+    <item>
+      <title>Changing How We Develop Ladybird</title>
+      <link>https://ladybird.org/posts/changing-how-we-develop-ladybird/</link>
+      <guid>https://lobste.rs/s/db2owo</guid>
+      <author>ladybird.org via raoulmillais</author>
+      <pubDate>Fri, 05 Jun 2026 03:27:32 -0500</pubDate>
+      <comments>https://lobste.rs/s/db2owo/changing_how_we_develop_ladybird</comments>
+      <description>&lt;p&gt;&lt;a href="https://lobste.rs/s/db2owo/changing_how_we_develop_ladybird"&gt;Comments&lt;/a&gt;&lt;/p&gt;</description>
+      <category>browsers</category>
+    </item>
+    <item>
+      <title>A faster bump allocator for rust</title>
+      <link>https://owen.cafe/posts/stumpalo/</link>
+      <guid>https://lobste.rs/s/vta6wp</guid>
+      <author>owen.cafe by atocanist</author>
+      <pubDate>Thu, 04 Jun 2026 16:27:13 -0500</pubDate>
+      <comments>https://lobste.rs/s/vta6wp/faster_bump_allocator_for_rust</comments>
+      <description>&lt;p&gt;&lt;a href="https://lobste.rs/s/vta6wp/faster_bump_allocator_for_rust"&gt;Comments&lt;/a&gt;&lt;/p&gt;</description>
+      <category>rust</category>
+      <category>performance</category>
+    </item>
+    <item>
+      <title>Code is Cheap(er)</title>
+      <link>https://htmx.org/essays/code-is-cheap/</link>
+      <guid>https://lobste.rs/s/onbcu5</guid>
+      <author>htmx.org via facundoolano</author>
+      <pubDate>Thu, 04 Jun 2026 20:24:45 -0500</pubDate>
+      <comments>https://lobste.rs/s/onbcu5/code_is_cheap_er</comments>
+      <description>&lt;p&gt;&lt;a href="https://lobste.rs/s/onbcu5/code_is_cheap_er"&gt;Comments&lt;/a&gt;&lt;/p&gt;</description>
+      <category>practices</category>
+      <category>vibecoding</category>
+    </item>
+    <item>
+      <title>Reviewing code requires reading</title>
+      <link>https://hauleth.dev/post/review-requires-reading/</link>
+      <guid>https://lobste.rs/s/hb1s2k</guid>
+      <author>hauleth.dev by hauleth</author>
+      <pubDate>Thu, 04 Jun 2026 12:37:35 -0500</pubDate>
+      <comments>https://lobste.rs/s/hb1s2k/reviewing_code_requires_reading</comments>
+      <description>&lt;p&gt;&lt;a href="https://lobste.rs/s/hb1s2k/reviewing_code_requires_reading"&gt;Comments&lt;/a&gt;&lt;/p&gt;</description>
+      <category>culture</category>
+    </item>
+    <item>
+      <title>IPv6 zones in URLs are a mistake</title>
+      <link>https://xeiaso.net/notes/2026/ipv6-zones-go-url/</link>
+      <guid>https://lobste.rs/s/lcnc5e</guid>
+      <author>xeiaso.net via gmem</author>
+      <pubDate>Thu, 04 Jun 2026 16:09:47 -0500</pubDate>
+      <comments>https://lobste.rs/s/lcnc5e/ipv6_zones_urls_are_mistake</comments>
+      <description>&lt;p&gt;&lt;a href="https://lobste.rs/s/lcnc5e/ipv6_zones_urls_are_mistake"&gt;Comments&lt;/a&gt;&lt;/p&gt;</description>
+      <category>devops</category>
+      <category>web</category>
+    </item>
+    <item>
+      <title>What are you doing this weekend?</title>
+      <link>https://lobste.rs/s/vzutqp/what_are_you_doing_this_weekend</link>
+      <guid>https://lobste.rs/s/vzutqp</guid>
+      <author> by caius</author>
+      <pubDate>Fri, 05 Jun 2026 03:57:48 -0500</pubDate>
+      <comments>https://lobste.rs/s/vzutqp/what_are_you_doing_this_weekend</comments>
+      <description>&lt;p&gt;Feel free to tell what you plan on doing this weekend and even ask for help or feedback.&lt;/p&gt;
+&lt;p&gt;Please keep in mind it’s more than OK to do nothing at all too!&lt;/p&gt;
+</description>
+      <category>programming</category>
+      <category>ask</category>
+    </item>
+    <item>
+      <title>The Empty Field That Wasn't: GPS Broadcasts a Numbers Station</title>
+      <link>https://lsc-pagepro.mydigitalpublication.com/publication/?i=865273&amp;p=62&amp;view=issueViewer</link>
+      <guid>https://lobste.rs/s/a7v7e5</guid>
+      <author>lsc-pagepro.mydigitalpublication.com via lordgilman</author>
+      <pubDate>Fri, 05 Jun 2026 08:07:50 -0500</pubDate>
+      <comments>https://lobste.rs/s/a7v7e5/empty_field_wasn_t_gps_broadcasts_numbers</comments>
+      <description>&lt;p&gt;&lt;a href="https://lobste.rs/s/a7v7e5/empty_field_wasn_t_gps_broadcasts_numbers"&gt;Comments&lt;/a&gt;&lt;/p&gt;</description>
+      <category>security</category>
+    </item>
+    <item>
+      <title>jujutsu v0.42.0 released</title>
+      <link>https://github.com/jj-vcs/jj/releases/tag/v0.42.0</link>
+      <guid>https://lobste.rs/s/jqkedb</guid>
+      <author>github.com via mediremi</author>
+      <pubDate>Thu, 04 Jun 2026 11:53:12 -0500</pubDate>
+      <comments>https://lobste.rs/s/jqkedb/jujutsu_v0_42_0_released</comments>
+      <description>&lt;p&gt;&lt;a href="https://lobste.rs/s/jqkedb/jujutsu_v0_42_0_released"&gt;Comments&lt;/a&gt;&lt;/p&gt;</description>
+      <category>release</category>
+      <category>vcs</category>
+    </item>
+    <item>
+      <title>Warren's Abstract Machine: A Tutorial Reconstruction</title>
+      <link>https://github.com/a-yiorgos/wambook</link>
+      <guid>https://lobste.rs/s/y6a6cg</guid>
+      <author>github.com via veqq</author>
+      <pubDate>Thu, 04 Jun 2026 21:06:52 -0500</pubDate>
+      <comments>https://lobste.rs/s/y6a6cg/warren_s_abstract_machine_tutorial</comments>
+      <description>&lt;p&gt;&lt;a href="https://lobste.rs/s/y6a6cg/warren_s_abstract_machine_tutorial"&gt;Comments&lt;/a&gt;&lt;/p&gt;</description>
+      <category>logiclangs</category>
+    </item>
+    <item>
+      <title>PivCo-Huffman</title>
+      <link>https://marcinzukowski.github.io/pivco-huffman/paper-1.0/ph.html</link>
+      <guid>https://lobste.rs/s/u9j9u4</guid>
+      <author>marcinzukowski.github.io via mikejsavage</author>
+      <pubDate>Fri, 05 Jun 2026 06:08:39 -0500</pubDate>
+      <comments>https://lobste.rs/s/u9j9u4/pivco_huffman</comments>
+      <description>&lt;p&gt;&lt;a href="https://lobste.rs/s/u9j9u4/pivco_huffman"&gt;Comments&lt;/a&gt;&lt;/p&gt;</description>
+      <category>compsci</category>
+    </item>
+    <item>
+      <title>The C++ Standard Library Has Been Walking Itself Back for Fifteen Years, and the Receipts Are Public</title>
+      <link>https://hftuniversity.com/post/the-c-standard-library-has-been-walking-itself-back-for-fifteen-years-and-the-receipts-are-public</link>
+      <guid>https://lobste.rs/s/7jt1ix</guid>
+      <author>hftuniversity.com via tmcb</author>
+      <pubDate>Thu, 04 Jun 2026 02:52:00 -0500</pubDate>
+      <comments>https://lobste.rs/s/7jt1ix/c_standard_library_has_been_walking</comments>
+      <description>&lt;p&gt;&lt;a href="https://lobste.rs/s/7jt1ix/c_standard_library_has_been_walking"&gt;Comments&lt;/a&gt;&lt;/p&gt;</description>
+      <category>c++</category>
+    </item>
+    <item>
+      <title>Branchless Quicksort</title>
+      <link>https://tiki.li/blog/blqsort</link>
+      <guid>https://lobste.rs/s/jlw6bq</guid>
+      <author>tiki.li via LolPython</author>
+      <pubDate>Thu, 04 Jun 2026 17:19:28 -0500</pubDate>
+      <comments>https://lobste.rs/s/jlw6bq/branchless_quicksort</comments>
+      <description>&lt;p&gt;&lt;a href="https://lobste.rs/s/jlw6bq/branchless_quicksort"&gt;Comments&lt;/a&gt;&lt;/p&gt;</description>
+      <category>c</category>
+      <category>c++</category>
+    </item>
+    <item>
+      <title>I was laid off by Atlassian</title>
+      <link>https://youtu.be/55pTFVoclvE</link>
+      <guid>https://lobste.rs/s/jyuccr</guid>
+      <author>youtu.be via df</author>
+      <pubDate>Thu, 04 Jun 2026 19:38:53 -0500</pubDate>
+      <comments>https://lobste.rs/s/jyuccr/i_was_laid_off_by_atlassian</comments>
+      <description>&lt;p&gt;&lt;a href="https://lobste.rs/s/jyuccr/i_was_laid_off_by_atlassian"&gt;Comments&lt;/a&gt;&lt;/p&gt;</description>
+      <category>video</category>
+      <category>scaling</category>
+    </item>
+    <item>
+      <title>When su replaced login for becoming another Unix login</title>
+      <link>https://utcc.utoronto.ca/~cks/space/blog/unix/SuAsLoginReplacement</link>
+      <guid>https://lobste.rs/s/pmduqk</guid>
+      <author>utcc.utoronto.ca via wezm</author>
+      <pubDate>Thu, 04 Jun 2026 19:53:45 -0500</pubDate>
+      <comments>https://lobste.rs/s/pmduqk/when_su_replaced_login_for_becoming</comments>
+      <description>&lt;p&gt;&lt;a href="https://lobste.rs/s/pmduqk/when_su_replaced_login_for_becoming"&gt;Comments&lt;/a&gt;&lt;/p&gt;</description>
+      <category>unix</category>
+    </item>
+    <item>
+      <title>burntsushi discusses personal medical diagnosis</title>
+      <link>https://burntsushi.net/encephalitis/</link>
+      <guid>https://lobste.rs/s/ovbcr4</guid>
+      <author>burntsushi.net via carlana</author>
+      <pubDate>Wed, 03 Jun 2026 10:07:10 -0500</pubDate>
+      <comments>https://lobste.rs/s/ovbcr4/burntsushi_discusses_personal_medical</comments>
+      <description>&lt;p&gt;&lt;a href="https://lobste.rs/s/ovbcr4/burntsushi_discusses_personal_medical"&gt;Comments&lt;/a&gt;&lt;/p&gt;</description>
+      <category>person</category>
+    </item>
+    <item>
+      <title>How do you sieve/filter/manage your internet mail?</title>
+      <link>https://lobste.rs/s/dku5yb/how_do_you_sieve_filter_manage_your</link>
+      <guid>https://lobste.rs/s/dku5yb</guid>
+      <author> by runxiyu</author>
+      <pubDate>Fri, 05 Jun 2026 08:40:18 -0500</pubDate>
+      <comments>https://lobste.rs/s/dku5yb/how_do_you_sieve_filter_manage_your</comments>
+      <description>&lt;p&gt;Especially lobsters that are subscribed to twenty mailing lists and review a ton of patches.&lt;/p&gt;
+&lt;p&gt;Do you have a particular workflow regarding archival and labels?&lt;br&gt;
+What (preferably FOSS) tooling has been significantly helpful?&lt;br&gt;
+Do you use something such as Sieve scripts?&lt;/p&gt;
+</description>
+      <category>practices</category>
+      <category>ask</category>
+    </item>
+    <item>
+      <title>Learning J – Part I</title>
+      <link>https://drj11.wordpress.com/2007/04/09/learning-j-part-i/</link>
+      <guid>https://lobste.rs/s/mcyag5</guid>
+      <author>drj11.wordpress.com via veqq</author>
+      <pubDate>Thu, 04 Jun 2026 18:25:37 -0500</pubDate>
+      <comments>https://lobste.rs/s/mcyag5/learning_j_part_i</comments>
+      <description>&lt;p&gt;&lt;a href="https://drj11.wordpress.com/2007/04/09/learning-j-part-i/" rel="ugc"&gt;Part I&lt;/a&gt;, &lt;a href="https://drj11.wordpress.com/2007/04/11/learning-j-part-ii/" rel="ugc"&gt;Part II&lt;/a&gt;, &lt;a href="https://drj11.wordpress.com/2007/04/27/learning-j-part-iii/" rel="ugc"&gt;Part III&lt;/a&gt;, and &lt;a href="https://drj11.wordpress.com/2007/05/12/learning-j-part-iv/" rel="ugc"&gt;Part IV&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://lobste.rs/s/mcyag5/learning_j_part_i"&gt;Comments&lt;/a&gt;&lt;/p&gt;</description>
+      <category>apl</category>
+    </item>
+    <item>
+      <title>Reproducible Builds in May 2026</title>
+      <link>https://reproducible-builds.org/reports/2026-05/</link>
+      <guid>https://lobste.rs/s/cubjpv</guid>
+      <author>reproducible-builds.org via fanf</author>
+      <pubDate>Thu, 04 Jun 2026 14:47:34 -0500</pubDate>
+      <comments>https://lobste.rs/s/cubjpv/reproducible_builds_may_2026</comments>
+      <description>&lt;p&gt;&lt;a href="https://lobste.rs/s/cubjpv/reproducible_builds_may_2026"&gt;Comments&lt;/a&gt;&lt;/p&gt;</description>
+      <category>programming</category>
+    </item>
+    <item>
+      <title>The EU tech sovereignty plan</title>
+      <link>https://hamishcampbell.com/the-eus-tech-sovereignty-plan/</link>
+      <guid>https://lobste.rs/s/2bfsek</guid>
+      <author>hamishcampbell.com via Foxboron</author>
+      <pubDate>Fri, 05 Jun 2026 01:32:38 -0500</pubDate>
+      <comments>https://lobste.rs/s/2bfsek/eu_tech_sovereignty_plan</comments>
+      <description>&lt;p&gt;&lt;a href="https://lobste.rs/s/2bfsek/eu_tech_sovereignty_plan"&gt;Comments&lt;/a&gt;&lt;/p&gt;</description>
+      <category>culture</category>
+    </item>
+    <item>
+      <title>My Software North Star</title>
+      <link>https://kristoff.it/blog/north-star/</link>
+      <guid>https://lobste.rs/s/g6lkw1</guid>
+      <author>kristoff.it by kristoff</author>
+      <pubDate>Wed, 03 Jun 2026 15:09:08 -0500</pubDate>
+      <comments>https://lobste.rs/s/g6lkw1/my_software_north_star</comments>
+      <description>&lt;p&gt;&lt;a href="https://lobste.rs/s/g6lkw1/my_software_north_star"&gt;Comments&lt;/a&gt;&lt;/p&gt;</description>
+      <category>philosophy</category>
+    </item>
+    <item>
+      <title>Extension or Imitation? Can you tell the valid Haskell Language Extensions, from the Impostors?</title>
+      <link>https://doscienceto.it/extension-or-imitation/</link>
+      <guid>https://lobste.rs/s/r7by0p</guid>
+      <author>doscienceto.it by hungry_joe</author>
+      <pubDate>Thu, 04 Jun 2026 02:19:22 -0500</pubDate>
+      <comments>https://lobste.rs/s/r7by0p/extension_imitation_can_you_tell_valid</comments>
+      <description>&lt;p&gt;&lt;a href="https://lobste.rs/s/r7by0p/extension_imitation_can_you_tell_valid"&gt;Comments&lt;/a&gt;&lt;/p&gt;</description>
+      <category>haskell</category>
+    </item>
+    <item>
+      <title>Tmux plugin to quickly switch between sessions</title>
+      <link>https://github.com/maxonvim/tmux-underkeys</link>
+      <guid>https://lobste.rs/s/3khvsa</guid>
+      <author>github.com by maxvim</author>
+      <pubDate>Thu, 04 Jun 2026 14:07:50 -0500</pubDate>
+      <comments>https://lobste.rs/s/3khvsa/tmux_plugin_quickly_switch_between</comments>
+      <description>&lt;p&gt;&lt;a href="https://lobste.rs/s/3khvsa/tmux_plugin_quickly_switch_between"&gt;Comments&lt;/a&gt;&lt;/p&gt;</description>
+      <category>practices</category>
+    </item>
+    <item>
+      <title>Ladybird browser update (May 2026)</title>
+      <link>https://www.youtube.com/watch?v=GZoLy5e8y-4</link>
+      <guid>https://lobste.rs/s/giob6a</guid>
+      <author>youtube.com via epidemian</author>
+      <pubDate>Thu, 04 Jun 2026 22:02:01 -0500</pubDate>
+      <comments>https://lobste.rs/s/giob6a/ladybird_browser_update_may_2026</comments>
+      <description>&lt;p&gt;&lt;a href="https://lobste.rs/s/giob6a/ladybird_browser_update_may_2026"&gt;Comments&lt;/a&gt;&lt;/p&gt;</description>
+      <category>video</category>
+      <category>browsers</category>
+    </item>
+    <item>
+      <title>AI enthusiasts are in a race against time, AI skeptics are in a race against entropy</title>
+      <link>https://charitydotwtf.substack.com/p/ai-enthusiasts-are-in-a-race-against</link>
+      <guid>https://lobste.rs/s/ri4flr</guid>
+      <author>charitydotwtf.substack.com via eatonphil</author>
+      <pubDate>Thu, 04 Jun 2026 07:33:04 -0500</pubDate>
+      <comments>https://lobste.rs/s/ri4flr/ai_enthusiasts_are_race_against_time_ai</comments>
+      <description>&lt;p&gt;&lt;a href="https://lobste.rs/s/ri4flr/ai_enthusiasts_are_race_against_time_ai"&gt;Comments&lt;/a&gt;&lt;/p&gt;</description>
+      <category>practices</category>
+      <category>vibecoding</category>
+    </item>
+    <item>
+      <title>The terminal, the TTY, and the shell</title>
+      <link>https://lfg.popovicu.com/series/the-shell-as-a-language/terminal-tty-and-shell/</link>
+      <guid>https://lobste.rs/s/eriaol</guid>
+      <author>lfg.popovicu.com via j11g</author>
+      <pubDate>Thu, 04 Jun 2026 14:39:01 -0500</pubDate>
+      <comments>https://lobste.rs/s/eriaol/terminal_tty_shell</comments>
+      <description>&lt;p&gt;&lt;a href="https://lobste.rs/s/eriaol/terminal_tty_shell"&gt;Comments&lt;/a&gt;&lt;/p&gt;</description>
+      <category>linux</category>
+    </item>
+  </channel>
+</rss>
