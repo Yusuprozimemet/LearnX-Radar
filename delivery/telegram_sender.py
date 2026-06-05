@@ -59,16 +59,28 @@ def _reply_markup(lesson: dict) -> dict:
     return {"reply_markup": json.dumps({"inline_keyboard": rows})}
 
 
-def _plain(md: str, limit: int) -> str:
-    """Flatten lesson markdown to plain text for a Telegram caption/message (no
-    parse_mode), trimming to `limit`. Drops heading/bold/italic/bullet markers."""
-    text = md
-    text = re.sub(r"^#{1,6}\s*", "", text, flags=re.MULTILINE)  # headings
-    text = re.sub(r"\*\*(.+?)\*\*", r"\1", text)                 # bold
-    text = re.sub(r"(?<!\w)_(.+?)_(?!\w)", r"\1", text)          # italics
-    text = re.sub(r"^\s*[-*]\s+", "• ", text, flags=re.MULTILINE)  # bullets
-    text = text.strip()
-    return text if len(text) <= limit else text[: limit - 1].rstrip() + "…"
+def _dutch_html(md: str, limit: int) -> str:
+    """Convert the Dutch lesson markdown to Telegram HTML (sent with parse_mode=HTML):
+    **Dutch** -> <b> (bold), _English_ -> <i> (italic), headings -> bold, bullets ->
+    '• '. Telegram has no text colour, so bold/italic is how Dutch and English are
+    distinguished. Trimmed to `limit` at a LINE boundary so no HTML tag is ever cut
+    mid-way (which Telegram would reject)."""
+    if len(md) > limit - 80:
+        kept: list[str] = []
+        total = 0
+        for line in md.splitlines():
+            if total + len(line) + 1 > limit - 80:
+                break
+            kept.append(line)
+            total += len(line) + 1
+        md = "\n".join(kept)
+    # Escape HTML specials first; our markdown markers (**, _, #) aren't specials.
+    esc = md.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    esc = re.sub(r"^\s*#{1,6}\s*(.+)$", r"<b>\1</b>", esc, flags=re.MULTILINE)  # heading -> bold
+    esc = re.sub(r"^\s*[-*]\s+", "• ", esc, flags=re.MULTILINE)                 # bullets
+    esc = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", esc)                           # **bold**
+    esc = re.sub(r"(?<!\w)_(.+?)_(?!\w)", r"<i>\1</i>", esc)                    # _italic_
+    return esc.strip()
 
 
 def _dutch_reply_markup(dutch: dict) -> dict:
@@ -96,7 +108,8 @@ def _send_dutch(lesson: dict) -> None:
                 SEND_AUDIO.format(token=token),
                 data={
                     "chat_id": config.TELEGRAM_CHAT_ID,
-                    "caption": _plain(dutch["markdown"], CAPTION_LIMIT),
+                    "caption": _dutch_html(dutch["markdown"], CAPTION_LIMIT),
+                    "parse_mode": "HTML",
                     "title": "Dutch lesson",
                     "performer": "LearnX-Radar",
                     **markup,
@@ -109,7 +122,8 @@ def _send_dutch(lesson: dict) -> None:
             SEND_MESSAGE.format(token=token),
             data={
                 "chat_id": config.TELEGRAM_CHAT_ID,
-                "text": _plain(dutch["markdown"], MESSAGE_LIMIT),
+                "text": _dutch_html(dutch["markdown"], MESSAGE_LIMIT),
+                "parse_mode": "HTML",
                 **markup,
             },
             timeout=60,
