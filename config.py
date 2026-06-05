@@ -206,6 +206,22 @@ LEARNING_GOALS = ["distributed systems", "wasm", "llm agents"]
 KNOWN_PENALTY = 0.1   # multiplier for a KNOWN_SKILLS hit (0 = drop; 1 = no effect)
 GOAL_BOOST = 1.5      # multiplier when a skill matches a LEARNING_GOALS entry
 
+# --- Cross-day momentum (v7 Day 26, Phase 3a) ---
+# Reward skills genuinely RISING over time, not one-day spikes. gap_scorer looks
+# back over MOMENTUM_WINDOW_DAYS of trending_history (matched by canonical name,
+# alias-aware) and folds a momentum multiplier into the score:
+#   score = demand x novelty x table_stakes x known x goal x MOMENTUM
+# Sustained + accelerating -> boost (up to MAX_BOOST); seen only today -> SPIKE_DAMP.
+# Orthogonal to novelty (that's "have WE taught it"; this is "is the WORLD rising").
+# See specs/v7/day26-momentum-and-vectordb.md.
+MOMENTUM_ENABLED = True            # False (or no history) -> multiplier 1.0 (rollback)
+# MOMENTUM_WINDOW_DAYS: lookback window. PROVISIONAL — the tuning sweep
+# (scripts/exp_momentum.py) needs ~14+ days of post-Phase-2 history to be
+# meaningful; revisit once the cron has accrued it.
+MOMENTUM_WINDOW_DAYS = 14
+MOMENTUM_MAX_BOOST = 1.5           # cap for a sustained, accelerating skill
+MOMENTUM_SPIKE_DAMP = 0.9         # multiplier for a skill seen only today (mild)
+
 # --- Lesson generation ---
 LESSON_DURATION_MIN = 5  # target audio length for a daily lesson
 LESSON_DIFFICULTY_DEFAULT = "beginner"  # auto-scales in v2 from skill_memory

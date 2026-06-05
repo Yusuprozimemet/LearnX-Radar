@@ -189,6 +189,93 @@ def test_known_and_table_stakes_compose():
     assert s["score"] >= 0
 
 
+# --- cross-day momentum (v7 Day 26) ------------------------------------------
+
+def _hist(*day_rows):
+    """Build trending_history {date: {scored:[...]}} from (days_ago, rows) pairs."""
+    return {_ago(d): {"today_skill": None, "scored": rows} for d, rows in day_rows}
+
+
+def test_momentum_neutral_when_disabled_or_no_history(monkeypatch):
+    # No history -> 1.0 regardless of flag.
+    assert gap_scorer._momentum("DuckDB", 2.0, None) == 1.0
+    # Flag off -> 1.0 even with history.
+    monkeypatch.setattr(config, "MOMENTUM_ENABLED", False)
+    h = _hist((1, [{"skill": "DuckDB", "demand_weight": 2.0}]))
+    assert gap_scorer._momentum("DuckDB", 2.0, h) == 1.0
+
+
+def test_momentum_spike_damp_for_today_only(monkeypatch):
+    monkeypatch.setattr(config, "MOMENTUM_ENABLED", True)
+    # Prior days exist but never mention DuckDB -> one-day spike.
+    h = _hist((1, [{"skill": "Other", "demand_weight": 1.0}]),
+              (2, [{"skill": "Other", "demand_weight": 1.0}]))
+    assert gap_scorer._momentum("DuckDB", 2.0, h) == config.MOMENTUM_SPIKE_DAMP
+
+
+def test_momentum_boost_scales_with_recurrence_and_acceleration(monkeypatch):
+    monkeypatch.setattr(config, "MOMENTUM_ENABLED", True)
+    monkeypatch.setattr(config, "MOMENTUM_WINDOW_DAYS", 14)
+    monkeypatch.setattr(config, "MOMENTUM_MAX_BOOST", 1.5)
+    # Present 2 of 3 prior days, prior avg demand 1.5; today 3.0 -> accelerating.
+    h = _hist((1, [{"skill": "DuckDB", "demand_weight": 2.0}]),
+              (2, [{"skill": "DuckDB", "demand_weight": 1.0}]),
+              (3, [{"skill": "Other", "demand_weight": 1.0}]))
+    m = gap_scorer._momentum("DuckDB", 3.0, h)
+    assert m == 1.0 + 0.5 * (2 / 3)  # boost scaled by recurrence 2/3, full (accelerating)
+
+
+def test_momentum_half_boost_when_not_accelerating(monkeypatch):
+    monkeypatch.setattr(config, "MOMENTUM_ENABLED", True)
+    monkeypatch.setattr(config, "MOMENTUM_MAX_BOOST", 1.5)
+    h = _hist((1, [{"skill": "DuckDB", "demand_weight": 2.0}]),
+              (2, [{"skill": "DuckDB", "demand_weight": 1.0}]),
+              (3, [{"skill": "Other", "demand_weight": 1.0}]))
+    full = 1.0 + 0.5 * (2 / 3)
+    # today demand 1.0 <= prior avg 1.5 -> half the boost above 1.0
+    m = gap_scorer._momentum("DuckDB", 1.0, h)
+    assert m == 1.0 + (full - 1.0) * 0.5
+
+
+def test_momentum_matches_across_days_by_canonical(monkeypatch):
+    monkeypatch.setattr(config, "MOMENTUM_ENABLED", True)
+    monkeypatch.setattr(config, "SKILL_ALIASES", {"k8s": "kubernetes"})
+    # History stored "Kubernetes"; today's skill is "k8s" -> same canonical, counts.
+    h = _hist((1, [{"skill": "Kubernetes", "demand_weight": 2.0}]),
+              (2, [{"skill": "Kubernetes", "demand_weight": 2.0}]))
+    assert gap_scorer._momentum("k8s", 3.0, h) > 1.0
+
+
+def test_momentum_excludes_today_from_history(monkeypatch):
+    monkeypatch.setattr(config, "MOMENTUM_ENABLED", True)
+    # Only today in history -> no PRIOR days to judge against -> neutral 1.0.
+    only_today = _hist((0, [{"skill": "DuckDB", "demand_weight": 2.0}]))
+    assert gap_scorer._momentum("DuckDB", 2.0, only_today) == 1.0
+    # Today carries DuckDB but the one PRIOR day doesn't: today must be excluded,
+    # so DuckDB has no prior presence -> spike damp (proves today isn't counted).
+    h = _hist((0, [{"skill": "DuckDB", "demand_weight": 2.0}]),
+              (1, [{"skill": "Other", "demand_weight": 1.0}]))
+    assert gap_scorer._momentum("DuckDB", 2.0, h) == config.MOMENTUM_SPIKE_DAMP
+
+
+def test_score_folds_momentum_in(monkeypatch):
+    monkeypatch.setattr(config, "MOMENTUM_ENABLED", True)
+    h = _hist((1, [{"skill": "DuckDB", "demand_weight": 0.5}]),
+              (2, [{"skill": "DuckDB", "demand_weight": 0.5}]))
+    s = gap_scorer.score([{"skill": "DuckDB", "sources": ["dev.to"]}], EMPTY_MEMORY,
+                         history=h)[0]
+    assert s["momentum"] > 1.0
+    assert s["canonical"] == "duckdb"
+    assert s["score"] == s["demand_weight"] * s["novelty"] * s["momentum"]
+
+
+def test_score_without_history_is_unchanged():
+    """Back-compat: no history arg -> momentum 1.0, exact pre-Day26 score."""
+    s = gap_scorer.score([{"skill": "Redis", "sources": ["HN Hiring"]}], EMPTY_MEMORY)[0]
+    assert s["momentum"] == 1.0
+    assert s["score"] == 2.0  # demand 2.0 x novelty 1.0, untouched
+
+
 # --- skill_extractor ---------------------------------------------------------
 
 def test_build_digest_caps_text():
