@@ -128,6 +128,26 @@ def _followup_button(lesson: dict) -> str:
     return f'<p style="margin:16px 0">{"".join(buttons)}</p>'
 
 
+def _dutch_html(lesson: dict) -> str:
+    """The 🇳🇱 Dutch lesson section + a recall-quiz button (v5). Empty when the run
+    produced no Dutch lesson, so dev-only delivery is unchanged."""
+    dutch = lesson.get("dutch") or {}
+    if not dutch.get("markdown"):
+        return ""
+    section = (
+        '<hr style="border:none;border-top:1px solid #eee">'
+        + _markdown_to_html(dutch["markdown"])
+    )
+    words = dutch.get("quiz_words") or []
+    if words:
+        section += (
+            '<p style="margin:16px 0">'
+            + _button(followup.dutch_quiz_url(words), "🇳🇱 Quiz me in Dutch", "#0b8457")
+            + "</p>"
+        )
+    return section
+
+
 def _render_html(lesson: dict) -> str:
     return f"""
     <div style="{_WRAP_STYLE}">
@@ -139,7 +159,17 @@ def _render_html(lesson: dict) -> str:
       {_followup_button(lesson)}
       <hr style="border:none;border-top:1px solid #eee">
       {_markdown_to_html(lesson.get('brief_md', ''))}
+      {_dutch_html(lesson)}
     </div>"""
+
+
+def _attach_audio(msg: MIMEMultipart, path_str: str) -> None:
+    path = Path(path_str)
+    if not path.exists():
+        return
+    audio = MIMEAudio(path.read_bytes(), _subtype="mpeg")
+    audio.add_header("Content-Disposition", "attachment", filename=path.name)
+    msg.attach(audio)
 
 
 def _build_message(lesson: dict) -> MIMEMultipart:
@@ -149,10 +179,10 @@ def _build_message(lesson: dict) -> MIMEMultipart:
     msg["To"] = config.EMAIL_TO
     msg.attach(MIMEText(_render_html(lesson), "html", "utf-8"))
 
-    mp3 = Path(lesson["mp3_path"])
-    audio = MIMEAudio(mp3.read_bytes(), _subtype="mpeg")
-    audio.add_header("Content-Disposition", "attachment", filename=mp3.name)
-    msg.attach(audio)
+    _attach_audio(msg, lesson["mp3_path"])
+    dutch_mp3 = (lesson.get("dutch") or {}).get("mp3_path")
+    if dutch_mp3:  # v5: the Dutch lesson audio rides along as a second attachment
+        _attach_audio(msg, dutch_mp3)
     return msg
 
 

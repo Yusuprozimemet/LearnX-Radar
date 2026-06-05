@@ -10,6 +10,8 @@ import re
 from datetime import date, timedelta
 from pathlib import Path
 
+import config
+
 _DIR = Path(__file__).parent
 SEEN_FILE = _DIR / "seen_skills.json"
 MEMORY_FILE = _DIR / "skill_memory.json"
@@ -17,6 +19,7 @@ LAST_SCORED_FILE = _DIR / "last_scored.json"  # v3: this run's ranking for the d
 # v3: per-day rankings, so the dashboard date-picker can replay any day
 HISTORY_FILE = _DIR / "trending_history.json"
 BRIEFS_DIR = _DIR.parent / "briefs"  # committed briefs, linked from lessons for Perplexity Q&A
+DUTCH_MEMORY_FILE = _DIR / "dutch_memory.json"  # v5: Dutch vocab spaced-repetition state
 
 LAST_SCORED_KEEP = 20  # cap the persisted ranking; the dashboard only shows a top slice
 HISTORY_KEEP_DAYS = 60  # cap the per-day archive so the embedded page payload stays bounded
@@ -239,3 +242,118 @@ def load_brief(filename: str) -> str:
         return (BRIEFS_DIR / filename).read_text(encoding="utf-8")
     except OSError:
         return ""
+
+
+# --- dutch_memory.json : Dutch vocab spaced-repetition state (v5) -------------
+#
+# Mirrors skill_memory.json: committed back by the workflow so the SR schedule and
+# streak survive across daily runs. Shape:
+#   {"version": 1, "cefr": "A2", "streak": 0, "last_run": "YYYY-MM-DD",
+#    "last_words": [id, ...],                 # the prior run's set — the quiz target
+#    "words": {id: {"introduced","reps","last_review","due"}},
+#    "lessons": [{"date","theme","audio","words":[id...],"summary"}]}
+
+def _default_dutch_memory() -> dict:
+    return {
+        "version": 1,
+        "cefr": config.DUTCH_CEFR_START,
+        "streak": 0,
+        "last_run": None,
+        "last_words": [],
+        "words": {},
+        "lessons": [],
+    }
+
+
+def load_dutch_memory() -> dict:
+    if not DUTCH_MEMORY_FILE.exists():
+        return _default_dutch_memory()
+    try:
+        data = json.loads(DUTCH_MEMORY_FILE.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return _default_dutch_memory()
+    if not isinstance(data, dict):
+        return _default_dutch_memory()
+    # Backfill any missing keys so callers can rely on the full shape.
+    for key, value in _default_dutch_memory().items():
+        data.setdefault(key, value)
+    return data
+
+
+def save_dutch_memory(memory: dict) -> None:
+    DUTCH_MEMORY_FILE.write_text(
+        json.dumps(memory, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+
+
+def dutch_due_words(memory: dict, today: date | None = None) -> list[str]:
+    """Ids whose review is due on/before `today`, oldest due date first."""
+    today_iso = (today or date.today()).isoformat()
+    due = [
+        (wid, entry.get("due", ""))
+        for wid, entry in memory.get("words", {}).items()
+        if entry.get("due", "") and entry["due"] <= today_iso
+    ]
+    due.sort(key=lambda pair: pair[1])
+    return [wid for wid, _ in due]
+
+
+def _dutch_interval_days(reps: int) -> int:
+    """Spacing interval (days) after `reps` exposures: widens with each rep."""
+    base = config.DUTCH_SR_BASE_INTERVAL_DAYS
+    factor = config.DUTCH_SR_SPACING_FACTOR
+    return max(1, round(base * (factor ** max(0, reps - 1))))
+
+
+def record_dutch_lesson(
+    memory: dict,
+    *,
+    word_ids,
+    theme: str,
+    audio: str = "",
+    summary: str = "",
+    when: date | None = None,
+) -> dict:
+    """Update Dutch SR state after a lesson covering `word_ids` is delivered.
+
+    New words start at reps=1; re-served (review) words have their reps bumped and
+    their next `due` pushed further out. Streak increments on a consecutive day and
+    resets after a gap. `last_words` is set to today's ids (the next run's quiz
+    target), and a lessons[] entry is appended.
+    """
+    today = (when or date.today()).isoformat()
+    yesterday = ((when or date.today()) - timedelta(days=1)).isoformat()
+    words = memory.setdefault("words", {})
+    ids = list(word_ids)
+
+    for wid in ids:
+        entry = words.get(wid)
+        if entry is None:
+            reps = 1
+            entry = {"introduced": today, "reps": reps, "last_review": today}
+        else:
+            reps = int(entry.get("reps", 1)) + 1
+            entry["reps"] = reps
+            entry["last_review"] = today
+            entry.setdefault("introduced", today)
+        due = (date.fromisoformat(today) + timedelta(days=_dutch_interval_days(reps))).isoformat()
+        entry["due"] = due
+        words[wid] = entry
+
+    last_run = memory.get("last_run")
+    if last_run == yesterday:
+        memory["streak"] = int(memory.get("streak", 0)) + 1
+    else:
+        memory["streak"] = 1
+    memory["last_run"] = today
+    memory["last_words"] = ids
+    memory.setdefault("lessons", []).append(
+        {
+            "date": today,
+            "theme": theme,
+            "audio": audio,
+            "words": ids,
+            "summary": summary,
+        }
+    )
+    return memory
