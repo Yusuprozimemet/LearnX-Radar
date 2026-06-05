@@ -236,17 +236,21 @@ def extract(items: list[dict], chat_fn=chat) -> list[dict]:
         return _extract_single_pass(items, chat_fn)
 
     chunks = _chunk_by_tokens(items, config.EXTRACTION_CHUNK_TOKENS)
-    log.info("Map-reduce extract: %d items in %d chunk(s)", len(items), len(chunks))
     candidates: list[dict] = []
+    failed = 0
     for i, chunk in enumerate(chunks):
         try:
             candidates.extend(_extract_chunk(chunk, chat_fn, cap=False))
         except Exception as exc:  # one bad chunk must not kill the run
+            failed += 1
             log.warning("map chunk %d/%d failed: %s", i + 1, len(chunks), exc)
 
     groups = _reduce(candidates)
     mentions = _attribute(groups, items)
-    log.info(
-        "Map-reduce: %d candidates -> %d merged mentions", len(candidates), len(mentions)
+    # Surface recall in the cron log (failed chunks explain a low candidate count).
+    fail_note = f" ({failed} FAILED)" if failed else ""
+    print(
+        f"[extract] map-reduce: {len(items)} items -> {len(chunks)} chunks{fail_note} "
+        f"-> {len(candidates)} raw -> {len(mentions)} candidates"
     )
     return mentions
