@@ -2,7 +2,7 @@
   "version": 1,
   "skills": {
     "DuckDB": {
-      "times_taught": 1,
+      "times_taught": 2,
       "first_taught": "2026-05-30",
       "lessons": [
         {
@@ -11,10 +11,18 @@
           "difficulty": "beginner",
           "summary": "Rising questions",
           "audio": "lesson-20260530.mp3"
+        },
+        {
+          "date": "2026-06-05",
+          "title": "DuckDB",
+          "difficulty": "intermediate",
+          "summary": "Lakehouse Format",
+          "audio": "lesson-20260605-duckdb.mp3",
+          "brief": "20260605-duckdb.md"
         }
       ],
-      "last_taught": "2026-05-30",
-      "summary": "Rising questions"
+      "last_taught": "2026-06-05",
+      "summary": "Lakehouse Format"
     },
     "AI automation for speech language pathologists": {
       "times_taught": 1,
@@ -194,10 +202,10 @@
     }
   },
   "so_counts": {
-    "python": 2205900,
+    "python": 2205910,
     "rust": 43952,
     "kubernetes": 59812,
-    "langchain": 1982,
+    "langchain": 1983,
     "duckdb": 504
   }
 }
