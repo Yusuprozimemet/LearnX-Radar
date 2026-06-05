@@ -34,34 +34,49 @@ _VOICE = {"ALEX": VOICE_ALEX, "MAYA": VOICE_MAYA}
 _RATE = {"ALEX": RATE_ALEX, "MAYA": RATE_MAYA}
 
 
-async def build(lines: list[DialogueLine], out_path: str) -> None:
+async def build(
+    lines: list[DialogueLine],
+    out_path: str,
+    *,
+    voices: dict[str, str] | None = None,
+    rates: dict[str, str] | None = None,
+) -> None:
+    """Render `lines` to one MP3. `voices`/`rates` (keyed by speaker) override the
+    default English co-host map — the Dutch track passes its nl-NL voices here; dev
+    callers pass nothing and get the unchanged behaviour."""
     if not lines:
         raise ValueError("No dialogue lines to render")
+    voices = voices or _VOICE
+    rates = rates or _RATE
     tmp_dir = Path(out_path).parent / ".tts_tmp"
     tmp_dir.mkdir(parents=True, exist_ok=True)
     try:
-        segments = await _render_all(lines, str(tmp_dir))
+        segments = await _render_all(lines, str(tmp_dir), voices, rates)
         _assemble(segments, out_path)
         log.info("Audio saved: %s", out_path)
     finally:
         shutil.rmtree(tmp_dir, ignore_errors=True)
 
 
-async def _render_all(lines: list[DialogueLine], tmp_dir: str) -> list[RenderedSegment]:
+async def _render_all(
+    lines: list[DialogueLine], tmp_dir: str, voices: dict[str, str], rates: dict[str, str]
+) -> list[RenderedSegment]:
     semaphore = asyncio.Semaphore(TTS_SEMAPHORE_LIMIT)
     results: list[RenderedSegment | None] = [None] * len(lines)
 
     async def render_one(idx: int, line: DialogueLine) -> None:
         async with semaphore:
-            results[idx] = await _render_segment(line, tmp_dir, idx)
+            results[idx] = await _render_segment(line, tmp_dir, idx, voices, rates)
 
     await asyncio.gather(*[render_one(i, ln) for i, ln in enumerate(lines)])
     return [r for r in results if r is not None]
 
 
-async def _render_segment(line: DialogueLine, out_dir: str, idx: int) -> RenderedSegment:
-    voice = _VOICE.get(line.speaker, VOICE_ALEX)
-    rate = _RATE.get(line.speaker, RATE_ALEX)
+async def _render_segment(
+    line: DialogueLine, out_dir: str, idx: int, voices: dict[str, str], rates: dict[str, str]
+) -> RenderedSegment:
+    voice = voices.get(line.speaker, VOICE_ALEX)
+    rate = rates.get(line.speaker, RATE_ALEX)
     out_path = str(Path(out_dir) / f"seg_{idx:04d}.mp3")
 
     communicate = edge_tts.Communicate(line.text, voice, rate=rate)

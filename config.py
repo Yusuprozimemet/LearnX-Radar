@@ -143,6 +143,33 @@ GOAL_BOOST = 1.5      # multiplier when a skill matches a LEARNING_GOALS entry
 LESSON_DURATION_MIN = 5  # target audio length for a daily lesson
 LESSON_DIFFICULTY_DEFAULT = "beginner"  # auto-scales in v2 from skill_memory
 
+# --- Dutch coach (v5) ---
+# A second learning track that rides the same daily run: a small A2 Dutch lesson
+# (vocab + example sentences + dialogue + audio + spaced-repetition review + a
+# recall quiz) delivered alongside the dev lesson. The whole block is guarded in
+# main() so a Dutch failure never touches the dev pipeline; set DUTCH_ENABLED=False
+# to switch the track off entirely. Vocabulary is anchored to dutch/wordlist.json
+# (a frozen, human-reviewed bank) — the LLM only writes sentences around fixed
+# words, never invents vocabulary. See specs/v5/ and plan/plan.md.
+DUTCH_ENABLED = True
+DUTCH_CEFR_START = "A2"              # starting level (auto-advances toward B1 in v6)
+DUTCH_NEW_WORDS_PER_DAY = 4          # new words introduced each morning
+DUTCH_REVIEW_WORDS_MAX = 6           # cap on due-for-review words pulled into a day
+DUTCH_THEME_TECH_TIE_IN = True       # on tech days, tie the lesson to the dev topic
+
+# Spaced repetition for vocab: shorter base than the dev track (SR_BASE_INTERVAL_DAYS
+# = 7) because words need tighter early spacing than concept lessons. Intervals widen
+# as reps grow: round(base * factor**(reps-1)) -> ~1, 2, 5, 11, 24 ... days.
+DUTCH_SR_BASE_INTERVAL_DAYS = 1
+DUTCH_SR_SPACING_FACTOR = 2.2
+
+# Dutch TTS voices (edge-tts, no API key) — two co-hosts, slower than native so an
+# A2 learner can follow. Speakers reuse the ALEX/MAYA labels of the dev dialogue so
+# audio_builder's voice map keys line up.
+DUTCH_VOICE_ALEX = "nl-NL-MaartenNeural"
+DUTCH_VOICE_MAYA = "nl-NL-ColetteNeural"
+DUTCH_TTS_RATE = "-10%"
+
 # A descriptive User-Agent keeps free endpoints (Reddit/SO) from returning 429.
 USER_AGENT = "learnx-radar/1.0 (+https://github.com/learnx-radar)"
 

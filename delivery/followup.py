@@ -55,6 +55,22 @@ def perplexity_url(skill: str, brief_md: str) -> str:
     return _SEARCH.format(q=quote(query))
 
 
+def dutch_quiz_url(words: list[dict]) -> str:
+    """Deep link to a Perplexity thread that quizzes the user on the given Dutch
+    words (v5). Used for *yesterday's* words — genuine spaced retrieval. The words
+    (Dutch + English) are embedded so Perplexity is grounded without any fetch."""
+    pairs = "; ".join(f"{w['nl']} = {w.get('en', '')}".strip(" =") for w in words if w.get("nl"))
+    query = (
+        f"Quiz me on these Dutch words I learned yesterday: {pairs}.\n\n"
+        f"Ask me ONE question at a time, alternating between 'How do you say <English> "
+        f"in Dutch?' and 'What does <Dutch word> mean?', plus one short fill-in-the-"
+        f"blank Dutch sentence. Wait for my answer before the next. After each answer, "
+        f"correct me and give the right word WITH its article (de/het). Start now with "
+        f"question one."
+    )
+    return _SEARCH.format(q=quote(query))
+
+
 def quiz_url(skill: str, brief_md: str) -> str:
     """Deep link to a Perplexity thread that quizzes the user on `skill`.
 

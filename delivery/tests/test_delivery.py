@@ -156,3 +156,55 @@ def test_build_message_has_subject_and_audio_attachment(tmp_path, monkeypatch):
     assert any(p.get_content_type() == "text/html" for p in parts)
     audio = [p for p in parts if p.get_content_maintype() == "audio"]
     assert audio and audio[0].get_filename() == "lesson-20260530.mp3"
+
+
+# --- Dutch delivery (v5) -----------------------------------------------------
+
+_DUTCH_WORDS = [{"id": "afspraak", "nl": "de afspraak", "en": "the appointment"}]
+_DUTCH_MD = "## 🇳🇱 Dutch (A2) — everyday\n\n**Nieuwe woorden**\n- **de afspraak** — the appointment"
+
+
+def test_dutch_quiz_url_embeds_words():
+    url = followup.dutch_quiz_url(_DUTCH_WORDS)
+    q = unquote(url)
+    assert url.startswith("https://www.perplexity.ai/search/new?q=")
+    assert "de afspraak" in q and "the appointment" in q
+    assert "ONE question at a time" in q
+
+
+def test_email_dutch_section_present_only_when_set():
+    assert email_sender._dutch_html({"title": "x"}) == ""  # no dutch -> nothing
+    html = email_sender._dutch_html(
+        {"dutch": {"markdown": _DUTCH_MD, "quiz_words": _DUTCH_WORDS}}
+    )
+    assert "de afspraak" in html
+    assert "Quiz me in Dutch" in html  # quiz button rendered when words present
+
+
+def test_email_dutch_section_no_button_without_quiz_words():
+    html = email_sender._dutch_html({"dutch": {"markdown": _DUTCH_MD}})
+    assert "de afspraak" in html
+    assert "Quiz me in Dutch" not in html
+
+
+def test_email_attaches_second_dutch_mp3(tmp_path, monkeypatch):
+    monkeypatch.setattr(email_sender.config, "EMAIL_FROM", "a@x.com")
+    monkeypatch.setattr(email_sender.config, "EMAIL_TO", "b@x.com")
+    lesson = _lesson(tmp_path)
+    dmp3 = tmp_path / "dutch-20260605.mp3"
+    dmp3.write_bytes(b"ID3dutch")
+    lesson["dutch"] = {"markdown": _DUTCH_MD, "mp3_path": str(dmp3)}
+    msg = email_sender._build_message(lesson)
+    names = sorted(
+        p.get_filename() for p in msg.get_payload() if p.get_content_maintype() == "audio"
+    )
+    assert names == ["dutch-20260605.mp3", "lesson-20260530.mp3"]
+
+
+def test_telegram_dutch_markup_and_plain_text():
+    markup = telegram_sender._dutch_reply_markup({"quiz_words": _DUTCH_WORDS})
+    assert _buttons(markup) == ["🇳🇱 Quiz me in Dutch"]
+    assert telegram_sender._dutch_reply_markup({}) == {}  # no words -> no button
+    plain = telegram_sender._plain(_DUTCH_MD, 1024)
+    assert "**" not in plain and "##" not in plain  # markdown markers stripped
+    assert "de afspraak" in plain
