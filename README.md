@@ -15,11 +15,17 @@ review, and a recall quiz. See [Dutch coach](#dutch-coach-v5).
 
 ## What it does
 
-- Collects signals from GitHub Trending, Hacker News Who is Hiring, dev.to RSS,
-       and Stack Overflow tag deltas.
-- Extracts skills, scores gaps, and selects a daily topic.
-- Writes a teaching brief, plans a curriculum, generates dialogue, and builds
-       one MP3 via edge-tts.
+- Collects signals from **seven** public sources: GitHub Trending, Hacker News
+       (Who-is-Hiring + front page), Stack Overflow tag deltas, dev.to, Reddit, and
+       Lobste.rs.
+- Extracts skills via **map-reduce** over the corpus (chunked for recall, with
+       **deterministic per-source attribution** — a corpus scan, not an LLM tally),
+       scores gaps with spaced-repetition novelty **and a cross-day momentum signal**
+       (rewards skills genuinely rising over time, damps one-day spikes), then selects
+       a daily topic.
+- Writes a teaching brief **grounded in the real source text** (read via Jina, plus
+       fresh Exa web results when `EXA_API_KEY` is set) with cited `## Sources`; then
+       plans a curriculum, generates dialogue, and builds one MP3 via edge-tts.
 - Builds a second, independent **Dutch lesson** (vocab + sentences + dialogue +
        Dutch-voice MP3) from a curated word bank, with spaced-repetition review.
 - Delivers both lessons to Telegram (audio + summary) and email (brief + MP3s).
@@ -32,7 +38,9 @@ review, and a recall quiz. See [Dutch coach](#dutch-coach-v5).
 ## Pipeline
 
 ```
-scrape -> dedup -> extract skills -> score gaps -> write brief
+scrape (7 sources) -> dedup -> extract skills (map-reduce + deterministic
+                      attribution) -> score gaps (demand x novelty x momentum)
+                      -> write grounded brief (Jina + Exa, cited)
                       -> plan curriculum -> generate dialogue -> build audio
                       -> build Dutch lesson (vocab + sentences + Dutch audio)
                       -> deliver (Telegram + email) -> persist state -> refresh dashboard
@@ -42,18 +50,51 @@ The Dutch branch is independent and fully guarded: any failure there is logged a
 skipped so the developer lesson always ships. Set `DUTCH_ENABLED = False` in
 [config.py](config.py) to turn the track off.
 
+## Accuracy & grounding (v7)
+
+Three pieces sharpen *what* gets taught and *how grounded* the lesson is — each
+behind a config flag for clean rollback:
+
+- **Open-vocabulary discovery (7 sources).** Reddit, the HN front page, and
+       Lobste.rs are open-vocabulary feeds, so the radar can surface skills it was
+       never pre-configured to watch — not just a fixed tag/language list. Per-source
+       weights (`SOURCE_WEIGHTS`) keep real demand (HN Hiring, Stack Overflow) above
+       community buzz.
+- **Map-reduce extraction + deterministic attribution** (`EXTRACTION_MAPREDUCE`).
+       The corpus is chunked and skills extracted per chunk (recall), variants merged
+       (`SKILL_ALIASES`), then each skill's source set is computed by **scanning the
+       corpus** rather than trusting the LLM to tally — so the demand weight is exact.
+       Chunk size was chosen by experiment ([scripts/exp_extraction.py](scripts/exp_extraction.py)).
+- **Grounded briefs** (`GROUNDING_ENABLED`). Instead of writing from the skill name
+       alone, the brief reads the actual sources that surfaced the skill (keyless Jina
+       reader) plus fresh Exa web results, and cites a real `## Sources` list authored
+       in code (the LLM never writes URLs). Read budget chosen by experiment
+       ([scripts/exp_grounding.py](scripts/exp_grounding.py)). The grounding helpers in
+       [radar/research/](radar/research/) are vendored from the sibling LearnX-Search.
+- **Cross-day momentum** (`MOMENTUM_ENABLED`). Scoring looks back over
+       `trending_history` (matched by canonical name) and boosts skills sustained and
+       accelerating across days, while damping one-day spikes — orthogonal to the
+       spaced-repetition novelty signal.
+
 ## Repository layout
 
 ```
-agents/     source collectors (GitHub, HN, dev.to, Stack Overflow)
-radar/      skill extraction, gap scoring, brief writing
+agents/     source collectors (GitHub, HN hiring + front page, Stack Overflow,
+            dev.to, Reddit, Lobste.rs)
+radar/      map-reduce skill extraction, gap scoring (+ momentum), grounded
+            brief writing, PII scrubbing
+radar/research/  brief-grounding helpers vendored from LearnX-Search: Jina
+            reader (keyless), Exa search (key-gated), relevance filter
 learnx/     curriculum, dialogue, audio_builder, LLM client
 dutch/      Dutch coach: curated wordlist, lesson builder, Dutch audio (v5)
 delivery/   Telegram and email delivery (+ Perplexity follow-up link)
 dashboard/  static dashboard builder (Radar / Dutch tabs)
 storage/    state files (seen_skills.json, skill_memory.json, last_scored.json,
-            dutch_memory.json)
+            trending_history.json, dutch_memory.json)
 briefs/     full lesson briefs (linked from lessons for Perplexity Q&A)
+scripts/    one-off experiment harnesses (chunk size, grounding read budget,
+            momentum window) — deletable, not part of the cron
+specs/      per-day specs driving each slice (v1..v7)
 output/     generated MP3 files and sample outputs
 config.py   central configuration and model selection
 main.py     daily pipeline entry point
@@ -63,6 +104,8 @@ main.py     daily pipeline entry point
 
 - LLM: NVIDIA NIM (OpenAI-compatible) using `meta/llama-3.3-70b-instruct`
        configured in [config.py](config.py).
+- Grounding: keyless Jina Reader (`r.jina.ai`) for page reads + optional Exa
+       neural web search (`EXA_API_KEY`) for fresh sources.
 - TTS: edge-tts plus pydub (English co-host voices for dev lessons, `nl-NL` voices
        for Dutch lessons); ffmpeg required for audio assembly.
 - Delivery: Telegram Bot API and Gmail SMTP.
@@ -73,7 +116,9 @@ main.py     daily pipeline entry point
 
 - Required env vars: `NVIDIA_API_KEY`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`,
        `GMAIL_APP_PASSWORD`, `EMAIL_FROM`, `EMAIL_TO`.
-- Optional: `GITHUB_TOKEN` (higher GitHub API rate limits).
+- Optional: `GITHUB_TOKEN` (higher GitHub API rate limits); `EXA_API_KEY` (free at
+       exa.ai — enables Exa web results in brief grounding; without it grounding falls
+       back to reading the day's own source URLs via Jina).
 - The Dutch coach needs **no new secrets** — it reuses the same LLM and edge-tts.
        Tune it via the `DUTCH_*` constants in [config.py](config.py) (enable/disable,
        words per day, review cap, voices); `DUTCH_ENABLED = True` by default.
@@ -145,6 +190,9 @@ In CI, the env values come from GitHub repo secrets (see
        dashboard. Scored from the full scrape each run (not just post-dedup
        items), so the board always shows the complete demand picture and updates
        on every run.
+- [storage/trending_history.json](storage/trending_history.json): one ranking per
+       day (kept ~60 days). Powers the dashboard's date replay **and** the cross-day
+       momentum signal (prior days are matched by canonical skill name).
 - [briefs](briefs): full lesson briefs, linked from each lesson for Perplexity Q&A.
 - [output](output): generated MP3 lessons — the developer lesson
        (`lesson-YYYYMMDD-<slug>.mp3`) and the Dutch lesson (`dutch-YYYYMMDD.mp3`).
@@ -170,8 +218,12 @@ beyond the workflow's built-in `GITHUB_TOKEN`.
 
 ## Data and privacy
 
-- All sources are public (GitHub Trending, HN "Who is Hiring?", dev.to RSS,
-       Stack Overflow tag counts). No accounts or private data are scraped.
+- All sources are public (GitHub Trending, HN "Who is Hiring?" + front page,
+       Stack Overflow tag counts, dev.to RSS, Reddit `.rss`, Lobste.rs RSS). No
+       accounts or private data are scraped.
+- Brief grounding fetches public pages via Jina Reader and (optionally) Exa
+       search; fetched page text is PII-scrubbed before it reaches the LLM,
+       persistence, or delivery — treat Jina and Exa as third parties.
 - PII (emails, phone numbers, @handles) is redacted from collected text at
        ingestion in [radar/privacy.py](radar/privacy.py) — before dedup, before
        the LLM, and before anything is persisted, delivered, or linked to
