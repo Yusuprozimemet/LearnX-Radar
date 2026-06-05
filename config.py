@@ -133,8 +133,40 @@ SOURCE_WEIGHTS = {
 }
 DEFAULT_SOURCE_WEIGHT = 1.0  # any source not listed above
 
-# How many top skill mentions to keep after extraction (focuses scoring + brief).
+# How many top skill mentions to keep AFTER scoring (focuses brief + dashboard).
+# With map-reduce extraction this is a post-scoring trim (main.py), not an
+# extraction cap — extraction maximizes recall; scoring then keeps the top N.
 MAX_SKILL_MENTIONS = 25
+
+# --- Map-reduce extraction (v7 Day 25) ---
+# The old single-pass extractor flattened ~430 items into one LLM call that also
+# had to tally per-skill sources — capping recall and resting the demand signal on
+# LLM arithmetic. Map-reduce instead: chunk -> extract candidates per chunk (LLM,
+# recall) -> merge variants (lexical + alias map) -> ATTRIBUTE sources by scanning
+# the corpus (deterministic). See specs/v7/day25-mapreduce-extraction.md.
+EXTRACTION_MAPREDUCE = True       # False -> legacy single-pass extract (rollback switch)
+# EXTRACTION_CHUNK_TOKENS: token budget per map chunk. Set from the exp_extraction.py
+# sweep over the real corpus, NOT a guess. Finding: recall (candidates) = 4k:60,
+# 6k:60, 8k:45, 12k:43, single-pass:18 (cap 60). 6k ties 4k at the cap with fewer
+# LLM calls (5 vs 7); 8k drops to 45. So 6k = largest budget still at max recall =
+# the knee. (Attribution is deterministic, so chunk size trades only recall vs cost.)
+EXTRACTION_CHUNK_TOKENS = 6000
+EXTRACTION_MAX_CANDIDATES = 60    # safety cap on merged candidates before attribution
+# Variant merging: lexical normalize (lowercase/strip/collapse) + this alias map.
+# Deterministic + debuggable; grow as real variants are observed. (No LLM merge pass
+# by decision — can be added later behind a flag if too many merges are missed.)
+SKILL_ALIASES = {
+    "k8s": "kubernetes",
+    "rsc": "react server components",
+    "postgres": "postgresql",
+    "pg": "postgresql",
+    "ts": "typescript",
+    "js": "javascript",
+}
+# Short/ambiguous names where a corpus substring scan is unreliable ("Go" in
+# "going", "C" everywhere) — attribute these from the map step's LLM-reported
+# sources instead of scanning. Names <=2 chars are treated as ambiguous too.
+AMBIGUOUS_SHORT_SKILLS = {"go", "c", "r", "d", "c#", "c++", "ml", "ai", "ci"}
 
 # --- Spaced repetition (v2) ---
 # A taught skill is suppressed, then becomes eligible again after a spacing

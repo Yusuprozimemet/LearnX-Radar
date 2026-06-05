@@ -210,7 +210,8 @@ def test_clean_drops_empty_and_caps(monkeypatch):
     assert [m["skill"] for m in cleaned] == ["A", "B"]
 
 
-def test_extract_with_canned_llm():
+def test_extract_single_pass_with_canned_llm(monkeypatch):
+    monkeypatch.setattr(skill_extractor.config, "EXTRACTION_MAPREDUCE", False)
     canned = json.dumps(
         [{"skill": "DuckDB", "sources": ["dev.to"], "evidence": "fast OLAP"}]
     )
@@ -219,8 +220,9 @@ def test_extract_with_canned_llm():
     assert out == [{"skill": "DuckDB", "sources": ["dev.to"], "evidence": "fast OLAP"}]
 
 
-def test_extract_salvages_truncated_json():
+def test_extract_single_pass_salvages_truncated_json(monkeypatch):
     """A reply cut off mid-array (the real failure mode) recovers whole objects."""
+    monkeypatch.setattr(skill_extractor.config, "EXTRACTION_MAPREDUCE", False)
     truncated = (
         '```json\n[\n'
         '  {"skill": "DuckDB", "sources": ["dev.to"], "evidence": "fast OLAP"},\n'
@@ -238,6 +240,126 @@ def test_extract_empty_items_no_call():
         raise AssertionError("should not call LLM")
 
     assert skill_extractor.extract([], chat_fn=boom) == []
+
+
+# --- map-reduce extraction (v7 Day 25) ---------------------------------------
+
+def test_term_pattern_word_boundary_and_punctuation():
+    """The deterministic matcher must be a token/phrase match, not a substring."""
+    go = skill_extractor._term_pattern("go")
+    assert go.search("learning go today") and go.search("(go)")
+    assert not go.search("going") and not go.search("mongodb") and not go.search("ago")
+
+    phrase = skill_extractor._term_pattern("react server components")
+    assert phrase.search("using React  Server   Components now")  # flexible whitespace
+    assert not phrase.search("react components")
+
+    cpp = skill_extractor._term_pattern("c++")
+    assert cpp.search("we use c++ here")
+    assert not cpp.search("c++17") and not cpp.search("abcc++")
+
+
+def test_canonical_and_alias_merge(monkeypatch):
+    monkeypatch.setattr(skill_extractor.config, "SKILL_ALIASES", {"k8s": "kubernetes"})
+    assert skill_extractor._canonical("  K8S ") == "kubernetes"
+    assert skill_extractor._canonical("Kubernetes") == "kubernetes"
+    # Two surface forms across chunks collapse into one group.
+    groups = skill_extractor._reduce([
+        {"skill": "k8s", "sources": ["HN Hiring"], "evidence": "ops"},
+        {"skill": "Kubernetes", "sources": ["dev.to"], "evidence": ""},
+    ])
+    assert set(groups) == {"kubernetes"}
+    assert groups["kubernetes"]["surfaces"] == {"k8s", "Kubernetes"}
+
+
+def test_attribute_sources_are_deterministic_from_corpus(monkeypatch):
+    """Attribution comes from a corpus scan, NOT the LLM's (here wrong) tally."""
+    monkeypatch.setattr(skill_extractor.config, "SKILL_ALIASES", {})
+    monkeypatch.setattr(skill_extractor.config, "AMBIGUOUS_SHORT_SKILLS", set())
+    groups = skill_extractor._reduce(
+        [{"skill": "DuckDB", "sources": ["GitHub Trending"], "evidence": "olap"}]
+    )
+    items = [
+        {"source": "HN Front Page", "title": "DuckDB 1.0", "text": "fast"},
+        {"source": "dev.to", "title": "why I use duckdb", "text": "columnar"},
+        {"source": "Reddit", "title": "cats", "text": "unrelated"},
+    ]
+    out = skill_extractor._attribute(groups, items)
+    m = next(x for x in out if x["skill"] == "DuckDB")
+    # Real sources from the scan (HN + dev.to), NOT the LLM's "GitHub Trending".
+    assert m["sources"] == ["HN Front Page", "dev.to"]
+
+
+def test_attribute_alias_surface_matched_in_corpus(monkeypatch):
+    """Alias canonical is scanned even if only the alias key appears in the corpus."""
+    monkeypatch.setattr(skill_extractor.config, "SKILL_ALIASES", {"k8s": "kubernetes"})
+    monkeypatch.setattr(skill_extractor.config, "AMBIGUOUS_SHORT_SKILLS", set())
+    groups = skill_extractor._reduce([{"skill": "Kubernetes", "sources": [], "evidence": ""}])
+    items = [{"source": "HN Hiring", "title": "k8s operators", "text": "scaling"}]
+    out = skill_extractor._attribute(groups, items)
+    assert out[0]["sources"] == ["HN Hiring"]  # matched via the k8s alias surface
+
+
+def test_attribute_ambiguous_skill_falls_back_to_llm_sources(monkeypatch):
+    """Short/ambiguous names skip the corpus scan and use the LLM's sources."""
+    monkeypatch.setattr(skill_extractor.config, "AMBIGUOUS_SHORT_SKILLS", {"go"})
+    groups = skill_extractor._reduce(
+        [{"skill": "Go", "sources": ["HN Hiring"], "evidence": "backend"}]
+    )
+    # A corpus full of "going"/"ago" would false-match a substring scan; ambiguous
+    # path must ignore the corpus and trust the LLM-reported source.
+    items = [{"source": "Reddit", "title": "going to the store", "text": "ago"}]
+    out = skill_extractor._attribute(groups, items)
+    assert out[0]["sources"] == ["HN Hiring"]
+
+
+def test_attribute_falls_back_when_corpus_phrasing_differs(monkeypatch):
+    """If the LLM's term isn't found verbatim in the corpus, keep its sources."""
+    monkeypatch.setattr(skill_extractor.config, "SKILL_ALIASES", {})
+    monkeypatch.setattr(skill_extractor.config, "AMBIGUOUS_SHORT_SKILLS", set())
+    groups = skill_extractor._reduce(
+        [{"skill": "agentic coding", "sources": ["Lobste.rs"], "evidence": "ai"}]
+    )
+    items = [{"source": "HN Front Page", "title": "agentic AI workflows", "text": "tools"}]
+    out = skill_extractor._attribute(groups, items)  # "agentic coding" not present verbatim
+    assert out[0]["sources"] == ["Lobste.rs"]
+
+
+def test_chunk_by_tokens_splits_and_recall_unions(monkeypatch):
+    monkeypatch.setattr(skill_extractor.config, "EXTRACTION_MAPREDUCE", True)
+    monkeypatch.setattr(skill_extractor.config, "EXTRACTION_CHUNK_TOKENS", 30)
+    monkeypatch.setattr(skill_extractor.config, "SKILL_ALIASES", {})
+    monkeypatch.setattr(skill_extractor.config, "AMBIGUOUS_SHORT_SKILLS", set())
+    items = [
+        {"source": "HN Front Page", "title": "DuckDB benchmarks", "text": "x" * 200},
+        {"source": "dev.to", "title": "Kafka consumer groups deepdive", "text": "y" * 200},
+    ]
+    assert len(skill_extractor._chunk_by_tokens(items, 30)) >= 2  # split into chunks
+
+    # Each chunk returns the skill in its own item. Key off an item-unique word —
+    # NOT the skill name, since the extract.txt template itself names DuckDB/Kafka.
+    def per_chunk(messages, **k):
+        digest = messages[0]["content"]
+        if "benchmarks" in digest:
+            return json.dumps([{"skill": "DuckDB", "sources": [], "evidence": ""}])
+        return json.dumps([{"skill": "Kafka consumer groups", "sources": [], "evidence": ""}])
+
+    out = skill_extractor.extract(items, chat_fn=per_chunk)
+    assert {m["skill"] for m in out} == {"DuckDB", "Kafka consumer groups"}
+
+
+def test_extract_max_candidates_cap(monkeypatch):
+    monkeypatch.setattr(skill_extractor.config, "EXTRACTION_MAPREDUCE", True)
+    monkeypatch.setattr(skill_extractor.config, "EXTRACTION_MAX_CANDIDATES", 1)
+    monkeypatch.setattr(skill_extractor.config, "EXTRACTION_CHUNK_TOKENS", 9999)
+    monkeypatch.setattr(skill_extractor.config, "AMBIGUOUS_SHORT_SKILLS", set())
+    canned = json.dumps([
+        {"skill": "DuckDB", "sources": [], "evidence": ""},
+        {"skill": "Kafka", "sources": [], "evidence": ""},
+    ])
+    items = [{"source": "HN Front Page", "title": "DuckDB and Kafka", "text": "both here"}]
+    out = skill_extractor.extract(items, chat_fn=lambda *a, **k: canned)
+    assert len(out) == 1  # capped to EXTRACTION_MAX_CANDIDATES
 
 
 # --- brief_writer ------------------------------------------------------------
