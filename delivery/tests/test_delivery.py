@@ -2,7 +2,7 @@
 import json
 from urllib.parse import unquote
 
-from delivery import email_sender, followup, telegram_sender
+from delivery import devto_publisher, email_sender, followup, telegram_sender
 
 
 def _lesson(
@@ -226,3 +226,68 @@ def test_telegram_dutch_html_italicises_english_and_keeps_tags_intact():
     assert "Ik heb een afspraak" not in short      # dropped the later line (trimmed)
     assert short.count("<b>") == short.count("</b>")  # tags balanced (no mid-tag cut)
     assert short.count("<i>") == short.count("</i>")
+
+
+# --- dev.to cross-post -------------------------------------------------------
+
+class _FakeResp:
+    def raise_for_status(self):
+        pass
+
+    def json(self):
+        return {"url": "https://dev.to/x/draft-temp-slug"}
+
+
+def test_devto_strip_h1():
+    assert devto_publisher._strip_h1("# DuckDB\n\nbody") == "body"
+    assert devto_publisher._strip_h1("no heading\nmore") == "no heading\nmore"
+
+
+def test_devto_publish_creates_draft(monkeypatch):
+    monkeypatch.setattr(devto_publisher.config, "DEVTO_PUBLISH_ENABLED", True)
+    monkeypatch.setattr(devto_publisher.config, "DEVTO_API_KEY", "k")
+    monkeypatch.setattr(devto_publisher.config, "DEVTO_PUBLISHED", False)
+    monkeypatch.setattr(devto_publisher.config, "DEVTO_POST_TAGS", ["programming"])
+    captured = {}
+
+    def fake_post(url, json=None, headers=None, timeout=None):
+        captured["url"] = url
+        captured["json"] = json
+        captured["headers"] = headers
+        return _FakeResp()
+
+    monkeypatch.setattr(devto_publisher.requests, "post", fake_post)
+    lesson = {"title": "DuckDB", "skill": "DuckDB", "brief_md": "# DuckDB\n\nfast OLAP"}
+    assert devto_publisher.publish(lesson, force=True) is True
+    art = captured["json"]["article"]
+    assert art["title"] == "DuckDB"
+    assert art["published"] is False                 # draft
+    assert "# DuckDB" not in art["body_markdown"]    # leading H1 stripped
+    assert "t.me/learnradar" in art["body_markdown"] # CTA footer appended
+    assert captured["headers"]["api-key"] == "k"
+
+
+def test_devto_skips_without_key(monkeypatch):
+    monkeypatch.setattr(devto_publisher.config, "DEVTO_PUBLISH_ENABLED", True)
+    monkeypatch.setattr(devto_publisher.config, "DEVTO_API_KEY", "")
+
+    def boom(*a, **k):
+        raise AssertionError("must not POST without a key")
+
+    monkeypatch.setattr(devto_publisher.requests, "post", boom)
+    assert devto_publisher.publish({"brief_md": "x"}, force=True) is False
+
+
+def test_devto_skips_on_wrong_weekday(monkeypatch):
+    monkeypatch.setattr(devto_publisher.config, "DEVTO_PUBLISH_ENABLED", True)
+    monkeypatch.setattr(devto_publisher.config, "DEVTO_API_KEY", "k")
+    # Force the gate: configured weekday is "today + 1", so a non-forced call skips.
+    from datetime import date
+    monkeypatch.setattr(devto_publisher.config, "DEVTO_POST_WEEKDAY",
+                        (date.today().weekday() + 1) % 7)
+
+    def boom(*a, **k):
+        raise AssertionError("must not POST on the wrong weekday")
+
+    monkeypatch.setattr(devto_publisher.requests, "post", boom)
+    assert devto_publisher.publish({"brief_md": "x"}) is False

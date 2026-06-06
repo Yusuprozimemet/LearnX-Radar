@@ -62,6 +62,16 @@ WAITLIST_MESSAGE = (
     "👉 <b>Join the waitlist</b> (individuals &amp; teams): {url}"
 )
 
+# --- dev.to auto cross-post (reach + SEO) ---
+# Cross-post the lesson brief as a dev.to article. dev.to is a community platform,
+# so this runs WEEKLY (not daily) and creates a DRAFT by default for review. One
+# authenticated POST to the Forem API. No key / disabled / wrong weekday -> no-op.
+DEVTO_API_KEY = os.getenv("DEVTO_API_KEY")  # dev.to → Settings → Extensions → API Keys
+DEVTO_PUBLISH_ENABLED = True
+DEVTO_POST_WEEKDAY = 0      # weekly cadence (Mon); not daily — respects the community
+DEVTO_PUBLISHED = False     # False = create as DRAFT for review; True = publish live
+DEVTO_POST_TAGS = ["programming", "learning", "career"]  # <=4, lowercase (Forem rule)
+
 # --- Email delivery (Gmail SMTP) ---
 GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD")
 EMAIL_FROM = os.getenv("EMAIL_FROM")

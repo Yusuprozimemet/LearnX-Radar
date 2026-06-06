@@ -33,6 +33,7 @@ jobs:
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
           TELEGRAM_CHANNEL_BOT_TOKEN: ${{ secrets.TELEGRAM_CHANNEL_BOT_TOKEN }}
           WAITLIST_URL: ${{ secrets.WAITLIST_URL }}
+          DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
