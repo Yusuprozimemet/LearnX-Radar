@@ -6,10 +6,10 @@ Each lesson links to a Perplexity thread pre-loaded with the brief *text* for
 follow-up Q&A (and a recall quiz), plus a static dashboard built from the
 recorded state.
 
-It also runs a second daily track — a **Dutch coach** (v5) — that rides the same
+It also runs a second daily track — a **Dutch coach** — that rides the same
 pipeline to teach Dutch (A2, heading toward inburgering B1): a small themed
 vocabulary lesson with example sentences, a spoken Dutch MP3, spaced-repetition
-review, and a recall quiz. See [Dutch coach](#dutch-coach-v5).
+review, and a recall quiz. See [Dutch coach](#dutch-coach).
 
 ![LearnX-Radar overview](image.png)
 
@@ -18,7 +18,7 @@ review, and a recall quiz. See [Dutch coach](#dutch-coach-v5).
 - **Telegram channel — [t.me/learnradar](https://t.me/learnradar):** every daily
        lesson (developer + Dutch) as audio **plus the full lesson as a PDF**. Joining
        is the whole subscription — Telegram holds the member list, so **no personal
-       data is stored** on our side.
+       data is stored** on my side.
 - **Podcast:** add the [feed URL](#podcast-feed) to any podcast app.
 - **Early access to *personalized* lessons:** a waitlist CTA is posted to the
        channel weekly; it links a hosted form (see [Privacy](#data-and-privacy)).
@@ -154,10 +154,10 @@ flowchart TB
 ```
 
 Privacy-relevant edges: the public channel and the waitlist store **no** personal
-data on our side (see [Data and privacy](#data-and-privacy)); committed state JSON
+data on my side (see [Data and privacy](#data-and-privacy)); committed state JSON
 holds only skill/dedup data, never source PII or subscribers.
 
-## Accuracy & grounding (v7)
+## Accuracy & grounding
 
 Three pieces sharpen *what* gets taught and *how grounded* the lesson is — each
 behind a config flag for clean rollback:
@@ -193,7 +193,7 @@ radar/      map-reduce skill extraction, gap scoring (+ momentum), grounded
 radar/research/  brief-grounding helpers vendored from LearnX-Search: Jina
             reader (keyless), Exa search (key-gated), relevance filter
 learnx/     curriculum, dialogue, audio_builder, LLM client
-dutch/      Dutch coach: curated wordlist, lesson builder, Dutch audio (v5)
+dutch/      Dutch coach: curated wordlist, lesson builder, Dutch audio
 delivery/   Telegram (DM + channel) & email delivery, full-lesson PDF (pdf.py),
             Perplexity follow-up links, weekly waitlist CTA
 dashboard/  static dashboard builder (Radar / Dutch tabs) + privacy.html
@@ -239,7 +239,7 @@ main.py     daily pipeline entry point
        words per day, review cap, voices); `DUTCH_ENABLED = True` by default.
 - Use [.env.example](.env.example) as the template.
 
-## Dutch coach (v5)
+## Dutch coach
 
 A second daily track that teaches Dutch (A2, heading toward inburgering B1) using the
 same engine. Each run it:
@@ -349,7 +349,7 @@ beyond the workflow's built-in `GITHUB_TOKEN`.
 - Dedup state expires after 14 days and is capped (5000 entries) so it does not
        grow without bound.
 - **Subscribers & waitlist:** the Telegram channel stores **no** personal data on
-       our side (Telegram manages membership). The early-access waitlist is a hosted
+       my side (Telegram manages membership). The early-access waitlist is a hosted
        form (Tally) that stores only the email you submit (+ optional segment/goals),
        under consent; see the [privacy policy](https://yusuprozimemet.github.io/LearnX-Radar/privacy.html).
        No subscriber list is ever committed to this repo.
