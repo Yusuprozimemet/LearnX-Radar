@@ -17,38 +17,6 @@
       "last_taught": "2026-06-05",
       "summary": "Lakehouse Format"
     },
-    "Cursor": {
-      "times_taught": 1,
-      "first_taught": "2026-06-05",
-      "lessons": [
-        {
-          "date": "2026-06-05",
-          "title": "Cursor",
-          "difficulty": "beginner",
-          "summary": "AI coding tool",
-          "audio": "lesson-20260605-cursor.mp3",
-          "brief": "20260605-cursor.md"
-        }
-      ],
-      "last_taught": "2026-06-05",
-      "summary": "AI coding tool"
-    },
-    "Kafka consumer groups": {
-      "times_taught": 1,
-      "first_taught": "2026-06-05",
-      "lessons": [
-        {
-          "date": "2026-06-05",
-          "title": "Kafka consumer groups",
-          "difficulty": "beginner",
-          "summary": "Used in multiple companies",
-          "audio": "lesson-20260605-kafka-consumer-groups.mp3",
-          "brief": "20260605-kafka-consumer-groups.md"
-        }
-      ],
-      "last_taught": "2026-06-05",
-      "summary": "Used in multiple companies"
-    },
     "Claude": {
       "times_taught": 1,
       "first_taught": "2026-06-06",
