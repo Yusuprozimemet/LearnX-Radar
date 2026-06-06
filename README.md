@@ -1,5 +1,12 @@
 # LearnX-Radar
 
+> **Daily AI-generated audio lessons from real developer trends — plus a Dutch coach for inburgering B1.**
+
+[![Live dashboard](https://img.shields.io/badge/dashboard-live-brightgreen)](https://yusuprozimemet.github.io/LearnX-Radar/)
+[![Listen on Spotify](https://img.shields.io/badge/Spotify-listen-1DB954?logo=spotify&logoColor=white)](https://open.spotify.com/show/033tPjkKDj5xF09FQC0Di7)
+[![Join on Telegram](https://img.shields.io/badge/Telegram-join-26A5E4?logo=telegram&logoColor=white)](https://t.me/learnradar)
+[![Stars](https://img.shields.io/github/stars/Yusuprozimemet/LearnX-Radar?style=social)](https://github.com/Yusuprozimemet/LearnX-Radar/stargazers)
+
 LearnX-Radar is a self-updating curriculum engine that watches developer
 signals for emerging skill gaps and auto-generates a personalized audio lesson.
 Each lesson links to a Perplexity thread pre-loaded with the brief *text* for
