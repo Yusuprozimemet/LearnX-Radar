@@ -91,6 +91,19 @@ def build_feed(memory: dict, dutch: dict | None = None) -> str:
         "    <language>en-us</language>",
         f"    <itunes:author>{_esc(_TITLE)}</itunes:author>",
         "    <itunes:explicit>false</itunes:explicit>",
+        "    <itunes:type>episodic</itunes:type>",
+        f"    <itunes:summary>{_esc(_DESCRIPTION)}</itunes:summary>",
+        f'    <itunes:image href="{_esc(config.PODCAST_IMAGE_URL)}"/>',
+        f'    <itunes:category text="{_esc(config.PODCAST_CATEGORY)}"/>',
+        "    <itunes:owner>",
+        f"      <itunes:name>{_esc(config.PODCAST_OWNER_NAME)}</itunes:name>",
+        f"      <itunes:email>{_esc(config.PODCAST_OWNER_EMAIL)}</itunes:email>",
+        "    </itunes:owner>",
+        "    <image>",
+        f"      <url>{_esc(config.PODCAST_IMAGE_URL)}</url>",
+        f"      <title>{_esc(_TITLE)}</title>",
+        f"      <link>{_esc(config.SITE_URL)}</link>",
+        "    </image>",
     ]
     tail = ["  </channel>", "</rss>", ""]
     return "\n".join(head + items + tail)
