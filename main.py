@@ -187,6 +187,13 @@ def main() -> None:
     config.validate()
     memory = load_memory()
 
+    # Weekly personalization-waitlist CTA to the channel (fires only on its
+    # configured weekday; runs before the early-return so a quiet day still posts).
+    try:
+        telegram_sender.post_waitlist()
+    except Exception as exc:
+        print(f"[waitlist] post failed (non-fatal): {exc}")
+
     # 1. Collect from all sources, then drop anything already taught.
     items = _scrape(memory)
     seen = load_seen()
