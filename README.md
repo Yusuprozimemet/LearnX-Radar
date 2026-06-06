@@ -69,6 +69,94 @@ The Dutch branch is independent and fully guarded: any failure there is logged a
 skipped so the developer lesson always ships. Set `DUTCH_ENABLED = False` in
 [config.py](config.py) to turn the track off.
 
+## Architecture & data flow
+
+```mermaid
+flowchart TB
+  subgraph SRC["Input sources (public, 7)"]
+    GH[GitHub Trending]
+    HNH[HN Who-is-Hiring]
+    HNF[HN Front Page]
+    SO[Stack Overflow]
+    DEV[dev.to]
+    RED[Reddit]
+    LOB[Lobste.rs]
+  end
+
+  PII["PII redaction (at ingestion)"]
+  DEDUP["Dedup (vs seen_skills)"]
+
+  subgraph ANALYZE["Analysis"]
+    EXTRACT["Map-reduce extraction<br/>chunk -> LLM -> merge variants"]
+    ATTR["Deterministic attribution<br/>corpus scan -> real source set"]
+    SCORE["Gap scoring<br/>demand x novelty x momentum"]
+    TOP{Top skill of the day}
+    EXTRACT --> ATTR --> SCORE --> TOP
+  end
+
+  subgraph DEV_PIPE["Developer lesson"]
+    BRIEF["Grounded brief<br/>Jina read + Exa, cited Sources"]
+    CURR[Curriculum] --> DIAL[Dialogue] --> AUD[Audio MP3 - edge-tts]
+    BRIEF --> CURR
+  end
+
+  subgraph DUTCH["Dutch coach (independent track)"]
+    DW[Select words + SRS] --> DL[Lesson LLM] --> DA[Dutch MP3]
+  end
+
+  PDF[Render full-lesson PDFs]
+
+  subgraph DELIVER["Delivery & outputs"]
+    TG["Telegram<br/>your DM + public channel<br/>audio + full-lesson PDF"]
+    EMAIL[Email: brief + MP3s]
+    QUIZ[Quiz polls + Perplexity links]
+    WAIT[Weekly waitlist CTA]
+    DASH[Static dashboard]
+    FEED[Podcast RSS]
+  end
+
+  subgraph STATE["State / memory (committed JSON)"]
+    SEEN[(seen_skills)]
+    SM[(skill_memory)]
+    LS[(last_scored)]
+    HIST[(trending_history)]
+    DM[(dutch_memory)]
+  end
+
+  NIM[[NVIDIA NIM LLM]]
+
+  %% main data flow
+  SRC --> PII --> DEDUP --> EXTRACT
+  TOP --> BRIEF
+  AUD --> PDF
+  DA --> PDF
+  PDF --> TG
+  PDF --> EMAIL
+  TOP --> QUIZ
+  WAIT --> TG
+
+  %% state reads/writes
+  DEDUP --> SEEN
+  AUD --> SM
+  SCORE --> LS
+  SCORE --> HIST
+  DA --> DM
+  HIST -. momentum .-> SCORE
+  LS --> DASH
+  AUD --> FEED
+  DA --> FEED
+
+  %% shared LLM provider
+  NIM -. powers .-> EXTRACT
+  NIM -.-> BRIEF
+  NIM -.-> DIAL
+  NIM -.-> DL
+```
+
+Privacy-relevant edges: the public channel and the waitlist store **no** personal
+data on our side (see [Data and privacy](#data-and-privacy)); committed state JSON
+holds only skill/dedup data, never source PII or subscribers.
+
 ## Accuracy & grounding (v7)
 
 Three pieces sharpen *what* gets taught and *how grounded* the lesson is — each
