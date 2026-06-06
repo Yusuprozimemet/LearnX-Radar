@@ -56,7 +56,18 @@ def _lessons(memory: dict, dutch: dict | None = None) -> list[dict]:
             title = lesson.get("summary") or f"Dutch — {lesson.get('theme', '')}".strip(" —")
             items.append({**lesson, "title": f"🇳🇱 {title}"})
     items.sort(key=lambda lesson: lesson.get("date", ""), reverse=True)
-    return items
+    # Dedupe by audio: the <guid> is the audio filename, so two records pointing at
+    # the same file (e.g. same-day re-runs that reused a date-based name) would emit
+    # a duplicate guid and podcast apps would drop one. Keep the newest per file.
+    seen: set[str] = set()
+    deduped = []
+    for lesson in items:
+        audio = lesson.get("audio")
+        if audio in seen:
+            continue
+        seen.add(audio)
+        deduped.append(lesson)
+    return deduped
 
 
 def _item(lesson: dict) -> str:
