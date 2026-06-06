@@ -1,10 +1,11 @@
-"""Send the lesson MP3 + summary to Telegram via sendAudio.
+"""Send the lesson MP3 + summary (+ full-lesson PDF) to Telegram.
 
-Adapted from Daily-CronJob (delivery/telegram_sender.py): instead of a text
-digest we upload the audio file with the skill summary as a caption.
-
-Caption is plain text (no parse_mode) on purpose — skill names contain arbitrary
-characters (C#, `await`, etc.) that would break Markdown parsing.
+Adapted from Daily-CronJob: instead of a text digest we upload the audio file
+with the skill summary as a caption, plus the full brief as a PDF document
+(captions cap at 1024 chars). Delivery fans out to every target in `_targets()`
+— the owner's chat and, when configured, a public broadcast **channel**
+(`TELEGRAM_CHANNEL_ID`) so anyone who joins the channel gets the lessons. The
+channel holds the subscriber list, so we store no personal data ourselves.
 """
 import json
 import re
@@ -14,12 +15,60 @@ from pathlib import Path
 import requests
 
 import config
-from delivery import followup
+from delivery import followup, pdf
 
 SEND_AUDIO = "https://api.telegram.org/bot{token}/sendAudio"
 SEND_MESSAGE = "https://api.telegram.org/bot{token}/sendMessage"
+SEND_DOCUMENT = "https://api.telegram.org/bot{token}/sendDocument"
 CAPTION_LIMIT = 1024  # Telegram caption max length
 MESSAGE_LIMIT = 4096  # Telegram text-message max length
+
+OUTPUT_DIR = Path(__file__).resolve().parent.parent / "output"
+
+
+def _targets() -> list[str]:
+    """Distinct chat ids to deliver to: the owner chat + the broadcast channel.
+
+    TELEGRAM_CHANNEL_ID is optional; when set (and the bot is an admin there),
+    lessons are posted to the channel so its members all receive them.
+    """
+    ids: list[str] = []
+    for cid in (config.TELEGRAM_CHAT_ID, getattr(config, "TELEGRAM_CHANNEL_ID", None)):
+        if cid and cid not in ids:
+            ids.append(cid)
+    return ids
+
+
+def _slug(text: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-") or "lesson"
+
+
+def _token_for(chat_id: str) -> str:
+    """Use the dedicated channel-bot token for the channel target (if configured),
+    else the main bot token. Lets a separate public bot own the channel."""
+    channel = getattr(config, "TELEGRAM_CHANNEL_ID", None)
+    channel_token = getattr(config, "TELEGRAM_CHANNEL_BOT_TOKEN", None)
+    if channel and chat_id == channel and channel_token:
+        return channel_token
+    return config.TELEGRAM_BOT_TOKEN
+
+
+def _send_document(chat_id: str, path: Path, caption: str, token: str,
+                   markup: dict | None = None) -> None:
+    """Upload a PDF (full lesson) via sendDocument — sidesteps the 1024 caption cap."""
+    with Path(path).open("rb") as doc:
+        resp = requests.post(
+            SEND_DOCUMENT.format(token=token),
+            data={
+                "chat_id": chat_id,
+                "caption": caption[:CAPTION_LIMIT],
+                "parse_mode": "HTML",
+                **(markup or {}),
+            },
+            files={"document": (Path(path).name, doc, "application/pdf")},
+            timeout=120,
+        )
+    resp.raise_for_status()
 
 
 def _caption(lesson: dict) -> str:
@@ -91,64 +140,129 @@ def _dutch_reply_markup(dutch: dict) -> dict:
     return {"reply_markup": json.dumps({"inline_keyboard": [[button]]})}
 
 
-def _send_dutch(lesson: dict) -> None:
-    """Deliver the Dutch lesson (v5) as its own message: a second sendAudio when a
-    Dutch MP3 exists, else a plain text sendMessage. No-op when the run produced no
-    Dutch lesson, so dev-only delivery is unchanged."""
+def _send_dutch(chat_id: str, lesson: dict, dutch_pdf: Path | None, token: str) -> None:
+    """Deliver the Dutch lesson to one chat: audio (teaser caption) + full PDF, or a
+    text message when there's no audio. No-op when the run produced no Dutch lesson."""
     dutch = lesson.get("dutch") or {}
-    if not dutch.get("markdown"):
+    md = dutch.get("markdown")
+    if not md:
         return
-    token = config.TELEGRAM_BOT_TOKEN
     markup = _dutch_reply_markup(dutch)
     mp3 = dutch.get("mp3_path")
-    if mp3 and Path(mp3).exists():
-        path = Path(mp3)
-        with path.open("rb") as audio:
-            resp = requests.post(
+    has_audio = bool(mp3 and Path(mp3).exists())
+    pdf_on = config.TELEGRAM_PDF_ENABLED and dutch_pdf is not None
+    # With a full PDF attached, the audio caption is only a teaser; otherwise it
+    # carries as much of the lesson as the 1024 cap allows.
+    caption = _dutch_html(md, 600 if pdf_on else CAPTION_LIMIT)
+
+    if has_audio:
+        with Path(mp3).open("rb") as audio:
+            requests.post(
                 SEND_AUDIO.format(token=token),
                 data={
-                    "chat_id": config.TELEGRAM_CHAT_ID,
-                    "caption": _dutch_html(dutch["markdown"], CAPTION_LIMIT),
-                    "parse_mode": "HTML",
-                    "title": "Dutch lesson",
-                    "performer": "LearnX-Radar",
-                    **markup,
+                    "chat_id": chat_id, "caption": caption, "parse_mode": "HTML",
+                    "title": "Dutch lesson", "performer": "LearnX-Radar", **markup,
                 },
-                files={"audio": (path.name, audio, "audio/mpeg")},
+                files={"audio": (Path(mp3).name, audio, "audio/mpeg")},
                 timeout=60,
-            )
-    else:
-        resp = requests.post(
+            ).raise_for_status()
+    elif not pdf_on:
+        requests.post(
             SEND_MESSAGE.format(token=token),
-            data={
-                "chat_id": config.TELEGRAM_CHAT_ID,
-                "text": _dutch_html(dutch["markdown"], MESSAGE_LIMIT),
-                "parse_mode": "HTML",
-                **markup,
-            },
+            data={"chat_id": chat_id, "text": _dutch_html(md, MESSAGE_LIMIT),
+                  "parse_mode": "HTML", **markup},
             timeout=60,
-        )
-    resp.raise_for_status()
-    print("[telegram] sent Dutch lesson")
+        ).raise_for_status()
+
+    if pdf_on:
+        # Quiz button rides the audio when present; else attach it to the PDF.
+        _send_document(chat_id, dutch_pdf, "🇳🇱 <b>Dutch lesson</b> — full text",
+                       token, markup={} if has_audio else markup)
+    print(f"[telegram] sent Dutch lesson -> {chat_id}")
 
 
-def send(lesson: dict) -> None:
-    """Upload lesson['mp3_path'] with a caption to the configured chat, then send the
-    Dutch lesson (when present) as a separate message."""
+def _render_pdfs(lesson: dict) -> tuple[Path | None, Path | None]:
+    """Render the dev + Dutch lesson PDFs once (reused across all targets)."""
+    brief_pdf = dutch_pdf = None
+    if not config.TELEGRAM_PDF_ENABLED:
+        return brief_pdf, dutch_pdf
+    if lesson.get("brief_md"):
+        try:
+            out = OUTPUT_DIR / f"lesson-{date.today():%Y%m%d}-{_slug(lesson['title'])}.pdf"
+            brief_pdf = pdf.render_pdf(lesson["brief_md"], lesson["title"], out,
+                                       footer=f"📡 LearnX-Radar · {lesson['title']}")
+        except Exception as exc:
+            print(f"[telegram] lesson PDF render failed (non-fatal): {exc}")
+    dmd = (lesson.get("dutch") or {}).get("markdown")
+    if dmd:
+        try:
+            out = OUTPUT_DIR / f"dutch-{date.today():%Y%m%d}.pdf"
+            dutch_pdf = pdf.render_pdf(dmd, "Dutch lesson", out,
+                                       footer="🇳🇱 LearnX-Radar · Dutch")
+        except Exception as exc:
+            print(f"[telegram] Dutch PDF render failed (non-fatal): {exc}")
+    return brief_pdf, dutch_pdf
+
+
+def _deliver_one(chat_id: str, lesson: dict, brief_pdf: Path | None,
+                 dutch_pdf: Path | None) -> None:
+    """Send the full lesson bundle (dev audio + PDF, Dutch audio + PDF) to one chat."""
+    token = _token_for(chat_id)
     mp3 = Path(lesson["mp3_path"])
     with mp3.open("rb") as audio:
-        resp = requests.post(
-            SEND_AUDIO.format(token=config.TELEGRAM_BOT_TOKEN),
+        requests.post(
+            SEND_AUDIO.format(token=token),
             data={
-                "chat_id": config.TELEGRAM_CHAT_ID,
-                "caption": _caption(lesson),
-                "title": lesson["title"],
-                "performer": "LearnX-Radar",
+                "chat_id": chat_id, "caption": _caption(lesson),
+                "title": lesson["title"], "performer": "LearnX-Radar",
                 **_reply_markup(lesson),
             },
             files={"audio": (mp3.name, audio, "audio/mpeg")},
             timeout=60,
-        )
-    resp.raise_for_status()
-    print(f"[telegram] sent lesson '{lesson['title']}'")
-    _send_dutch(lesson)
+        ).raise_for_status()
+    if brief_pdf is not None:
+        _send_document(chat_id, brief_pdf, f"📄 <b>{lesson['title']}</b> — full lesson",
+                       token, markup=_reply_markup(lesson))
+    print(f"[telegram] sent lesson '{lesson['title']}' -> {chat_id}")
+    _send_dutch(chat_id, lesson, dutch_pdf, token)
+
+
+def post_waitlist(force: bool = False, chat_id: str | None = None) -> bool:
+    """Post the personalization-waitlist CTA to the channel — a recurring upsell.
+
+    Piggybacks the daily cron: posts only on config.WAITLIST_POST_WEEKDAY unless
+    `force`. `chat_id` overrides the target (used to preview privately). Returns
+    True if a message was sent. No data is collected here — the CTA links to a
+    hosted form that holds responses.
+    """
+    if not config.WAITLIST_ENABLED:
+        return False
+    target = chat_id or getattr(config, "TELEGRAM_CHANNEL_ID", None)
+    if not target:
+        return False
+    if not force and date.today().weekday() != config.WAITLIST_POST_WEEKDAY:
+        return False
+    url = (config.WAITLIST_URL or "").strip()
+    if not url:
+        print("[waitlist] WAITLIST_URL not set — skipping CTA")
+        return False
+    requests.post(
+        SEND_MESSAGE.format(token=_token_for(target)),
+        data={"chat_id": target, "text": config.WAITLIST_MESSAGE.format(url=url),
+              "parse_mode": "HTML"},
+        timeout=30,
+    ).raise_for_status()
+    print(f"[waitlist] posted CTA -> {target}")
+    return True
+
+
+def send(lesson: dict) -> None:
+    """Broadcast the lesson to every target (owner chat + channel). PDFs are rendered
+    once and reused; delivery to each target is failure-isolated so one bad target
+    (e.g. a misconfigured channel) never blocks the others."""
+    brief_pdf, dutch_pdf = _render_pdfs(lesson)
+    for chat_id in _targets():
+        try:
+            _deliver_one(chat_id, lesson, brief_pdf, dutch_pdf)
+        except Exception as exc:
+            print(f"[telegram] delivery to {chat_id} failed (non-fatal): {exc}")
