@@ -310,7 +310,7 @@ gentle, ramps with streak + review accuracy).
 grammar, and Dutch-society knowledge — a coherent B1/inburgering curriculum you feel
 improving month over month.
 
-> **Held for a later track (v7):** active *production* — daily writing prompts
+> **Held for a later track:** active *production* — daily writing prompts
 > (*Schrijven*) and speaking/shadowing exercises (*Spreken*) — plus **monthly scored
 > mock exams** mapping to the six exam parts. These are where self-checking is
 > hardest (no inbound channel), so they get their own careful design. The roadmap
@@ -319,17 +319,107 @@ improving month over month.
 
 ---
 
+### v7 — Accuracy & grounding (teach the *right* thing, *grounded*)
+
+**Goal:** raise the quality of *what* the radar picks and *how grounded* each lesson
+is, without leaving the free-tier, one-shot-cron discipline. The earlier phases
+proved the loop; v7 sharpens its judgement. Four slices, each a self-contained spec
+(`specs/v7/`) behind a config rollback flag.
+
+1. **Discovery sources (`day23-discovery-sources.md`)** — widen input from **4 to 7
+   sources** by adding three *open-vocabulary* feeds (Reddit `.rss`, the HN front
+   page, Lobste.rs), so the radar can surface a skill it was never pre-configured to
+   watch — not just track a fixed tag/language list. All zero-auth and stateless.
+   Per-source weights (`SOURCE_WEIGHTS`) keep real job-market demand above buzz.
+
+2. **Grounded briefs (`day24-brief-grounding.md`)** — instead of writing the brief
+   from the skill *name* alone, read the **actual source text** that surfaced the
+   skill (keyless Jina reader) plus fresh Exa web results (`EXA_API_KEY`), and cite a
+   real `## Sources` list **authored in code** (the LLM never writes URLs — it
+   fabricates them). Grounding helpers are vendored from the sibling LearnX-Search
+   into `radar/research/`. Read budget chosen by experiment (`scripts/exp_grounding.py`).
+
+3. **Map-reduce extraction (`day25-mapreduce-extraction.md`)** — replace the
+   single-pass extractor (which capped recall and rested the demand weight on the LLM
+   tallying sources) with **map** (chunk the corpus → extract candidates per chunk for
+   recall) → **reduce** (merge variants via `SKILL_ALIASES`) → **attribute** (compute
+   each skill's source set by *scanning the corpus*, deterministically). Chunk size
+   chosen by experiment (`scripts/exp_extraction.py`).
+
+4. **Cross-day momentum (`day26-momentum-and-vectordb.md`)** — fold a **momentum
+   multiplier** into scoring: look back over `trending_history` (matched by canonical
+   name) and boost skills *sustained and accelerating* across days while damping
+   one-day spikes. Orthogonal to the spaced-repetition novelty signal (that's "have
+   *we* taught it"; momentum is "is the *world* rising"). A vector-DB phase (3b) is
+   named but gated as optional.
+
+**Output:** the daily topic is more often a skill genuinely rising in the world, and
+the brief that teaches it is grounded in and cites real sources rather than the
+model's priors.
+
+---
+
+### v8 — Reach & distribution (get the lesson to people)
+
+**Goal:** the pipeline is a strong daily *author*; v8 turns it into a small *product*
+with real distribution — still no inbound server, no stored subscriber PII, no paid
+tier. This is the top of a funnel toward the personalized (paid) lessons the waitlist
+validates. The slices live in `specs/v8/`.
+
+1. **Public distribution (`day27-public-distribution.md`)** — three things, each
+   config-flagged and failure-isolated:
+   - **Channel broadcast.** `telegram_sender.send()` fans the lesson out to the owner
+     DM *and* an optional public channel (`TELEGRAM_CHANNEL_ID`, e.g. `@learnradar`),
+     posted by a *separate* public bot (`TELEGRAM_CHANNEL_BOT_TOKEN`) so the public
+     product is decoupled from the personal DM/quiz bot. **Telegram holds the member
+     list, so no subscriber PII is ever stored** — the GDPR-clean model chosen over a
+     repo-stored subscriber list.
+   - **Full-lesson PDF.** `delivery/pdf.py` renders the brief to a PDF via `xhtml2pdf`
+     and attaches it (`sendDocument`), so subscribers get the complete formatted lesson
+     — audio captions cap at 1024 chars, which truncated the Dutch dialogue.
+   - **Weekly waitlist CTA.** `post_waitlist()` posts a personalization early-access
+     call-to-action to the channel on its configured weekday, linking a hosted form
+     (Tally, `WAITLIST_URL`) — we store nothing.
+
+2. **Reach & discoverability (`day28-reach-and-discoverability.md`)** — three
+   additive, no-PII reach levers:
+   - **Weekly dev.to cross-post.** `delivery/devto_publisher.py` cross-posts the lesson
+     brief to dev.to via the Forem API (`DEVTO_API_KEY`) — *weekly*, **draft by
+     default** for review, with a footer linking back to the channel. SEO + a second
+     audience; degrades to a no-op without a key.
+   - **Apple/Spotify-compliant podcast feed.** Extend `dashboard/feed.py` with the
+     iTunes directory tags, an owner email for ownership verification, and square cover
+     art (`cover.png`); de-duplicate episodes by audio GUID so a re-run never doubles
+     an episode. The show then lists in Spotify and Apple Podcasts, not just generic
+     RSS apps.
+   - **Social preview.** The dashboard gains Open Graph / Twitter card tags
+     (`og.png`) and a "Join on Telegram" CTA so a shared link renders a rich card.
+
+**Output:** the same daily lesson now reaches people on Telegram, Spotify, Apple
+Podcasts, dev.to, and the web — with a waitlist capturing demand for the personalized
+tier — all on the free tier, storing no subscriber data.
+
+> **Monetization direction:** the free channel is top-of-funnel for a paid
+> *personalized* tier (lessons matched to a learner's stack & goals, with a real
+> mastery loop). The honest read is that **B2B / L&D** is likely a stronger wedge than
+> B2C; the waitlist exists to **validate willingness-to-pay before** building paid
+> infrastructure and any private datastore.
+
+---
+
 ## Repo Structure
 
 ```
 LearnX-Radar/
-  agents/                  # data collection (from Daily-CronJob pattern)
-  radar/                   # skill extraction, gap scoring, brief writing
+  agents/                  # data collection — 7 open-vocab sources (v7 Day 23)
+  radar/                   # map-reduce extraction, gap scoring (+momentum), briefs
+  radar/research/          # brief-grounding helpers vendored from LearnX-Search (v7)
   learnx/                  # audio pipeline (from LearnX-CLI)
   dutch/                   # Dutch coach: curated wordlist + lesson + audio (v5)
-  delivery/                # Telegram, email
-  storage/                 # seen_skills.json, skill_memory.json, dutch_memory.json
-  dashboard/               # static site generator (v3); Radar/Dutch tabs (v5)
+  delivery/                # Telegram (DM + channel), email, PDF, waitlist, dev.to (v8)
+  storage/                 # seen_skills.json, skill_memory.json, dutch_memory.json,
+                           # trending_history.json (powers momentum), last_scored.json
+  dashboard/               # static site (Radar/Dutch tabs) + podcast feed (v4/v8)
   specs/                   # day-by-day specs (written before code, LearnX-CLI style)
   plan/                    # this file and future phase plans
   .github/workflows/       # cron job + CI + GitHub Pages deploy
@@ -392,3 +482,10 @@ linked to Perplexity. One choke point keeps PII out of every downstream sink.
   pacing, a growing B1 word bank, plus daily KNM (Dutch society), reading, and a
   weekly grammar focus. After 1–2 months the monthly mock + mastery % show real,
   measurable improvement across the exam skills.
+- v7: The skill chosen each day is more often one genuinely rising across seven
+  open-vocabulary sources (momentum-aware), and the brief teaching it is grounded in
+  and cites real source text — not the model's priors.
+- v8: The lesson reaches a real audience — a public Telegram channel (audio + PDF),
+  a Spotify/Apple-listed podcast, and a weekly dev.to cross-post — while a waitlist
+  captures demand for the personalized tier, all free-tier and storing no subscriber
+  data.
