@@ -105,6 +105,10 @@ RELEASES_PAGE_URL = f"{REPO_URL}/releases"  # human-facing list of all lesson as
 # The public Pages site (dashboard + feed are published here).
 SITE_URL = "https://yusuprozimemet.github.io/LearnX-Radar/"
 FEED_URL = f"{SITE_URL}podcast.xml"
+OG_IMAGE_URL = f"{SITE_URL}og.png"  # social-share preview (pages.yml copies image.png)
+# Public Telegram channel — a constant (not the TELEGRAM_CHANNEL_ID secret) so the
+# dashboard/Pages build, which runs without secrets, can still link it.
+CHANNEL_URL = "https://t.me/learnradar"
 
 # --- Data sources (all free, no paid APIs) ---
 # Languages/topics to watch on GitHub Trending — proxy for emerging tools.
