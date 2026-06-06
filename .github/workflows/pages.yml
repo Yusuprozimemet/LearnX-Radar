@@ -44,6 +44,7 @@ jobs:
           mkdir -p _site
           cp dashboard/index.html _site/index.html
           cp dashboard/podcast.xml _site/podcast.xml
+          cp dashboard/privacy.html _site/privacy.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
