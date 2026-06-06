@@ -20,7 +20,7 @@ jobs:
           cache: pip
 
       - name: Install ffmpeg (edge-tts assembly)
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg libcairo2-dev pkg-config
 
       - run: pip install -r requirements.txt
 
