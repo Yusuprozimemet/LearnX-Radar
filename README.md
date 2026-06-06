@@ -15,13 +15,17 @@ review, and a recall quiz. See [Dutch coach](#dutch-coach).
 
 ## Subscribe (free)
 
-- **Telegram channel — [t.me/learnradar](https://t.me/learnradar):** every daily
-       lesson (developer + Dutch) as audio **plus the full lesson as a PDF**. Joining
-       is the whole subscription — Telegram holds the member list, so **no personal
-       data is stored** on my side.
-- **Podcast:** add the [feed URL](#podcast-feed) to any podcast app.
-- **Early access to *personalized* lessons:** a waitlist CTA is posted to the
-       channel weekly; it links a hosted form (see [Privacy](#data-and-privacy)).
+- **Telegram — [t.me/learnradar](https://t.me/learnradar):** every daily lesson
+       (developer + Dutch) as audio **plus the full lesson as a PDF**. Joining is the
+       whole subscription — Telegram holds the member list, so **no personal data is
+       stored** on my side.
+- **Spotify — [listen on Spotify](https://open.spotify.com/show/033tPjkKDj5xF09FQC0Di7):** the daily lessons as a
+       podcast show (also on Apple Podcasts, or add the [feed URL](#podcast-feed) to any
+       podcast app).
+- **Waitlist for *personalized* lessons — [tally.so/r/WOqPdP](https://tally.so/r/WOqPdP):**
+       early access to lessons matched to your stack & goals (individuals & teams). A
+       reminder CTA is also posted to the channel weekly; we store only what you submit
+       (see [Privacy](#data-and-privacy)).
 
 ## What it does
 
@@ -44,11 +48,17 @@ review, and a recall quiz. See [Dutch coach](#dutch-coach).
        (brief + MP3s).
 - Posts a weekly **waitlist call-to-action** to the channel for upcoming
        personalized lessons (links a hosted form; no subscriber data stored here).
+- **Cross-posts the lesson to dev.to** once a week (as a draft for review) for
+       extra reach and SEO, with a footer linking back to the Telegram channel.
 - Persists a knowledge memory and full briefs (whose text seeds each lesson's
        Perplexity follow-up Q&A and recall quiz).
 - Redacts PII (emails, phone numbers, handles) from collected text at ingestion.
 - Builds a static dashboard from committed state, with a Radar / Dutch tab toggle.
-- Publishes a podcast RSS feed so the daily lessons land in your podcast app.
+- Publishes an **Apple/Spotify-compliant podcast RSS feed** (with cover art and
+       iTunes directory tags) so the daily lessons land in Spotify, Apple Podcasts, or
+       any podcast app.
+- Generates a static dashboard with **Open Graph / Twitter share previews** and a
+       "Join on Telegram" call-to-action so a shared link renders a rich card.
 
 ## Pipeline
 
@@ -59,11 +69,11 @@ scrape (7 sources) -> dedup -> extract skills (map-reduce + deterministic
                       -> plan curriculum -> generate dialogue -> build audio
                       -> build Dutch lesson (vocab + sentences + Dutch audio)
                       -> render PDFs -> deliver (Telegram DM + channel, email)
-                      -> persist state -> refresh dashboard
+                      -> persist state -> refresh dashboard + podcast feed
 ```
 
 (On its configured weekday the run also posts the personalization-waitlist CTA to
-the channel.)
+the channel and cross-posts the lesson to dev.to as a draft.)
 
 The Dutch branch is independent and fully guarded: any failure there is logged and
 skipped so the developer lesson always ships. Set `DUTCH_ENABLED = False` in
@@ -112,8 +122,10 @@ radar/research/  brief-grounding helpers vendored from LearnX-Search: Jina
 learnx/     curriculum, dialogue, audio_builder, LLM client
 dutch/      Dutch coach: curated wordlist, lesson builder, Dutch audio
 delivery/   Telegram (DM + channel) & email delivery, full-lesson PDF (pdf.py),
-            Perplexity follow-up links, weekly waitlist CTA
-dashboard/  static dashboard builder (Radar / Dutch tabs) + privacy.html
+            Perplexity follow-up links, weekly waitlist CTA, weekly dev.to
+            cross-post (devto_publisher.py)
+dashboard/  static dashboard builder (Radar / Dutch tabs), podcast feed
+            (feed.py), Open Graph preview + privacy.html
 storage/    state files (seen_skills.json, skill_memory.json, last_scored.json,
             trending_history.json, dutch_memory.json)
 briefs/     full lesson briefs (linked from lessons for Perplexity Q&A)
@@ -136,8 +148,10 @@ main.py     daily pipeline entry point
 - PDF: full-lesson PDFs via `xhtml2pdf` (pure-Python; the CI/cron runners install
        `libcairo2-dev` + `pkg-config` for its build).
 - Delivery: Telegram Bot API (your DM **+ a public broadcast channel**) and Gmail SMTP.
-- Schedule: radar workflow runs at 06:00 UTC every day; dashboard deploys via
-       GitHub Pages.
+- Reach: weekly dev.to cross-post via the Forem API (`DEVTO_API_KEY`, draft by
+       default), and an Apple/Spotify-compliant podcast feed served from GitHub Pages.
+- Schedule: radar workflow runs at 06:00 UTC every day; dashboard + podcast feed
+       deploy via GitHub Pages.
 
 ## Configuration
 
@@ -151,6 +165,9 @@ main.py     daily pipeline entry point
        DMs/quiz stay on the personal bot), and `WAITLIST_URL` (hosted form link). All
        degrade gracefully — unset means delivery goes to your DM only and the CTA is
        skipped.
+- Optional (reach): `DEVTO_API_KEY` (dev.to → Settings → Extensions → API Keys)
+       enables the weekly dev.to cross-post; unset means it's skipped. It posts a draft
+       by default (`DEVTO_PUBLISHED = False`) on `DEVTO_POST_WEEKDAY` (Mon).
 - The Dutch coach needs **no new secrets** — it reuses the same LLM and edge-tts.
        Tune it via the `DUTCH_*` constants in [config.py](config.py) (enable/disable,
        words per day, review cap, voices); `DUTCH_ENABLED = True` by default.
@@ -237,8 +254,13 @@ In CI, the env values come from GitHub repo secrets (see
 The daily MP3s (developer lesson + Dutch lesson) are uploaded as assets on a single
 rolling GitHub Release (tag `lessons`) by the radar workflow, and `podcast.xml` is
 published alongside the dashboard on GitHub Pages — Dutch episodes interleave with
-the dev lessons by date. Subscribe in any podcast app (Pocket Casts, Apple Podcasts,
-AntennaPod) by adding the feed URL:
+the dev lessons by date. The feed is **Apple Podcasts / Spotify compliant**: it
+carries the required iTunes directory tags, an owner email for ownership
+verification, and square cover art (`cover.png`), and episodes are de-duplicated by
+audio GUID so a re-run never doubles an episode.
+
+Listen on **[Spotify](https://open.spotify.com/show/033tPjkKDj5xF09FQC0Di7)**, or subscribe in any podcast app
+(Apple Podcasts, Pocket Casts, AntennaPod) by adding the feed URL:
 
 ```
 https://yusuprozimemet.github.io/LearnX-Radar/podcast.xml
