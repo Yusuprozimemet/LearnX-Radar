@@ -13,6 +13,16 @@ review, and a recall quiz. See [Dutch coach](#dutch-coach-v5).
 
 ![LearnX-Radar overview](image.png)
 
+## Subscribe (free)
+
+- **Telegram channel — [t.me/learnradar](https://t.me/learnradar):** every daily
+       lesson (developer + Dutch) as audio **plus the full lesson as a PDF**. Joining
+       is the whole subscription — Telegram holds the member list, so **no personal
+       data is stored** on our side.
+- **Podcast:** add the [feed URL](#podcast-feed) to any podcast app.
+- **Early access to *personalized* lessons:** a waitlist CTA is posted to the
+       channel weekly; it links a hosted form (see [Privacy](#data-and-privacy)).
+
 ## What it does
 
 - Collects signals from **seven** public sources: GitHub Trending, Hacker News
@@ -28,7 +38,12 @@ review, and a recall quiz. See [Dutch coach](#dutch-coach-v5).
        plans a curriculum, generates dialogue, and builds one MP3 via edge-tts.
 - Builds a second, independent **Dutch lesson** (vocab + sentences + dialogue +
        Dutch-voice MP3) from a curated word bank, with spaced-repetition review.
-- Delivers both lessons to Telegram (audio + summary) and email (brief + MP3s).
+- Delivers both lessons to your Telegram DM **and an optional public broadcast
+       channel** — audio + summary + the **full lesson as a PDF** (captions cap at
+       1024 chars, so the PDF carries the complete, formatted lesson) — and to email
+       (brief + MP3s).
+- Posts a weekly **waitlist call-to-action** to the channel for upcoming
+       personalized lessons (links a hosted form; no subscriber data stored here).
 - Persists a knowledge memory and full briefs (whose text seeds each lesson's
        Perplexity follow-up Q&A and recall quiz).
 - Redacts PII (emails, phone numbers, handles) from collected text at ingestion.
@@ -43,8 +58,12 @@ scrape (7 sources) -> dedup -> extract skills (map-reduce + deterministic
                       -> write grounded brief (Jina + Exa, cited)
                       -> plan curriculum -> generate dialogue -> build audio
                       -> build Dutch lesson (vocab + sentences + Dutch audio)
-                      -> deliver (Telegram + email) -> persist state -> refresh dashboard
+                      -> render PDFs -> deliver (Telegram DM + channel, email)
+                      -> persist state -> refresh dashboard
 ```
+
+(On its configured weekday the run also posts the personalization-waitlist CTA to
+the channel.)
 
 The Dutch branch is independent and fully guarded: any failure there is logged and
 skipped so the developer lesson always ships. Set `DUTCH_ENABLED = False` in
@@ -87,8 +106,9 @@ radar/research/  brief-grounding helpers vendored from LearnX-Search: Jina
             reader (keyless), Exa search (key-gated), relevance filter
 learnx/     curriculum, dialogue, audio_builder, LLM client
 dutch/      Dutch coach: curated wordlist, lesson builder, Dutch audio (v5)
-delivery/   Telegram and email delivery (+ Perplexity follow-up link)
-dashboard/  static dashboard builder (Radar / Dutch tabs)
+delivery/   Telegram (DM + channel) & email delivery, full-lesson PDF (pdf.py),
+            Perplexity follow-up links, weekly waitlist CTA
+dashboard/  static dashboard builder (Radar / Dutch tabs) + privacy.html
 storage/    state files (seen_skills.json, skill_memory.json, last_scored.json,
             trending_history.json, dutch_memory.json)
 briefs/     full lesson briefs (linked from lessons for Perplexity Q&A)
@@ -108,7 +128,9 @@ main.py     daily pipeline entry point
        neural web search (`EXA_API_KEY`) for fresh sources.
 - TTS: edge-tts plus pydub (English co-host voices for dev lessons, `nl-NL` voices
        for Dutch lessons); ffmpeg required for audio assembly.
-- Delivery: Telegram Bot API and Gmail SMTP.
+- PDF: full-lesson PDFs via `xhtml2pdf` (pure-Python; the CI/cron runners install
+       `libcairo2-dev` + `pkg-config` for its build).
+- Delivery: Telegram Bot API (your DM **+ a public broadcast channel**) and Gmail SMTP.
 - Schedule: radar workflow runs at 06:00 UTC every day; dashboard deploys via
        GitHub Pages.
 
@@ -119,6 +141,11 @@ main.py     daily pipeline entry point
 - Optional: `GITHUB_TOKEN` (higher GitHub API rate limits); `EXA_API_KEY` (free at
        exa.ai — enables Exa web results in brief grounding; without it grounding falls
        back to reading the day's own source URLs via Jina).
+- Optional (public channel + waitlist): `TELEGRAM_CHANNEL_ID` (e.g. `@learnradar`),
+       `TELEGRAM_CHANNEL_BOT_TOKEN` (a separate public bot that admins the channel, so
+       DMs/quiz stay on the personal bot), and `WAITLIST_URL` (hosted form link). All
+       degrade gracefully — unset means delivery goes to your DM only and the CTA is
+       skipped.
 - The Dutch coach needs **no new secrets** — it reuses the same LLM and edge-tts.
        Tune it via the `DUTCH_*` constants in [config.py](config.py) (enable/disable,
        words per day, review cap, voices); `DUTCH_ENABLED = True` by default.
@@ -233,6 +260,11 @@ beyond the workflow's built-in `GITHUB_TOKEN`.
        Perplexity — treat both as third parties.
 - Dedup state expires after 14 days and is capped (5000 entries) so it does not
        grow without bound.
+- **Subscribers & waitlist:** the Telegram channel stores **no** personal data on
+       our side (Telegram manages membership). The early-access waitlist is a hosted
+       form (Tally) that stores only the email you submit (+ optional segment/goals),
+       under consent; see the [privacy policy](https://yusuprozimemet.github.io/LearnX-Radar/privacy.html).
+       No subscriber list is ever committed to this repo.
 
 ## Tests
 
