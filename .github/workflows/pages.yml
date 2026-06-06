@@ -45,7 +45,8 @@ jobs:
           cp dashboard/index.html _site/index.html
           cp dashboard/podcast.xml _site/podcast.xml
           cp dashboard/privacy.html _site/privacy.html
-          cp image.png _site/og.png   # social-share preview (og:image)
+          cp image.png _site/og.png            # social-share preview (og:image)
+          cp dashboard/cover.png _site/cover.png   # podcast artwork (itunes:image)
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

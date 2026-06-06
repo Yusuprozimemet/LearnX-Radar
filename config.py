@@ -120,6 +120,12 @@ OG_IMAGE_URL = f"{SITE_URL}og.png"  # social-share preview (pages.yml copies ima
 # dashboard/Pages build, which runs without secrets, can still link it.
 CHANNEL_URL = "https://t.me/learnradar"
 
+# Podcast directory metadata (Apple Podcasts / Spotify require these in the feed).
+PODCAST_IMAGE_URL = f"{SITE_URL}cover.png"   # square artwork >=1400px (pages.yml copies it)
+PODCAST_CATEGORY = "Technology"
+PODCAST_OWNER_NAME = "Yusup Rozimemet"
+PODCAST_OWNER_EMAIL = "yusuf.rozimemet@gmail.com"  # used by Apple to verify ownership
+
 # --- Data sources (all free, no paid APIs) ---
 # Languages/topics to watch on GitHub Trending — proxy for emerging tools.
 TRENDING_LANGUAGES = ["python", "typescript", "rust", "go"]
