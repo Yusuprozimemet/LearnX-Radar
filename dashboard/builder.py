@@ -397,11 +397,28 @@ def _section(title: str, inner: str) -> str:
     return f"<section><h2>{_esc(title)}</h2>{inner}</section>"
 
 
+_OG_TITLE = "LearnX-Radar — daily developer skill radar and lessons"
+_OG_DESC = (
+    "A free daily developer lesson (plus a Dutch lesson) — what's rising right now, "
+    "grounded in real sources and explained. Subscribe free on Telegram."
+)
+
+
 def _page(title: str, body: str) -> str:
     return f"""<!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{_esc(title)}</title>
+<meta name="description" content="{_esc(_OG_DESC)}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{_esc(config.SITE_URL)}">
+<meta property="og:title" content="{_esc(_OG_TITLE)}">
+<meta property="og:description" content="{_esc(_OG_DESC)}">
+<meta property="og:image" content="{_esc(config.OG_IMAGE_URL)}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{_esc(_OG_TITLE)}">
+<meta name="twitter:description" content="{_esc(_OG_DESC)}">
+<meta name="twitter:image" content="{_esc(config.OG_IMAGE_URL)}">
 <style>
   body {{ font-family:-apple-system,Segoe UI,Roboto,sans-serif; max-width:880px;
          margin:2rem auto; padding:0 1rem; color:#1f2328; line-height:1.5; }}
@@ -422,9 +439,18 @@ def _page(title: str, body: str) -> str:
   .stats {{ display:flex; flex-wrap:wrap; gap:1.2rem; color:#555; font-size:.95rem; }}
   .stats strong {{ color:#1f2328; }}
   audio {{ outline:none; }}
+  .cta {{ margin:.9rem 0 1.2rem; }}
+  .cta a {{ display:inline-block; background:#229ED9; color:#fff; padding:.55rem 1rem;
+            border-radius:8px; text-decoration:none; font-weight:600; }}
+  .cta a:hover {{ background:#1b8ec4; }}
+  .cta .note {{ color:#888; font-size:.85rem; margin-left:.6rem; }}
 </style></head><body>
 <h1>📡 LearnX-Radar</h1>
 <p class="sub">Skill radar · generated {date.today():%b %d, %Y}</p>
+<p class="cta">
+  <a href="{_esc(config.CHANNEL_URL)}">📣 Join free on Telegram</a>
+  <span class="note">a daily developer lesson (+ Dutch) — audio &amp; PDF</span>
+</p>
 <p class="nav">
   <a href="{_esc(config.FEED_URL)}">🎧 Podcast feed</a>
   <a href="{_esc(config.RELEASES_PAGE_URL)}">📦 All lesson audio (Releases)</a>
