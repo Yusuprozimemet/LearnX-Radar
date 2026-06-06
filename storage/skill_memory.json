@@ -199,12 +199,28 @@
       ],
       "last_taught": "2026-06-05",
       "summary": "Used in multiple companies"
+    },
+    "Claude": {
+      "times_taught": 1,
+      "first_taught": "2026-06-06",
+      "lessons": [
+        {
+          "date": "2026-06-06",
+          "title": "Claude",
+          "difficulty": "beginner",
+          "summary": "Claude mentioned as AI model",
+          "audio": "lesson-20260606-claude.mp3",
+          "brief": "20260606-claude.md"
+        }
+      ],
+      "last_taught": "2026-06-06",
+      "summary": "Claude mentioned as AI model"
     }
   },
   "so_counts": {
-    "python": 2205910,
-    "rust": 43952,
-    "kubernetes": 59812,
+    "python": 2205793,
+    "rust": 43946,
+    "kubernetes": 59809,
     "langchain": 1983,
     "duckdb": 504
   }

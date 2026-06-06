@@ -1,67 +1,7 @@
 {
-  "updated": "2026-06-05",
-  "today_skill": "DuckDB",
+  "updated": "2026-06-06",
+  "today_skill": "Claude",
   "scored": [
-    {
-      "skill": "DuckDB",
-      "sources": [
-        "GitHub Trending",
-        "HN Hiring",
-        "Reddit",
-        "Stack Overflow"
-      ],
-      "evidence": "Lakehouse Format",
-      "frequency": 4,
-      "demand_weight": 5.25,
-      "novelty": 0.8571428571428571,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.5,
-      "canonical": "duckdb",
-      "suggested_difficulty": "intermediate",
-      "score": 6.75
-    },
-    {
-      "skill": "LangChain",
-      "sources": [
-        "HN Hiring",
-        "Stack Overflow",
-        "dev.to"
-      ],
-      "evidence": "Rising questions",
-      "frequency": 3,
-      "demand_weight": 4.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.5,
-      "canonical": "langchain",
-      "suggested_difficulty": "beginner",
-      "score": 6.0
-    },
-    {
-      "skill": "Postgres",
-      "sources": [
-        "HN Front Page",
-        "HN Hiring",
-        "Lobste.rs",
-        "Reddit",
-        "dev.to"
-      ],
-      "evidence": "Multiple companies use Postgres",
-      "frequency": 5,
-      "demand_weight": 5.25,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.1,
-      "canonical": "postgresql",
-      "suggested_difficulty": "beginner",
-      "score": 5.775
-    },
     {
       "skill": "Claude",
       "sources": [
@@ -72,55 +12,113 @@
         "Reddit",
         "dev.to"
       ],
-      "evidence": "Increased bugs in rsync",
+      "evidence": "Claude mentioned as AI model",
       "frequency": 6,
       "demand_weight": 6.25,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 0.9,
+      "momentum": 1.0416666666666665,
       "canonical": "claude",
       "suggested_difficulty": "beginner",
-      "score": 5.625
+      "score": 6.510416666666666
     },
     {
-      "skill": "Redis",
+      "skill": "LLM",
       "sources": [
-        "HN Front Page",
+        "GitHub Trending",
         "HN Hiring",
         "Reddit",
         "dev.to"
       ],
-      "evidence": "New array data structure",
+      "evidence": "LLM discussed in multiple contexts",
       "frequency": 4,
       "demand_weight": 4.25,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
-      "goal_match": false,
+      "goal_match": true,
       "momentum": 0.9,
-      "canonical": "redis",
+      "canonical": "llm",
       "suggested_difficulty": "beginner",
-      "score": 3.825
+      "score": 5.7375
     },
     {
-      "skill": "Distributed systems",
+      "skill": "React Server Components",
       "sources": [
+        "GitHub Trending",
         "HN Hiring",
-        "dev.to"
+        "Reddit"
       ],
-      "evidence": "ParadeDB hires distributed systems engineers",
-      "frequency": 2,
-      "demand_weight": 2.5,
+      "evidence": "CopilotKit framework",
+      "frequency": 3,
+      "demand_weight": 3.75,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
-      "goal_match": true,
-      "momentum": 0.9,
-      "canonical": "distributed systems",
+      "goal_match": false,
+      "momentum": 1.5,
+      "canonical": "react server components",
       "suggested_difficulty": "beginner",
-      "score": 3.375
+      "score": 5.625
+    },
+    {
+      "skill": "LangChain",
+      "sources": [
+        "HN Hiring",
+        "Stack Overflow"
+      ],
+      "evidence": "Stable questions",
+      "frequency": 2,
+      "demand_weight": 3.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.5,
+      "canonical": "langchain",
+      "suggested_difficulty": "beginner",
+      "score": 5.25
+    },
+    {
+      "skill": "LLMs",
+      "sources": [
+        "GitHub Trending",
+        "HN Front Page",
+        "HN Hiring",
+        "Reddit"
+      ],
+      "evidence": "explained in HN article",
+      "frequency": 4,
+      "demand_weight": 4.75,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 0.9,
+      "canonical": "llms",
+      "suggested_difficulty": "beginner",
+      "score": 4.275
+    },
+    {
+      "skill": "Vite",
+      "sources": [
+        "HN Hiring",
+        "Reddit",
+        "dev.to"
+      ],
+      "evidence": "Vite mentioned as development tool",
+      "frequency": 3,
+      "demand_weight": 3.25,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.0833333333333333,
+      "canonical": "vite",
+      "suggested_difficulty": "beginner",
+      "score": 3.520833333333333
     },
     {
       "skill": "Playwright",
@@ -129,17 +127,17 @@
         "Reddit",
         "dev.to"
       ],
-      "evidence": "Browser automation",
+      "evidence": "Playwright mentioned for web scraping",
       "frequency": 3,
       "demand_weight": 3.25,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 0.9,
+      "momentum": 1.0416666666666665,
       "canonical": "playwright",
       "suggested_difficulty": "beginner",
-      "score": 2.9250000000000003
+      "score": 3.385416666666666
     },
     {
       "skill": "Agent-based systems",
@@ -147,145 +145,164 @@
         "GitHub Trending",
         "HN Hiring"
       ],
-      "evidence": "Logenta.ai, Agentscope",
+      "evidence": "Logenta.ai companion",
       "frequency": 2,
       "demand_weight": 3.0,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 0.9,
+      "momentum": 1.0416666666666665,
       "canonical": "agent-based systems",
       "suggested_difficulty": "beginner",
-      "score": 2.7
+      "score": 3.1249999999999996
     },
     {
-      "skill": "Autonomous AI agents",
+      "skill": "Vector embeddings",
       "sources": [
         "GitHub Trending",
-        "HN Hiring"
+        "Reddit",
+        "dev.to"
       ],
-      "evidence": "Multiple companies use autonomous AI",
-      "frequency": 2,
-      "demand_weight": 3.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "autonomous ai agents",
-      "suggested_difficulty": "beginner",
-      "score": 2.7
-    },
-    {
-      "skill": "Conventional Commits",
-      "sources": [
-        "HN Front Page",
-        "Lobste.rs",
-        "Reddit"
-      ],
-      "evidence": "Encourages focus on wrong things",
+      "evidence": "Lance Lakehouse Format",
       "frequency": 3,
-      "demand_weight": 2.75,
+      "demand_weight": 2.25,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "conventional commits",
+      "momentum": 1.3333333333333333,
+      "canonical": "vector embeddings",
       "suggested_difficulty": "beginner",
-      "score": 2.475
+      "score": 3.0
     },
     {
-      "skill": "Vite",
-      "sources": [
-        "HN Hiring",
-        "Reddit"
-      ],
-      "evidence": "Fast development server",
-      "frequency": 2,
-      "demand_weight": 2.75,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "vite",
-      "suggested_difficulty": "beginner",
-      "score": 2.475
-    },
-    {
-      "skill": "Agentic AI",
-      "sources": [
-        "HN Hiring",
-        "dev.to"
-      ],
-      "evidence": "Guac builds agentic AI",
-      "frequency": 2,
-      "demand_weight": 2.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "agentic ai",
-      "suggested_difficulty": "beginner",
-      "score": 2.25
-    },
-    {
-      "skill": "React Server Components",
-      "sources": [
-        "GitHub Trending",
-        "dev.to"
-      ],
-      "evidence": "CopilotKit",
-      "frequency": 2,
-      "demand_weight": 1.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.5,
-      "canonical": "react server components",
-      "suggested_difficulty": "beginner",
-      "score": 2.25
-    },
-    {
-      "skill": "Real-time streaming",
-      "sources": [
-        "HN Hiring",
-        "dev.to"
-      ],
-      "evidence": "Forward uses real-time streaming",
-      "frequency": 2,
-      "demand_weight": 2.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "real-time streaming",
-      "suggested_difficulty": "beginner",
-      "score": 2.25
-    },
-    {
-      "skill": "Agentic coding",
+      "skill": "SRE",
       "sources": [
         "HN Hiring",
         "Reddit",
         "dev.to"
       ],
-      "evidence": "Agentic Operating System",
+      "evidence": "Site reliability engineering",
       "frequency": 3,
       "demand_weight": 3.25,
-      "novelty": 0.42857142857142855,
+      "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 1.5,
-      "canonical": "agentic coding",
-      "suggested_difficulty": "intermediate",
-      "score": 2.0892857142857144
+      "momentum": 0.9,
+      "canonical": "sre",
+      "suggested_difficulty": "beginner",
+      "score": 2.9250000000000003
+    },
+    {
+      "skill": "Data engineering",
+      "sources": [
+        "HN Hiring",
+        "dev.to"
+      ],
+      "evidence": "Data engineering and infrastructure",
+      "frequency": 2,
+      "demand_weight": 2.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.0833333333333333,
+      "canonical": "data engineering",
+      "suggested_difficulty": "beginner",
+      "score": 2.708333333333333
+    },
+    {
+      "skill": "GenAI",
+      "sources": [
+        "HN Front Page",
+        "HN Hiring"
+      ],
+      "evidence": "discussed in HN community",
+      "frequency": 2,
+      "demand_weight": 3.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 0.9,
+      "canonical": "genai",
+      "suggested_difficulty": "beginner",
+      "score": 2.7
+    },
+    {
+      "skill": "Gemma",
+      "sources": [
+        "GitHub Trending",
+        "HN Front Page",
+        "Reddit"
+      ],
+      "evidence": "Gemma mentioned as AI model",
+      "frequency": 3,
+      "demand_weight": 2.75,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 0.9,
+      "canonical": "gemma",
+      "suggested_difficulty": "beginner",
+      "score": 2.475
+    },
+    {
+      "skill": "BPF",
+      "sources": [
+        "HN Hiring",
+        "dev.to"
+      ],
+      "evidence": "BPF discussed in context of Solana",
+      "frequency": 2,
+      "demand_weight": 2.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 0.9,
+      "canonical": "bpf",
+      "suggested_difficulty": "beginner",
+      "score": 2.25
+    },
+    {
+      "skill": "Linux security",
+      "sources": [
+        "HN Hiring",
+        "dev.to"
+      ],
+      "evidence": "Securing Linux server in 10 steps",
+      "frequency": 2,
+      "demand_weight": 2.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 0.9,
+      "canonical": "linux security",
+      "suggested_difficulty": "beginner",
+      "score": 2.25
+    },
+    {
+      "skill": "Observability",
+      "sources": [
+        "HN Hiring",
+        "dev.to"
+      ],
+      "evidence": "Turning raw logs into engineering best practices",
+      "frequency": 2,
+      "demand_weight": 2.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 0.9,
+      "canonical": "observability",
+      "suggested_difficulty": "beginner",
+      "score": 2.25
     },
     {
       "skill": "pg_durable",
@@ -293,41 +310,61 @@
         "HN Front Page",
         "Lobste.rs"
       ],
-      "evidence": "In-database durable execution",
+      "evidence": "PostgreSQL durable execution",
       "frequency": 2,
       "demand_weight": 2.0,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 0.9,
+      "momentum": 1.0416666666666665,
       "canonical": "pg_durable",
       "suggested_difficulty": "beginner",
-      "score": 1.8
+      "score": 2.083333333333333
     },
     {
-      "skill": "Autonomous underwriting",
+      "skill": "Real-time streaming",
       "sources": [
         "HN Hiring"
       ],
-      "evidence": "Shepherd",
+      "evidence": "Rebuilding payments for software platforms",
       "frequency": 1,
       "demand_weight": 2.0,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "autonomous underwriting",
+      "momentum": 1.0416666666666665,
+      "canonical": "real-time streaming",
       "suggested_difficulty": "beginner",
-      "score": 1.8
+      "score": 2.083333333333333
     },
     {
-      "skill": "Cloud architecture",
+      "skill": "Rust async/await",
+      "sources": [
+        "GitHub Trending",
+        "HN Hiring",
+        "Lobste.rs",
+        "dev.to"
+      ],
+      "evidence": "rolldown bundler",
+      "frequency": 4,
+      "demand_weight": 4.5,
+      "novelty": 0.2857142857142857,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.4166666666666667,
+      "canonical": "rust async/await",
+      "suggested_difficulty": "intermediate",
+      "score": 1.8214285714285714
+    },
+    {
+      "skill": "AI control plane",
       "sources": [
         "HN Hiring"
       ],
-      "evidence": "Cloud architect's perspective",
+      "evidence": "AI control plane product",
       "frequency": 1,
       "demand_weight": 2.0,
       "novelty": 1.0,
@@ -335,41 +372,7 @@
       "known": false,
       "goal_match": false,
       "momentum": 0.9,
-      "canonical": "cloud architecture",
-      "suggested_difficulty": "beginner",
-      "score": 1.8
-    },
-    {
-      "skill": "Data platform",
-      "sources": [
-        "HN Hiring"
-      ],
-      "evidence": "Relevant Healthcare builds data platform",
-      "frequency": 1,
-      "demand_weight": 2.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "data platform",
-      "suggested_difficulty": "beginner",
-      "score": 1.8
-    },
-    {
-      "skill": "Geo-location dev tool",
-      "sources": [
-        "HN Hiring"
-      ],
-      "evidence": "Radar Labs uses geo-location",
-      "frequency": 1,
-      "demand_weight": 2.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "geo-location dev tool",
+      "canonical": "ai control plane",
       "suggested_difficulty": "beginner",
       "score": 1.8
     }
