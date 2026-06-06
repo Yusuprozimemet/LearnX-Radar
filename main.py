@@ -23,7 +23,7 @@ from agents import (
     stackoverflow_agent,
 )
 from dashboard import builder as dashboard
-from delivery import email_sender, telegram_sender
+from delivery import devto_publisher, email_sender, telegram_sender
 from dutch import audio as dutch_audio
 from dutch import lesson as dutch_lesson
 from dutch import wordlist as dutch_wordlist
@@ -287,6 +287,12 @@ def main() -> None:
             sender.send(lesson)
         except Exception as exc:
             print(f"[{name}] send failed: {exc}")
+
+    # 4b. Weekly cross-post to dev.to (draft) for reach/SEO — never blocks the run.
+    try:
+        devto_publisher.publish(lesson)
+    except Exception as exc:
+        print(f"[devto] cross-post failed: {exc}")
 
     # 5. Persist state only after the lesson was produced.
     mark_seen(seen, (item["id"] for item in new_items))
