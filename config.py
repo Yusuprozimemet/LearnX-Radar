@@ -32,6 +32,35 @@ NVIDIA_MODEL = "meta/llama-3.3-70b-instruct"
 # --- Telegram delivery ---
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+# Optional public broadcast CHANNEL (e.g. "@learnx_radar" or "-100…"). When set and
+# the bot is an admin there, every lesson is also posted to the channel, so anyone
+# who joins receives it — Telegram holds the subscriber list, so we store no PII.
+# Absent -> delivery goes to TELEGRAM_CHAT_ID only (unchanged).
+TELEGRAM_CHANNEL_ID = os.getenv("TELEGRAM_CHANNEL_ID")
+# Optional: a SEPARATE bot token for posting to the channel (e.g. a public
+# LearnRadarBot), so the public product is decoupled from the personal bot. The
+# bot owning this token must be an admin of TELEGRAM_CHANNEL_ID. Absent -> the
+# channel is posted with TELEGRAM_BOT_TOKEN (which must then be the channel admin).
+TELEGRAM_CHANNEL_BOT_TOKEN = os.getenv("TELEGRAM_CHANNEL_BOT_TOKEN")
+# Attach the FULL lesson as a PDF document (sendDocument) so Telegram subscribers
+# get the same detailed content as email — audio captions are capped at 1024 chars
+# (which truncated the Dutch dialogue). False -> legacy caption-only behavior.
+TELEGRAM_PDF_ENABLED = True
+
+# --- Waitlist / personalization upsell (channel CTA) ---
+# A recurring call-to-action posted to the channel inviting subscribers to a hosted
+# waitlist form (we store NO data — the form provider does). Piggybacks the daily
+# cron: posts only on WAITLIST_POST_WEEKDAY, channel-only.
+WAITLIST_ENABLED = True
+WAITLIST_URL = os.getenv("WAITLIST_URL", "")  # Tally/Forms PUBLIC link; empty -> skip
+WAITLIST_POST_WEEKDAY = 3  # date.weekday(): Mon=0 … Thu=3 … Sun=6
+WAITLIST_MESSAGE = (
+    "🚀 <b>Want lessons tailored to you?</b>\n\n"
+    "Daily lessons here are the same for everyone. Early access gets you lessons "
+    "matched to <b>your stack &amp; goals</b>, with spaced-repetition review and "
+    "mastery quizzes that track what you've actually learned.\n\n"
+    "👉 <b>Join the waitlist</b> (individuals &amp; teams): {url}"
+)
 
 # --- Email delivery (Gmail SMTP) ---
 GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD")
