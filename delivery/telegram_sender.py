@@ -26,6 +26,23 @@ MESSAGE_LIMIT = 4096  # Telegram text-message max length
 OUTPUT_DIR = Path(__file__).resolve().parent.parent / "output"
 
 
+def _check(resp: requests.Response) -> None:
+    """Raise on a non-2xx Telegram response, surfacing Telegram's JSON `description`.
+
+    requests' own raise_for_status hides the body, so a frozen bot or a missing
+    admin right shows only "400 Bad Request" in the logs — useless for diagnosis.
+    Telegram puts the real reason (e.g. "PEER_ID_INVALID", "FROZEN_METHOD_INVALID")
+    in `description`; we fold it into the error so failures are self-explanatory.
+    """
+    if resp.ok:
+        return
+    try:
+        detail = resp.json().get("description", "")
+    except ValueError:
+        detail = resp.text[:300]
+    raise requests.HTTPError(f"{resp.status_code} {detail}".strip(), response=resp)
+
+
 def _targets() -> list[str]:
     """Distinct chat ids to deliver to: the owner chat + the broadcast channel.
 
@@ -68,7 +85,7 @@ def _send_document(chat_id: str, path: Path, caption: str, token: str,
             files={"document": (Path(path).name, doc, "application/pdf")},
             timeout=120,
         )
-    resp.raise_for_status()
+    _check(resp)
 
 
 def _caption(lesson: dict) -> str:
@@ -157,7 +174,7 @@ def _send_dutch(chat_id: str, lesson: dict, dutch_pdf: Path | None, token: str) 
 
     if has_audio:
         with Path(mp3).open("rb") as audio:
-            requests.post(
+            _check(requests.post(
                 SEND_AUDIO.format(token=token),
                 data={
                     "chat_id": chat_id, "caption": caption, "parse_mode": "HTML",
@@ -165,14 +182,14 @@ def _send_dutch(chat_id: str, lesson: dict, dutch_pdf: Path | None, token: str) 
                 },
                 files={"audio": (Path(mp3).name, audio, "audio/mpeg")},
                 timeout=60,
-            ).raise_for_status()
+            ))
     elif not pdf_on:
-        requests.post(
+        _check(requests.post(
             SEND_MESSAGE.format(token=token),
             data={"chat_id": chat_id, "text": _dutch_html(md, MESSAGE_LIMIT),
                   "parse_mode": "HTML", **markup},
             timeout=60,
-        ).raise_for_status()
+        ))
 
     if pdf_on:
         # Quiz button rides the audio when present; else attach it to the PDF.
@@ -210,7 +227,7 @@ def _deliver_one(chat_id: str, lesson: dict, brief_pdf: Path | None,
     token = _token_for(chat_id)
     mp3 = Path(lesson["mp3_path"])
     with mp3.open("rb") as audio:
-        requests.post(
+        _check(requests.post(
             SEND_AUDIO.format(token=token),
             data={
                 "chat_id": chat_id, "caption": _caption(lesson),
@@ -219,7 +236,7 @@ def _deliver_one(chat_id: str, lesson: dict, brief_pdf: Path | None,
             },
             files={"audio": (mp3.name, audio, "audio/mpeg")},
             timeout=60,
-        ).raise_for_status()
+        ))
     if brief_pdf is not None:
         _send_document(chat_id, brief_pdf, f"📄 <b>{lesson['title']}</b> — full lesson",
                        token, markup=_reply_markup(lesson))
@@ -246,12 +263,12 @@ def post_waitlist(force: bool = False, chat_id: str | None = None) -> bool:
     if not url:
         print("[waitlist] WAITLIST_URL not set — skipping CTA")
         return False
-    requests.post(
+    _check(requests.post(
         SEND_MESSAGE.format(token=_token_for(target)),
         data={"chat_id": target, "text": config.WAITLIST_MESSAGE.format(url=url),
               "parse_mode": "HTML"},
         timeout=30,
-    ).raise_for_status()
+    ))
     print(f"[waitlist] posted CTA -> {target}")
     return True
 
