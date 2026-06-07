@@ -32,12 +32,28 @@
       ],
       "last_taught": "2026-06-06",
       "summary": "Claude mentioned as AI model"
+    },
+    "Langchain": {
+      "times_taught": 1,
+      "first_taught": "2026-06-07",
+      "lessons": [
+        {
+          "date": "2026-06-07",
+          "title": "Langchain",
+          "difficulty": "beginner",
+          "summary": "Rising questions",
+          "audio": "lesson-20260607-langchain.mp3",
+          "brief": "20260607-langchain.md"
+        }
+      ],
+      "last_taught": "2026-06-07",
+      "summary": "Rising questions"
     }
   },
   "so_counts": {
-    "python": 2205793,
-    "rust": 43946,
-    "kubernetes": 59809,
+    "python": 2205799,
+    "rust": 43947,
+    "kubernetes": 59806,
     "langchain": 1983,
     "duckdb": 504
   }

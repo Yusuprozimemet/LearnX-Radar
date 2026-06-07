@@ -1,75 +1,14 @@
 {
-  "updated": "2026-06-06",
-  "today_skill": "Claude",
+  "updated": "2026-06-07",
+  "today_skill": "Langchain",
   "scored": [
     {
-      "skill": "Claude",
-      "sources": [
-        "GitHub Trending",
-        "HN Front Page",
-        "HN Hiring",
-        "Lobste.rs",
-        "Reddit",
-        "dev.to"
-      ],
-      "evidence": "Claude mentioned as AI model",
-      "frequency": 6,
-      "demand_weight": 6.25,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.0416666666666665,
-      "canonical": "claude",
-      "suggested_difficulty": "beginner",
-      "score": 6.510416666666666
-    },
-    {
-      "skill": "LLM",
-      "sources": [
-        "GitHub Trending",
-        "HN Hiring",
-        "Reddit",
-        "dev.to"
-      ],
-      "evidence": "LLM discussed in multiple contexts",
-      "frequency": 4,
-      "demand_weight": 4.25,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": true,
-      "momentum": 0.9,
-      "canonical": "llm",
-      "suggested_difficulty": "beginner",
-      "score": 5.7375
-    },
-    {
-      "skill": "React Server Components",
-      "sources": [
-        "GitHub Trending",
-        "HN Hiring",
-        "Reddit"
-      ],
-      "evidence": "CopilotKit framework",
-      "frequency": 3,
-      "demand_weight": 3.75,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.5,
-      "canonical": "react server components",
-      "suggested_difficulty": "beginner",
-      "score": 5.625
-    },
-    {
-      "skill": "LangChain",
+      "skill": "Langchain",
       "sources": [
         "HN Hiring",
         "Stack Overflow"
       ],
-      "evidence": "Stable questions",
+      "evidence": "Rising questions",
       "frequency": 2,
       "demand_weight": 3.5,
       "novelty": 1.0,
@@ -82,108 +21,223 @@
       "score": 5.25
     },
     {
-      "skill": "LLMs",
+      "skill": "Postgres",
       "sources": [
         "GitHub Trending",
-        "HN Front Page",
+        "HN Hiring",
+        "Reddit",
+        "dev.to"
+      ],
+      "evidence": "ParadeDB and PlanetScale hire Postgres engineers",
+      "frequency": 4,
+      "demand_weight": 4.25,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.1428571428571428,
+      "canonical": "postgresql",
+      "suggested_difficulty": "beginner",
+      "score": 4.857142857142857
+    },
+    {
+      "skill": "Vite",
+      "sources": [
+        "GitHub Trending",
         "HN Hiring",
         "Reddit"
       ],
-      "evidence": "explained in HN article",
+      "evidence": "Fast frontend tooling",
+      "frequency": 3,
+      "demand_weight": 3.75,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.1428571428571428,
+      "canonical": "vite",
+      "suggested_difficulty": "beginner",
+      "score": 4.285714285714286
+    },
+    {
+      "skill": "WebAssembly",
+      "sources": [
+        "HN Front Page",
+        "HN Hiring",
+        "dev.to"
+      ],
+      "evidence": "WebAssembly used with Rust",
+      "frequency": 3,
+      "demand_weight": 3.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.2142857142857142,
+      "canonical": "webassembly",
+      "suggested_difficulty": "beginner",
+      "score": 4.25
+    },
+    {
+      "skill": "LLM agents",
+      "sources": [
+        "HN Hiring",
+        "Lobste.rs"
+      ],
+      "evidence": "Starting new projects discussion",
+      "frequency": 2,
+      "demand_weight": 3.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": true,
+      "momentum": 0.9,
+      "canonical": "llm agents",
+      "suggested_difficulty": "beginner",
+      "score": 4.05
+    },
+    {
+      "skill": "Serverless",
+      "sources": [
+        "GitHub Trending",
+        "HN Hiring",
+        "Reddit",
+        "dev.to"
+      ],
+      "evidence": "Serverless vs containers debate",
       "frequency": 4,
-      "demand_weight": 4.75,
+      "demand_weight": 4.25,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
       "momentum": 0.9,
-      "canonical": "llms",
+      "canonical": "serverless",
       "suggested_difficulty": "beginner",
-      "score": 4.275
+      "score": 3.825
     },
     {
-      "skill": "Vite",
-      "sources": [
-        "HN Hiring",
-        "Reddit",
-        "dev.to"
-      ],
-      "evidence": "Vite mentioned as development tool",
-      "frequency": 3,
-      "demand_weight": 3.25,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.0833333333333333,
-      "canonical": "vite",
-      "suggested_difficulty": "beginner",
-      "score": 3.520833333333333
-    },
-    {
-      "skill": "Playwright",
-      "sources": [
-        "HN Hiring",
-        "Reddit",
-        "dev.to"
-      ],
-      "evidence": "Playwright mentioned for web scraping",
-      "frequency": 3,
-      "demand_weight": 3.25,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.0416666666666665,
-      "canonical": "playwright",
-      "suggested_difficulty": "beginner",
-      "score": 3.385416666666666
-    },
-    {
-      "skill": "Agent-based systems",
+      "skill": "Terraform",
       "sources": [
         "GitHub Trending",
+        "HN Hiring",
+        "Reddit",
+        "dev.to"
+      ],
+      "evidence": "Terraform used in DevOps",
+      "frequency": 4,
+      "demand_weight": 4.25,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 0.9,
+      "canonical": "terraform",
+      "suggested_difficulty": "beginner",
+      "score": 3.825
+    },
+    {
+      "skill": "NestJS",
+      "sources": [
+        "GitHub Trending",
+        "HN Hiring",
+        "Reddit"
+      ],
+      "evidence": "Node.js framework",
+      "frequency": 3,
+      "demand_weight": 3.75,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 0.9,
+      "canonical": "nestjs",
+      "suggested_difficulty": "beginner",
+      "score": 3.375
+    },
+    {
+      "skill": "Supabase",
+      "sources": [
+        "GitHub Trending",
+        "HN Hiring",
+        "Reddit"
+      ],
+      "evidence": "Postgres development platform",
+      "frequency": 3,
+      "demand_weight": 3.75,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 0.9,
+      "canonical": "supabase",
+      "suggested_difficulty": "beginner",
+      "score": 3.375
+    },
+    {
+      "skill": "eBPF",
+      "sources": [
+        "HN Front Page",
         "HN Hiring"
       ],
-      "evidence": "Logenta.ai companion",
+      "evidence": "Zeroserve: A zero-config web server you can script with eBPF",
       "frequency": 2,
       "demand_weight": 3.0,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 1.0416666666666665,
-      "canonical": "agent-based systems",
+      "momentum": 1.0714285714285714,
+      "canonical": "ebpf",
       "suggested_difficulty": "beginner",
-      "score": 3.1249999999999996
+      "score": 3.2142857142857144
     },
     {
-      "skill": "Vector embeddings",
+      "skill": "Gemini",
       "sources": [
         "GitHub Trending",
-        "Reddit",
+        "HN Hiring",
         "dev.to"
       ],
-      "evidence": "Lance Lakehouse Format",
+      "evidence": "Gemini model released",
       "frequency": 3,
-      "demand_weight": 2.25,
+      "demand_weight": 3.5,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 1.3333333333333333,
-      "canonical": "vector embeddings",
+      "momentum": 0.9,
+      "canonical": "gemini",
       "suggested_difficulty": "beginner",
-      "score": 3.0
+      "score": 3.15
     },
     {
-      "skill": "SRE",
+      "skill": "Grafana",
+      "sources": [
+        "GitHub Trending",
+        "HN Hiring",
+        "dev.to"
+      ],
+      "evidence": "Observability platform",
+      "frequency": 3,
+      "demand_weight": 3.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 0.9,
+      "canonical": "grafana",
+      "suggested_difficulty": "beginner",
+      "score": 3.15
+    },
+    {
+      "skill": "CI/CD",
       "sources": [
         "HN Hiring",
         "Reddit",
         "dev.to"
       ],
-      "evidence": "Site reliability engineering",
+      "evidence": "CI/CD used in DevOps",
       "frequency": 3,
       "demand_weight": 3.25,
       "novelty": 1.0,
@@ -191,190 +245,135 @@
       "known": false,
       "goal_match": false,
       "momentum": 0.9,
-      "canonical": "sre",
+      "canonical": "ci/cd",
       "suggested_difficulty": "beginner",
       "score": 2.9250000000000003
     },
     {
-      "skill": "Data engineering",
+      "skill": "React Native",
       "sources": [
         "HN Hiring",
+        "Reddit",
         "dev.to"
       ],
-      "evidence": "Data engineering and infrastructure",
+      "evidence": "Duolingo clone built with React Native",
+      "frequency": 3,
+      "demand_weight": 3.25,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 0.9,
+      "canonical": "react native",
+      "suggested_difficulty": "beginner",
+      "score": 2.9250000000000003
+    },
+    {
+      "skill": "Deno",
+      "sources": [
+        "GitHub Trending",
+        "HN Hiring"
+      ],
+      "evidence": "Modern runtime",
       "frequency": 2,
+      "demand_weight": 3.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 0.9,
+      "canonical": "deno",
+      "suggested_difficulty": "beginner",
+      "score": 2.7
+    },
+    {
+      "skill": "Codex",
+      "sources": [
+        "GitHub Trending",
+        "HN Front Page",
+        "dev.to"
+      ],
+      "evidence": "Harness engineering: Leveraging Codex in an agent-first world",
+      "frequency": 3,
       "demand_weight": 2.5,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 1.0833333333333333,
-      "canonical": "data engineering",
+      "momentum": 1.0357142857142856,
+      "canonical": "codex",
       "suggested_difficulty": "beginner",
-      "score": 2.708333333333333
+      "score": 2.589285714285714
     },
     {
-      "skill": "GenAI",
+      "skill": "Kafka consumer groups",
       "sources": [
-        "HN Front Page",
         "HN Hiring"
       ],
-      "evidence": "discussed in HN community",
-      "frequency": 2,
-      "demand_weight": 3.0,
+      "evidence": "Real-time data processing",
+      "frequency": 1,
+      "demand_weight": 2.0,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "genai",
+      "momentum": 1.2857142857142856,
+      "canonical": "kafka consumer groups",
       "suggested_difficulty": "beginner",
-      "score": 2.7
+      "score": 2.571428571428571
     },
     {
-      "skill": "Gemma",
+      "skill": "DevSecOps",
       "sources": [
-        "GitHub Trending",
-        "HN Front Page",
+        "HN Hiring",
         "Reddit"
       ],
-      "evidence": "Gemma mentioned as AI model",
-      "frequency": 3,
+      "evidence": "DevSecOps used in security",
+      "frequency": 2,
       "demand_weight": 2.75,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
       "momentum": 0.9,
-      "canonical": "gemma",
+      "canonical": "devsecops",
       "suggested_difficulty": "beginner",
       "score": 2.475
     },
     {
-      "skill": "BPF",
+      "skill": "Kafka",
       "sources": [
         "HN Hiring",
-        "dev.to"
+        "Reddit"
       ],
-      "evidence": "BPF discussed in context of Solana",
+      "evidence": "Ekbatan: Java persistence framework",
       "frequency": 2,
-      "demand_weight": 2.5,
+      "demand_weight": 2.75,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
       "momentum": 0.9,
-      "canonical": "bpf",
+      "canonical": "kafka",
       "suggested_difficulty": "beginner",
-      "score": 2.25
-    },
-    {
-      "skill": "Linux security",
-      "sources": [
-        "HN Hiring",
-        "dev.to"
-      ],
-      "evidence": "Securing Linux server in 10 steps",
-      "frequency": 2,
-      "demand_weight": 2.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "linux security",
-      "suggested_difficulty": "beginner",
-      "score": 2.25
-    },
-    {
-      "skill": "Observability",
-      "sources": [
-        "HN Hiring",
-        "dev.to"
-      ],
-      "evidence": "Turning raw logs into engineering best practices",
-      "frequency": 2,
-      "demand_weight": 2.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "observability",
-      "suggested_difficulty": "beginner",
-      "score": 2.25
-    },
-    {
-      "skill": "pg_durable",
-      "sources": [
-        "HN Front Page",
-        "Lobste.rs"
-      ],
-      "evidence": "PostgreSQL durable execution",
-      "frequency": 2,
-      "demand_weight": 2.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.0416666666666665,
-      "canonical": "pg_durable",
-      "suggested_difficulty": "beginner",
-      "score": 2.083333333333333
+      "score": 2.475
     },
     {
       "skill": "Real-time streaming",
       "sources": [
         "HN Hiring"
       ],
-      "evidence": "Rebuilding payments for software platforms",
+      "evidence": "Forward rebuilds payments with real-time streaming",
       "frequency": 1,
       "demand_weight": 2.0,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 1.0416666666666665,
+      "momentum": 1.0714285714285714,
       "canonical": "real-time streaming",
       "suggested_difficulty": "beginner",
-      "score": 2.083333333333333
-    },
-    {
-      "skill": "Rust async/await",
-      "sources": [
-        "GitHub Trending",
-        "HN Hiring",
-        "Lobste.rs",
-        "dev.to"
-      ],
-      "evidence": "rolldown bundler",
-      "frequency": 4,
-      "demand_weight": 4.5,
-      "novelty": 0.2857142857142857,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.4166666666666667,
-      "canonical": "rust async/await",
-      "suggested_difficulty": "intermediate",
-      "score": 1.8214285714285714
-    },
-    {
-      "skill": "AI control plane",
-      "sources": [
-        "HN Hiring"
-      ],
-      "evidence": "AI control plane product",
-      "frequency": 1,
-      "demand_weight": 2.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "ai control plane",
-      "suggested_difficulty": "beginner",
-      "score": 1.8
+      "score": 2.142857142857143
     }
   ]
 }
