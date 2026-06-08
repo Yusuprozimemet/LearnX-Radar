@@ -48,11 +48,27 @@
       ],
       "last_taught": "2026-06-07",
       "summary": "Rising questions"
+    },
+    "LangChain": {
+      "times_taught": 1,
+      "first_taught": "2026-06-08",
+      "lessons": [
+        {
+          "date": "2026-06-08",
+          "title": "LangChain",
+          "difficulty": "beginner",
+          "summary": "AI Agent framework",
+          "audio": "lesson-20260608-langchain.mp3",
+          "brief": "20260608-langchain.md"
+        }
+      ],
+      "last_taught": "2026-06-08",
+      "summary": "AI Agent framework"
     }
   },
   "so_counts": {
-    "python": 2205799,
-    "rust": 43947,
+    "python": 2205800,
+    "rust": 43948,
     "kubernetes": 59806,
     "langchain": 1983,
     "duckdb": 504

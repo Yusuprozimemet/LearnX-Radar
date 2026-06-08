@@ -1,56 +1,56 @@
 {
   "version": 1,
   "cefr": "A2",
-  "streak": 3,
-  "last_run": "2026-06-07",
+  "streak": 4,
+  "last_run": "2026-06-08",
   "last_words": [
-    "map",
-    "update",
-    "website",
-    "app",
-    "toetsenbord",
-    "muis",
-    "afspraak",
-    "vergadering",
-    "werk",
-    "baan"
+    "collega",
+    "winkel",
+    "boodschappen",
+    "geld",
+    "bestand",
+    "wachtwoord",
+    "netwerk",
+    "computer",
+    "laptop",
+    "scherm"
   ],
   "words": {
     "bestand": {
       "introduced": "2026-06-05",
-      "reps": 2,
-      "last_review": "2026-06-06",
-      "due": "2026-06-08"
+      "reps": 3,
+      "last_review": "2026-06-08",
+      "due": "2026-06-13"
     },
     "wachtwoord": {
       "introduced": "2026-06-05",
-      "reps": 2,
-      "last_review": "2026-06-06",
-      "due": "2026-06-08"
+      "reps": 3,
+      "last_review": "2026-06-08",
+      "due": "2026-06-13"
     },
     "netwerk": {
       "introduced": "2026-06-05",
-      "reps": 2,
-      "last_review": "2026-06-06",
-      "due": "2026-06-08"
+      "reps": 3,
+      "last_review": "2026-06-08",
+      "due": "2026-06-13"
     },
     "computer": {
       "introduced": "2026-06-05",
-      "reps": 2,
-      "last_review": "2026-06-06",
-      "due": "2026-06-08"
+      "reps": 3,
+      "last_review": "2026-06-08",
+      "due": "2026-06-13"
     },
     "laptop": {
       "introduced": "2026-06-05",
-      "reps": 2,
-      "last_review": "2026-06-06",
-      "due": "2026-06-08"
+      "reps": 3,
+      "last_review": "2026-06-08",
+      "due": "2026-06-13"
     },
     "scherm": {
       "introduced": "2026-06-05",
-      "reps": 2,
-      "last_review": "2026-06-06",
-      "due": "2026-06-08"
+      "reps": 3,
+      "last_review": "2026-06-08",
+      "due": "2026-06-13"
     },
     "toetsenbord": {
       "introduced": "2026-06-05",
@@ -111,6 +111,30 @@
       "reps": 1,
       "last_review": "2026-06-07",
       "due": "2026-06-08"
+    },
+    "collega": {
+      "introduced": "2026-06-08",
+      "reps": 1,
+      "last_review": "2026-06-08",
+      "due": "2026-06-09"
+    },
+    "winkel": {
+      "introduced": "2026-06-08",
+      "reps": 1,
+      "last_review": "2026-06-08",
+      "due": "2026-06-09"
+    },
+    "boodschappen": {
+      "introduced": "2026-06-08",
+      "reps": 1,
+      "last_review": "2026-06-08",
+      "due": "2026-06-09"
+    },
+    "geld": {
+      "introduced": "2026-06-08",
+      "reps": 1,
+      "last_review": "2026-06-08",
+      "due": "2026-06-09"
     }
   },
   "lessons": [
@@ -161,6 +185,24 @@
         "baan"
       ],
       "summary": "Dutch (tech): folder, update, website, app"
+    },
+    {
+      "date": "2026-06-08",
+      "theme": "everyday",
+      "audio": "dutch-20260608.mp3",
+      "words": [
+        "collega",
+        "winkel",
+        "boodschappen",
+        "geld",
+        "bestand",
+        "wachtwoord",
+        "netwerk",
+        "computer",
+        "laptop",
+        "scherm"
+      ],
+      "summary": "Dutch (everyday): colleague, shop, groceries, money"
     }
   ]
 }

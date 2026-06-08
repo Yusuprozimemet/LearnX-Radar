@@ -2622,5 +2622,377 @@
         "score": 2.142857142857143
       }
     ]
+  },
+  "2026-06-08": {
+    "today_skill": "LangChain",
+    "scored": [
+      {
+        "skill": "LangChain",
+        "sources": [
+          "HN Hiring",
+          "Stack Overflow",
+          "dev.to"
+        ],
+        "evidence": "AI Agent framework",
+        "frequency": 3,
+        "demand_weight": 4.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.5,
+        "canonical": "langchain",
+        "suggested_difficulty": "beginner",
+        "score": 6.0
+      },
+      {
+        "skill": "LLMs",
+        "sources": [
+          "GitHub Trending",
+          "HN Front Page",
+          "HN Hiring",
+          "Lobste.rs",
+          "dev.to"
+        ],
+        "evidence": "AI applications",
+        "frequency": 5,
+        "demand_weight": 5.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.0625,
+        "canonical": "llms",
+        "suggested_difficulty": "beginner",
+        "score": 5.84375
+      },
+      {
+        "skill": "Postgres",
+        "sources": [
+          "GitHub Trending",
+          "HN Hiring",
+          "Reddit",
+          "dev.to"
+        ],
+        "evidence": "Postgres extension",
+        "frequency": 4,
+        "demand_weight": 4.25,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.1875,
+        "canonical": "postgresql",
+        "suggested_difficulty": "beginner",
+        "score": 5.046875
+      },
+      {
+        "skill": "Vite",
+        "sources": [
+          "GitHub Trending",
+          "HN Hiring",
+          "Reddit",
+          "dev.to"
+        ],
+        "evidence": "Vite project",
+        "frequency": 4,
+        "demand_weight": 4.25,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.1875,
+        "canonical": "vite",
+        "suggested_difficulty": "beginner",
+        "score": 5.046875
+      },
+      {
+        "skill": "Distributed Systems",
+        "sources": [
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "Distributed Systems Engineers",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": true,
+        "momentum": 1.03125,
+        "canonical": "distributed systems",
+        "suggested_difficulty": "beginner",
+        "score": 3.8671875
+      },
+      {
+        "skill": "Agentic AI",
+        "sources": [
+          "GitHub Trending",
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "AI agent development",
+        "frequency": 3,
+        "demand_weight": 3.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.0625,
+        "canonical": "agentic ai",
+        "suggested_difficulty": "beginner",
+        "score": 3.71875
+      },
+      {
+        "skill": "DevOps",
+        "sources": [
+          "HN Hiring",
+          "Reddit",
+          "dev.to"
+        ],
+        "evidence": "Development methodology",
+        "frequency": 3,
+        "demand_weight": 3.25,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "devops",
+        "suggested_difficulty": "beginner",
+        "score": 2.9250000000000003
+      },
+      {
+        "skill": "Kafka",
+        "sources": [
+          "HN Hiring",
+          "Reddit"
+        ],
+        "evidence": "Event-driven systems",
+        "frequency": 2,
+        "demand_weight": 2.75,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.03125,
+        "canonical": "kafka",
+        "suggested_difficulty": "beginner",
+        "score": 2.8359375
+      },
+      {
+        "skill": "Helm",
+        "sources": [
+          "GitHub Trending",
+          "HN Hiring"
+        ],
+        "evidence": "Helm project",
+        "frequency": 2,
+        "demand_weight": 3.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "helm",
+        "suggested_difficulty": "beginner",
+        "score": 2.7
+      },
+      {
+        "skill": "Nix",
+        "sources": [
+          "HN Hiring",
+          "Lobste.rs"
+        ],
+        "evidence": "Package manager",
+        "frequency": 2,
+        "demand_weight": 3.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "nix",
+        "suggested_difficulty": "beginner",
+        "score": 2.7
+      },
+      {
+        "skill": "Kafka consumer groups",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "Job post mentioning Kafka",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.3125,
+        "canonical": "kafka consumer groups",
+        "suggested_difficulty": "beginner",
+        "score": 2.625
+      },
+      {
+        "skill": "ClickHouse",
+        "sources": [
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "100 Days of ClickHouse",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "clickhouse",
+        "suggested_difficulty": "beginner",
+        "score": 2.25
+      },
+      {
+        "skill": "Electron",
+        "sources": [
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "Electron App Icons",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "electron",
+        "suggested_difficulty": "beginner",
+        "score": 2.25
+      },
+      {
+        "skill": "Real-time streaming",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "Real-time streaming",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.09375,
+        "canonical": "real-time streaming",
+        "suggested_difficulty": "beginner",
+        "score": 2.1875
+      },
+      {
+        "skill": "AI control plane",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "AI control plane product",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.03125,
+        "canonical": "ai control plane",
+        "suggested_difficulty": "beginner",
+        "score": 2.0625
+      },
+      {
+        "skill": "YAML",
+        "sources": [
+          "Lobste.rs",
+          "Reddit",
+          "dev.to"
+        ],
+        "evidence": "Configuration files",
+        "frequency": 3,
+        "demand_weight": 2.25,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "yaml",
+        "suggested_difficulty": "beginner",
+        "score": 2.025
+      },
+      {
+        "skill": "Linux BPF",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "Dynamic runtime on Linux BPF",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "linux bpf",
+        "suggested_difficulty": "beginner",
+        "score": 1.8
+      },
+      {
+        "skill": "Rust async/await",
+        "sources": [
+          "GitHub Trending",
+          "dev.to"
+        ],
+        "evidence": "Rust project with async/await",
+        "frequency": 2,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.1875,
+        "canonical": "rust async/await",
+        "suggested_difficulty": "beginner",
+        "score": 1.78125
+      },
+      {
+        "skill": "DuckDB",
+        "sources": [
+          "HN Hiring",
+          "Reddit",
+          "Stack Overflow"
+        ],
+        "evidence": "Job post mentioning DuckDB",
+        "frequency": 3,
+        "demand_weight": 4.25,
+        "novelty": 0.21428571428571427,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.375,
+        "canonical": "duckdb",
+        "suggested_difficulty": "advanced",
+        "score": 1.2522321428571428
+      },
+      {
+        "skill": "React Server Components",
+        "sources": [
+          "GitHub Trending"
+        ],
+        "evidence": "React project with server components",
+        "frequency": 1,
+        "demand_weight": 1.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.21875,
+        "canonical": "react server components",
+        "suggested_difficulty": "beginner",
+        "score": 1.21875
+      }
+    ]
   }
 }
