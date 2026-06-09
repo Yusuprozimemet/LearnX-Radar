@@ -35,6 +35,13 @@ produce, not just what you were sent. See [Dutch coach](#dutch-coach).
        early access to lessons matched to your stack & goals (individuals & teams). A
        reminder CTA is also posted to the channel weekly; we store only what you submit
        (see [Privacy](#data-and-privacy)).
+- **Live dashboard — <https://yusuprozimemet.github.io/LearnX-Radar/>:** the
+       public skill radar (trending skills, coverage map, lesson archive) with a
+       🇳🇱 Dutch progress tab — rebuilt after every daily run, no login needed.
+- **Dutch trainer — <https://yusuprozimemet.github.io/LearnX-Radar/dutch.html>:**
+       today's Dutch lesson as an interactive Delft trainer — tap-to-play sentences,
+       fill-in-the-blanks, the one-chance listening test, and one-tap saving of your
+       scores back to the bot.
 
 ## What it does
 
