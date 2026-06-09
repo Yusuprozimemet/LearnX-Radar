@@ -20,8 +20,8 @@ lesson, a spoken Dutch MP3 with built-in repeat pauses, an interactive trainer
 page, and spaced repetition driven by **measured recall** — what you can
 produce, not just what you were sent. See [Dutch coach](#dutch-coach).
 
-<div style="display:flex; justify-content:center;">
-  <img src="image.png" alt="LearnX-Radar overview" style="max-width:100%; height:auto;" />
+<div align="center">
+  <img src="image.png" alt="LearnX-Radar overview" width="600" />
 </div>
 
 ## Subscribe (free)
