@@ -141,7 +141,7 @@ storage/    state files (seen_skills.json, skill_memory.json, last_scored.json,
 briefs/     full lesson briefs (linked from lessons for Perplexity Q&A)
 scripts/    one-off experiment harnesses (chunk size, grounding read budget,
             momentum window) — deletable, not part of the cron
-specs/      per-day specs driving each slice (v1..v7)
+specs/      per-day specs driving each slice (v1..v8)
 output/     generated MP3 files and sample outputs
 config.py   central configuration and model selection
 main.py     daily pipeline entry point
@@ -233,6 +233,8 @@ In CI, the env values come from GitHub repo secrets (see
        `python main.py` and commits updated state files and briefs.
 - Pages: [.github/workflows/pages.yml](.github/workflows/pages.yml) runs
        `python -m dashboard` and publishes the static HTML.
+- CI: [.github/workflows/ci.yml](.github/workflows/ci.yml) runs `ruff check .`
+       and `pytest` on every push and pull request.
 
 ## State and outputs
 
