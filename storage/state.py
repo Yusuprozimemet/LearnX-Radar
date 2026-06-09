@@ -395,7 +395,7 @@ def record_dutch_recall(
     must not double-count the recall counters).
     """
     lesson = next(
-        (l for l in reversed(memory.get("lessons", [])) if l.get("date") == date_iso),
+        (les for les in reversed(memory.get("lessons", [])) if les.get("date") == date_iso),
         None,
     )
     if lesson is None:
@@ -405,7 +405,9 @@ def record_dutch_recall(
     words = memory.setdefault("words", {})
     right_ids: list[str] = []
     wrong_ids: list[str] = []
-    for wid, mark in zip(lesson.get("words", []), marks):
+    # strict=False: a malformed report (marks shorter/longer than the lesson's
+    # words) degrades to applying the overlap instead of crashing the run.
+    for wid, mark in zip(lesson.get("words", []), marks, strict=False):
         entry = words.get(wid)
         if entry is None or mark == "x":
             continue

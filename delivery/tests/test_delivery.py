@@ -307,9 +307,11 @@ def test_fetch_reports_owner_only_last_wins_and_acks(monkeypatch):
     monkeypatch.setattr(telegram_recall.config, "TELEGRAM_CHAT_ID", "42")
     updates = [
         {"update_id": 7, "message": {"chat": {"id": 42}, "text": "/start dr_260608_10x"}},
-        {"update_id": 8, "message": {"chat": {"id": 99}, "text": "/start dr_260608_000"}},  # not the owner
+        # not the owner's chat:
+        {"update_id": 8, "message": {"chat": {"id": 99}, "text": "/start dr_260608_000"}},
         {"update_id": 9, "message": {"chat": {"id": 42}, "text": "hoi"}},  # not a report
-        {"update_id": 11, "message": {"chat": {"id": 42}, "text": "/start dr_260608_11x"}},  # re-send wins
+        # a re-send for the same date supersedes the earlier tap:
+        {"update_id": 11, "message": {"chat": {"id": 42}, "text": "/start dr_260608_11x"}},
         {"update_id": 12, "message": {"chat": {"id": 42}, "text": "/start dr_260607_01"}},
     ]
     calls = []
