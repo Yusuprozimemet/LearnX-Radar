@@ -14,9 +14,11 @@ follow-up Q&A (and a recall quiz), plus a static dashboard built from the
 recorded state.
 
 It also runs a second daily track — a **Dutch coach** — that rides the same
-pipeline to teach Dutch (A2, heading toward inburgering B1): a small themed
-vocabulary lesson with example sentences, a spoken Dutch MP3, spaced-repetition
-review, and a recall quiz. See [Dutch coach](#dutch-coach).
+pipeline to teach Dutch (A2, heading toward inburgering B1) with the
+**Delftse methode** (listen → imitate → produce): a small themed vocabulary
+lesson, a spoken Dutch MP3 with built-in repeat pauses, an interactive trainer
+page, and spaced repetition driven by **measured recall** — what you can
+produce, not just what you were sent. See [Dutch coach](#dutch-coach).
 
 ![LearnX-Radar overview](image.png)
 
@@ -49,6 +51,15 @@ review, and a recall quiz. See [Dutch coach](#dutch-coach).
        plans a curriculum, generates dialogue, and builds one MP3 via edge-tts.
 - Builds a second, independent **Dutch lesson** (vocab + sentences + dialogue +
        Dutch-voice MP3) from a curated word bank, with spaced-repetition review.
+       The MP3 follows the **Delftse methode**: each sentence is followed by a
+       repeat pause sized to say it back, then replays for self-checking; the
+       lesson ends with a deterministic fill-in-the-blanks exercise.
+- Publishes an **interactive Delft trainer page** on Pages
+       ([live](https://yusuprozimemet.github.io/LearnX-Radar/dutch.html)):
+       tap-to-play sentences with veiled translations, checked cloze, an enforced
+       one-chance listening test — and a **"Save results" deep link** that sends
+       your scores back to the bot, so failed words return sooner and recalled
+       words space out further (no webhook, no token in the browser).
 - Delivers both lessons to your Telegram DM **and an optional public broadcast
        channel** — audio + summary + the **full lesson as a PDF** (captions cap at
        1024 chars, so the PDF carries the complete, formatted lesson) — and to email
@@ -77,7 +88,8 @@ scrape (7 sources) -> dedup -> extract skills (map-reduce + deterministic
                       attribution) -> score gaps (demand x novelty x momentum)
                       -> write grounded brief (Jina + Exa, cited)
                       -> plan curriculum -> generate dialogue -> build audio
-                      -> build Dutch lesson (vocab + sentences + Dutch audio)
+                      -> ingest Dutch recall reports (getUpdates) -> build Dutch
+                         lesson (vocab + sentences + Delft audio + trainer JSON)
                       -> render PDFs -> deliver (Telegram DM + channel, email)
                       -> persist state -> refresh dashboard + podcast feed
 ```
@@ -130,18 +142,21 @@ radar/      map-reduce skill extraction, gap scoring (+ momentum), grounded
 radar/research/  brief-grounding helpers vendored from LearnX-Search: Jina
             reader (keyless), Exa search (key-gated), relevance filter
 learnx/     curriculum, dialogue, audio_builder, LLM client
-dutch/      Dutch coach: curated wordlist, lesson builder, Dutch audio
+dutch/      Dutch coach: curated wordlist, lesson builder, Delft audio layout,
+            cloze exercises (cloze.py), trainer lesson JSON (trainer.py)
 delivery/   Telegram (DM + channel) & email delivery, full-lesson PDF (pdf.py),
-            Perplexity follow-up links, weekly waitlist CTA, weekly dev.to
+            Perplexity follow-up links, recall-report ingestion
+            (telegram_recall.py), weekly waitlist CTA, weekly dev.to
             cross-post (devto_publisher.py)
-dashboard/  static dashboard builder (Radar / Dutch tabs), podcast feed
-            (feed.py), Open Graph preview + privacy.html
+dashboard/  static dashboard builder (Radar / Dutch tabs), the interactive
+            Delft trainer page (dutch.html), podcast feed (feed.py),
+            Open Graph preview + privacy.html
 storage/    state files (seen_skills.json, skill_memory.json, last_scored.json,
-            trending_history.json, dutch_memory.json)
+            trending_history.json, dutch_memory.json, dutch_lesson.json)
 briefs/     full lesson briefs (linked from lessons for Perplexity Q&A)
 scripts/    one-off experiment harnesses (chunk size, grounding read budget,
             momentum window) — deletable, not part of the cron
-specs/      per-day specs driving each slice (v1..v8)
+specs/      per-day specs driving each slice (v1..v9)
 output/     generated MP3 files and sample outputs
 config.py   central configuration and model selection
 main.py     daily pipeline entry point
@@ -180,22 +195,42 @@ main.py     daily pipeline entry point
        by default (`DEVTO_PUBLISHED = False`) on `DEVTO_POST_WEEKDAY` (Mon).
 - The Dutch coach needs **no new secrets** — it reuses the same LLM and edge-tts.
        Tune it via the `DUTCH_*` constants in [config.py](config.py) (enable/disable,
-       words per day, review cap, voices); `DUTCH_ENABLED = True` by default.
+       words per day, review cap, voices, Delft pauses/cloze/trainer toggles);
+       `DUTCH_ENABLED = True` by default.
+- Optional (recall feedback): `TELEGRAM_BOT_USERNAME` — the main bot's public
+       @username (without the @), used by the trainer page's "Save results" deep
+       link. Unset means the button simply isn't rendered; reports are accepted
+       from `TELEGRAM_CHAT_ID` only (`DUTCH_RECALL_ENABLED`).
 - Use [.env.example](.env.example) as the template.
 
 ## Dutch coach
 
 A second daily track that teaches Dutch (A2, heading toward inburgering B1) using the
-same engine. Each run it:
+same engine and the **Delftse methode** (listen → imitate → produce). Each run it:
 
 - Selects a small themed word set — themes **alternate** day to day (everyday Dutch
        vs. tech-flavoured Dutch tied to the day's developer topic).
 - Makes one LLM call to wrap those **exact** words in A2 example sentences and a short
-       dialogue, then renders a Dutch-voice MP3 via edge-tts.
+       dialogue, then renders a Dutch-voice MP3 via edge-tts — in **Delft blocks**:
+       vocabulary and dialogue sentence-by-sentence with a repeat pause sized to say
+       each line back (then a self-check replay), and the dialogue straight through.
+- Ends the lesson with a deterministic **fill-in-the-blanks** exercise (gatentekst)
+       over today's new words — no LLM, so nothing can be wrong.
+- Publishes the lesson as JSON for the **interactive trainer page**
+       ([dutch.html](https://yusuprozimemet.github.io/LearnX-Radar/dutch.html)): the
+       four Delft listening steps with a real player, checked cloze, and a
+       one-listen-per-sentence luistertoets.
+- Closes the loop with **recall feedback**: the trainer's "Save results" button
+       deep-links your scores to the bot as a `/start` message; the next morning's
+       run reads them via `getUpdates` and reschedules — a failed word returns at the
+       base interval, a recalled word spaces out further, an untrained word is
+       untouched. The dashboard shows a rolling 30-day recall rate and the most-failed
+       words.
 - Mixes in words **due for spaced-repetition review** and tracks a streak + CEFR level
        in [storage/dutch_memory.json](storage/dutch_memory.json).
-- Appends a 🇳🇱 section to the email, sends a separate Dutch message/audio to Telegram,
-       and adds a "Quiz me in Dutch" Perplexity link covering *yesterday's* words.
+- Appends a 🇳🇱 section to the email, sends a separate Dutch message/audio to Telegram
+       (with a "Train this lesson" button), and adds a "Quiz me in Dutch" Perplexity
+       link covering *yesterday's* words.
 
 **Correct by design:** vocabulary is anchored to a frozen, human-reviewed word bank
 ([dutch/wordlist.json](dutch/wordlist.json)). The LLM only writes sentences around fixed
@@ -208,7 +243,9 @@ python -m dutch.build_wordlist --theme everyday --cefr A2 --count 40
 ```
 
 The roadmap (KNM, reading, grammar, adaptive pacing toward B1) lives in
-[specs/v5](specs/v5) and [specs/v6](specs/v6); see [plan/plan.md](plan/plan.md).
+[specs/v5](specs/v5) and [specs/v6](specs/v6); the Delftse-methode slice
+(paused audio, cloze, trainer, recall feedback) in [specs/v9](specs/v9); see
+[plan/plan.md](plan/plan.md).
 
 ## Local usage
 
@@ -245,8 +282,12 @@ In CI, the env values come from GitHub repo secrets (see
 - [storage/skill_memory.json](storage/skill_memory.json): lesson history and
        spaced repetition data.
 - [storage/dutch_memory.json](storage/dutch_memory.json): Dutch vocab
-       spaced-repetition state — per-word due dates, streak, CEFR level, and a Dutch
-       lesson archive. Created on the first Dutch run and committed by the workflow.
+       spaced-repetition state — per-word due dates, recall counters, streak, CEFR
+       level, a Dutch lesson archive, and the trainer recall-report log. Created on
+       the first Dutch run and committed by the workflow.
+- `storage/dutch_lesson.json`: today's full Dutch lesson (text + translations +
+       cloze + audio seek map + recall-report contract) for the trainer page —
+       overwritten each run, copied to Pages by the deploy.
 - [storage/last_scored.json](storage/last_scored.json): latest scoring for the
        dashboard. Scored from the full scrape each run (not just post-dedup
        items), so the board always shows the complete demand picture and updates
@@ -258,6 +299,9 @@ In CI, the env values come from GitHub repo secrets (see
 - [output](output): generated MP3 lessons — the developer lesson
        (`lesson-YYYYMMDD-<slug>.mp3`) and the Dutch lesson (`dutch-YYYYMMDD.mp3`).
 - [dashboard/index.html](dashboard/index.html): generated static dashboard.
+- [dashboard/dutch.html](dashboard/dutch.html): the static Delft trainer page
+       (hand-written, not generated) — fetches `dutch_lesson.json` on Pages; progress
+       lives in localStorage, results travel via the Telegram deep link (no backend).
 - `dashboard/podcast.xml`: generated podcast feed (lesson MP3s hosted as assets on
        the `lessons` GitHub Release; built from committed state, published via Pages).
 
@@ -299,6 +343,10 @@ beyond the workflow's built-in `GITHUB_TOKEN`.
        Perplexity — treat both as third parties.
 - Dedup state expires after 14 days and is capped (5000 entries) so it does not
        grow without bound.
+- **Dutch trainer:** progress stays in your browser's localStorage; recall
+       reports travel as a `/start` message **from your own Telegram account to your
+       own bot** (the page only builds a URL — no token in the browser, no backend).
+       The pipeline accepts reports from the owner chat only.
 - **Subscribers & waitlist:** the Telegram channel stores **no** personal data on
        my side (Telegram manages membership). The early-access waitlist is a hosted
        form (Tally) that stores only the email you submit (+ optional segment/goals),
