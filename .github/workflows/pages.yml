@@ -15,6 +15,7 @@ on:
       - "storage/skill_memory.json"
       - "storage/last_scored.json"
       - "storage/trending_history.json"
+      - "storage/dutch_lesson.json"
       - "dashboard/**"
 
 permissions:
@@ -45,6 +46,15 @@ jobs:
           cp dashboard/index.html _site/index.html
           cp dashboard/podcast.xml _site/podcast.xml
           cp dashboard/privacy.html _site/privacy.html
+          cp dashboard/dutch.html _site/dutch.html         # Delft trainer page (v9)
+          cp storage/dutch_lesson.json _site/dutch_lesson.json 2>/dev/null || true  # today's lesson for the trainer
+          # Same-origin copy of the lesson MP3: the release CDN sends no CORS header,
+          # so the trainer page can't fetch it cross-origin (it needs blob-loading for
+          # exact sentence seeking). Downloading here is server-side — no CORS involved.
+          if [ -f storage/dutch_lesson.json ]; then
+            url=$(python -c "import json;print(json.load(open('storage/dutch_lesson.json'))['audio_url'])")
+            curl -sL --fail -o _site/dutch_audio.mp3 "$url" || echo "dutch audio not fetched (non-fatal)"
+          fi
           cp image.png _site/og.png            # social-share preview (og:image)
           cp dashboard/cover.png _site/cover.png   # podcast artwork (itunes:image)
       - uses: actions/upload-pages-artifact@v3

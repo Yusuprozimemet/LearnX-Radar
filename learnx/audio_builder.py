@@ -16,6 +16,7 @@ from pathlib import Path
 import edge_tts
 from pydub import AudioSegment
 
+import config
 from learnx.constants import (
     RATE_ALEX,
     RATE_MAYA,
@@ -40,10 +41,13 @@ async def build(
     *,
     voices: dict[str, str] | None = None,
     rates: dict[str, str] | None = None,
+    timings_out: list[dict] | None = None,
 ) -> None:
     """Render `lines` to one MP3. `voices`/`rates` (keyed by speaker) override the
     default English co-host map — the Dutch track passes its nl-NL voices here; dev
-    callers pass nothing and get the unchanged behaviour."""
+    callers pass nothing and get the unchanged behaviour. `timings_out` (v9 day 32),
+    when given a list, is extended with per-line {speaker, text, unit, start_ms,
+    end_ms} positions in the final MP3 — the Delft trainer's seek map."""
     if not lines:
         raise ValueError("No dialogue lines to render")
     voices = voices or _VOICE
@@ -52,7 +56,7 @@ async def build(
     tmp_dir.mkdir(parents=True, exist_ok=True)
     try:
         segments = await _render_all(lines, str(tmp_dir), voices, rates)
-        _assemble(segments, out_path)
+        _assemble(segments, out_path, timings_out)
         log.info("Audio saved: %s", out_path)
     finally:
         shutil.rmtree(tmp_dir, ignore_errors=True)
@@ -88,20 +92,48 @@ async def _render_segment(
     return RenderedSegment(line=line, audio_path=out_path, duration_ms=duration_ms)
 
 
-def _assemble(segments: list[RenderedSegment], out_path: str) -> None:
+def _assemble(
+    segments: list[RenderedSegment],
+    out_path: str,
+    timings_out: list[dict] | None = None,
+) -> None:
     full = AudioSegment.empty()
     prev_speaker: str | None = None
     prev_unit: int | None = None
+    after_pause = False  # previous line ended in a proportional repeat pause
 
     for seg in segments:
-        gap = _gap_ms(prev_speaker, prev_unit, seg.line)
+        # No extra pre-gap right after a repeat pause — the pause already separates.
+        gap = 0 if after_pause else _gap_ms(prev_speaker, prev_unit, seg.line)
         if gap:
             full += AudioSegment.silent(duration=gap)
+        start_ms = len(full)
         full += AudioSegment.from_mp3(seg.audio_path)
+        if timings_out is not None:
+            timings_out.append({
+                "speaker": seg.line.speaker,
+                "text": seg.line.text,
+                "unit": seg.line.unit_number,
+                "start_ms": start_ms,
+                "end_ms": len(full),
+            })
+        pause = _pause_after_ms(seg)
+        if pause:
+            full += AudioSegment.silent(duration=pause)
+        after_pause = pause > 0
         prev_speaker, prev_unit = seg.line.speaker, seg.line.unit_number
 
     full.export(out_path, format="mp3")
     log.info("Assembled %d segments -> %s (%.1fs)", len(segments), out_path, len(full) / 1000)
+
+
+def _pause_after_ms(seg: RenderedSegment) -> int:
+    """Delft repeat pause (v9 day 30): silence after the line sized to speak it
+    back, floored so one-word lines still leave time. 0 when the factor is unset."""
+    factor = getattr(seg.line, "pause_after_factor", 0.0)
+    if factor <= 0:
+        return 0
+    return max(int(seg.duration_ms * factor), config.DUTCH_DELFT_MIN_PAUSE_MS)
 
 
 def _gap_ms(prev_speaker: str | None, prev_unit: int | None, line: DialogueLine) -> int:

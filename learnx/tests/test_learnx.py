@@ -105,3 +105,17 @@ def test_silence_gap_logic():
     assert g("ALEX", 1, DialogueLine("ALEX", "x", 1)) == SILENCE_BREATH_MS
     assert g("ALEX", 1, DialogueLine("MAYA", "x", 1)) == SILENCE_TURN_MS
     assert g("MAYA", 1, DialogueLine("ALEX", "x", 2)) == SILENCE_UNIT_MS
+
+
+def test_pause_after_ms_proportional_and_floored():
+    from learnx.models import RenderedSegment
+
+    paused = DialogueLine("MAYA", "x", 0, pause_after_factor=1.5)
+    p = audio_builder._pause_after_ms
+    # 1.5x the rendered duration...
+    assert p(RenderedSegment(line=paused, audio_path="", duration_ms=4000)) == 6000
+    # ...floored so a one-word line still leaves time to speak it back...
+    assert p(RenderedSegment(line=paused, audio_path="", duration_ms=200)) == 1200
+    # ...and 0 when the factor is unset (dev track: byte-identical output).
+    plain = DialogueLine("MAYA", "x", 0)
+    assert p(RenderedSegment(line=plain, audio_path="", duration_ms=4000)) == 0

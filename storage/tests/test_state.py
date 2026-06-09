@@ -159,3 +159,4 @@ def test_record_dutch_lesson_streak_resets_after_gap():
     state.record_dutch_lesson(memory, word_ids=["a"], theme="everyday", when=date(2026, 6, 1))
     state.record_dutch_lesson(memory, word_ids=["b"], theme="everyday", when=date(2026, 6, 5))
     assert memory["streak"] == 1  # gap of >1 day resets
+

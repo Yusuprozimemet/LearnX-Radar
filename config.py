@@ -119,6 +119,7 @@ RELEASES_PAGE_URL = f"{REPO_URL}/releases"  # human-facing list of all lesson as
 # The public Pages site (dashboard + feed are published here).
 SITE_URL = "https://yusuprozimemet.github.io/LearnX-Radar/"
 FEED_URL = f"{SITE_URL}podcast.xml"
+TRAINER_URL = f"{SITE_URL}dutch.html"  # interactive Delft trainer (v9 day 32)
 OG_IMAGE_URL = f"{SITE_URL}og.png"  # social-share preview (pages.yml copies image.png)
 # Public Telegram channel — a constant (not the TELEGRAM_CHANNEL_ID secret) so the
 # dashboard/Pages build, which runs without secrets, can still link it.
@@ -310,6 +311,22 @@ DUTCH_CEFR_START = "A2"              # starting level (auto-advances toward B1 i
 DUTCH_NEW_WORDS_PER_DAY = 4          # new words introduced each morning
 DUTCH_REVIEW_WORDS_MAX = 6           # cap on due-for-review words pulled into a day
 DUTCH_THEME_TECH_TIE_IN = True       # on tech days, tie the lesson to the dev topic
+
+# --- Delftse methode (v9) ---
+# Restructure the Dutch MP3 into listen -> repeat -> listen-again blocks: every
+# sentence is followed by a silent pause sized for the learner to SAY it back,
+# then plays again for self-checking (Phase 1: imitation). A deterministic cloze
+# exercise — today's new words blanked out of the lesson text — adds the
+# production step (Phase 2). See specs/v9/day30-delft-audio.md / day31-delft-cloze.md.
+DUTCH_DELFT_AUDIO = True        # False -> legacy v5 audio layout (rollback)
+DUTCH_DELFT_PAUSE_FACTOR = 1.5  # repeat-pause = 1.5x the sentence duration
+DUTCH_DELFT_MIN_PAUSE_MS = 1200 # floor so one-word sentences still leave time
+DUTCH_CLOZE_ENABLED = True      # False -> lesson markdown unchanged (rollback)
+# Interactive Delft trainer (v9 day 32): the daily run commits the lesson as
+# storage/dutch_lesson.json; the static dashboard/dutch.html page on Pages reads it
+# and runs the phases interactively (tap-to-play sentences, checked cloze, enforced
+# one-chance listening). See specs/v9/day32-delft-trainer.md.
+DUTCH_TRAINER_ENABLED = True    # False -> no lesson JSON, no trainer link (rollback)
 
 # Spaced repetition for vocab: shorter base than the dev track (SR_BASE_INTERVAL_DAYS
 # = 7) because words need tighter early spacing than concept lessons. Intervals widen

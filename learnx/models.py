@@ -25,6 +25,11 @@ class DialogueLine:
     speaker: str       # "ALEX" | "MAYA"
     text: str
     unit_number: int   # 0 = intro, 1..N = unit, -1 = outro
+    # Silence AFTER this line = factor x the line's rendered duration (Delft repeat
+    # pause, v9 day 30). The pause must scale with the sentence, and duration is
+    # only known after TTS — so the factor rides on the line; _assemble resolves it.
+    # 0.0 (default) -> no proportional pause; dev-track output is byte-identical.
+    pause_after_factor: float = 0.0
 
 
 @dataclass

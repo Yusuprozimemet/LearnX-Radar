@@ -22,6 +22,7 @@ from storage.state import (
     record_dutch_lesson,
     record_lesson,
     save_brief,
+    save_dutch_lesson,
     save_dutch_memory,
     save_last_scored,
     save_memory,
@@ -48,6 +49,7 @@ __all__ = [
     "slugify",
     "load_dutch_memory",
     "save_dutch_memory",
+    "save_dutch_lesson",
     "dutch_due_words",
     "record_dutch_lesson",
 ]

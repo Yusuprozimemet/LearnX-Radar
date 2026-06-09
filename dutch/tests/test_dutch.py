@@ -2,9 +2,10 @@
 import json
 from datetime import date
 
+import config
 from dutch import audio as dutch_audio
+from dutch import cloze, wordlist
 from dutch import lesson as dutch_lesson
-from dutch import wordlist
 
 # --- wordlist ----------------------------------------------------------------
 
@@ -143,3 +144,191 @@ def test_to_lines_reads_words_then_dialogue_with_speaker_map():
     speakers = {ln.text: ln.speaker for ln in lines}
     assert speakers["Hallo."] == "ALEX"
     assert speakers["Goedemorgen."] == "MAYA"
+
+
+# --- Delft audio layout (v9 day 30) -------------------------------------------
+
+def _delft_lesson():
+    return dutch_lesson.DutchLesson(
+        theme="everyday",
+        cefr="A2",
+        new_words=[{"id": "a", "nl": "de a", "en": "the a"}],
+        review_words=[],
+        sentences=[{"id": "a", "nl": "Dit is de a.", "en": "This is the a."}],
+        dialogue=[{"speaker": "A", "nl": "Hallo.", "en": "Hi."},
+                  {"speaker": "B", "nl": "Goedemorgen.", "en": "Good morning."}],
+    )
+
+
+def test_to_lines_delft_blocks_and_repeat_pauses():
+    lines = dutch_audio.to_lines(_delft_lesson())
+    # Block A: word, sentence (repeat pause), sentence again. Block B: each of the
+    # 2 dialogue lines twice. Block C: the dialogue once more, straight through.
+    assert len(lines) == 3 + 4 + 2
+    word, s1, s2 = lines[0], lines[1], lines[2]
+    assert word.pause_after_factor == 0          # sentence follows immediately
+    assert s1.pause_after_factor == config.DUTCH_DELFT_PAUSE_FACTOR
+    assert s2.pause_after_factor == 0.5          # self-check replay, short pause
+    assert s1.text == s2.text == "Dit is de a."
+    block_b = lines[3:7]
+    assert [ln.text for ln in block_b] == ["Hallo.", "Hallo.",
+                                           "Goedemorgen.", "Goedemorgen."]
+    assert all(ln.unit_number == 1 for ln in block_b)
+    block_c = lines[7:]
+    assert [ln.text for ln in block_c] == ["Hallo.", "Goedemorgen."]
+    assert all(ln.unit_number == 2 and ln.pause_after_factor == 0 for ln in block_c)
+
+
+def test_to_lines_word_without_sentence_gets_the_pause():
+    lesson = _delft_lesson()
+    lesson.sentences = []  # LLM degraded: gloss only
+    lines = dutch_audio.to_lines(lesson)
+    assert lines[0].text == "de a"
+    assert lines[0].pause_after_factor == config.DUTCH_DELFT_PAUSE_FACTOR
+
+
+def test_to_lines_legacy_when_delft_disabled(monkeypatch):
+    monkeypatch.setattr(config, "DUTCH_DELFT_AUDIO", False)
+    lines = dutch_audio.to_lines(_delft_lesson())
+    assert len(lines) == 4  # word, sentence, 2 dialogue lines — v5 layout
+    assert all(ln.pause_after_factor == 0 for ln in lines)
+
+
+# --- cloze (v9 day 31) ---------------------------------------------------------
+
+def test_cloze_blanks_first_occurrence_and_strips_article():
+    section = cloze.render(
+        [{"id": "afspraak", "nl": "de afspraak", "en": "the appointment"}],
+        [{"id": "afspraak", "nl": "Ik heb morgen een afspraak.", "en": ""}],
+        [{"speaker": "A", "nl": "Hallo!", "en": ""}],
+    )
+    assert "Ik heb morgen een ___ (1)." in section   # bare noun matched, article-free
+    assert "afspraak" in section.rsplit("Antwoorden", 1)[1]  # key holds the answer
+    assert "Hallo!" not in section  # dialogue without a blank is left out
+
+
+def test_cloze_blanks_in_dialogue_keeps_whole_conversation():
+    section = cloze.render(
+        [{"id": "afspraak", "nl": "de afspraak", "en": "the appointment"}],
+        [],
+        [{"speaker": "A", "nl": "Hoe laat is je afspraak?", "en": ""},
+         {"speaker": "B", "nl": "Om tien uur.", "en": ""}],
+    )
+    assert "A: Hoe laat is je ___ (1)?" in section
+    assert "B: Om tien uur." in section  # unblanked line kept — it is the context
+
+
+def test_cloze_empty_when_no_word_occurs():
+    assert cloze.render(
+        [{"id": "afspraak", "nl": "de afspraak", "en": "the appointment"}],
+        [{"id": "afspraak", "nl": "Geen match hier.", "en": ""}],
+        [],
+    ) == ""
+
+
+def test_lesson_markdown_gains_instructions_and_cloze():
+    new_words = [
+        {"id": "afspraak", "nl": "de afspraak", "en": "the appointment", "theme": "everyday"}
+    ]
+    payload = {
+        "sentences": [
+            {"id": "afspraak", "nl": "Ik heb een afspraak.", "en": "I have an appointment."}
+        ],
+        "dialogue": [{"speaker": "A", "nl": "Tot morgen!", "en": "See you tomorrow!"}],
+    }
+    lesson = dutch_lesson.build(
+        new_words, [], theme="everyday", chat_fn=_fake_chat_factory(payload)
+    )
+    assert "Zo oefen je" in lesson.markdown          # Delft practice steps
+    assert "Invuloefening" in lesson.markdown        # cloze section appended
+    assert "___ (1)" in lesson.markdown
+
+
+# --- trainer JSON (v9 day 32) ---------------------------------------------------
+
+def test_trainer_payload_blocks_translations_and_block_c():
+    from dutch import trainer
+
+    lesson = _delft_lesson()
+    # Timings as the audio render reports them: block A (unit 0) sentence twice,
+    # block B (unit 1) repeats, block C (unit 2) straight through.
+    timings = [
+        {"speaker": "ALEX", "text": "de a", "unit": 0, "start_ms": 0, "end_ms": 800},
+        {"speaker": "MAYA", "text": "Dit is de a.", "unit": 0, "start_ms": 800, "end_ms": 2000},
+        {"speaker": "MAYA", "text": "Dit is de a.", "unit": 0, "start_ms": 3800, "end_ms": 5000},
+        {"speaker": "ALEX", "text": "Hallo.", "unit": 1, "start_ms": 5600, "end_ms": 6400},
+        {"speaker": "ALEX", "text": "Hallo.", "unit": 1, "start_ms": 7600, "end_ms": 8400},
+        {"speaker": "ALEX", "text": "Hallo.", "unit": 2, "start_ms": 9000, "end_ms": 9800},
+        {"speaker": "MAYA", "text": "Goedemorgen.", "unit": 2, "start_ms": 10250, "end_ms": 11500},
+    ]
+    payload = trainer.build_payload(lesson, timings, "dutch-20260609.mp3")
+
+    assert payload["audio_url"].endswith("/dutch-20260609.mp3")
+    blocks = [s["block"] for s in payload["segments"]]
+    assert blocks == ["A", "A", "A", "B", "B", "C", "C"]
+    # Translations joined by exact Dutch text (word gloss, sentence, dialogue).
+    by_nl = {s["nl"]: s["en"] for s in payload["segments"]}
+    assert by_nl["de a"] == "the a"
+    assert by_nl["Dit is de a."] == "This is the a."
+    assert by_nl["Goedemorgen."] == "Good morning."
+    # Block C span = first C start to last C end — the one-chance exercise's range.
+    assert payload["block_c"] == {"start_ms": 9000, "end_ms": 11500}
+    assert payload["cloze"]["answers"] == ["a"]  # "de a" -> bare form blanked
+
+
+def test_trainer_payload_no_block_c_when_no_dialogue():
+    from dutch import trainer
+
+    lesson = _delft_lesson()
+    lesson.dialogue = []
+    timings = [
+        {"speaker": "ALEX", "text": "de a", "unit": 0, "start_ms": 0, "end_ms": 800},
+    ]
+    payload = trainer.build_payload(lesson, timings, "dutch-20260609.mp3")
+    assert payload["block_c"] is None
+
+
+def test_cloze_extract_lines_and_answers_align():
+    data = cloze.extract(
+        [{"id": "afspraak", "nl": "de afspraak", "en": "the appointment"},
+         {"id": "beginnen", "nl": "beginnen", "en": "to begin"}],
+        [{"id": "afspraak", "nl": "Ik heb een afspraak.", "en": ""}],
+        [{"speaker": "A", "nl": "We beginnen om negen uur.", "en": ""}],
+    )
+    assert data["lines"] == ["Ik heb een ___ (1).", "A: We ___ (2) om negen uur."]
+    assert data["answers"] == ["afspraak", "beginnen"]
+
+
+def test_trainer_payload_block_b_and_luistertoets():
+    from dutch import trainer
+
+    lesson = _delft_lesson()
+    lesson.review_words = [{"id": "goedemorgen", "nl": "goedemorgen", "en": "good morning"}]
+    timings = [
+        {"speaker": "MAYA", "text": "Dit is de a.", "unit": 0, "start_ms": 0, "end_ms": 1200},
+        {"speaker": "ALEX", "text": "Hallo.", "unit": 1, "start_ms": 2000, "end_ms": 2800},
+        {"speaker": "ALEX", "text": "Hallo.", "unit": 1, "start_ms": 4000, "end_ms": 4800},
+        {"speaker": "ALEX", "text": "Hallo.", "unit": 2, "start_ms": 5400, "end_ms": 6200},
+        {"speaker": "MAYA", "text": "Goedemorgen.", "unit": 2, "start_ms": 6650, "end_ms": 7900},
+    ]
+    payload = trainer.build_payload(lesson, timings, "dutch-20260609.mp3")
+    # Block B's span (sentence -> pause -> sentence again) powers Delft step 3.
+    assert payload["block_b"] == {"start_ms": 2000, "end_ms": 4800}
+    # Luistertoets: one entry PER dialogue line, review words blanked too;
+    # a line without target words still plays — it just has nothing to fill.
+    lt = payload["luistertoets"]
+    assert [item["answers"] for item in lt] == [[], ["goedemorgen"]]
+    assert lt[1]["nl"] == "___ (1)."
+
+
+def test_cloze_sentence_blanks_every_occurrence_numbered_per_line():
+    items = cloze.sentence_blanks(
+        [{"id": "uur", "nl": "het uur", "en": "the hour"}],
+        [{"speaker": "A", "nl": "Om tien uur of om elf uur?", "en": ""},
+         {"speaker": "B", "nl": "Om tien uur.", "en": ""}],
+    )
+    # both occurrences blanked, numbering restarts per line
+    assert items[0]["nl"] == "Om tien ___ (1) of om elf ___ (2)?"
+    assert items[0]["answers"] == ["uur", "uur"]
+    assert items[1]["nl"] == "Om tien ___ (1)."
+    assert items[1]["answers"] == ["uur"]

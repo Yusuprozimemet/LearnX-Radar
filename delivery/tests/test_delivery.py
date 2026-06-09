@@ -203,12 +203,20 @@ def test_email_attaches_second_dutch_mp3(tmp_path, monkeypatch):
 
 def test_telegram_dutch_markup_and_html():
     markup = telegram_sender._dutch_reply_markup({"quiz_words": _DUTCH_WORDS})
-    assert _buttons(markup) == ["🇳🇱 Quiz me in Dutch"]
-    assert telegram_sender._dutch_reply_markup({}) == {}  # no words -> no button
+    # Delft trainer button (v9) leads; the recall-quiz button follows when words exist.
+    assert _buttons(markup) == ["🎧 Train this lesson (Delft)", "🇳🇱 Quiz me in Dutch"]
+    assert _buttons(telegram_sender._dutch_reply_markup({})) == [
+        "🎧 Train this lesson (Delft)"
+    ]
     out = telegram_sender._dutch_html(_DUTCH_MD, 1024)
     assert "<b>de afspraak</b>" in out          # Dutch word rendered bold
     assert "**" not in out and "##" not in out  # raw markdown markers gone
     assert "<b>Nieuwe woorden</b>" in out       # heading/label bolded
+
+
+def test_telegram_dutch_markup_empty_when_trainer_off(monkeypatch):
+    monkeypatch.setattr(telegram_sender.config, "DUTCH_TRAINER_ENABLED", False)
+    assert telegram_sender._dutch_reply_markup({}) == {}  # no words, no trainer -> {}
 
 
 def test_telegram_dutch_html_italicises_english_and_keeps_tags_intact():

@@ -150,11 +150,17 @@ def _dutch_html(md: str, limit: int) -> str:
 
 
 def _dutch_reply_markup(dutch: dict) -> dict:
+    rows = []
+    # Delft trainer (v9 day 32): tap-to-play sentences, checked cloze, enforced
+    # one-chance listening — the interactive half of the lesson.
+    if config.DUTCH_TRAINER_ENABLED:
+        rows.append([{"text": "🎧 Train this lesson (Delft)", "url": config.TRAINER_URL}])
     words = dutch.get("quiz_words") or []
-    if not words:
+    if words:
+        rows.append([{"text": "🇳🇱 Quiz me in Dutch", "url": followup.dutch_quiz_url(words)}])
+    if not rows:
         return {}
-    button = {"text": "🇳🇱 Quiz me in Dutch", "url": followup.dutch_quiz_url(words)}
-    return {"reply_markup": json.dumps({"inline_keyboard": [[button]]})}
+    return {"reply_markup": json.dumps({"inline_keyboard": rows})}
 
 
 def _send_dutch(chat_id: str, lesson: dict, dutch_pdf: Path | None, token: str) -> None:
