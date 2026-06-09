@@ -229,3 +229,6 @@ dashboard/podcast.xml
 
 # Claude Code local harness config
 .claude/
+
+# Local idea notes (not published)
+ideas/
