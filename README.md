@@ -29,8 +29,7 @@ produce, not just what you were sent. See [Dutch coach](#dutch-coach).
        whole subscription — Telegram holds the member list, so **no personal data is
        stored** on my side.
 - **Spotify — [listen on Spotify](https://open.spotify.com/show/033tPjkKDj5xF09FQC0Di7):** the daily lessons as a
-       podcast show (also on Apple Podcasts, or add the [feed URL](#podcast-feed) to any
-       podcast app).
+       podcast show (or add the [feed URL](#podcast-feed) to any podcast app).
 - **Waitlist for *personalized* lessons — [tally.so/r/WOqPdP](https://tally.so/r/WOqPdP):**
        early access to lessons matched to your stack & goals (individuals & teams). A
        reminder CTA is also posted to the channel weekly; we store only what you submit
@@ -82,9 +81,9 @@ produce, not just what you were sent. See [Dutch coach](#dutch-coach).
        audio, delivery, persistence) — the per-stage guards keep the run alive, and the
        report keeps those failures from hiding in Actions logs (`RUN_REPORT_ENABLED`).
 - Builds a static dashboard from committed state, with a Radar / Dutch tab toggle.
-- Publishes an **Apple/Spotify-compliant podcast RSS feed** (with cover art and
-       iTunes directory tags) so the daily lessons land in Spotify, Apple Podcasts, or
-       any podcast app.
+- Publishes a **Spotify-compliant podcast RSS feed** (with cover art and
+       iTunes directory tags) so the daily lessons land in Spotify or any
+       podcast app.
 - Generates a static dashboard with **Open Graph / Twitter share previews** and a
        "Join on Telegram" call-to-action so a shared link renders a rich card.
 
@@ -181,7 +180,7 @@ main.py     daily pipeline entry point
        `libcairo2-dev` + `pkg-config` for its build).
 - Delivery: Telegram Bot API (your DM **+ a public broadcast channel**) and Gmail SMTP.
 - Reach: weekly dev.to cross-post via the Forem API (`DEVTO_API_KEY`, draft by
-       default), and an Apple/Spotify-compliant podcast feed served from GitHub Pages.
+       default), and a Spotify-compliant podcast feed served from GitHub Pages.
 - Schedule: radar workflow runs at 06:00 UTC every day; dashboard + podcast feed
        deploy via GitHub Pages.
 
@@ -317,13 +316,13 @@ In CI, the env values come from GitHub repo secrets (see
 The daily MP3s (developer lesson + Dutch lesson) are uploaded as assets on a single
 rolling GitHub Release (tag `lessons`) by the radar workflow, and `podcast.xml` is
 published alongside the dashboard on GitHub Pages — Dutch episodes interleave with
-the dev lessons by date. The feed is **Apple Podcasts / Spotify compliant**: it
+the dev lessons by date. The feed is **Spotify compliant**: it
 carries the required iTunes directory tags, an owner email for ownership
 verification, and square cover art (`cover.png`), and episodes are de-duplicated by
 audio GUID so a re-run never doubles an episode.
 
 Listen on **[Spotify](https://open.spotify.com/show/033tPjkKDj5xF09FQC0Di7)**, or subscribe in any podcast app
-(Apple Podcasts, Pocket Casts, AntennaPod) by adding the feed URL:
+(Pocket Casts, AntennaPod) by adding the feed URL:
 
 ```
 https://yusuprozimemet.github.io/LearnX-Radar/podcast.xml
