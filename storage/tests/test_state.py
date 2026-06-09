@@ -160,3 +160,43 @@ def test_record_dutch_lesson_streak_resets_after_gap():
     state.record_dutch_lesson(memory, word_ids=["b"], theme="everyday", when=date(2026, 6, 5))
     assert memory["streak"] == 1  # gap of >1 day resets
 
+
+# --- recall feedback into the scheduler (v9 day 33) ---------------------------
+
+def test_record_dutch_recall_right_wrong_and_untrained():
+    memory = state._default_dutch_memory()
+    state.record_dutch_lesson(memory, word_ids=["a", "b", "c"], theme="everyday",
+                              when=date(2026, 6, 1))
+    state.record_dutch_lesson(memory, word_ids=["a", "b", "c"], theme="everyday",
+                              when=date(2026, 6, 2))  # reps -> 2, interval widened
+
+    applied = state.record_dutch_recall(memory, "2026-06-02", "10x",
+                                        when=date(2026, 6, 3))
+    assert applied == 2
+    a, b, c = memory["words"]["a"], memory["words"]["b"], memory["words"]["c"]
+    # right: counter up, scheduling untouched (exposure already widened it)
+    assert a["recall_right"] == 1 and "recall_wrong" not in a
+    assert a["reps"] == 2 and a["due"] == "2026-06-04"
+    # wrong: forgotten card — reps back to 1, due = lesson date + base interval
+    assert b["recall_wrong"] == 1
+    assert b["reps"] == 1 and b["due"] == "2026-06-03"
+    # 'x' (not trained): exposure-based scheduling stays the fallback
+    assert "recall_right" not in c and "recall_wrong" not in c
+    assert c["reps"] == 2
+    # the report log feeds the dashboard's rolling recall rate
+    log = memory["recall"][-1]
+    assert log["date"] == "2026-06-02" and log["reported"] == "2026-06-03"
+    assert log["right"] == ["a"] and log["wrong"] == ["b"]
+
+
+def test_record_dutch_recall_unknown_date_and_duplicate_noop():
+    memory = state._default_dutch_memory()
+    state.record_dutch_lesson(memory, word_ids=["a"], theme="everyday", when=date(2026, 6, 1))
+
+    assert state.record_dutch_recall(memory, "2026-05-30", "1") == 0  # no such lesson
+    assert state.record_dutch_recall(memory, "2026-06-01", "1") == 1
+    # duplicate tap on the deep link: first report wins, counters don't double
+    assert state.record_dutch_recall(memory, "2026-06-01", "0") == 0
+    a = memory["words"]["a"]
+    assert a["recall_right"] == 1 and "recall_wrong" not in a
+    assert len(memory["recall"]) == 1

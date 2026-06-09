@@ -20,6 +20,7 @@ from storage.state import (
     mark_seen,
     previous_lesson,
     record_dutch_lesson,
+    record_dutch_recall,
     record_lesson,
     save_brief,
     save_dutch_lesson,
@@ -52,4 +53,5 @@ __all__ = [
     "save_dutch_lesson",
     "dutch_due_words",
     "record_dutch_lesson",
+    "record_dutch_recall",
 ]

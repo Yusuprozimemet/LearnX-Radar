@@ -78,4 +78,18 @@ def build_payload(
         "segments": segments,
         "block_b": span("B"),  # sentence -> repeat pause -> sentence again (Delft step 3)
         "block_c": span("C"),  # the dialogue straight through (Delft steps 2/4)
+        # Recall feedback (v9 day 33): what the "Save results" deep link needs. The
+        # word ORDER here is the contract — it matches dutch_memory's lessons[].words
+        # for this date (both are new + review, same expression as main._build_dutch),
+        # so the page can report one mark per position (1 right / 0 wrong / x not
+        # trained) and the next run can map positions back to ids without sending the
+        # ids themselves (Telegram caps /start payloads at 64 chars). `form` is the
+        # article-stripped match form — the exam answers the page compares against.
+        "report": {
+            "bot": config.TELEGRAM_BOT_USERNAME if config.DUTCH_RECALL_ENABLED else "",
+            "words": [
+                {"id": w["id"], "form": cloze.match_form(w.get("nl", ""))}
+                for w in lesson.new_words + lesson.review_words
+            ],
+        },
     }

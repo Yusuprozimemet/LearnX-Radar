@@ -100,6 +100,12 @@
                           cursor:not-allowed; }
   button.score.retake { background:var(--blue); border-bottom-color:var(--blue-edge);
                         margin-left:.6rem; }
+  a.score { display:inline-block; background:var(--green); color:#fff; text-decoration:none;
+            border-bottom:4px solid var(--green-edge); border-radius:14px;
+            padding:.6rem 1.6rem; font-weight:800; font-size:.9rem;
+            text-transform:uppercase; letter-spacing:.05em; }
+  a.score:active { transform:translateY(2px); border-bottom-width:2px; }
+  .report-note { color:var(--grey); font-weight:700; font-size:.85rem; margin-left:.7rem; }
   .attempts { color:var(--grey); font-weight:800; font-size:.85rem; margin-left:.8rem; }
   .result { color:var(--green-edge); font-weight:800; margin-left:.8rem; }
   .stats { color:var(--grey); font-weight:700; margin-top:1rem; }
@@ -212,10 +218,52 @@
     if (!statsBox) return;
     statsBox.textContent = "";
     var s = recallStats();
-    if (!s.total) { statsBox.appendChild(el("span", "muted", "Nog geen resultaten.")); return; }
-    var pct = Math.round(100 * s.right / s.total);
-    statsBox.appendChild(el("span", null, "Recall op dit apparaat: "));
-    statsBox.appendChild(el("strong", null, s.right + "/" + s.total + " (" + pct + "%)"));
+    if (s.total) {
+      var pct = Math.round(100 * s.right / s.total);
+      statsBox.appendChild(el("span", null, "Recall op dit apparaat: "));
+      statsBox.appendChild(el("strong", null, s.right + "/" + s.total + " (" + pct + "%)"));
+    } else {
+      statsBox.appendChild(el("span", "muted", "Nog geen resultaten."));
+    }
+    refreshReport();
+  }
+
+  // --- v9 day 33: send recall results back to the bot (deep link, no server) ----
+  // One mark per word, in the payload's word order (the same order the daily run
+  // stored in its own lesson record): 1 = right, 0 = wrong, x = not trained. A word
+  // is wrong if ANY of its blanks was wrong in a scored attempt today; right needs
+  // at least one right blank and no wrong one. Tapping the button opens
+  // https://t.me/<bot>?start=dr_<YYMMDD>_<marks> — one tap in Telegram sends the
+  // payload as a /start message from the learner's own account; the next morning's
+  // run reads it via getUpdates and folds it into the spaced-repetition schedule.
+  var reportLesson = null, reportBox = null;
+  function wordMarks(lesson) {
+    var kinds = loadResults()[lesson.date] || {};
+    var rights = {}, wrongs = {};
+    Object.keys(kinds).forEach(function (k) {
+      (kinds[k].right || []).forEach(function (a) { rights[norm(a)] = true; });
+      (kinds[k].wrong || []).forEach(function (a) { wrongs[norm(a)] = true; });
+    });
+    return (lesson.report.words || []).map(function (w) {
+      var f = norm(w.form || "");
+      if (wrongs[f]) return "0";
+      if (rights[f]) return "1";
+      return "x";
+    }).join("");
+  }
+  function refreshReport() {
+    if (!reportBox || !reportLesson) return;
+    reportBox.textContent = "";
+    var rep = reportLesson.report || {};
+    if (!rep.bot || !(rep.words || []).length) return;
+    var marks = wordMarks(reportLesson);
+    if (!/[01]/.test(marks)) return;        // nothing scored yet today
+    var a = el("a", "score", "✅ Resultaten opslaan");
+    a.href = "https://t.me/" + rep.bot + "?start=dr_" +
+             reportLesson.date.replace(/-/g, "").slice(2) + "_" + marks;
+    reportBox.appendChild(a);
+    reportBox.appendChild(el("span", "report-note",
+      "stuurt je score naar de bot — morgen plant hij je woorden ernaar (sends your score to the bot)"));
   }
 
   // --- exam attempts: up to MAX_ATTEMPTS per date+exercise --------------------
@@ -571,6 +619,7 @@
     document.getElementById("meta").textContent =
       lesson.date + " · " + lesson.theme + " · " + lesson.cefr;
     loadAudio(lesson);
+    reportLesson = lesson;
     document.getElementById("tabs").style.display = "";
 
     var state = { tab: "leren", step: 1, sub: "gatentekst" };
@@ -598,6 +647,8 @@
         app.appendChild(state.sub === "gatentekst"
           ? gatentekstView(lesson) : luistertoetsView(lesson));
       }
+      reportBox = el("p");
+      app.appendChild(reportBox);
       statsBox = el("p", "stats");
       app.appendChild(statsBox);
       refreshStats();

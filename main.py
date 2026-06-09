@@ -23,7 +23,7 @@ from agents import (
     stackoverflow_agent,
 )
 from dashboard import builder as dashboard
-from delivery import devto_publisher, email_sender, telegram_sender
+from delivery import devto_publisher, email_sender, telegram_recall, telegram_sender
 from dutch import audio as dutch_audio
 from dutch import lesson as dutch_lesson
 from dutch import trainer as dutch_trainer
@@ -40,6 +40,7 @@ from storage import (
     mark_seen,
     previous_lesson,
     record_dutch_lesson,
+    record_dutch_recall,
     record_lesson,
     save_brief,
     save_dutch_lesson,
@@ -150,6 +151,24 @@ def _refresh_dashboard(memory: dict, scored=None, today_skill=None) -> None:
         _fail("dashboard build", exc)
 
 
+def _ingest_dutch_recall(dmem: dict) -> None:
+    """Fold pending trainer recall reports (v9 day 33) into the SR memory, mutating
+    `dmem` and saving immediately — so the fold-in survives even if a later Dutch
+    stage fails, and today's word selection already sees the reset due dates.
+    Guarded: a Telegram hiccup degrades to exposure-only scheduling, never blocks."""
+    if not config.DUTCH_RECALL_ENABLED:
+        return
+    try:
+        reports = telegram_recall.fetch_reports()
+        applied = sum(record_dutch_recall(dmem, d, marks) for d, marks in reports)
+        if applied:
+            save_dutch_memory(dmem)
+        if reports:
+            print(f"[dutch] recall: {len(reports)} report(s), {applied} word(s) updated")
+    except Exception as exc:
+        _fail("dutch recall", exc)
+
+
 def _build_dutch(today_skill: str | None) -> tuple[dict | None, dict | None]:
     """Build the daily Dutch lesson: (delivery_payload, persist_state).
 
@@ -162,6 +181,7 @@ def _build_dutch(today_skill: str | None) -> tuple[dict | None, dict | None]:
     try:
         today = date.today()
         dmem = load_dutch_memory()
+        _ingest_dutch_recall(dmem)  # BEFORE selection: a failed word becomes due now
         bank = dutch_wordlist.load()
         theme = dutch_wordlist.theme_for(today)
         new_w, review_w = dutch_wordlist.select_for_today(
