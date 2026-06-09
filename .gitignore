@@ -226,3 +226,6 @@ output/*
 # Generated dashboard + podcast feed (rendered each run; published via Pages, not committed)
 dashboard/index.html
 dashboard/podcast.xml
+
+# Claude Code local harness config
+.claude/
