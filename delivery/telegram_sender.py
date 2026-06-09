@@ -276,10 +276,27 @@ def post_waitlist(force: bool = False, chat_id: str | None = None) -> bool:
 def send(lesson: dict) -> None:
     """Broadcast the lesson to every target (owner chat + channel). PDFs are rendered
     once and reused; delivery to each target is failure-isolated so one bad target
-    (e.g. a misconfigured channel) never blocks the others."""
+    (e.g. a misconfigured channel) never blocks the others. After all targets are
+    attempted, any failure is re-raised so the caller's run report can surface it."""
     brief_pdf, dutch_pdf = _render_pdfs(lesson)
+    failed: list[str] = []
     for chat_id in _targets():
         try:
             _deliver_one(chat_id, lesson, brief_pdf, dutch_pdf)
         except Exception as exc:
-            print(f"[telegram] delivery to {chat_id} failed (non-fatal): {exc}")
+            print(f"[telegram] delivery to {chat_id} failed: {exc}")
+            failed.append(f"{chat_id}: {exc}")
+    if failed:
+        raise RuntimeError("delivery failed for " + "; ".join(failed))
+
+
+def send_report(text: str) -> None:
+    """Plain-text DM to the OWNER chat only (never the channel). Used by main() to
+    surface stage failures from an unattended cron run; no-op when unconfigured."""
+    if not (config.TELEGRAM_BOT_TOKEN and config.TELEGRAM_CHAT_ID):
+        return
+    _check(requests.post(
+        SEND_MESSAGE.format(token=config.TELEGRAM_BOT_TOKEN),
+        data={"chat_id": config.TELEGRAM_CHAT_ID, "text": text[:MESSAGE_LIMIT]},
+        timeout=30,
+    ))

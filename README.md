@@ -60,6 +60,9 @@ review, and a recall quiz. See [Dutch coach](#dutch-coach).
 - Persists a knowledge memory and full briefs (whose text seeds each lesson's
        Perplexity follow-up Q&A and recall quiz).
 - Redacts PII (emails, phone numbers, handles) from collected text at ingestion.
+- **DMs the owner a failure report** when any pipeline stage fails (source fetch,
+       audio, delivery, persistence) — the per-stage guards keep the run alive, and the
+       report keeps those failures from hiding in Actions logs (`RUN_REPORT_ENABLED`).
 - Builds a static dashboard from committed state, with a Radar / Dutch tab toggle.
 - Publishes an **Apple/Spotify-compliant podcast RSS feed** (with cover art and
        iTunes directory tags) so the daily lessons land in Spotify, Apple Podcasts, or

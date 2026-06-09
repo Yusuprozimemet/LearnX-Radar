@@ -46,6 +46,10 @@ TELEGRAM_CHANNEL_BOT_TOKEN = os.getenv("TELEGRAM_CHANNEL_BOT_TOKEN")
 # get the same detailed content as email — audio captions are capped at 1024 chars
 # (which truncated the Dutch dialogue). False -> legacy caption-only behavior.
 TELEGRAM_PDF_ENABLED = True
+# DM a run report to TELEGRAM_CHAT_ID (owner only, never the channel) when any
+# pipeline stage fails. The stage guards keep the run alive but otherwise leave
+# failures buried in Actions logs; this surfaces them. False -> logs only.
+RUN_REPORT_ENABLED = True
 
 # --- Waitlist / personalization upsell (channel CTA) ---
 # A recurring call-to-action posted to the channel inviting subscribers to a hosted

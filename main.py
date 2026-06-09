@@ -5,8 +5,8 @@
            -> deliver -> persist state
 
 Each stage is wrapped so one failure produces a clear message instead of a
-silent half-run. The module stubs raise NotImplementedError until their v1 spec
-day lands; the orchestration below is the contract they fill.
+silent half-run; failures are collected and DM'd to the owner at the end of the
+run (see _report) so an unattended cron can't degrade silently.
 """
 import asyncio
 from datetime import date
@@ -51,6 +51,29 @@ from storage import (
 
 OUTPUT_DIR = Path(__file__).parent / "output"
 
+# Stage failures collected across the run; _report() DMs them to the owner so the
+# per-stage guards (which keep the run alive) can't also hide a dying channel.
+_failures: list[str] = []
+
+
+def _fail(stage: str, exc: Exception) -> None:
+    print(f"[{stage}] failed: {exc}")
+    _failures.append(f"{stage}: {exc}")
+
+
+def _report() -> None:
+    """DM the collected failures to the owner chat. Best-effort: if Telegram itself
+    is down this can't help, but partial failures (one source, one channel) reach
+    the owner via the surviving DM path."""
+    if not _failures or not config.RUN_REPORT_ENABLED:
+        return
+    text = f"⚠️ LearnX-Radar run had {len(_failures)} failure(s) on {date.today():%Y-%m-%d}:\n"
+    text += "\n".join(f"• {f}" for f in _failures)
+    try:
+        telegram_sender.send_report(text)
+    except Exception as exc:
+        print(f"[report] could not send failure report: {exc}")
+
 
 def _scrape(memory: dict) -> list[dict]:
     """Run every agent; a failing source must not kill the run.
@@ -73,14 +96,14 @@ def _scrape(memory: dict) -> list[dict]:
             print(f"[{name}] fetched {len(fetched)} item(s)")
             items.extend(fetched)
         except Exception as exc:
-            print(f"[{name}] fetch failed: {exc}")
+            _fail(f"{name} fetch", exc)
 
     try:
         fetched = stackoverflow_agent.fetch(memory.get("so_counts", {}))
         print(f"[stackoverflow] fetched {len(fetched)} item(s)")
         items.extend(fetched)
     except Exception as exc:
-        print(f"[stackoverflow] fetch failed: {exc}")
+        _fail("stackoverflow fetch", exc)
 
     # Redact PII (emails/phones/handles) from every item's free text at ingestion,
     # before dedup, the LLM, persistence, delivery, or the Perplexity link see it.
@@ -122,11 +145,11 @@ def _refresh_dashboard(memory: dict, scored=None, today_skill=None) -> None:
         path = dashboard.build(memory, scored, today_skill, dutch=dutch)
         print(f"[dashboard] wrote {path}")
     except Exception as exc:
-        print(f"[dashboard] build failed: {exc}")
+        _fail("dashboard build", exc)
 
 
 def _build_dutch(today_skill: str | None) -> tuple[dict | None, dict | None]:
-    """Build the daily Dutch lesson (v5): (delivery_payload, persist_state).
+    """Build the daily Dutch lesson: (delivery_payload, persist_state).
 
     Fully isolated — disabled via config or any failure returns (None, None) so the
     dev lesson always ships. The quiz targets YESTERDAY's words, read from memory
@@ -162,7 +185,7 @@ def _build_dutch(today_skill: str | None) -> tuple[dict | None, dict | None]:
         try:
             asyncio.run(dutch_audio.build(dlesson, dutch_mp3))
         except Exception as exc:
-            print(f"[dutch] audio failed: {exc}")
+            _fail("dutch audio", exc)
             dutch_mp3 = None
         payload = {
             "markdown": dlesson.markdown,
@@ -179,11 +202,11 @@ def _build_dutch(today_skill: str | None) -> tuple[dict | None, dict | None]:
         print(f"[dutch] {theme} lesson: {len(new_w)} new, {len(review_w)} review")
         return payload, state
     except Exception as exc:
-        print(f"[dutch] build failed: {exc}")
+        _fail("dutch build", exc)
         return None, None
 
 
-def main() -> None:
+def _run() -> None:
     config.validate()
     memory = load_memory()
 
@@ -192,7 +215,7 @@ def main() -> None:
     try:
         telegram_sender.post_waitlist()
     except Exception as exc:
-        print(f"[waitlist] post failed (non-fatal): {exc}")
+        _fail("waitlist post", exc)
 
     # 1. Collect from all sources, then drop anything already taught.
     items = _scrape(memory)
@@ -210,18 +233,16 @@ def main() -> None:
         _refresh_dashboard(memory)  # refresh coverage/archive even on a quiet day
         return
 
-    # 2. Radar: score ALL scraped items so the dashboard always shows the full
-    # demand picture and updates on every run. (Scoring only new_items made a
-    # same-day re-run thin — dev.to is the only source with fresh items between
-    # trend refreshes — which flattened the board to all-0.5.) novelty already
-    # sinks recently-taught skills, so top() still picks a genuine gap to teach.
+    # 2. Radar: score ALL scraped items (not just new ones) so the dashboard shows
+    # the full demand picture on every run; novelty already sinks recently-taught
+    # skills, so top() still picks a genuine gap to teach.
     mentions = skill_extractor.extract(items)
     profile = {"known": config.KNOWN_SKILLS, "goals": config.LEARNING_GOALS}
     # Prior-day rankings power the momentum multiplier (today isn't written until
     # save_trending_history below, so this is strictly history).
     scored = gap_scorer.score(mentions, memory, profile, history=load_trending_history())
-    # Map-reduce extraction maximizes recall (many candidates); MAX_SKILL_MENTIONS
-    # is now a POST-SCORING keep so the brief/dashboard stay focused on the top N.
+    # Extraction maximizes recall (many candidates); MAX_SKILL_MENTIONS trims after
+    # scoring so the brief/dashboard stay focused on the top N.
     skill = gap_scorer.top(scored)
     scored = scored[: config.MAX_SKILL_MENTIONS]
     # Persist the ranking so the dashboard can rebuild from committed state alone
@@ -275,7 +296,7 @@ def main() -> None:
             lesson["quiz_skill"] = prev["skill"]
             lesson["quiz_brief_md"] = prev_brief_md
 
-    # 3c. Dutch coach (v5): build an independent A2 Dutch lesson and attach it to the
+    # 3c. Dutch coach: build an independent A2 Dutch lesson and attach it to the
     # payload so each sender appends it. Isolated — never blocks the dev lesson.
     dutch_payload, dutch_state = _build_dutch(skill["skill"])
     if dutch_payload:
@@ -286,13 +307,13 @@ def main() -> None:
         try:
             sender.send(lesson)
         except Exception as exc:
-            print(f"[{name}] send failed: {exc}")
+            _fail(f"{name} send", exc)
 
     # 4b. Weekly cross-post to dev.to (draft) for reach/SEO — never blocks the run.
     try:
         devto_publisher.publish(lesson)
     except Exception as exc:
-        print(f"[devto] cross-post failed: {exc}")
+        _fail("devto cross-post", exc)
 
     # 5. Persist state only after the lesson was produced.
     mark_seen(seen, (item["id"] for item in new_items))
@@ -320,11 +341,23 @@ def main() -> None:
             )
             save_dutch_memory(dutch_state["memory"])
         except Exception as exc:
-            print(f"[dutch] persist failed: {exc}")
+            _fail("dutch persist", exc)
 
     # 6. Regenerate the dashboard from the updated state + this run's ranking.
     _refresh_dashboard(memory, scored, skill["skill"])
     print("Done.")
+
+
+def main() -> None:
+    """Run the pipeline, then DM any stage failures to the owner. A hard crash is
+    recorded and re-raised so the Actions run still goes red."""
+    try:
+        _run()
+    except Exception as exc:
+        _fail("run", exc)
+        raise
+    finally:
+        _report()
 
 
 if __name__ == "__main__":

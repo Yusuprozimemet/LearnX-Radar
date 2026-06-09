@@ -228,6 +228,59 @@ def test_telegram_dutch_html_italicises_english_and_keeps_tags_intact():
     assert short.count("<i>") == short.count("</i>")
 
 
+# --- run report --------------------------------------------------------------
+
+class _OkResp:
+    ok = True
+
+
+def test_send_report_dms_owner_and_trims(monkeypatch):
+    monkeypatch.setattr(telegram_sender.config, "TELEGRAM_BOT_TOKEN", "tok")
+    monkeypatch.setattr(telegram_sender.config, "TELEGRAM_CHAT_ID", "owner")
+    captured = {}
+
+    def fake_post(url, data=None, timeout=None, **kw):
+        captured["url"] = url
+        captured["data"] = data
+        return _OkResp()
+
+    monkeypatch.setattr(telegram_sender.requests, "post", fake_post)
+    telegram_sender.send_report("x" * 5000)
+    assert "tok" in captured["url"]
+    assert captured["data"]["chat_id"] == "owner"
+    assert len(captured["data"]["text"]) == telegram_sender.MESSAGE_LIMIT
+
+
+def test_send_report_noop_without_config(monkeypatch):
+    monkeypatch.setattr(telegram_sender.config, "TELEGRAM_BOT_TOKEN", None)
+    monkeypatch.setattr(telegram_sender.config, "TELEGRAM_CHAT_ID", None)
+
+    def boom(*a, **k):
+        raise AssertionError("must not POST without bot token + chat id")
+
+    monkeypatch.setattr(telegram_sender.requests, "post", boom)
+    telegram_sender.send_report("failures")
+
+
+def test_send_tries_all_targets_then_raises_on_failure(monkeypatch):
+    monkeypatch.setattr(telegram_sender, "_render_pdfs", lambda lesson: (None, None))
+    monkeypatch.setattr(telegram_sender, "_targets", lambda: ["bad", "good"])
+    delivered = []
+
+    def fake_deliver(chat_id, lesson, brief_pdf, dutch_pdf):
+        delivered.append(chat_id)
+        if chat_id == "bad":
+            raise RuntimeError("PEER_ID_INVALID")
+
+    monkeypatch.setattr(telegram_sender, "_deliver_one", fake_deliver)
+    try:
+        telegram_sender.send({"title": "t", "mp3_path": "x.mp3"})
+        raise AssertionError("send must re-raise after a failed target")
+    except RuntimeError as exc:
+        assert "bad" in str(exc)
+    assert delivered == ["bad", "good"]  # the failure didn't block the other target
+
+
 # --- dev.to cross-post -------------------------------------------------------
 
 class _FakeResp:
