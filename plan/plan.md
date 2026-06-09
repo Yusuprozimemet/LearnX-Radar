@@ -498,3 +498,8 @@ linked to Perplexity. One choke point keeps PII out of every downstream sink.
   a Spotify/Apple-listed podcast, and a weekly dev.to cross-post — while a waitlist
   captures demand for the personalized tier, all free-tier and storing no subscriber
   data.
+- v9: The Dutch track adopts the **Delftse methode** (listen → imitate → produce):
+  the daily MP3 leaves repeat-pauses after every sentence, the lesson ends with a
+  fill-in-the-blanks production exercise, a static trainer page on Pages enforces
+  the one-chance listening drill, and measured recall — not mere exposure — drives
+  the spaced-repetition intervals.

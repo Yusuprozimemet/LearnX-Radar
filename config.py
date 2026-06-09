@@ -328,6 +328,18 @@ DUTCH_CLOZE_ENABLED = True      # False -> lesson markdown unchanged (rollback)
 # one-chance listening). See specs/v9/day32-delft-trainer.md.
 DUTCH_TRAINER_ENABLED = True    # False -> no lesson JSON, no trainer link (rollback)
 
+# Recall feedback into spaced repetition (v9 day 33): the trainer page's "Save
+# results" button deep-links to the bot (https://t.me/<username>?start=dr_…) so the
+# learner's own /start message carries the trainer scores back; the next morning's
+# run reads them via getUpdates and folds them into dutch_memory. No webhook, no
+# token in the browser — the page only builds a URL. Owner-only for now (reports
+# are accepted from TELEGRAM_CHAT_ID alone). See specs/v9/day33-recall-feedback.md.
+DUTCH_RECALL_ENABLED = True     # False -> no Save button, no getUpdates ingestion
+# The MAIN bot's public @username (without the @) — needed because the static page
+# can't know it (the token is a secret; a username is not). Empty -> the trainer
+# simply doesn't render the Save-results button.
+TELEGRAM_BOT_USERNAME = os.getenv("TELEGRAM_BOT_USERNAME", "")
+
 # Spaced repetition for vocab: shorter base than the dev track (SR_BASE_INTERVAL_DAYS
 # = 7) because words need tighter early spacing than concept lessons. Intervals widen
 # as reps grow: round(base * factor**(reps-1)) -> ~1, 2, 5, 11, 24 ... days.

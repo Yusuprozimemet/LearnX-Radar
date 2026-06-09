@@ -253,8 +253,13 @@ def load_brief(filename: str) -> str:
 # streak survive across daily runs. Shape:
 #   {"version": 1, "cefr": "A2", "streak": 0, "last_run": "YYYY-MM-DD",
 #    "last_words": [id, ...],                 # the prior run's set — the quiz target
-#    "words": {id: {"introduced","reps","last_review","due"}},
-#    "lessons": [{"date","theme","audio","words":[id...],"summary"}]}
+#    "words": {id: {"introduced","reps","last_review","due",
+#                   "recall_right","recall_wrong"}},   # v9 day 33: trainer outcomes
+#    "lessons": [{"date","theme","audio","words":[id...],"summary"}],
+#    "recall": [{"date","reported","right":[id...],"wrong":[id...]}]}  # report log
+
+RECALL_LOG_KEEP = 90  # reports kept; the dashboard's rolling window only needs 30
+
 
 def _default_dutch_memory() -> dict:
     return {
@@ -265,6 +270,7 @@ def _default_dutch_memory() -> dict:
         "last_words": [],
         "words": {},
         "lessons": [],
+        "recall": [],
     }
 
 
@@ -368,3 +374,61 @@ def record_dutch_lesson(
         }
     )
     return memory
+
+
+def record_dutch_recall(
+    memory: dict, date_iso: str, marks: str, when: date | None = None
+) -> int:
+    """Fold one trainer recall report into the SR state (v9 day 33); returns the
+    number of words it applied to (0 when the report can't be used).
+
+    `marks` is positional over the words of the lesson dated `date_iso` (the same
+    new+review order record_dutch_lesson stored). Per mark:
+      '1' (recalled)   -> recall_right += 1. Scheduling unchanged — the exposure
+                          bump at delivery already widened the interval, which is
+                          exactly "behaves as today" for a remembered word.
+      '0' (failed)     -> recall_wrong += 1, reps reset to 1, due = lesson date +
+                          base interval — the word reappears like a forgotten card.
+      'x' (not trained)-> untouched: exposure-based scheduling stays the fallback,
+                          so skipping the trainer never punishes.
+    One report per lesson date — the FIRST wins (a duplicate tap on the deep link
+    must not double-count the recall counters).
+    """
+    lesson = next(
+        (l for l in reversed(memory.get("lessons", [])) if l.get("date") == date_iso),
+        None,
+    )
+    if lesson is None:
+        return 0
+    if any(r.get("date") == date_iso for r in memory.get("recall", [])):
+        return 0  # already folded in
+    words = memory.setdefault("words", {})
+    right_ids: list[str] = []
+    wrong_ids: list[str] = []
+    for wid, mark in zip(lesson.get("words", []), marks):
+        entry = words.get(wid)
+        if entry is None or mark == "x":
+            continue
+        if mark == "1":
+            entry["recall_right"] = int(entry.get("recall_right", 0)) + 1
+            right_ids.append(wid)
+        else:
+            entry["recall_wrong"] = int(entry.get("recall_wrong", 0)) + 1
+            entry["reps"] = 1
+            entry["due"] = (
+                date.fromisoformat(date_iso) + timedelta(days=_dutch_interval_days(1))
+            ).isoformat()
+            wrong_ids.append(wid)
+    if not right_ids and not wrong_ids:
+        return 0
+    log = memory.setdefault("recall", [])
+    log.append(
+        {
+            "date": date_iso,
+            "reported": (when or date.today()).isoformat(),
+            "right": right_ids,
+            "wrong": wrong_ids,
+        }
+    )
+    del log[:-RECALL_LOG_KEEP]
+    return len(right_ids) + len(wrong_ids)

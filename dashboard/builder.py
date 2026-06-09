@@ -14,7 +14,7 @@ provenance, in case web hosting is added later.
 import html
 import json
 import math
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 import config
@@ -133,6 +133,7 @@ def _dutch_html(dutch: dict) -> str:
         f"<span>Streak <strong>{_esc(dutch.get('streak', 0))}</strong> day(s)</span>"
         f"<span>Words learned <strong>{len(words)}</strong></span>"
         f"<span>Due for review today <strong>{due}</strong></span>"
+        f"{_recall_rate_html(dutch.get('recall', []))}"
         "</div>"
     )
 
@@ -156,6 +157,10 @@ def _dutch_html(dutch: dict) -> str:
 
     sections = [_section("🇳🇱 Dutch progress", progress), _section("🆕 Recent words", table)]
 
+    struggling = _struggling_html(words, bank)
+    if struggling:
+        sections.append(_section("🔁 Struggling words", struggling))
+
     if lessons:
         ordered_lessons = sorted(lessons, key=lambda lesson: lesson.get("date", ""), reverse=True)
         cards = [
@@ -172,6 +177,51 @@ def _dutch_html(dutch: dict) -> str:
         sections.append(_section("🗂️ Dutch lessons", "".join(cards)))
 
     return "\n".join(sections)
+
+
+def _recall_rate_html(recall: list[dict]) -> str:
+    """Rolling 30-day recall rate from the trainer report log (v9 day 33): measured
+    production, not exposure — the difference between "the streak is alive" and
+    "it's working". Empty string until a first report exists in the window."""
+    cutoff = (date.today() - timedelta(days=30)).isoformat()
+    right = wrong = 0
+    for r in recall:
+        if r.get("date", "") >= cutoff:
+            right += len(r.get("right", []))
+            wrong += len(r.get("wrong", []))
+    total = right + wrong
+    if not total:
+        return ""
+    pct = round(100 * right / total)
+    return f"<span>Recall (30d) <strong>{pct}% ({right}/{total})</strong></span>"
+
+
+def _struggling_html(words: dict, bank: dict) -> str:
+    """The most-failed words (v9 day 33): recall_wrong desc, then shortest interval
+    (nearest due) first — the words the trainer says you can't yet produce. Empty
+    string (section omitted) until any word has a failed recall."""
+    failed = [
+        (wid, e) for wid, e in words.items() if int(e.get("recall_wrong", 0)) > 0
+    ]
+    if not failed:
+        return ""
+    failed.sort(key=lambda kv: (-int(kv[1].get("recall_wrong", 0)), kv[1].get("due", "")))
+    rows = []
+    for wid, entry in failed[:8]:
+        info = bank.get(wid, {})
+        rows.append(
+            "<tr><td>{nl}</td><td>{en}</td><td>{wrong}</td><td>{right}</td><td>{due}</td></tr>".format(
+                nl=_esc(info.get("nl", wid)),
+                en=_esc(info.get("en", "")),
+                wrong=int(entry.get("recall_wrong", 0)),
+                right=int(entry.get("recall_right", 0)),
+                due=_esc(entry.get("due", "—")),
+            )
+        )
+    return (
+        "<table><tr><th>Word</th><th>Meaning</th><th>Failed</th><th>Recalled</th>"
+        "<th>Next review</th></tr>" + "".join(rows) + "</table>"
+    )
 
 
 def _esc(text: object) -> str:

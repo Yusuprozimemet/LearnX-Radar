@@ -2,7 +2,7 @@
 import json
 from urllib.parse import unquote
 
-from delivery import devto_publisher, email_sender, followup, telegram_sender
+from delivery import devto_publisher, email_sender, followup, telegram_recall, telegram_sender
 
 
 def _lesson(
@@ -287,6 +287,66 @@ def test_send_tries_all_targets_then_raises_on_failure(monkeypatch):
     except RuntimeError as exc:
         assert "bad" in str(exc)
     assert delivered == ["bad", "good"]  # the failure didn't block the other target
+
+
+# --- recall reports via getUpdates (v9 day 33) --------------------------------
+
+class _UpdatesResp:
+    def __init__(self, result):
+        self._result = result
+
+    def raise_for_status(self):
+        pass
+
+    def json(self):
+        return {"ok": True, "result": self._result}
+
+
+def test_fetch_reports_owner_only_last_wins_and_acks(monkeypatch):
+    monkeypatch.setattr(telegram_recall.config, "TELEGRAM_BOT_TOKEN", "tok")
+    monkeypatch.setattr(telegram_recall.config, "TELEGRAM_CHAT_ID", "42")
+    updates = [
+        {"update_id": 7, "message": {"chat": {"id": 42}, "text": "/start dr_260608_10x"}},
+        {"update_id": 8, "message": {"chat": {"id": 99}, "text": "/start dr_260608_000"}},  # not the owner
+        {"update_id": 9, "message": {"chat": {"id": 42}, "text": "hoi"}},  # not a report
+        {"update_id": 11, "message": {"chat": {"id": 42}, "text": "/start dr_260608_11x"}},  # re-send wins
+        {"update_id": 12, "message": {"chat": {"id": 42}, "text": "/start dr_260607_01"}},
+    ]
+    calls = []
+
+    def fake_get(url, params=None, timeout=None):
+        calls.append(params or {})
+        return _UpdatesResp([] if "offset" in (params or {}) else updates)
+
+    monkeypatch.setattr(telegram_recall.requests, "get", fake_get)
+    reports = telegram_recall.fetch_reports()
+    # date-sorted; owner-only; the LAST report for a date supersedes the earlier tap
+    assert reports == [("2026-06-07", "01"), ("2026-06-08", "11x")]
+    assert calls[-1]["offset"] == 13  # whole batch acknowledged past the newest id
+
+
+def test_fetch_reports_noop_without_config(monkeypatch):
+    monkeypatch.setattr(telegram_recall.config, "TELEGRAM_BOT_TOKEN", None)
+
+    def boom(*a, **k):
+        raise AssertionError("must not call Telegram without a token")
+
+    monkeypatch.setattr(telegram_recall.requests, "get", boom)
+    assert telegram_recall.fetch_reports() == []
+
+
+def test_fetch_reports_no_updates_no_ack(monkeypatch):
+    monkeypatch.setattr(telegram_recall.config, "TELEGRAM_BOT_TOKEN", "tok")
+    monkeypatch.setattr(telegram_recall.config, "TELEGRAM_CHAT_ID", "42")
+    calls = []
+
+    def fake_get(url, params=None, timeout=None):
+        calls.append(params or {})
+        return _UpdatesResp([])
+
+    monkeypatch.setattr(telegram_recall.requests, "get", fake_get)
+    assert telegram_recall.fetch_reports() == []
+    assert len(calls) == 1  # nothing fetched -> no confirming second call
 
 
 # --- dev.to cross-post -------------------------------------------------------

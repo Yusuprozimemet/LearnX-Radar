@@ -321,6 +321,33 @@ def test_trainer_payload_block_b_and_luistertoets():
     assert lt[1]["nl"] == "___ (1)."
 
 
+def test_trainer_payload_report_words_order_and_forms(monkeypatch):
+    from dutch import trainer
+
+    monkeypatch.setattr(config, "DUTCH_RECALL_ENABLED", True)
+    monkeypatch.setattr(config, "TELEGRAM_BOT_USERNAME", "LearnXBot")
+    lesson = _delft_lesson()
+    lesson.review_words = [{"id": "goedemorgen", "nl": "goedemorgen", "en": "good morning"}]
+    payload = trainer.build_payload(lesson, [], "dutch-20260609.mp3")
+
+    rep = payload["report"]
+    assert rep["bot"] == "LearnXBot"
+    # Word ORDER (new then review) is the contract with dutch_memory's
+    # lessons[].words — the positional marks in the /start payload rely on it.
+    assert [w["id"] for w in rep["words"]] == ["a", "goedemorgen"]
+    # Article stripped: the form is what the page's exam answers contain.
+    assert rep["words"][0]["form"] == "a"
+
+
+def test_trainer_payload_report_bot_empty_when_recall_disabled(monkeypatch):
+    from dutch import trainer
+
+    monkeypatch.setattr(config, "DUTCH_RECALL_ENABLED", False)
+    monkeypatch.setattr(config, "TELEGRAM_BOT_USERNAME", "LearnXBot")
+    payload = trainer.build_payload(_delft_lesson(), [], "x.mp3")
+    assert payload["report"]["bot"] == ""  # the page then hides the Save button
+
+
 def test_cloze_sentence_blanks_every_occurrence_numbered_per_line():
     items = cloze.sentence_blanks(
         [{"id": "uur", "nl": "het uur", "en": "the hour"}],
