@@ -2994,5 +2994,375 @@
         "score": 1.21875
       }
     ]
+  },
+  "2026-06-09": {
+    "today_skill": "Postgres",
+    "scored": [
+      {
+        "skill": "Postgres",
+        "sources": [
+          "GitHub Trending",
+          "HN Front Page",
+          "HN Hiring",
+          "Reddit",
+          "dev.to"
+        ],
+        "evidence": "Durable workflows and vector search",
+        "frequency": 5,
+        "demand_weight": 5.25,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.2222222222222223,
+        "canonical": "postgresql",
+        "suggested_difficulty": "beginner",
+        "score": 6.416666666666667
+      },
+      {
+        "skill": "Claude Code",
+        "sources": [
+          "GitHub Trending",
+          "HN Hiring",
+          "Reddit",
+          "dev.to"
+        ],
+        "evidence": "Claude Code governance",
+        "frequency": 4,
+        "demand_weight": 4.25,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.1666666666666667,
+        "canonical": "claude code",
+        "suggested_difficulty": "beginner",
+        "score": 4.958333333333334
+      },
+      {
+        "skill": "Deno",
+        "sources": [
+          "GitHub Trending",
+          "HN Hiring",
+          "Lobste.rs"
+        ],
+        "evidence": "Modern runtime for JavaScript and TypeScript",
+        "frequency": 3,
+        "demand_weight": 4.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.0555555555555556,
+        "canonical": "deno",
+        "suggested_difficulty": "beginner",
+        "score": 4.222222222222222
+      },
+      {
+        "skill": "React Server Components",
+        "sources": [
+          "GitHub Trending",
+          "HN Front Page",
+          "dev.to"
+        ],
+        "evidence": "React, Angular, Mobile, Slack",
+        "frequency": 3,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.4444444444444444,
+        "canonical": "react server components",
+        "suggested_difficulty": "beginner",
+        "score": 3.611111111111111
+      },
+      {
+        "skill": "Rust async/await",
+        "sources": [
+          "GitHub Trending",
+          "HN Front Page",
+          "dev.to"
+        ],
+        "evidence": "Rust with Python bindings",
+        "frequency": 3,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.3888888888888888,
+        "canonical": "rust async/await",
+        "suggested_difficulty": "beginner",
+        "score": 3.4722222222222223
+      },
+      {
+        "skill": "Terragrunt",
+        "sources": [
+          "GitHub Trending",
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "Flexible orchestration tool for Infrastructure as Code",
+        "frequency": 3,
+        "demand_weight": 3.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "terragrunt",
+        "suggested_difficulty": "beginner",
+        "score": 3.15
+      },
+      {
+        "skill": "nix",
+        "sources": [
+          "HN Hiring",
+          "Lobste.rs"
+        ],
+        "evidence": "Package manager",
+        "frequency": 2,
+        "demand_weight": 3.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.0277777777777777,
+        "canonical": "nix",
+        "suggested_difficulty": "beginner",
+        "score": 3.083333333333333
+      },
+      {
+        "skill": "WebAssembly",
+        "sources": [
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "How I built an offline, privacy-first receipt scanner",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.2222222222222223,
+        "canonical": "webassembly",
+        "suggested_difficulty": "beginner",
+        "score": 3.055555555555556
+      },
+      {
+        "skill": "Kafka",
+        "sources": [
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "Kafka cluster",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.0555555555555556,
+        "canonical": "kafka",
+        "suggested_difficulty": "beginner",
+        "score": 2.638888888888889
+      },
+      {
+        "skill": "YAML",
+        "sources": [
+          "Lobste.rs",
+          "Reddit",
+          "dev.to"
+        ],
+        "evidence": "Configuration file format",
+        "frequency": 3,
+        "demand_weight": 2.25,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.0277777777777777,
+        "canonical": "yaml",
+        "suggested_difficulty": "beginner",
+        "score": 2.3125
+      },
+      {
+        "skill": "Real-time streaming",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "Real-time streaming",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.1111111111111112,
+        "canonical": "real-time streaming",
+        "suggested_difficulty": "beginner",
+        "score": 2.2222222222222223
+      },
+      {
+        "skill": "Agent-based systems",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "Design and ship agent-based system",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.0555555555555556,
+        "canonical": "agent-based systems",
+        "suggested_difficulty": "beginner",
+        "score": 2.111111111111111
+      },
+      {
+        "skill": "OpenTelemetry",
+        "sources": [
+          "GitHub Trending",
+          "Reddit"
+        ],
+        "evidence": "OpenTelemetry observability platform",
+        "frequency": 2,
+        "demand_weight": 1.75,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.0555555555555556,
+        "canonical": "opentelemetry",
+        "suggested_difficulty": "beginner",
+        "score": 1.8472222222222223
+      },
+      {
+        "skill": "Agentic Operating System",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "Agentic Operating System for e-commerce",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "agentic operating system",
+        "suggested_difficulty": "beginner",
+        "score": 1.8
+      },
+      {
+        "skill": "Inference stack",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "Intersection of LLM training",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "inference stack",
+        "suggested_difficulty": "beginner",
+        "score": 1.8
+      },
+      {
+        "skill": "LLM training",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "Intersection of LLM training",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "llm training",
+        "suggested_difficulty": "beginner",
+        "score": 1.8
+      },
+      {
+        "skill": "Spatial computing",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "Spatial computing - using computer vision to 3D reconstruct and understand surroundings",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "spatial computing",
+        "suggested_difficulty": "beginner",
+        "score": 1.8
+      },
+      {
+        "skill": "Agentic coding",
+        "sources": [
+          "GitHub Trending",
+          "dev.to"
+        ],
+        "evidence": "Glamourous agentic coding",
+        "frequency": 2,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.1666666666666665,
+        "canonical": "agentic coding",
+        "suggested_difficulty": "beginner",
+        "score": 1.7499999999999998
+      },
+      {
+        "skill": "DuckDB",
+        "sources": [
+          "HN Hiring",
+          "Reddit",
+          "Stack Overflow"
+        ],
+        "evidence": "No evidence found",
+        "frequency": 3,
+        "demand_weight": 4.25,
+        "novelty": 0.2857142857142857,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.3888888888888888,
+        "canonical": "duckdb",
+        "suggested_difficulty": "advanced",
+        "score": 1.6865079365079363
+      },
+      {
+        "skill": "OCaml",
+        "sources": [
+          "HN Front Page",
+          "Reddit"
+        ],
+        "evidence": "Introduction to the Dune build system",
+        "frequency": 2,
+        "demand_weight": 1.75,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "ocaml",
+        "suggested_difficulty": "beginner",
+        "score": 1.575
+      }
+    ]
   }
 }
