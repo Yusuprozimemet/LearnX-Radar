@@ -1,0 +1,633 @@
+<!doctype html>
+<!-- Delft trainer (v9 day 32) — static, client-side only. Fetches dutch_lesson.json
+     (committed by the daily run, copied here by pages.yml) and mirrors the Delftse
+     methode app's structure:
+       LEREN  steps 1-4 — sentence-by-sentence with translations; whole text with
+              transcript; listen-and-repeat without text (Block B's built-in pauses);
+              whole text without transcript. Real player: prev / play-pause / next /
+              slider over the lesson MP3's timestamped segments.
+       TEST   gatentekst (whole text, new words blanked, checked) and luistertoets
+              (hear each sentence ONCE — enforced — then fill its target words).
+     Progress lives in localStorage — no backend, no accounts, no PII. -->
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dutch trainer — LearnX-Radar</title>
+<style>
+  /* LearnX-Radar's own playful look: candy colors, rounded cards, chunky 3D
+     buttons (flat face + darker bottom edge that "presses" on click). Inspired by
+     the general gamified-learning aesthetic — layout, copy and palette are ours. */
+  :root {
+    --green:#5fbf38; --green-edge:#48992a; --green-soft:#e8f7e0;
+    --blue:#2bb3f0;  --blue-edge:#1f93c7;  --blue-soft:#e3f5fd;
+    --orange:#ff9d33; --orange-edge:#e07f17;
+    --red:#ff5757; --red-soft:#ffe9e9;
+    --ink:#3d4350; --grey:#8a909c; --border:#e6e8ec; --bg:#f7f8f5; --card:#fff;
+  }
+  * { box-sizing:border-box; }
+  body { font-family:"Nunito","Segoe UI",-apple-system,Roboto,sans-serif; background:var(--bg);
+         max-width:760px; margin:0 auto 4rem; padding:0 1rem; color:var(--ink); line-height:1.55; }
+  header.bar { display:flex; align-items:center; gap:.7rem; padding:1.1rem 0 .6rem; }
+  header.bar .owl { font-size:1.9rem; }
+  header.bar h1 { font-size:1.25rem; margin:0; font-weight:800; }
+  header.bar .meta { color:var(--grey); font-size:.85rem; font-weight:700;
+                     background:var(--card); border:2px solid var(--border);
+                     border-radius:999px; padding:.15rem .7rem; }
+  header.bar a { margin-left:auto; color:var(--blue); text-decoration:none; font-weight:800;
+                 font-size:.9rem; }
+  .tabs { display:flex; gap:.5rem; margin:.6rem 0 1rem; }
+  .tabs button { flex:1; background:var(--card); color:var(--grey); font:inherit;
+                 font-weight:800; text-transform:uppercase; letter-spacing:.05em;
+                 font-size:.82rem; padding:.55rem; cursor:pointer;
+                 border:2px solid var(--border); border-bottom-width:4px; border-radius:14px; }
+  .tabs button:active { transform:translateY(2px); border-bottom-width:2px; }
+  .tabs button.active { background:var(--green-soft); color:var(--green-edge);
+                        border-color:var(--green); }
+  .pills { display:flex; gap:.5rem; flex-wrap:wrap; margin:.2rem 0 1rem; }
+  .pills button { min-width:2.7rem; height:2.7rem; padding:0 1rem; border-radius:999px;
+                  font:inherit; font-weight:800; color:var(--grey); background:var(--card);
+                  cursor:pointer; white-space:nowrap;
+                  border:2px solid var(--border); border-bottom-width:4px; }
+  .pills button:active { transform:translateY(2px); border-bottom-width:2px; }
+  .pills button.active { background:var(--green); border-color:var(--green-edge);
+                         color:#fff; }
+  .hint { background:var(--card); border:2px solid var(--border); border-radius:16px;
+          padding:.7rem 1rem; color:var(--ink); font-weight:700; font-size:.92rem; }
+  .player { background:var(--card); border:2px solid var(--border); border-radius:20px;
+            padding:1.3rem 1.2rem 1rem; display:flex; flex-direction:column;
+            align-items:center; gap:1rem; margin:1.1rem 0; }
+  .player .buttons { display:flex; gap:.6rem; }
+  .player .buttons button { width:3.4rem; height:3.4rem; font-size:1.35rem; color:#fff;
+            background:var(--blue); border:0; border-bottom:4px solid var(--blue-edge);
+            border-radius:18px; cursor:pointer; }
+  .player .buttons button:active { transform:translateY(2px); border-bottom-width:2px; }
+  .player .buttons button:nth-child(2) { background:var(--green);
+            border-bottom-color:var(--green-edge); width:4.2rem; }
+  .player .buttons button.toggled { background:var(--orange);
+            border-bottom-color:var(--orange-edge); }
+  .player input[type=range] { width:100%; accent-color:var(--green); }
+  .line { display:flex; align-items:center; gap:.7rem; background:var(--card);
+          border:2px solid var(--border); border-radius:14px; padding:.5rem .7rem;
+          margin:.45rem 0; }
+  .line button.play { width:2.4rem; height:2.4rem; flex:none; font-size:1rem; color:#fff;
+          background:var(--blue); border:0; border-bottom:4px solid var(--blue-edge);
+          border-radius:12px; cursor:pointer; }
+  .line button.play:active { transform:translateY(2px); border-bottom-width:2px; }
+  .line button.play:disabled { background:#cfd4dc; border-bottom-color:#b9bfc9;
+          cursor:not-allowed; }
+  .line .nl { font-weight:800; }
+  .line .en { color:var(--grey); font-style:italic; font-size:.92rem; }
+  .line .en.veiled { background:var(--blue-soft); color:var(--blue-soft);
+          border-radius:8px; cursor:pointer; padding:0 .3rem; }
+  .line .en.veiled:hover { background:#d2eefb; color:#d2eefb; }
+  .line.now { border-color:var(--green); background:var(--green-soft); }
+  .transcript .line { border-style:dashed; }
+  .peek-box { min-height:1.9rem; font-weight:800; text-align:center; }
+  .cloze-line { background:var(--card); border:2px solid var(--border); border-radius:14px;
+                padding:.55rem .8rem; margin:.45rem 0; }
+  .cloze-line input { font:inherit; font-weight:700; width:8.5rem; padding:.15rem .5rem;
+                      border:2px solid var(--border); border-radius:10px; background:#fff; }
+  .cloze-line input:focus { outline:none; border-color:var(--blue); }
+  .cloze-line input.right { border-color:var(--green); background:var(--green-soft);
+                            color:var(--green-edge); }
+  .cloze-line input.wrong { border-color:var(--red); background:var(--red-soft);
+                            color:var(--red); }
+  button.score { background:var(--green); color:#fff; border:0;
+                 border-bottom:4px solid var(--green-edge); border-radius:14px;
+                 padding:.6rem 1.6rem; font:inherit; font-weight:800;
+                 text-transform:uppercase; letter-spacing:.05em; cursor:pointer; }
+  button.score:active:not(:disabled) { transform:translateY(2px); border-bottom-width:2px; }
+  button.score:disabled { background:#cfd4dc; border-bottom-color:#b9bfc9;
+                          cursor:not-allowed; }
+  button.score.retake { background:var(--blue); border-bottom-color:var(--blue-edge);
+                        margin-left:.6rem; }
+  .attempts { color:var(--grey); font-weight:800; font-size:.85rem; margin-left:.8rem; }
+  .result { color:var(--green-edge); font-weight:800; margin-left:.8rem; }
+  .stats { color:var(--grey); font-weight:700; margin-top:1rem; }
+  .stats strong { color:var(--ink); }
+  .muted { color:var(--grey); }
+  .lt-row { display:flex; align-items:center; flex-wrap:wrap; gap:.4rem;
+            background:var(--card); border:2px solid var(--border); border-radius:14px;
+            padding:.55rem .7rem; margin:.45rem 0; }
+  .lt-row .speaker { color:var(--grey); font-weight:800; font-size:.85rem; }
+  .lt-row button.play { width:2.4rem; height:2.4rem; flex:none; font-size:1rem; color:#fff;
+          background:var(--blue); border:0; border-bottom:4px solid var(--blue-edge);
+          border-radius:12px; cursor:pointer; }
+  .lt-row button.play:active { transform:translateY(2px); border-bottom-width:2px; }
+  .lt-row button.play:disabled { background:#cfd4dc; border-bottom-color:#b9bfc9;
+          cursor:not-allowed; }
+  .lt-row .cloze-line { border:0; padding:0; margin:0; background:none; }
+  .les-row { display:flex; align-items:center; gap:.8rem; background:var(--card);
+             border:2px solid var(--border); border-radius:14px; padding:.6rem .9rem;
+             margin:.45rem 0; }
+  .les-row .les { color:var(--blue); font-weight:800; min-width:6.2rem; }
+  .les-row .title { font-weight:700; color:var(--grey); }
+  .les-row .pct { margin-left:auto; color:var(--green-edge); font-weight:800; }
+  .les-row .check { background:var(--green); color:#fff; border-radius:50%;
+                    width:1.5rem; height:1.5rem; display:flex; align-items:center;
+                    justify-content:center; font-size:.8rem; }
+</style></head><body>
+<header class="bar">
+  <span class="owl">📻</span>
+  <h1>Dutch trainer</h1><span class="meta" id="meta">laden…</span>
+  <a href="index.html">📡 radar</a>
+</header>
+<div class="tabs" id="tabs" style="display:none">
+  <button data-tab="leren" class="active">🎧 leren</button>
+  <button data-tab="test">✍️ test</button>
+  <button data-tab="lessen">🏆 lessen</button>
+</div>
+<div id="app"><p class="muted" style="margin-top:1rem">Loading today's lesson…</p></div>
+
+<script>
+(function () {
+  "use strict";
+  var app = document.getElementById("app");
+  var audio = new Audio();
+  audio.preload = "metadata";
+  var stopAt = null;          // ms position where playback must stop
+  var onTick = null;          // per-view position hook (slider/highlight)
+  var onStop = null;          // called when stopAt is reached
+
+  // A 40ms watchdog instead of `timeupdate` (which fires only ~4x/s — playback
+  // would overshoot a sentence's end by up to ~250ms and bleed into the next line;
+  // the inter-line gaps are only 150-450ms). The 20ms end margin absorbs the
+  // remaining check latency so a snippet stops INSIDE its own trailing silence.
+  setInterval(function () {
+    if (audio.paused) return;
+    var ms = audio.currentTime * 1000;
+    if (onTick) onTick(ms);
+    if (stopAt !== null && ms >= stopAt - 20) {
+      audio.pause();
+      stopAt = null;
+      if (onStop) onStop();
+    }
+  }, 40);
+
+  // Seek-then-play that is safe before the MP3's metadata has arrived (seeking an
+  // unloaded <audio> silently no-ops and playback starts at 0 — the Block C bug).
+  // The +10ms start nudge keeps a seek from landing one MP3 frame early and
+  // catching the tail of the previous word.
+  function playRange(startMs, endMs) {
+    audio.pause();
+    stopAt = endMs;
+    var go = function () { audio.currentTime = (startMs + 10) / 1000; audio.play(); };
+    if (audio.readyState >= 1) { go(); return; }
+    audio.addEventListener("loadedmetadata", go, { once: true });
+    audio.load();
+  }
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text !== undefined) n.textContent = text;
+    return n;
+  }
+  function norm(s) { return s.trim().toLowerCase().replace(/\s+/g, " "); }
+
+  // --- localStorage: per-date results + one-chance flags ----------------------
+  var STORE = "learnx-dutch-results";
+  function loadResults() {
+    try { return JSON.parse(localStorage.getItem(STORE)) || {}; }
+    catch (e) { return {}; }
+  }
+  function saveResult(date, kind, right, wrong) {
+    var all = loadResults();
+    all[date] = all[date] || {};
+    all[date][kind] = { right: right, wrong: wrong };
+    localStorage.setItem(STORE, JSON.stringify(all));
+    refreshStats();
+  }
+  function recallStats() {
+    var right = 0, total = 0, all = loadResults();
+    Object.keys(all).forEach(function (d) {
+      Object.keys(all[d]).forEach(function (k) {
+        right += (all[d][k].right || []).length;
+        total += (all[d][k].right || []).length + (all[d][k].wrong || []).length;
+      });
+    });
+    return { right: right, total: total };
+  }
+  var statsBox = null;
+  function refreshStats() {
+    if (!statsBox) return;
+    statsBox.textContent = "";
+    var s = recallStats();
+    if (!s.total) { statsBox.appendChild(el("span", "muted", "Nog geen resultaten.")); return; }
+    var pct = Math.round(100 * s.right / s.total);
+    statsBox.appendChild(el("span", null, "Recall op dit apparaat: "));
+    statsBox.appendChild(el("strong", null, s.right + "/" + s.total + " (" + pct + "%)"));
+  }
+
+  // --- exam attempts: up to MAX_ATTEMPTS per date+exercise --------------------
+  var MAX_ATTEMPTS = 3;
+  var ATT = "learnx-dutch-attempts";
+  function attemptsUsed(date, kind) {
+    try {
+      var all = JSON.parse(localStorage.getItem(ATT)) || {};
+      return (all[date] || {})[kind] || 0;
+    } catch (e) { return 0; }
+  }
+  function bumpAttempts(date, kind) {
+    var all;
+    try { all = JSON.parse(localStorage.getItem(ATT)) || {}; } catch (e) { all = {}; }
+    all[date] = all[date] || {};
+    all[date][kind] = Math.min(MAX_ATTEMPTS, (all[date][kind] || 0) + 1);
+    localStorage.setItem(ATT, JSON.stringify(all));
+    return all[date][kind];
+  }
+
+  // Score / retake controls shared by both exams: scoring closes the attempt
+  // (inputs lock); "Opnieuw" opens the next one (form resets, fresh listens via
+  // `onRetake`) until MAX_ATTEMPTS is reached.
+  function examControls(lesson, kind, totalBlanks, inputs, answersByN, onRetake) {
+    var bar = el("p");
+    var used = attemptsUsed(lesson.date, kind);
+    var score = el("button", "score", "Score");
+    var retake = el("button", "score retake", "🔁 Opnieuw");
+    var result = el("span", "result", "");
+    var info = el("span", "attempts", "poging " + Math.min(used + 1, MAX_ATTEMPTS) +
+                  "/" + MAX_ATTEMPTS);
+    retake.style.display = "none";
+    if (used >= MAX_ATTEMPTS) {
+      score.disabled = true;
+      inputs.forEach(function (i) { i.disabled = true; });
+      info.textContent = "geen pogingen meer (no attempts left)";
+    }
+    score.addEventListener("click", function () {
+      var r = checkInputs(inputs, answersByN);
+      used = bumpAttempts(lesson.date, kind);
+      result.textContent = r.right.length + "/" + totalBlanks + " goed";
+      saveResult(lesson.date, kind, r.right, r.wrong);
+      inputs.forEach(function (i) { i.disabled = true; });
+      score.disabled = true;
+      info.textContent = "poging " + used + "/" + MAX_ATTEMPTS + " gebruikt";
+      if (used < MAX_ATTEMPTS && r.wrong.length) retake.style.display = "";
+    });
+    retake.addEventListener("click", function () {
+      inputs.forEach(function (i) {
+        i.disabled = false; i.value = ""; i.classList.remove("right", "wrong");
+      });
+      score.disabled = false;
+      retake.style.display = "none";
+      result.textContent = "";
+      info.textContent = "poging " + Math.min(used + 1, MAX_ATTEMPTS) + "/" + MAX_ATTEMPTS;
+      if (onRetake) onRetake();
+    });
+    bar.appendChild(score); bar.appendChild(retake);
+    bar.appendChild(result); bar.appendChild(info);
+    return bar;
+  }
+
+  // --- player widget: prev / play-pause / next / slider over a segment range ----
+  function makePlayer(segments, opts) {
+    opts = opts || {};
+    var first = segments[0].start_ms, last = segments[segments.length - 1].end_ms;
+    var box = el("div", "player");
+    var buttons = el("div", "buttons");
+    var prev = el("button", null, "⏮");
+    var toggle = el("button", null, "▶");
+    var next = el("button", null, "⏭");
+    buttons.appendChild(prev); buttons.appendChild(toggle); buttons.appendChild(next);
+    if (opts.peek) {
+      var peekBtn = el("button", null, "𝐀");
+      peekBtn.title = "Lees mee (read along)";
+      buttons.appendChild(peekBtn);
+    }
+    box.appendChild(buttons);
+    var slider = el("input");
+    slider.type = "range"; slider.min = 0; slider.max = 1000; slider.value = 0;
+    box.appendChild(slider);
+    var peekBox = opts.peek ? el("div", "peek-box", "") : null;
+    if (peekBox) box.appendChild(peekBox);
+    var peeking = false, playing = false;
+
+    function segAt(ms) {
+      for (var i = segments.length - 1; i >= 0; i--) {
+        if (ms >= segments[i].start_ms) return i;
+      }
+      return 0;
+    }
+    function setPlaying(p) { playing = p; toggle.textContent = p ? "⏸" : "▶"; }
+
+    function activate() {           // this player takes over the audio element
+      onTick = function (ms) {
+        var frac = (ms - first) / (last - first);
+        slider.value = Math.max(0, Math.min(1000, Math.round(frac * 1000)));
+        var i = segAt(ms);
+        if (opts.onSegment) opts.onSegment(i);
+        if (peekBox) peekBox.textContent = peeking ? segments[i].nl : "";
+      };
+      onStop = function () { setPlaying(false); };
+    }
+
+    toggle.addEventListener("click", function () {
+      activate();
+      if (playing) { audio.pause(); setPlaying(false); return; }
+      var pos = audio.currentTime * 1000;
+      if (pos < first || pos >= last) playRange(first, last);
+      else { stopAt = last; audio.play(); }
+      setPlaying(true);
+    });
+    prev.addEventListener("click", function () {
+      activate();
+      var i = Math.max(0, segAt(audio.currentTime * 1000) - 1);
+      playRange(segments[i].start_ms, last);
+      setPlaying(true);
+    });
+    next.addEventListener("click", function () {
+      activate();
+      var i = Math.min(segments.length - 1, segAt(audio.currentTime * 1000) + 1);
+      playRange(segments[i].start_ms, last);
+      setPlaying(true);
+    });
+    slider.addEventListener("input", function () {
+      activate();
+      var ms = first + (slider.value / 1000) * (last - first);
+      playRange(ms, last);
+      setPlaying(true);
+    });
+    if (opts.peek) {
+      peekBtn.addEventListener("click", function () {
+        peeking = !peeking;
+        peekBtn.classList.toggle("toggled", peeking);
+        if (!peeking && peekBox) peekBox.textContent = "";
+      });
+    }
+    return box;
+  }
+
+  // --- LEREN steps 1-4 ----------------------------------------------------------
+  var HINTS = {
+    1: "Luister per zin. Tik op de vertaling als je die nodig hebt. (Listen per sentence; tap to reveal the translation.)",
+    2: "Luister naar het hele gesprek en lees mee. (Listen to the whole dialogue and read along.)",
+    3: "Luister en spreek na in de pauze — zonder tekst. Tik 𝐀 om even mee te lezen. (Listen and repeat aloud in the pause — no text. Tap 𝐀 to peek.)",
+    4: "Luister naar het hele gesprek — zonder tekst. (Listen to the whole dialogue — no text.)",
+  };
+
+  function lerenView(lesson, step) {
+    var wrap = el("div");
+    wrap.appendChild(el("p", "hint", HINTS[step]));
+    var segB = lesson.segments.filter(function (s) { return s.block === "B"; });
+    var segC = lesson.segments.filter(function (s) { return s.block === "C"; });
+
+    if (step === 1) {
+      // Vocabulary (block A, replays deduped) then the dialogue (block C): tap ▶
+      // per sentence, translation veiled until tapped.
+      var seen = {};
+      lesson.segments.forEach(function (seg) {
+        if (seg.block === "B") return;
+        if (seg.block === "A" && seen[seg.nl]) return;
+        seen[seg.nl] = true;
+        var row = el("div", "line");
+        var play = el("button", "play", "🔊");
+        play.addEventListener("click", function () { playRange(seg.start_ms, seg.end_ms); });
+        row.appendChild(play);
+        row.appendChild(el("span", "nl", seg.nl));
+        if (seg.en) {
+          var en = el("span", "en veiled", seg.en);
+          en.title = "vertaling (tap to reveal)";
+          en.addEventListener("click", function () { en.classList.remove("veiled"); });
+          row.appendChild(en);
+        }
+        wrap.appendChild(row);
+      });
+    } else if (step === 2 && segC.length) {
+      var lines = [];
+      var transcript = el("div", "transcript");
+      segC.forEach(function (seg, i) {
+        var row = el("div", "line");
+        row.appendChild(el("span", "nl", (lesson.dialogue[i] ? lesson.dialogue[i].speaker + ": " : "") + seg.nl));
+        if (seg.en) row.appendChild(el("span", "en", seg.en));
+        lines.push(row); transcript.appendChild(row);
+      });
+      wrap.appendChild(makePlayer(segC, {
+        onSegment: function (i) {
+          lines.forEach(function (l, j) { l.classList.toggle("now", i === j); });
+        },
+      }));
+      wrap.appendChild(transcript);
+    } else if (step === 3 && segB.length) {
+      // Block B has the repeat pauses baked into the audio: line -> pause -> line.
+      wrap.appendChild(makePlayer(segB, { peek: true }));
+    } else if (step === 4 && segC.length) {
+      wrap.appendChild(makePlayer(segC, {}));
+    } else {
+      wrap.appendChild(el("p", "muted", "Geen audio voor deze stap."));
+    }
+    return wrap;
+  }
+
+  // --- TEST: gatentekst ----------------------------------------------------------
+  function buildClozeLine(text, inputs, numberOffset) {
+    var div = el("div", "cloze-line");
+    var parts = text.split(/___ \((\d+)\)/g);   // text, n, text, n, ...
+    for (var i = 0; i < parts.length; i++) {
+      if (i % 2 === 0) { div.appendChild(document.createTextNode(parts[i])); continue; }
+      var input = el("input");
+      input.dataset.n = (numberOffset || 0) + parseInt(parts[i], 10);
+      input.autocapitalize = "none";
+      inputs.push(input);
+      div.appendChild(input);
+    }
+    return div;
+  }
+
+  function checkInputs(inputs, answersByN) {
+    var right = [], wrong = [];
+    inputs.forEach(function (input) {
+      var want = answersByN[input.dataset.n] || "";
+      var ok = norm(input.value) === norm(want);
+      input.classList.toggle("right", ok);
+      input.classList.toggle("wrong", !ok);
+      if (ok) { input.disabled = true; right.push(want); } else { wrong.push(want); }
+    });
+    return { right: right, wrong: wrong };
+  }
+
+  function gatentekstView(lesson) {
+    var wrap = el("div");
+    wrap.appendChild(el("p", "hint", "Vul de juiste woorden in — eerst uit je geheugen. (Fill in the correct words from memory first.)"));
+    if (!lesson.cloze || !lesson.cloze.answers.length) {
+      wrap.appendChild(el("p", "muted", "Geen invuloefening vandaag."));
+      return wrap;
+    }
+    var inputs = [], answersByN = {};
+    lesson.cloze.answers.forEach(function (a, i) { answersByN[i + 1] = a; });
+    lesson.cloze.lines.forEach(function (line) {
+      wrap.appendChild(buildClozeLine(line, inputs, 0));
+    });
+    wrap.appendChild(examControls(
+      lesson, "gatentekst", lesson.cloze.answers.length, inputs, answersByN
+    ));
+    return wrap;
+  }
+
+  // --- TEST: luistertoets (hear each sentence ONCE, then fill its words) ---------
+  function luistertoetsView(lesson) {
+    var wrap = el("div");
+    wrap.appendChild(el("p", "hint",
+      "Luister één keer per zin — daarna is de knop weg — en vul de woorden in. (One listen per sentence — then the button is gone — and fill in the words.)"));
+    var segC = lesson.segments.filter(function (s) { return s.block === "C"; });
+    var items = lesson.luistertoets || [];
+    if (!items.length || !segC.length) {
+      wrap.appendChild(el("p", "muted", "Geen luistertoets vandaag."));
+      return wrap;
+    }
+    var inputs = [], answersByN = {}, n = 0, totalBlanks = 0;
+    var plays = [], keys = [];
+    items.forEach(function (item, i) {
+      var row = el("div", "lt-row");
+      var play = el("button", "play", "🔊");
+      var key = "learnx-dutch-lt-" + lesson.date + "-" + i;
+      plays.push(play); keys.push(key);
+      if (localStorage.getItem(key)) { play.disabled = true; play.textContent = "✓"; }
+      play.style.marginRight = ".6rem";
+      play.addEventListener("click", function () {
+        localStorage.setItem(key, "1");
+        play.disabled = true; play.textContent = "✓";
+        if (segC[i]) playRange(segC[i].start_ms, segC[i].end_ms);
+      });
+      row.appendChild(play);
+      row.appendChild(el("span", "speaker", item.speaker + ":"));
+      // Renumber this line's blanks into the global answer map so one Score
+      // button can check everything.
+      var offset = n;
+      item.answers.forEach(function (a) { n += 1; answersByN[n] = a; totalBlanks += 1; });
+      var text = item.nl.replace(/___ \((\d+)\)/g, function (m, d) {
+        return "___ (" + (offset + parseInt(d, 10)) + ")";
+      });
+      var line = buildClozeLine(text, inputs, 0);
+      line.style.display = "inline";
+      row.appendChild(line);
+      wrap.appendChild(row);
+    });
+    wrap.appendChild(examControls(
+      lesson, "luistertoets", totalBlanks, inputs, answersByN,
+      function () {   // a retake grants fresh one-chance listens
+        keys.forEach(function (k) { localStorage.removeItem(k); });
+        plays.forEach(function (p) { p.disabled = false; p.textContent = "🔊"; });
+      }
+    ));
+    return wrap;
+  }
+
+  // --- LESSEN: per-day final scores (Boom-style lesson list, on-device) -----------
+  function lessenView(lesson) {
+    var wrap = el("div");
+    wrap.appendChild(el("p", "hint",
+      "Jouw lessen en eindscores — op dit apparaat. (Your lessons and final scores — on this device.)"));
+    var all = loadResults();
+    var dates = Object.keys(all).sort().reverse();
+    if (lesson.date && dates.indexOf(lesson.date) === -1) dates.unshift(lesson.date);
+    if (!dates.length) {
+      wrap.appendChild(el("p", "muted", "Nog geen lessen gedaan."));
+      return wrap;
+    }
+    dates.forEach(function (d) {
+      var row = el("div", "les-row");
+      row.appendChild(el("span", "les", "LES " + d.slice(5)));   // MM-DD as the lesson id
+      row.appendChild(el("span", "title",
+        d === lesson.date ? (lesson.theme + " · vandaag") : ""));
+      var right = 0, total = 0, kinds = all[d] || {};
+      Object.keys(kinds).forEach(function (k) {
+        right += (kinds[k].right || []).length;
+        total += (kinds[k].right || []).length + (kinds[k].wrong || []).length;
+      });
+      var used = Math.max(attemptsUsed(d, "gatentekst"), attemptsUsed(d, "luistertoets"));
+      if (used) {
+        row.appendChild(el("span", "attempts",
+          used >= MAX_ATTEMPTS ? "klaar" : "poging " + used + "/" + MAX_ATTEMPTS));
+      }
+      if (total) {
+        row.appendChild(el("span", "pct", Math.round(100 * right / total) + "%"));
+        row.appendChild(el("span", "check", "✔"));
+      } else {
+        row.appendChild(el("span", "pct muted", "—"));
+      }
+      wrap.appendChild(row);
+    });
+    return wrap;
+  }
+
+  // --- page assembly --------------------------------------------------------------
+  // Load the lesson MP3 fully as a blob: blob URLs are instantly and exactly
+  // seekable, independent of server Range support (python -m http.server has none
+  // — seeks clamped to 0, the "plays from the beginning" bug). The Pages deploy
+  // puts a same-origin copy at dutch_audio.mp3 (the release CDN sends no CORS
+  // header, so the browser cannot fetch it cross-origin); local previews fall
+  // through to the lesson's own audio_url, which is then same-origin too.
+  function loadAudio(lesson) {
+    fetch("dutch_audio.mp3")
+      .then(function (r) { if (!r.ok) throw 0; return r.blob(); })
+      .catch(function () {
+        return fetch(lesson.audio_url)
+          .then(function (r) { if (!r.ok) throw 0; return r.blob(); });
+      })
+      .then(function (b) { audio.src = URL.createObjectURL(b); })
+      .catch(function () { audio.src = lesson.audio_url; }); // last resort: direct
+  }
+
+  function render(lesson) {
+    document.getElementById("meta").textContent =
+      lesson.date + " · " + lesson.theme + " · " + lesson.cefr;
+    loadAudio(lesson);
+    document.getElementById("tabs").style.display = "";
+
+    var state = { tab: "leren", step: 1, sub: "gatentekst" };
+
+    function draw() {
+      app.textContent = "";
+      var pills = el("div", "pills");
+      if (state.tab === "leren") {
+        [1, 2, 3, 4].forEach(function (s) {
+          var b = el("button", s === state.step ? "active" : "", String(s));
+          b.addEventListener("click", function () { state.step = s; draw(); });
+          pills.appendChild(b);
+        });
+        app.appendChild(pills);
+        app.appendChild(lerenView(lesson, state.step));
+      } else if (state.tab === "lessen") {
+        app.appendChild(lessenView(lesson));
+      } else {
+        ["gatentekst", "luistertoets"].forEach(function (k) {
+          var b = el("button", k === state.sub ? "active" : "", k);
+          b.addEventListener("click", function () { state.sub = k; draw(); });
+          pills.appendChild(b);
+        });
+        app.appendChild(pills);
+        app.appendChild(state.sub === "gatentekst"
+          ? gatentekstView(lesson) : luistertoetsView(lesson));
+      }
+      statsBox = el("p", "stats");
+      app.appendChild(statsBox);
+      refreshStats();
+    }
+
+    document.querySelectorAll("#tabs button").forEach(function (b) {
+      b.addEventListener("click", function () {
+        audio.pause(); stopAt = null; onTick = null; onStop = null;
+        document.querySelectorAll("#tabs button").forEach(function (x) {
+          x.classList.toggle("active", x === b);
+        });
+        state.tab = b.dataset.tab;
+        draw();
+      });
+    });
+    draw();
+  }
+
+  fetch("dutch_lesson.json", { cache: "no-store" })
+    .then(function (resp) {
+      if (!resp.ok) throw new Error("HTTP " + resp.status);
+      return resp.json();
+    })
+    .then(render)
+    .catch(function () {
+      document.getElementById("meta").textContent = "geen les";
+      app.textContent = "";
+      app.appendChild(el("p", "muted",
+        "No lesson yet — the first one appears after the next daily run."));
+    });
+})();
+</script>
+</body></html>

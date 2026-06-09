@@ -8,6 +8,8 @@ so a bad generation degrades to the verified gloss rather than a wrong word.
 import logging
 from dataclasses import dataclass, field
 
+import config
+from dutch import cloze
 from dutch.prompt_loader import load_prompt
 from learnx.llm import chat, parse_json_response
 
@@ -84,6 +86,18 @@ def build(
 
     lesson.summary = _summary(theme, new_words)
     lesson.markdown = _render_markdown(lesson)
+    # Delft Phase 2 (v9 day 31): deterministic cloze over today's new words. Empty
+    # when no new word occurs in the text — the section then simply doesn't render.
+    if config.DUTCH_CLOZE_ENABLED:
+        section = cloze.render(lesson.new_words, lesson.sentences, lesson.dialogue)
+        if section:
+            lesson.markdown += "\n\n" + section
+    # Trainer link (v9 day 32) — flows into the PDF and email; Telegram also gets
+    # an inline button. The page checks answers and enforces the one-chance listen.
+    if config.DUTCH_TRAINER_ENABLED and lesson.markdown:
+        lesson.markdown += (
+            f"\n\n🎧 _Oefen interactief (train interactively):_ {config.TRAINER_URL}"
+        )
     return lesson
 
 
@@ -98,6 +112,20 @@ def _render_markdown(lesson: DutchLesson) -> str:
     renderers map these to <b>/<i>, so Dutch and English read distinctly."""
     by_id = {s["id"]: s for s in lesson.sentences}
     out: list[str] = [f"## 🇳🇱 Dutch ({lesson.cefr}) — {lesson.theme}", ""]
+
+    # Delft practice steps (v9 day 30): map the audio's blocks to the method's four
+    # input steps, so the MP3 is used as an imitation exercise, not background audio.
+    if config.DUTCH_DELFT_AUDIO:
+        out += [
+            "**Zo oefen je (how to practice — Delft method)**",
+            "1. _Blok A & B:_ luister, **spreek na in de pauze**, luister opnieuw "
+            "— _listen, repeat aloud in the pause, listen again_",
+            "2. _Blok C:_ luister naar het hele gesprek **met** de tekst "
+            "— _whole dialogue, with the transcript_",
+            "3. Herhaal Blok A & B **zonder** tekst — _replay without the transcript_",
+            "4. Luister Blok C nog één keer zonder tekst — _final listen, no transcript_",
+            "",
+        ]
 
     out.append("**Nieuwe woorden (new words)**")
     for w in lesson.new_words:

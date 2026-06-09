@@ -454,6 +454,7 @@ def _page(title: str, body: str) -> str:
 <p class="nav">
   <a href="{_esc(config.FEED_URL)}">🎧 Podcast feed</a>
   <a href="{_esc(config.RELEASES_PAGE_URL)}">📦 All lesson audio (Releases)</a>
+  <a href="dutch.html">🇳🇱 Dutch trainer</a>
 </p>
 {body}
 </body></html>"""

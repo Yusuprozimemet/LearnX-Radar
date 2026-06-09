@@ -20,6 +20,9 @@ LAST_SCORED_FILE = _DIR / "last_scored.json"  # v3: this run's ranking for the d
 HISTORY_FILE = _DIR / "trending_history.json"
 BRIEFS_DIR = _DIR.parent / "briefs"  # committed briefs, linked from lessons for Perplexity Q&A
 DUTCH_MEMORY_FILE = _DIR / "dutch_memory.json"  # v5: Dutch vocab spaced-repetition state
+# v9 day 32: today's full Dutch lesson (text + cloze + audio seek map) for the
+# Delft trainer page — committed by the workflow, copied to Pages, fetched by JS.
+DUTCH_LESSON_FILE = _DIR / "dutch_lesson.json"
 
 LAST_SCORED_KEEP = 20  # cap the persisted ranking; the dashboard only shows a top slice
 HISTORY_KEEP_DAYS = 60  # cap the per-day archive so the embedded page payload stays bounded
@@ -283,6 +286,14 @@ def load_dutch_memory() -> dict:
 def save_dutch_memory(memory: dict) -> None:
     DUTCH_MEMORY_FILE.write_text(
         json.dumps(memory, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+
+
+def save_dutch_lesson(payload: dict) -> None:
+    """Persist today's trainer lesson JSON (v9 day 32). Overwritten each run —
+    the trainer page shows the latest lesson only."""
+    DUTCH_LESSON_FILE.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
     )
 
 

@@ -26,6 +26,7 @@ from dashboard import builder as dashboard
 from delivery import devto_publisher, email_sender, telegram_sender
 from dutch import audio as dutch_audio
 from dutch import lesson as dutch_lesson
+from dutch import trainer as dutch_trainer
 from dutch import wordlist as dutch_wordlist
 from learnx import audio_builder, curriculum, dialogue
 from radar import brief_writer, gap_scorer, privacy, skill_extractor
@@ -41,6 +42,7 @@ from storage import (
     record_dutch_lesson,
     record_lesson,
     save_brief,
+    save_dutch_lesson,
     save_dutch_memory,
     save_last_scored,
     save_memory,
@@ -182,11 +184,22 @@ def _build_dutch(today_skill: str | None) -> tuple[dict | None, dict | None]:
             cefr=dmem.get("cefr", config.DUTCH_CEFR_START),
         )
         dutch_mp3: str | None = str(OUTPUT_DIR / f"dutch-{today:%Y%m%d}.mp3")
+        timings: list[dict] = []
         try:
-            asyncio.run(dutch_audio.build(dlesson, dutch_mp3))
+            timings = asyncio.run(dutch_audio.build(dlesson, dutch_mp3))
         except Exception as exc:
             _fail("dutch audio", exc)
             dutch_mp3 = None
+        # Delft trainer JSON (v9 day 32): persist today's lesson (text + cloze +
+        # audio seek map) for the Pages trainer. Needs the audio's timings, so it
+        # only writes when the render succeeded; guarded — never blocks delivery.
+        if config.DUTCH_TRAINER_ENABLED and dutch_mp3:
+            try:
+                save_dutch_lesson(
+                    dutch_trainer.build_payload(dlesson, timings, Path(dutch_mp3).name)
+                )
+            except Exception as exc:
+                _fail("dutch trainer", exc)
         payload = {
             "markdown": dlesson.markdown,
             "mp3_path": dutch_mp3,
