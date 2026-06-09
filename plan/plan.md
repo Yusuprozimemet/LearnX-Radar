@@ -395,9 +395,18 @@ validates. The slices live in `specs/v8/`.
    - **Social preview.** The dashboard gains Open Graph / Twitter card tags
      (`og.png`) and a "Join on Telegram" CTA so a shared link renders a rich card.
 
+3. **Run failure report (`day29-run-report.md`)** — observability for the unattended
+   cron. The per-stage guards keep the run alive but bury failures in Actions logs;
+   now `main()` collects every guarded failure (source fetch, audio, delivery,
+   persistence — including per-target Telegram failures that `send()` previously
+   swallowed) and DMs a summary to the **owner chat only** at the end of the run
+   (`RUN_REPORT_ENABLED`), so a dying channel is a same-day ping, not a
+   weeks-later surprise.
+
 **Output:** the same daily lesson now reaches people on Telegram, Spotify, Apple
 Podcasts, dev.to, and the web — with a waitlist capturing demand for the personalized
-tier — all on the free tier, storing no subscriber data.
+tier — all on the free tier, storing no subscriber data, and with stage failures
+DM'd to the owner the same day.
 
 > **Monetization direction:** the free channel is top-of-funnel for a paid
 > *personalized* tier (lessons matched to a learner's stack & goals, with a real
