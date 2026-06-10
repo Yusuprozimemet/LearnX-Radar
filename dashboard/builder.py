@@ -87,20 +87,20 @@ def build_from_state(out_path: Path = OUTPUT) -> Path:
 
 def _tabs(radar_body: str, dutch_body: str) -> str:
     """Top Radar/Dutch nav + the two tab panels. Radar shows by default; clicking a
-    button swaps panels (vanilla DOM, same technique as the trending date picker)."""
+    link swaps panels (vanilla DOM, same technique as the trending date picker)."""
     nav = (
-        "<div class='tabs'>"
-        "<button data-tab='radar' class='active'>📡 Radar</button>"
-        "<button data-tab='dutch'>🇳🇱 Dutch</button>"
-        "</div>"
+        "<p class='nav tabs'>"
+        "<a href='#' data-tab='radar' class='active'>📡 Radar</a>"
+        "<a href='#' data-tab='dutch'>🇳🇱 Dutch</a>"
+        "</p>"
     )
     script = (
         "<script>(function(){"
-        "var links=document.querySelectorAll('.tabs button');"
+        "var links=document.querySelectorAll('.tabs a');"
         "function show(t){"
         "document.getElementById('tab-radar').style.display=(t==='radar')?'':'none';"
         "document.getElementById('tab-dutch').style.display=(t==='dutch')?'':'none';"
-        "links.forEach(function(a){a.classList.toggle('active',a.getAttribute('data-tab')===t);})}"
+        "links.forEach(function(a){a.classList.toggle('active',a.getAttribute('data-tab')===t);});}"
         "links.forEach(function(a){a.addEventListener('click',function(e){"
         "e.preventDefault();show(a.getAttribute('data-tab'));});});"
         "})();</script>"
@@ -470,77 +470,41 @@ def _page(title: str, body: str) -> str:
 <meta name="twitter:description" content="{_esc(_OG_DESC)}">
 <meta name="twitter:image" content="{_esc(config.OG_IMAGE_URL)}">
 <style>
-  :root {{
-    --green:#5fbf38; --green-edge:#48992a; --green-soft:#e8f7e0;
-    --blue:#2bb3f0;  --blue-edge:#1f93c7;
-    --ink:#3d4350; --grey:#8a909c; --border:#e6e8ec; --bg:#f7f8f5; --card:#fff;
-  }}
-  * {{ box-sizing:border-box; }}
-  body {{ font-family:"Nunito","Segoe UI",-apple-system,Roboto,sans-serif;
-         background:var(--bg); max-width:880px; margin:0 auto 4rem;
-         padding:0 1rem; color:var(--ink); line-height:1.55; }}
-  header.bar {{ display:flex; align-items:center; gap:.7rem; padding:1.1rem 0 .6rem; flex-wrap:wrap; }}
-  header.bar .owl {{ font-size:1.9rem; }}
-  header.bar h1 {{ font-size:1.25rem; margin:0; font-weight:800; }}
-  header.bar .meta {{ color:var(--grey); font-size:.85rem; font-weight:700;
-                      background:var(--card); border:2px solid var(--border);
-                      border-radius:999px; padding:.15rem .7rem; }}
-  header.bar a {{ margin-left:auto; color:var(--blue); text-decoration:none;
-                  font-weight:800; font-size:.9rem; }}
-  .sub {{ color:var(--grey); font-weight:700; margin:.2rem 0 .8rem; font-size:.9rem; }}
-  section {{ margin:2rem 0; }}
-  h2 {{ font-size:.95rem; font-weight:800; text-transform:uppercase;
-        letter-spacing:.05em; color:var(--grey); margin-bottom:.8rem; border:0; padding:0; }}
+  body {{ font-family:-apple-system,Segoe UI,Roboto,sans-serif; max-width:880px;
+         margin:2rem auto; padding:0 1rem; color:#1f2328; line-height:1.5; }}
+  h1 {{ margin-bottom:0; }} .sub {{ color:#888; margin-top:.25rem; }}
+  section {{ margin:2.5rem 0; }} h2 {{ border-bottom:1px solid #eee; padding-bottom:.3rem; }}
   table {{ width:100%; border-collapse:collapse; }}
-  th,td {{ text-align:left; padding:.4rem .6rem; border-bottom:1px solid var(--border); }}
-  th {{ color:var(--grey); font-size:.82rem; text-transform:uppercase; letter-spacing:.03em; font-weight:800; }}
-  .muted {{ color:var(--grey); }}
-  .card {{ background:var(--card); border:2px solid var(--border); border-radius:16px;
-           padding:.8rem 1rem; margin:.6rem 0; }}
-  .card .meta {{ color:var(--grey); font-size:.8rem; font-weight:700; }}
-  .card .title {{ font-weight:800; color:var(--ink); }}
-  .ctrl {{ display:inline-block; color:var(--grey); font-size:.9rem; margin-bottom:.8rem; font-weight:700; }}
-  .ctrl select {{ font:inherit; margin-left:.3rem; padding:.15rem .3rem;
-                  border:2px solid var(--border); border-radius:8px; }}
-  details > summary {{ cursor:pointer; color:var(--blue); margin:.6rem 0; font-weight:700; }}
-  .nav {{ margin:.5rem 0 .9rem; font-size:.9rem; display:flex; flex-wrap:wrap; gap:.5rem; }}
-  .nav a {{ color:var(--blue); font-weight:700; text-decoration:none;
-            background:var(--card); border:2px solid var(--border);
-            border-radius:999px; padding:.2rem .8rem; }}
-  .tabs {{ display:flex; gap:.5rem; margin:.6rem 0 1rem; }}
-  .tabs button {{ flex:1; background:var(--card); color:var(--grey); font:inherit;
-                  font-weight:800; text-transform:uppercase; letter-spacing:.05em;
-                  font-size:.82rem; padding:.55rem; cursor:pointer;
-                  border:2px solid var(--border); border-bottom-width:4px; border-radius:14px; }}
-  .tabs button:active {{ transform:translateY(2px); border-bottom-width:2px; }}
-  .tabs button.active {{ background:var(--green-soft); color:var(--green-edge); border-color:var(--green); }}
-  .stats {{ display:flex; flex-wrap:wrap; gap:1.2rem; color:var(--grey); font-size:.95rem; font-weight:700; }}
-  .stats strong {{ color:var(--ink); }}
-  audio {{ outline:none; width:100%; margin-top:.5rem; }}
-  .cta {{ margin:.9rem 0 1.2rem; display:flex; align-items:center; flex-wrap:wrap; gap:.5rem; }}
-  .cta a {{ display:inline-block; background:var(--blue); color:#fff; padding:.55rem 1rem;
-            border:0; border-bottom:4px solid var(--blue-edge); border-radius:14px;
-            text-decoration:none; font-weight:800; font-size:.9rem; }}
-  .cta a:active {{ transform:translateY(2px); border-bottom-width:2px; }}
-  .cta .note {{ color:var(--grey); font-size:.85rem; font-weight:700; }}
-  ul {{ padding-left:1.2rem; }}
-  li {{ margin:.3rem 0; }}
-  li strong {{ color:var(--ink); }}
+  th,td {{ text-align:left; padding:.4rem .6rem; border-bottom:1px solid #f0f0f0; }}
+  th {{ color:#666; font-size:.85rem; text-transform:uppercase; letter-spacing:.03em; }}
+  .muted {{ color:#999; }}
+  .card {{ border:1px solid #eee; border-radius:8px; padding:.8rem 1rem; margin:.6rem 0; }}
+  .card .meta {{ color:#888; font-size:.8rem; }} .card .title {{ font-weight:600; }}
+  .ctrl {{ display:inline-block; color:#666; font-size:.9rem; margin-bottom:.8rem; }}
+  .ctrl select {{ font:inherit; margin-left:.3rem; padding:.15rem .3rem; }}
+  details > summary {{ cursor:pointer; color:#2563eb; margin:.6rem 0; }}
+  .nav {{ margin:.5rem 0 0; font-size:.9rem; }} .nav a {{ color:#2563eb; margin-right:1rem; }}
+  .tabs {{ border-bottom:1px solid #eee; padding-bottom:.4rem; }}
+  .tabs a {{ text-decoration:none; }} .tabs a.active {{ font-weight:700; color:#1f2328; }}
+  .stats {{ display:flex; flex-wrap:wrap; gap:1.2rem; color:#555; font-size:.95rem; }}
+  .stats strong {{ color:#1f2328; }}
+  audio {{ outline:none; }}
+  .cta {{ margin:.9rem 0 1.2rem; }}
+  .cta a {{ display:inline-block; background:#229ED9; color:#fff; padding:.55rem 1rem;
+            border-radius:8px; text-decoration:none; font-weight:600; }}
+  .cta a:hover {{ background:#1b8ec4; }}
+  .cta .note {{ color:#888; font-size:.85rem; margin-left:.6rem; }}
 </style></head><body>
-<header class="bar">
-  <span class="owl">📡</span>
-  <h1>LearnX-Radar</h1>
-  <span class="meta">generated {date.today():%b %d, %Y}</span>
-  <a href="dutch.html">🇳🇱 Dutch trainer</a>
-</header>
-<div class="sub">Daily developer skill radar + Dutch lesson</div>
+<h1>📡 LearnX-Radar</h1>
+<p class="sub">Skill radar · generated {date.today():%b %d, %Y}</p>
 <p class="cta">
   <a href="{_esc(config.CHANNEL_URL)}">📣 Join free on Telegram</a>
   <span class="note">a daily developer lesson (+ Dutch) — audio &amp; PDF</span>
 </p>
 <p class="nav">
   <a href="{_esc(config.FEED_URL)}">🎧 Podcast feed</a>
-  <a href="{_esc(config.RELEASES_PAGE_URL)}">📦 Audio releases</a>
+  <a href="{_esc(config.RELEASES_PAGE_URL)}">📦 All lesson audio (Releases)</a>
+  <a href="dutch.html">🇳🇱 Dutch trainer</a>
 </p>
 {body}
 </body></html>"""
