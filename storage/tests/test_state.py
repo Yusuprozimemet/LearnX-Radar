@@ -200,3 +200,31 @@ def test_record_dutch_recall_unknown_date_and_duplicate_noop():
     a = memory["words"]["a"]
     assert a["recall_right"] == 1 and "recall_wrong" not in a
     assert len(memory["recall"]) == 1
+
+
+def test_save_dutch_lesson_archives_dated_copy_and_index(tmp_path, monkeypatch):
+    monkeypatch.setattr(state, "DUTCH_LESSON_FILE", tmp_path / "dutch_lesson.json")
+    monkeypatch.setattr(state, "DUTCH_LESSONS_DIR", tmp_path / "lessons")
+
+    state.save_dutch_lesson({"date": "2026-06-10", "theme": "tech", "cefr": "A2"})
+    state.save_dutch_lesson({"date": "2026-06-11", "theme": "everyday", "cefr": "A2"})
+    # same-day re-run replaces that day's archive entry instead of duplicating it
+    state.save_dutch_lesson({"date": "2026-06-11", "theme": "tech", "cefr": "A2"})
+
+    latest = json.loads((tmp_path / "dutch_lesson.json").read_text(encoding="utf-8"))
+    assert latest["date"] == "2026-06-11"
+    archived = json.loads(
+        (tmp_path / "lessons" / "dutch-2026-06-10.json").read_text(encoding="utf-8")
+    )
+    assert archived["theme"] == "tech"
+    index = json.loads((tmp_path / "lessons" / "index.json").read_text(encoding="utf-8"))
+    assert [e["date"] for e in index["lessons"]] == ["2026-06-10", "2026-06-11"]
+    assert index["lessons"][1]["theme"] == "tech"
+
+
+def test_save_dutch_lesson_without_date_skips_archive(tmp_path, monkeypatch):
+    monkeypatch.setattr(state, "DUTCH_LESSON_FILE", tmp_path / "dutch_lesson.json")
+    monkeypatch.setattr(state, "DUTCH_LESSONS_DIR", tmp_path / "lessons")
+    state.save_dutch_lesson({"theme": "tech"})
+    assert (tmp_path / "dutch_lesson.json").exists()
+    assert not (tmp_path / "lessons").exists()
