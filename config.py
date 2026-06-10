@@ -342,6 +342,16 @@ DUTCH_RECALL_ENABLED = True     # False -> no Save button, no getUpdates ingesti
 # simply doesn't render the Save-results button.
 TELEGRAM_BOT_USERNAME = os.getenv("TELEGRAM_BOT_USERNAME", "")
 
+# Lesson quality signal: the Dutch track measures recall, but nothing told us
+# whether the DEV lessons are any good. Same zero-backend loop as the trainer's
+# recall feedback: the owner DM's lesson audio carries 1–5 star deep-link buttons
+# (https://t.me/<username>?start=lr_<date>_<n>); one tap sends the rating as a
+# /start message from the owner's own account, and the next morning's run reads
+# it via getUpdates and stamps it on that day's lesson in skill_memory.json.
+# Owner-only: buttons render on the DM (not the channel) and ratings from other
+# chats are ignored. Needs TELEGRAM_BOT_USERNAME, like the trainer's Save button.
+LESSON_RATING_ENABLED = True    # False -> no star buttons, ratings ignored
+
 # Spaced repetition for vocab: shorter base than the dev track (SR_BASE_INTERVAL_DAYS
 # = 7) because words need tighter early spacing than concept lessons. Intervals widen
 # as reps grow: round(base * factor**(reps-1)) -> ~1, 2, 5, 11, 24 ... days.

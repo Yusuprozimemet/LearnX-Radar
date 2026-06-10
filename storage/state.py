@@ -215,6 +215,23 @@ def record_lesson(
     return memory
 
 
+def record_lesson_rating(memory: dict, date_iso: str, rating: int) -> int:
+    """Stamp an owner quality rating (1–5) on the lesson(s) taught on `date_iso`;
+    returns how many lesson entries it applied to (0 when no lesson has that date).
+
+    Overwrites any prior rating for the date — unlike the Dutch recall fold-in
+    (first report wins, to protect counters), a rating is an opinion, so a
+    re-tap legitimately supersedes the earlier one.
+    """
+    applied = 0
+    for data in memory.get("skills", {}).values():
+        for lesson in data.get("lessons", []):
+            if lesson.get("date") == date_iso:
+                lesson["rating"] = int(rating)
+                applied += 1
+    return applied
+
+
 def previous_lesson(memory: dict) -> dict | None:
     """The most recently taught lesson across all skills, or None if none yet.
 

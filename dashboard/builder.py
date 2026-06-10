@@ -410,7 +410,7 @@ def _archive_html(skills: dict) -> str:
         (
             "<div class='card'>"
             f"<div class='meta'>{_esc(lesson.get('date', ''))} · "
-            f"{_esc(lesson.get('difficulty', ''))}</div>"
+            f"{_esc(lesson.get('difficulty', ''))}{_stars(lesson)}</div>"
             f"<div class='title'>{_esc(lesson.get('title', ''))}</div>"
             f"<p>{_esc(lesson.get('summary', ''))}</p>"
             f"{_player(lesson)}"
@@ -418,7 +418,7 @@ def _archive_html(skills: dict) -> str:
         )
         for lesson in lessons
     ]
-    inner = "".join(cards[:_ARCHIVE_RECENT])
+    inner = _rating_avg_html(lessons) + "".join(cards[:_ARCHIVE_RECENT])
     older = cards[_ARCHIVE_RECENT:]
     if older:
         inner += (
@@ -428,6 +428,34 @@ def _archive_html(skills: dict) -> str:
             + "</details>"
         )
     return _section("🗂️ Lesson archive", inner)
+
+
+def _stars(lesson: dict) -> str:
+    """The owner's 1–5 quality rating on a lesson card, when one was reported
+    via the Telegram star buttons. Empty string for unrated lessons."""
+    rating = lesson.get("rating")
+    if not rating:
+        return ""
+    return f" · {'★' * int(rating)}{'☆' * (5 - int(rating))}"
+
+
+def _rating_avg_html(lessons: list[dict]) -> str:
+    """Rolling 30-day average of the owner's lesson ratings — the dev track's
+    quality signal, mirroring the Dutch tab's recall rate: did the lessons land,
+    not just ship. Empty string until a first rating exists in the window."""
+    cutoff = (date.today() - timedelta(days=30)).isoformat()
+    rated = [
+        int(les["rating"])
+        for les in lessons
+        if les.get("rating") and les.get("date", "") >= cutoff
+    ]
+    if not rated:
+        return ""
+    avg = sum(rated) / len(rated)
+    return (
+        "<div class='stats'><span>Lesson rating (30d) "
+        f"<strong>{avg:.1f}★ ({len(rated)} rated)</strong></span></div>"
+    )
 
 
 def _player(lesson: dict) -> str:
