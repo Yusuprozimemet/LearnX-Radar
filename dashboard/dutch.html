@@ -9,8 +9,8 @@
        TEST   gatentekst (whole text, new words blanked, checked) and luistertoets
               (hear each sentence ONCE — enforced — then fill its target words).
        LESSEN per-day scores plus the lesson archive (lessons/index.json): tap ▶ on
-              a past day to reopen that whole lesson — Duolingo-style, a finished
-              node stays visitable. Archived days play audio from the release CDN.
+              a past day to reopen that whole lesson — a finished lesson stays
+              visitable. Archived days play audio from the release CDN.
      Progress lives in localStorage — no backend, no accounts, no PII. -->
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -565,8 +565,8 @@
     return wrap;
   }
 
-  // --- LESSEN: per-day final scores + the lesson archive (Duolingo-style nodes:
-  // a finished lesson stays visitable — tap ▶ to reopen that day) -----------------
+  // --- LESSEN: per-day final scores + the lesson archive (a finished lesson
+  // stays visitable — tap ▶ to reopen that day) -----------------------------------
   function lessenView(lesson) {
     var wrap = el("div");
     wrap.appendChild(el("p", "hint",

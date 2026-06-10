@@ -503,5 +503,4 @@ linked to Perplexity. One choke point keeps PII out of every downstream sink.
   fill-in-the-blanks production exercise, a static trainer page on Pages enforces
   the one-chance listening drill, and measured recall — not mere exposure — drives
   the spaced-repetition intervals. Every day's lesson is archived, so the trainer's
-  lesson list can reopen any past day — a finished node stays visitable,
-  Duolingo-style.
+  lesson list can reopen any past day — a finished lesson stays visitable.

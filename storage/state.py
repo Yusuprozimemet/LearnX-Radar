@@ -24,7 +24,7 @@ DUTCH_MEMORY_FILE = _DIR / "dutch_memory.json"  # v5: Dutch vocab spaced-repetit
 # Delft trainer page — committed by the workflow, copied to Pages, fetched by JS.
 DUTCH_LESSON_FILE = _DIR / "dutch_lesson.json"
 # Lesson archive: a dated copy of every trainer lesson plus an index.json manifest,
-# so the trainer page can reopen any past day (Duolingo-style lesson nodes). Grows
+# so the trainer page can reopen any past day. Grows
 # from the day this shipped — earlier lessons were overwritten and exist as audio only.
 DUTCH_LESSONS_DIR = _DIR / "lessons"
 
