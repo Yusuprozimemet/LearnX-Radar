@@ -8,6 +8,9 @@
               slider over the lesson MP3's timestamped segments.
        TEST   gatentekst (whole text, new words blanked, checked) and luistertoets
               (hear each sentence ONCE — enforced — then fill its target words).
+       LESSEN per-day scores plus the lesson archive (lessons/index.json): tap ▶ on
+              a past day to reopen that whole lesson — Duolingo-style, a finished
+              node stays visitable. Archived days play audio from the release CDN.
      Progress lives in localStorage — no backend, no accounts, no PII. -->
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -68,10 +71,12 @@
   .line { display:flex; align-items:center; gap:.7rem; background:var(--card);
           border:2px solid var(--border); border-radius:14px; padding:.5rem .7rem;
           margin:.45rem 0; }
-  .line button.play { width:2.4rem; height:2.4rem; flex:none; font-size:1rem; color:#fff;
+  .line button.play, .les-row button.play { width:2.4rem; height:2.4rem; flex:none;
+          font-size:1rem; color:#fff;
           background:var(--blue); border:0; border-bottom:4px solid var(--blue-edge);
           border-radius:12px; cursor:pointer; }
-  .line button.play:active { transform:translateY(2px); border-bottom-width:2px; }
+  .line button.play:active, .les-row button.play:active { transform:translateY(2px);
+          border-bottom-width:2px; }
   .line button.play:disabled { background:#cfd4dc; border-bottom-color:#b9bfc9;
           cursor:not-allowed; }
   .line .nl { font-weight:800; }
@@ -131,6 +136,7 @@
   .les-row .check { background:var(--green); color:#fff; border-radius:50%;
                     width:1.5rem; height:1.5rem; display:flex; align-items:center;
                     justify-content:center; font-size:.8rem; }
+  .les-row.open { border-color:var(--green); background:var(--green-soft); }
 </style></head><body>
 <header class="bar">
   <span class="owl">📻</span>
@@ -559,23 +565,39 @@
     return wrap;
   }
 
-  // --- LESSEN: per-day final scores (Boom-style lesson list, on-device) -----------
+  // --- LESSEN: per-day final scores + the lesson archive (Duolingo-style nodes:
+  // a finished lesson stays visitable — tap ▶ to reopen that day) -----------------
   function lessenView(lesson) {
     var wrap = el("div");
     wrap.appendChild(el("p", "hint",
-      "Jouw lessen en eindscores — op dit apparaat. (Your lessons and final scores — on this device.)"));
+      "Jouw lessen en eindscores — op dit apparaat. Tik ▶ om een eerdere les te openen. (Your lessons and final scores — on this device. Tap ▶ to reopen a past lesson.)"));
     var all = loadResults();
-    var dates = Object.keys(all).sort().reverse();
-    if (lesson.date && dates.indexOf(lesson.date) === -1) dates.unshift(lesson.date);
+    var byDate = {};                                  // archive manifest, keyed by date
+    manifest.forEach(function (m) { if (m.date) byDate[m.date] = m; });
+    var dates = Object.keys(all);
+    Object.keys(byDate).forEach(function (d) {
+      if (dates.indexOf(d) === -1) dates.push(d);
+    });
+    if (lesson.date && dates.indexOf(lesson.date) === -1) dates.push(lesson.date);
+    dates.sort().reverse();
     if (!dates.length) {
       wrap.appendChild(el("p", "muted", "Nog geen lessen gedaan."));
       return wrap;
     }
     dates.forEach(function (d) {
       var row = el("div", "les-row");
+      if (d === lesson.date) row.classList.add("open");
+      if (d !== lesson.date && byDate[d]) {           // reopen any archived day
+        var open = el("button", "play", "▶");
+        open.title = "Open deze les (reopen this lesson)";
+        open.addEventListener("click", function () { openLesson(d); });
+        row.appendChild(open);
+      }
       row.appendChild(el("span", "les", "LES " + d.slice(5)));   // MM-DD as the lesson id
+      var theme = d === lesson.date ? lesson.theme : (byDate[d] || {}).theme || "";
       row.appendChild(el("span", "title",
-        d === lesson.date ? (lesson.theme + " · vandaag") : ""));
+        d === lesson.date ? theme + (d === latestDate ? " · vandaag" : " · geopend")
+                          : theme));
       var right = 0, total = 0, kinds = all[d] || {};
       Object.keys(kinds).forEach(function (k) {
         right += (kinds[k].right || []).length;
@@ -598,81 +620,120 @@
   }
 
   // --- page assembly --------------------------------------------------------------
+  var manifest = [];     // lessons/index.json entries — the archived days (oldest first)
+  var latestDate = "";   // dutch_lesson.json's date — the day with a same-origin MP3 copy
+  var currentLesson = null;
+  var state = { tab: "leren", step: 1, sub: "gatentekst" };
+
   // Load the lesson MP3 fully as a blob: blob URLs are instantly and exactly
   // seekable, independent of server Range support (python -m http.server has none
   // — seeks clamped to 0, the "plays from the beginning" bug). The Pages deploy
-  // puts a same-origin copy at dutch_audio.mp3 (the release CDN sends no CORS
-  // header, so the browser cannot fetch it cross-origin); local previews fall
-  // through to the lesson's own audio_url, which is then same-origin too.
+  // puts a same-origin copy at dutch_audio.mp3 for the LATEST lesson only (the
+  // release CDN sends no CORS header, so the browser cannot fetch it cross-origin);
+  // local previews fall through to the lesson's own audio_url, which is then
+  // same-origin too. Archived days skip the copy and end at the direct CDN URL —
+  // the release CDN honours Range requests, so seeking still works there.
   function loadAudio(lesson) {
-    fetch("dutch_audio.mp3")
-      .then(function (r) { if (!r.ok) throw 0; return r.blob(); })
-      .catch(function () {
-        return fetch(lesson.audio_url)
-          .then(function (r) { if (!r.ok) throw 0; return r.blob(); });
-      })
+    var fromUrl = function () {
+      return fetch(lesson.audio_url)
+        .then(function (r) { if (!r.ok) throw 0; return r.blob(); });
+    };
+    (lesson.date === latestDate
+      ? fetch("dutch_audio.mp3")
+          .then(function (r) { if (!r.ok) throw 0; return r.blob(); })
+          .catch(fromUrl)
+      : fromUrl())
       .then(function (b) { audio.src = URL.createObjectURL(b); })
       .catch(function () { audio.src = lesson.audio_url; }); // last resort: direct
   }
 
+  function setTab(t) {
+    state.tab = t;
+    document.querySelectorAll("#tabs button").forEach(function (x) {
+      x.classList.toggle("active", x.dataset.tab === t);
+    });
+  }
+
+  // Reopen an archived day from the lessen list: fetch its dated JSON and render
+  // it as the current lesson (leren step 1, like a fresh open).
+  function openLesson(d) {
+    fetch("lessons/dutch-" + d + ".json", { cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .then(render)
+      .catch(function () {
+        document.getElementById("meta").textContent = "les " + d + " niet gevonden";
+      });
+  }
+
+  function draw() {
+    var lesson = currentLesson;
+    app.textContent = "";
+    var pills = el("div", "pills");
+    if (state.tab === "leren") {
+      [1, 2, 3, 4].forEach(function (s) {
+        var b = el("button", s === state.step ? "active" : "", String(s));
+        b.addEventListener("click", function () { state.step = s; draw(); });
+        pills.appendChild(b);
+      });
+      app.appendChild(pills);
+      app.appendChild(lerenView(lesson, state.step));
+    } else if (state.tab === "lessen") {
+      app.appendChild(lessenView(lesson));
+    } else {
+      ["gatentekst", "luistertoets"].forEach(function (k) {
+        var b = el("button", k === state.sub ? "active" : "", k);
+        b.addEventListener("click", function () { state.sub = k; draw(); });
+        pills.appendChild(b);
+      });
+      app.appendChild(pills);
+      app.appendChild(state.sub === "gatentekst"
+        ? gatentekstView(lesson) : luistertoetsView(lesson));
+    }
+    reportBox = el("p");
+    app.appendChild(reportBox);
+    statsBox = el("p", "stats");
+    app.appendChild(statsBox);
+    refreshStats();
+  }
+
+  document.querySelectorAll("#tabs button").forEach(function (b) {
+    b.addEventListener("click", function () {
+      audio.pause(); stopAt = null; onTick = null; onStop = null;
+      setTab(b.dataset.tab);
+      draw();
+    });
+  });
+
   function render(lesson) {
+    audio.pause(); stopAt = null; onTick = null; onStop = null;
+    currentLesson = lesson;
     document.getElementById("meta").textContent =
       lesson.date + " · " + lesson.theme + " · " + lesson.cefr;
     loadAudio(lesson);
     reportLesson = lesson;
     document.getElementById("tabs").style.display = "";
-
-    var state = { tab: "leren", step: 1, sub: "gatentekst" };
-
-    function draw() {
-      app.textContent = "";
-      var pills = el("div", "pills");
-      if (state.tab === "leren") {
-        [1, 2, 3, 4].forEach(function (s) {
-          var b = el("button", s === state.step ? "active" : "", String(s));
-          b.addEventListener("click", function () { state.step = s; draw(); });
-          pills.appendChild(b);
-        });
-        app.appendChild(pills);
-        app.appendChild(lerenView(lesson, state.step));
-      } else if (state.tab === "lessen") {
-        app.appendChild(lessenView(lesson));
-      } else {
-        ["gatentekst", "luistertoets"].forEach(function (k) {
-          var b = el("button", k === state.sub ? "active" : "", k);
-          b.addEventListener("click", function () { state.sub = k; draw(); });
-          pills.appendChild(b);
-        });
-        app.appendChild(pills);
-        app.appendChild(state.sub === "gatentekst"
-          ? gatentekstView(lesson) : luistertoetsView(lesson));
-      }
-      reportBox = el("p");
-      app.appendChild(reportBox);
-      statsBox = el("p", "stats");
-      app.appendChild(statsBox);
-      refreshStats();
-    }
-
-    document.querySelectorAll("#tabs button").forEach(function (b) {
-      b.addEventListener("click", function () {
-        audio.pause(); stopAt = null; onTick = null; onStop = null;
-        document.querySelectorAll("#tabs button").forEach(function (x) {
-          x.classList.toggle("active", x === b);
-        });
-        state.tab = b.dataset.tab;
-        draw();
-      });
-    });
+    setTab("leren");
+    state.step = 1;
     draw();
   }
 
-  fetch("dutch_lesson.json", { cache: "no-store" })
+  // The archive manifest first (missing on day one — fine, the list just shows
+  // on-device results only), then today's lesson.
+  fetch("lessons/index.json", { cache: "no-store" })
+    .then(function (r) { return r.ok ? r.json() : {}; })
+    .catch(function () { return {}; })
+    .then(function (idx) {
+      manifest = (idx && idx.lessons) || [];
+      return fetch("dutch_lesson.json", { cache: "no-store" });
+    })
     .then(function (resp) {
       if (!resp.ok) throw new Error("HTTP " + resp.status);
       return resp.json();
     })
-    .then(render)
+    .then(function (lesson) {
+      latestDate = lesson.date || "";
+      render(lesson);
+    })
     .catch(function () {
       document.getElementById("meta").textContent = "geen les";
       app.textContent = "";

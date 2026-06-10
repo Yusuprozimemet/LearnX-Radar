@@ -502,4 +502,6 @@ linked to Perplexity. One choke point keeps PII out of every downstream sink.
   the daily MP3 leaves repeat-pauses after every sentence, the lesson ends with a
   fill-in-the-blanks production exercise, a static trainer page on Pages enforces
   the one-chance listening drill, and measured recall — not mere exposure — drives
-  the spaced-repetition intervals.
+  the spaced-repetition intervals. Every day's lesson is archived, so the trainer's
+  lesson list can reopen any past day — a finished node stays visitable,
+  Duolingo-style.
