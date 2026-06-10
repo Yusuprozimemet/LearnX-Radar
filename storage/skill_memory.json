@@ -80,11 +80,27 @@
       ],
       "last_taught": "2026-06-09",
       "summary": "Durable workflows and vector search"
+    },
+    "Rust async/await": {
+      "times_taught": 1,
+      "first_taught": "2026-06-10",
+      "lessons": [
+        {
+          "date": "2026-06-10",
+          "title": "Rust async/await",
+          "difficulty": "beginner",
+          "summary": "Rust projects trending",
+          "audio": "lesson-20260610-rust-async-await.mp3",
+          "brief": "20260610-rust-async-await.md"
+        }
+      ],
+      "last_taught": "2026-06-10",
+      "summary": "Rust projects trending"
     }
   },
   "so_counts": {
-    "python": 2205798,
-    "rust": 43949,
+    "python": 2205806,
+    "rust": 43950,
     "kubernetes": 59806,
     "langchain": 1983,
     "duckdb": 504

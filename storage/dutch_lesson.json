@@ -1,0 +1,486 @@
+{
+  "date": "2026-06-10",
+  "theme": "everyday",
+  "cefr": "A2",
+  "audio_url": "https://github.com/Yusuprozimemet/LearnX-Radar/releases/download/lessons/dutch-20260610.mp3",
+  "new_words": [
+    {
+      "id": "rekening",
+      "nl": "de rekening",
+      "en": "the bill",
+      "pos": "noun",
+      "theme": "everyday",
+      "cefr": "A2"
+    },
+    {
+      "id": "trein",
+      "nl": "de trein",
+      "en": "the train",
+      "pos": "noun",
+      "theme": "everyday",
+      "cefr": "A2"
+    },
+    {
+      "id": "bus",
+      "nl": "de bus",
+      "en": "the bus",
+      "pos": "noun",
+      "theme": "everyday",
+      "cefr": "A2"
+    },
+    {
+      "id": "fiets",
+      "nl": "de fiets",
+      "en": "the bicycle",
+      "pos": "noun",
+      "theme": "everyday",
+      "cefr": "A2"
+    }
+  ],
+  "sentences": [
+    {
+      "id": "rekening",
+      "nl": "Ik betaal de rekening.",
+      "en": "I pay the bill."
+    },
+    {
+      "id": "trein",
+      "nl": "Ik ga met de trein naar Amsterdam.",
+      "en": "I go to Amsterdam by train."
+    },
+    {
+      "id": "bus",
+      "nl": "Ik neem de bus naar de winkel.",
+      "en": "I take the bus to the shop."
+    },
+    {
+      "id": "fiets",
+      "nl": "Ik ga naar het werk met de fiets.",
+      "en": "I go to work by bicycle."
+    },
+    {
+      "id": "afspraak",
+      "nl": "Ik heb een afspraak met de collega.",
+      "en": "I have an appointment with the colleague."
+    },
+    {
+      "id": "vergadering",
+      "nl": "Ik ga naar de vergadering.",
+      "en": "I go to the meeting."
+    },
+    {
+      "id": "werk",
+      "nl": "Ik ga naar het werk.",
+      "en": "I go to work."
+    },
+    {
+      "id": "baan",
+      "nl": "Ik zoek een nieuwe baan.",
+      "en": "I am looking for a new job."
+    },
+    {
+      "id": "collega",
+      "nl": "Mijn collega helpt me.",
+      "en": "My colleague helps me."
+    },
+    {
+      "id": "winkel",
+      "nl": "Ik ga naar de winkel.",
+      "en": "I go to the shop."
+    }
+  ],
+  "dialogue": [
+    {
+      "speaker": "A",
+      "nl": "Ik ga met de trein naar de winkel.",
+      "en": "I'm going to the shop by train."
+    },
+    {
+      "speaker": "B",
+      "nl": "Ik neem de bus, dat is sneller.",
+      "en": "I take the bus, it's faster."
+    },
+    {
+      "speaker": "A",
+      "nl": "Ik heb een afspraak met de collega.",
+      "en": "I have an appointment with the colleague."
+    },
+    {
+      "speaker": "B",
+      "nl": "Ik ga naar de vergadering, succes met je afspraak!",
+      "en": "I'm going to the meeting, good luck with your appointment!"
+    },
+    {
+      "speaker": "A",
+      "nl": "Bedankt, ik moet nog de rekening betalen.",
+      "en": "Thanks, I still have to pay the bill."
+    },
+    {
+      "speaker": "B",
+      "nl": "Ik wens je een fijne dag op het werk!",
+      "en": "I wish you a nice day at work!"
+    }
+  ],
+  "cloze": {
+    "lines": [
+      "Ik betaal de ___ (1).",
+      "Ik ga met de ___ (2) naar Amsterdam.",
+      "Ik neem de ___ (3) naar de winkel.",
+      "Ik ga naar het werk met de ___ (4)."
+    ],
+    "answers": [
+      "rekening",
+      "trein",
+      "bus",
+      "fiets"
+    ]
+  },
+  "luistertoets": [
+    {
+      "speaker": "A",
+      "nl": "Ik ga met de ___ (1) naar de ___ (2).",
+      "answers": [
+        "trein",
+        "winkel"
+      ],
+      "en": "I'm going to the shop by train."
+    },
+    {
+      "speaker": "B",
+      "nl": "Ik neem de ___ (1), dat is sneller.",
+      "answers": [
+        "bus"
+      ],
+      "en": "I take the bus, it's faster."
+    },
+    {
+      "speaker": "A",
+      "nl": "Ik heb een ___ (1) met de ___ (2).",
+      "answers": [
+        "afspraak",
+        "collega"
+      ],
+      "en": "I have an appointment with the colleague."
+    },
+    {
+      "speaker": "B",
+      "nl": "Ik ga naar de ___ (2), succes met je ___ (1)!",
+      "answers": [
+        "afspraak",
+        "vergadering"
+      ],
+      "en": "I'm going to the meeting, good luck with your appointment!"
+    },
+    {
+      "speaker": "A",
+      "nl": "Bedankt, ik moet nog de ___ (1) betalen.",
+      "answers": [
+        "rekening"
+      ],
+      "en": "Thanks, I still have to pay the bill."
+    },
+    {
+      "speaker": "B",
+      "nl": "Ik wens je een fijne dag op het ___ (1)!",
+      "answers": [
+        "werk"
+      ],
+      "en": "I wish you a nice day at work!"
+    }
+  ],
+  "segments": [
+    {
+      "block": "A",
+      "speaker": "ALEX",
+      "nl": "de rekening",
+      "en": "the bill",
+      "start_ms": 0,
+      "end_ms": 2160
+    },
+    {
+      "block": "A",
+      "speaker": "MAYA",
+      "nl": "Ik betaal de rekening.",
+      "en": "I pay the bill.",
+      "start_ms": 2610,
+      "end_ms": 5274
+    },
+    {
+      "block": "A",
+      "speaker": "MAYA",
+      "nl": "Ik betaal de rekening.",
+      "en": "I pay the bill.",
+      "start_ms": 9270,
+      "end_ms": 11934
+    },
+    {
+      "block": "A",
+      "speaker": "ALEX",
+      "nl": "de trein",
+      "en": "the train",
+      "start_ms": 13266,
+      "end_ms": 15114
+    },
+    {
+      "block": "A",
+      "speaker": "MAYA",
+      "nl": "Ik ga met de trein naar Amsterdam.",
+      "en": "I go to Amsterdam by train.",
+      "start_ms": 15564,
+      "end_ms": 19092
+    },
+    {
+      "block": "A",
+      "speaker": "MAYA",
+      "nl": "Ik ga met de trein naar Amsterdam.",
+      "en": "I go to Amsterdam by train.",
+      "start_ms": 24384,
+      "end_ms": 27912
+    },
+    {
+      "block": "A",
+      "speaker": "ALEX",
+      "nl": "de bus",
+      "en": "the bus",
+      "start_ms": 29675,
+      "end_ms": 31547
+    },
+    {
+      "block": "A",
+      "speaker": "MAYA",
+      "nl": "Ik neem de bus naar de winkel.",
+      "en": "I take the bus to the shop.",
+      "start_ms": 31997,
+      "end_ms": 35045
+    },
+    {
+      "block": "A",
+      "speaker": "MAYA",
+      "nl": "Ik neem de bus naar de winkel.",
+      "en": "I take the bus to the shop.",
+      "start_ms": 39617,
+      "end_ms": 42665
+    },
+    {
+      "block": "A",
+      "speaker": "ALEX",
+      "nl": "de fiets",
+      "en": "the bicycle",
+      "start_ms": 44189,
+      "end_ms": 46061
+    },
+    {
+      "block": "A",
+      "speaker": "MAYA",
+      "nl": "Ik ga naar het werk met de fiets.",
+      "en": "I go to work by bicycle.",
+      "start_ms": 46511,
+      "end_ms": 49775
+    },
+    {
+      "block": "A",
+      "speaker": "MAYA",
+      "nl": "Ik ga naar het werk met de fiets.",
+      "en": "I go to work by bicycle.",
+      "start_ms": 54671,
+      "end_ms": 57935
+    },
+    {
+      "block": "B",
+      "speaker": "ALEX",
+      "nl": "Ik ga met de trein naar de winkel.",
+      "en": "I'm going to the shop by train.",
+      "start_ms": 59567,
+      "end_ms": 62663
+    },
+    {
+      "block": "B",
+      "speaker": "ALEX",
+      "nl": "Ik ga met de trein naar de winkel.",
+      "en": "I'm going to the shop by train.",
+      "start_ms": 67307,
+      "end_ms": 70403
+    },
+    {
+      "block": "B",
+      "speaker": "MAYA",
+      "nl": "Ik neem de bus, dat is sneller.",
+      "en": "I take the bus, it's faster.",
+      "start_ms": 71951,
+      "end_ms": 75335
+    },
+    {
+      "block": "B",
+      "speaker": "MAYA",
+      "nl": "Ik neem de bus, dat is sneller.",
+      "en": "I take the bus, it's faster.",
+      "start_ms": 80410,
+      "end_ms": 83794
+    },
+    {
+      "block": "B",
+      "speaker": "ALEX",
+      "nl": "Ik heb een afspraak met de collega.",
+      "en": "I have an appointment with the colleague.",
+      "start_ms": 85486,
+      "end_ms": 88702
+    },
+    {
+      "block": "B",
+      "speaker": "ALEX",
+      "nl": "Ik heb een afspraak met de collega.",
+      "en": "I have an appointment with the colleague.",
+      "start_ms": 93526,
+      "end_ms": 96742
+    },
+    {
+      "block": "B",
+      "speaker": "MAYA",
+      "nl": "Ik ga naar de vergadering, succes met je afspraak!",
+      "en": "I'm going to the meeting, good luck with your appointment!",
+      "start_ms": 98350,
+      "end_ms": 103150
+    },
+    {
+      "block": "B",
+      "speaker": "MAYA",
+      "nl": "Ik ga naar de vergadering, succes met je afspraak!",
+      "en": "I'm going to the meeting, good luck with your appointment!",
+      "start_ms": 110350,
+      "end_ms": 115150
+    },
+    {
+      "block": "B",
+      "speaker": "ALEX",
+      "nl": "Bedankt, ik moet nog de rekening betalen.",
+      "en": "Thanks, I still have to pay the bill.",
+      "start_ms": 117550,
+      "end_ms": 121294
+    },
+    {
+      "block": "B",
+      "speaker": "ALEX",
+      "nl": "Bedankt, ik moet nog de rekening betalen.",
+      "en": "Thanks, I still have to pay the bill.",
+      "start_ms": 126910,
+      "end_ms": 130654
+    },
+    {
+      "block": "B",
+      "speaker": "MAYA",
+      "nl": "Ik wens je een fijne dag op het werk!",
+      "en": "I wish you a nice day at work!",
+      "start_ms": 132526,
+      "end_ms": 136102
+    },
+    {
+      "block": "B",
+      "speaker": "MAYA",
+      "nl": "Ik wens je een fijne dag op het werk!",
+      "en": "I wish you a nice day at work!",
+      "start_ms": 141466,
+      "end_ms": 145042
+    },
+    {
+      "block": "C",
+      "speaker": "ALEX",
+      "nl": "Ik ga met de trein naar de winkel.",
+      "en": "I'm going to the shop by train.",
+      "start_ms": 146830,
+      "end_ms": 149926
+    },
+    {
+      "block": "C",
+      "speaker": "MAYA",
+      "nl": "Ik neem de bus, dat is sneller.",
+      "en": "I take the bus, it's faster.",
+      "start_ms": 150375,
+      "end_ms": 153759
+    },
+    {
+      "block": "C",
+      "speaker": "ALEX",
+      "nl": "Ik heb een afspraak met de collega.",
+      "en": "I have an appointment with the colleague.",
+      "start_ms": 154209,
+      "end_ms": 157425
+    },
+    {
+      "block": "C",
+      "speaker": "MAYA",
+      "nl": "Ik ga naar de vergadering, succes met je afspraak!",
+      "en": "I'm going to the meeting, good luck with your appointment!",
+      "start_ms": 157875,
+      "end_ms": 162675
+    },
+    {
+      "block": "C",
+      "speaker": "ALEX",
+      "nl": "Bedankt, ik moet nog de rekening betalen.",
+      "en": "Thanks, I still have to pay the bill.",
+      "start_ms": 163125,
+      "end_ms": 166869
+    },
+    {
+      "block": "C",
+      "speaker": "MAYA",
+      "nl": "Ik wens je een fijne dag op het werk!",
+      "en": "I wish you a nice day at work!",
+      "start_ms": 167319,
+      "end_ms": 170895
+    }
+  ],
+  "block_b": {
+    "start_ms": 59567,
+    "end_ms": 145042
+  },
+  "block_c": {
+    "start_ms": 146830,
+    "end_ms": 170895
+  },
+  "report": {
+    "bot": "Prakly_notification_bot",
+    "words": [
+      {
+        "id": "rekening",
+        "form": "rekening"
+      },
+      {
+        "id": "trein",
+        "form": "trein"
+      },
+      {
+        "id": "bus",
+        "form": "bus"
+      },
+      {
+        "id": "fiets",
+        "form": "fiets"
+      },
+      {
+        "id": "afspraak",
+        "form": "afspraak"
+      },
+      {
+        "id": "vergadering",
+        "form": "vergadering"
+      },
+      {
+        "id": "werk",
+        "form": "werk"
+      },
+      {
+        "id": "baan",
+        "form": "baan"
+      },
+      {
+        "id": "collega",
+        "form": "collega"
+      },
+      {
+        "id": "winkel",
+        "form": "winkel"
+      }
+    ]
+  }
+}
