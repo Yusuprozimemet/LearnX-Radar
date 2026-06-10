@@ -545,6 +545,7 @@ def _page(title: str, body: str) -> str:
   <span class="note">a daily developer lesson (+ Dutch) — audio &amp; PDF</span>
 </p>
 <p class="nav">
+  <a href="{_esc(config.SPOTIFY_SHOW_URL)}">🟢 Listen on Spotify</a>
   <a href="{_esc(config.FEED_URL)}">🎧 Podcast feed</a>
   <a href="{_esc(config.RELEASES_PAGE_URL)}">📦 Audio releases</a>
 </p>

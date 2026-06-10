@@ -124,6 +124,8 @@ OG_IMAGE_URL = f"{SITE_URL}og.png"  # social-share preview (pages.yml copies ima
 # Public Telegram channel — a constant (not the TELEGRAM_CHANNEL_ID secret) so the
 # dashboard/Pages build, which runs without secrets, can still link it.
 CHANNEL_URL = "https://t.me/learnradar"
+# The show page Spotify created from the podcast feed, linked from the dashboard.
+SPOTIFY_SHOW_URL = "https://open.spotify.com/show/033tPjkKDj5xF09FQC0Di7"
 
 # Podcast directory metadata (Apple Podcasts / Spotify require these in the feed).
 PODCAST_IMAGE_URL = f"{SITE_URL}cover.png"   # square artwork >=1400px (pages.yml copies it)
