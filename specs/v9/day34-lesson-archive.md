@@ -1,10 +1,10 @@
-# v9 / Day 34 — Lesson archive (reopen any past day, Duolingo-style)
+# v9 / Day 34 — Lesson archive (reopen any past day)
 
 **Goal:** the trainer shows the latest lesson only — `dutch_lesson.json` is
 overwritten every run, so yesterday's lesson vanishes from the site the moment
 today's lands (Day 32 explicitly deferred the back-catalog). Keep every day's
-lesson and let the learner reopen it from the trainer's lesson list, like a
-finished Duolingo node that stays visitable. Same architecture as everything
+lesson and let the learner reopen it from the trainer's lesson list — a
+finished lesson stays visitable. Same architecture as everything
 else: the daily run commits state, Pages serves it, the browser does the rest.
 
 ---
