@@ -41,8 +41,8 @@ produce, not just what you were sent. See [Dutch coach](#dutch-coach).
        🇳🇱 Dutch progress tab — rebuilt after every daily run, no login needed.
 - **Dutch trainer — <https://yusuprozimemet.github.io/LearnX-Radar/dutch.html>:**
        today's Dutch lesson as an interactive Delft trainer — tap-to-play sentences,
-       fill-in-the-blanks, the one-chance listening test, and one-tap saving of your
-       scores back to the bot.
+       fill-in-the-blanks, the one-chance listening test, one-tap saving of your
+       scores back to the bot, and a lesson archive to reopen any past day.
 
 ## What it does
 
@@ -67,7 +67,10 @@ produce, not just what you were sent. See [Dutch coach](#dutch-coach).
        tap-to-play sentences with veiled translations, checked cloze, an enforced
        one-chance listening test — and a **"Save results" deep link** that sends
        your scores back to the bot, so failed words return sooner and recalled
-       words space out further (no webhook, no token in the browser).
+       words space out further (no webhook, no token in the browser). Every
+       lesson is **archived** (dated JSON + an `index.json` manifest), so the
+       trainer's LESSEN tab can reopen any past day — a finished lesson stays
+       visitable, with audio streamed from the release CDN.
 - Delivers both lessons to your Telegram DM **and an optional public broadcast
        channel** — audio + summary + the **full lesson as a PDF** (captions cap at
        1024 chars, so the PDF carries the complete, formatted lesson) — and to email
@@ -97,7 +100,8 @@ scrape (7 sources) -> dedup -> extract skills (map-reduce + deterministic
                       -> write grounded brief (Jina + Exa, cited)
                       -> plan curriculum -> generate dialogue -> build audio
                       -> ingest Dutch recall reports (getUpdates) -> build Dutch
-                         lesson (vocab + sentences + Delft audio + trainer JSON)
+                         lesson (vocab + sentences + Delft audio + trainer JSON,
+                         archived per day)
                       -> render PDFs -> deliver (Telegram DM + channel, email)
                       -> persist state -> refresh dashboard + podcast feed
 ```
@@ -160,7 +164,8 @@ dashboard/  static dashboard builder (Radar / Dutch tabs), the interactive
             Delft trainer page (dutch.html), podcast feed (feed.py),
             Open Graph preview + privacy.html
 storage/    state files (seen_skills.json, skill_memory.json, last_scored.json,
-            trending_history.json, dutch_memory.json, dutch_lesson.json)
+            trending_history.json, dutch_memory.json, dutch_lesson.json,
+            lessons/ — the per-day Dutch lesson archive + index.json)
 briefs/     full lesson briefs (linked from lessons for Perplexity Q&A)
 scripts/    one-off experiment harnesses (chunk size, grounding read budget,
             momentum window) — deletable, not part of the cron
@@ -228,6 +233,10 @@ same engine and the **Delftse methode** (listen → imitate → produce). Each r
        ([dutch.html](https://yusuprozimemet.github.io/LearnX-Radar/dutch.html)): the
        four Delft listening steps with a real player, checked cloze, and a
        one-listen-per-sentence luistertoets.
+- **Archives every lesson** (a dated copy in `storage/lessons/` plus an
+       `index.json` manifest) so the trainer's LESSEN tab lists past days next to
+       their final scores — tap ▶ to reopen a whole earlier lesson, with its audio
+       streamed from the release CDN.
 - Closes the loop with **recall feedback**: the trainer's "Save results" button
        deep-links your scores to the bot as a `/start` message; the next morning's
        run reads them via `getUpdates` and reschedules — a failed word returns at the
@@ -252,7 +261,8 @@ python -m dutch.build_wordlist --theme everyday --cefr A2 --count 40
 
 The roadmap (KNM, reading, grammar, adaptive pacing toward B1) lives in
 [specs/v5](specs/v5) and [specs/v6](specs/v6); the Delftse-methode slice
-(paused audio, cloze, trainer, recall feedback) in [specs/v9](specs/v9); see
+(paused audio, cloze, trainer, recall feedback, lesson archive) in
+[specs/v9](specs/v9); see
 [plan/plan.md](plan/plan.md).
 
 ## Local usage
@@ -296,6 +306,10 @@ In CI, the env values come from GitHub repo secrets (see
 - `storage/dutch_lesson.json`: today's full Dutch lesson (text + translations +
        cloze + audio seek map + recall-report contract) for the trainer page —
        overwritten each run, copied to Pages by the deploy.
+- `storage/lessons/`: the Dutch lesson archive — a dated JSON copy of every
+       trainer lesson plus an `index.json` manifest, committed by the daily run and
+       copied to Pages so the trainer can reopen any past day. Grows from the day
+       the archive shipped; earlier lessons exist as audio only.
 - [storage/last_scored.json](storage/last_scored.json): latest scoring for the
        dashboard. Scored from the full scrape each run (not just post-dedup
        items), so the board always shows the complete demand picture and updates
@@ -306,7 +320,8 @@ In CI, the env values come from GitHub repo secrets (see
 - [briefs](briefs): full lesson briefs, linked from each lesson for Perplexity Q&A.
 - [output](output): generated MP3 lessons — the developer lesson
        (`lesson-YYYYMMDD-<slug>.mp3`) and the Dutch lesson (`dutch-YYYYMMDD.mp3`).
-- [dashboard/index.html](dashboard/index.html): generated static dashboard.
+- `dashboard/index.html`: generated static dashboard (not committed — rebuilt
+       from state by the Pages deploy, and locally via `python -m dashboard`).
 - [dashboard/dutch.html](dashboard/dutch.html): the static Delft trainer page
        (hand-written, not generated) — fetches `dutch_lesson.json` on Pages; progress
        lives in localStorage, results travel via the Telegram deep link (no backend).
