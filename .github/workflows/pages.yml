@@ -16,6 +16,7 @@ on:
       - "storage/last_scored.json"
       - "storage/trending_history.json"
       - "storage/dutch_lesson.json"
+      - "storage/lessons/**"
       - "dashboard/**"
 
 permissions:
@@ -48,6 +49,10 @@ jobs:
           cp dashboard/privacy.html _site/privacy.html
           cp dashboard/dutch.html _site/dutch.html         # Delft trainer page (v9)
           cp storage/dutch_lesson.json _site/dutch_lesson.json 2>/dev/null || true  # today's lesson for the trainer
+          # Lesson archive (dated JSONs + index.json): the trainer's lesson list.
+          # Past days play their audio straight from the release CDN (it supports
+          # Range requests, so seeking works without the same-origin blob copy).
+          if [ -d storage/lessons ]; then mkdir -p _site/lessons && cp storage/lessons/*.json _site/lessons/; fi
           # Same-origin copy of the lesson MP3: the release CDN sends no CORS header,
           # so the trainer page can't fetch it cross-origin (it needs blob-loading for
           # exact sentence seeking). Downloading here is server-side — no CORS involved.

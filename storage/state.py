@@ -23,6 +23,10 @@ DUTCH_MEMORY_FILE = _DIR / "dutch_memory.json"  # v5: Dutch vocab spaced-repetit
 # v9 day 32: today's full Dutch lesson (text + cloze + audio seek map) for the
 # Delft trainer page — committed by the workflow, copied to Pages, fetched by JS.
 DUTCH_LESSON_FILE = _DIR / "dutch_lesson.json"
+# Lesson archive: a dated copy of every trainer lesson plus an index.json manifest,
+# so the trainer page can reopen any past day (Duolingo-style lesson nodes). Grows
+# from the day this shipped — earlier lessons were overwritten and exist as audio only.
+DUTCH_LESSONS_DIR = _DIR / "lessons"
 
 LAST_SCORED_KEEP = 20  # cap the persisted ranking; the dashboard only shows a top slice
 HISTORY_KEEP_DAYS = 60  # cap the per-day archive so the embedded page payload stays bounded
@@ -296,10 +300,34 @@ def save_dutch_memory(memory: dict) -> None:
 
 
 def save_dutch_lesson(payload: dict) -> None:
-    """Persist today's trainer lesson JSON (v9 day 32). Overwritten each run —
-    the trainer page shows the latest lesson only."""
-    DUTCH_LESSON_FILE.write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
+    """Persist today's trainer lesson JSON (v9 day 32). dutch_lesson.json is
+    overwritten each run (the trainer page's default view); a dated copy goes to
+    the lessons/ archive and index.json gains an entry, so the page's lesson list
+    can reopen past days. Re-running the same day replaces that day's entry."""
+    text = json.dumps(payload, ensure_ascii=False, indent=2)
+    DUTCH_LESSON_FILE.write_text(text, encoding="utf-8")
+    day = payload.get("date", "")
+    if not day:
+        return
+    DUTCH_LESSONS_DIR.mkdir(exist_ok=True)
+    (DUTCH_LESSONS_DIR / f"dutch-{day}.json").write_text(text, encoding="utf-8")
+    index_file = DUTCH_LESSONS_DIR / "index.json"
+    try:
+        index = json.loads(index_file.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        index = {}
+    lessons = [e for e in index.get("lessons", []) if e.get("date") != day]
+    lessons.append(
+        {
+            "date": day,
+            "theme": payload.get("theme", ""),
+            "cefr": payload.get("cefr", ""),
+        }
+    )
+    lessons.sort(key=lambda e: e.get("date", ""))
+    index_file.write_text(
+        json.dumps({"lessons": lessons}, ensure_ascii=False, indent=2),
+        encoding="utf-8",
     )
 
 
