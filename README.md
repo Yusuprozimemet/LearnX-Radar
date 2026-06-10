@@ -24,6 +24,17 @@ produce, not just what you were sent. See [Dutch coach](#dutch-coach).
   <img src="image.png" alt="LearnX-Radar overview" width="600" />
 </div>
 
+<table align="center">
+  <tr>
+    <td align="center"><a href="https://yusuprozimemet.github.io/LearnX-Radar/"><b>Live skill radar</b></a></td>
+    <td align="center"><a href="https://yusuprozimemet.github.io/LearnX-Radar/dutch.html"><b>Dutch trainer</b></a></td>
+  </tr>
+  <tr>
+    <td><img src="image2.png" alt="LearnX-Radar dashboard — daily trending-skills radar with the Dutch tab and Telegram/Spotify links" width="380" /></td>
+    <td><img src="image3.png" alt="Dutch trainer — Delft listening step with audio player, tap-to-play dialogue lines and translations" width="380" /></td>
+  </tr>
+</table>
+
 ## Subscribe (free)
 
 - **Telegram — [t.me/learnradar](https://t.me/learnradar):** every daily lesson
