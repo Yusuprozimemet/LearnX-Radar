@@ -101,10 +101,23 @@ def _caption(lesson: dict) -> str:
     return f"🎧 {title}\n\n{trimmed}\n\n{footer}"
 
 
-def _reply_markup(lesson: dict) -> dict:
+def _rating_row() -> list[dict]:
+    """Five star buttons deep-linking the day's lesson rating back to the bot
+    (t.me/<bot>?start=lr_<YYMMDD>_<n>) — the dev track's quality signal, riding
+    the same getUpdates loop as the Dutch trainer's recall reports. Empty when
+    the feature is off or the bot's public username isn't configured."""
+    if not (config.LESSON_RATING_ENABLED and config.TELEGRAM_BOT_USERNAME):
+        return []
+    base = f"https://t.me/{config.TELEGRAM_BOT_USERNAME}?start=lr_{date.today():%y%m%d}"
+    return [{"text": "⭐" * n, "url": f"{base}_{n}"} for n in range(1, 6)]
+
+
+def _reply_markup(lesson: dict, rate: bool = False) -> dict:
     """Inline keyboard: a follow-up button (today's brief) and, when a previous
     lesson exists, a recall-quiz button (the prior lesson's brief). Both deep
-    links embed the brief *text* so Perplexity has grounding without scraping."""
+    links embed the brief *text* so Perplexity has grounding without scraping.
+    `rate` adds the star-rating row — owner DM only (ratings from other chats
+    would be ignored by the ingestion, so the channel never sees dead buttons)."""
     rows = []
     brief_md = lesson.get("brief_md")
     skill = lesson.get("skill")
@@ -120,6 +133,9 @@ def _reply_markup(lesson: dict) -> dict:
             "text": "🧠 Quiz me on this",
             "url": followup.quiz_url(quiz_skill, quiz_brief),
         }])
+    if rate:
+        if stars := _rating_row():
+            rows.append(stars)
     if not rows:
         return {}
     return {"reply_markup": json.dumps({"inline_keyboard": rows})}
@@ -231,6 +247,7 @@ def _deliver_one(chat_id: str, lesson: dict, brief_pdf: Path | None,
                  dutch_pdf: Path | None) -> None:
     """Send the full lesson bundle (dev audio + PDF, Dutch audio + PDF) to one chat."""
     token = _token_for(chat_id)
+    is_owner = str(chat_id) == str(config.TELEGRAM_CHAT_ID)
     mp3 = Path(lesson["mp3_path"])
     with mp3.open("rb") as audio:
         _check(requests.post(
@@ -238,7 +255,7 @@ def _deliver_one(chat_id: str, lesson: dict, brief_pdf: Path | None,
             data={
                 "chat_id": chat_id, "caption": _caption(lesson),
                 "title": lesson["title"], "performer": "LearnX-Radar",
-                **_reply_markup(lesson),
+                **_reply_markup(lesson, rate=is_owner),
             },
             files={"audio": (mp3.name, audio, "audio/mpeg")},
             timeout=60,

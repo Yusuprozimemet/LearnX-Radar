@@ -85,6 +85,26 @@ def test_reply_markup_empty_without_brief():
     assert telegram_sender._reply_markup({"title": "x"}) == {}
 
 
+def test_reply_markup_rating_row_owner_only(monkeypatch):
+    monkeypatch.setattr(telegram_sender.config, "TELEGRAM_BOT_USERNAME", "radarbot")
+    monkeypatch.setattr(telegram_sender.config, "LESSON_RATING_ENABLED", True)
+    lesson = {"skill": "DuckDB", "brief_md": _BRIEF}
+    # rate=True (owner DM) appends the five star buttons as the last row …
+    markup = telegram_sender._reply_markup(lesson, rate=True)
+    rows = json.loads(markup["reply_markup"])["inline_keyboard"]
+    assert [btn["text"] for btn in rows[-1]] == ["⭐", "⭐⭐", "⭐⭐⭐", "⭐⭐⭐⭐", "⭐⭐⭐⭐⭐"]
+    assert rows[-1][2]["url"].startswith("https://t.me/radarbot?start=lr_")
+    assert rows[-1][2]["url"].endswith("_3")
+    # … while the channel (rate=False) and an unset username get no stars.
+    assert _buttons(telegram_sender._reply_markup(lesson)) == [
+        "🔎 Ask follow-ups on Perplexity"
+    ]
+    monkeypatch.setattr(telegram_sender.config, "TELEGRAM_BOT_USERNAME", "")
+    assert _buttons(telegram_sender._reply_markup(lesson, rate=True)) == [
+        "🔎 Ask follow-ups on Perplexity"
+    ]
+
+
 # --- email buttons -----------------------------------------------------------
 
 def test_email_buttons_followup_only_without_prior():
@@ -325,6 +345,33 @@ def test_fetch_reports_owner_only_last_wins_and_acks(monkeypatch):
     # date-sorted; owner-only; the LAST report for a date supersedes the earlier tap
     assert reports == [("2026-06-07", "01"), ("2026-06-08", "11x")]
     assert calls[-1]["offset"] == 13  # whole batch acknowledged past the newest id
+
+
+def test_fetch_inbound_splits_ratings_from_recall(monkeypatch):
+    monkeypatch.setattr(telegram_recall.config, "TELEGRAM_BOT_TOKEN", "tok")
+    monkeypatch.setattr(telegram_recall.config, "TELEGRAM_CHAT_ID", "42")
+    updates = [
+        {"update_id": 1, "message": {"chat": {"id": 42}, "text": "/start dr_260608_10x"}},
+        {"update_id": 2, "message": {"chat": {"id": 42}, "text": "/start lr_260608_4"}},
+        # not the owner's chat — a channel member's tap is ignored:
+        {"update_id": 3, "message": {"chat": {"id": 99}, "text": "/start lr_260608_1"}},
+        # a changed mind supersedes the earlier stars:
+        {"update_id": 4, "message": {"chat": {"id": 42}, "text": "/start lr_260608_5"}},
+        {"update_id": 5, "message": {"chat": {"id": 42}, "text": "/start lr_260607_2"}},
+        # out-of-range / malformed ratings don't parse:
+        {"update_id": 6, "message": {"chat": {"id": 42}, "text": "/start lr_260607_9"}},
+    ]
+    calls = []
+
+    def fake_get(url, params=None, timeout=None):
+        calls.append(params or {})
+        return _UpdatesResp([] if "offset" in (params or {}) else updates)
+
+    monkeypatch.setattr(telegram_recall.requests, "get", fake_get)
+    inbound = telegram_recall.fetch_inbound()
+    assert inbound["recall"] == [("2026-06-08", "10x")]
+    assert inbound["ratings"] == [("2026-06-07", 2), ("2026-06-08", 5)]
+    assert calls[-1]["offset"] == 7  # whole batch acknowledged past the newest id
 
 
 def test_fetch_reports_noop_without_config(monkeypatch):

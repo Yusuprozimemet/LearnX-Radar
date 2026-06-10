@@ -42,6 +42,7 @@ from storage import (
     record_dutch_lesson,
     record_dutch_recall,
     record_lesson,
+    record_lesson_rating,
     save_brief,
     save_dutch_lesson,
     save_dutch_memory,
@@ -151,22 +152,39 @@ def _refresh_dashboard(memory: dict, scored=None, today_skill=None) -> None:
         _fail("dashboard build", exc)
 
 
-def _ingest_dutch_recall(dmem: dict) -> None:
-    """Fold pending trainer recall reports (v9 day 33) into the SR memory, mutating
-    `dmem` and saving immediately — so the fold-in survives even if a later Dutch
-    stage fails, and today's word selection already sees the reset due dates.
-    Guarded: a Telegram hiccup degrades to exposure-only scheduling, never blocks."""
-    if not config.DUTCH_RECALL_ENABLED:
+def _ingest_inbound(memory: dict) -> None:
+    """Fold pending deep-link feedback (one acknowledged getUpdates batch) into
+    state, saving immediately so the fold-in survives even if a later stage fails:
+
+    - dev-lesson star ratings -> skill_memory lesson entries (the quality signal
+      for the developer track), and
+    - Dutch trainer recall reports (v9 day 33) -> dutch_memory SR state, BEFORE
+      today's word selection so a failed word is already due.
+
+    Both ride the same fetch because acknowledging the batch drops every pending
+    update. Guarded: a Telegram hiccup degrades to exposure-only scheduling and a
+    missed rating, never blocks the run."""
+    if not (config.DUTCH_RECALL_ENABLED or config.LESSON_RATING_ENABLED):
         return
     try:
-        reports = telegram_recall.fetch_reports()
-        applied = sum(record_dutch_recall(dmem, d, marks) for d, marks in reports)
-        if applied:
-            save_dutch_memory(dmem)
-        if reports:
-            print(f"[dutch] recall: {len(reports)} report(s), {applied} word(s) updated")
+        inbound = telegram_recall.fetch_inbound()
     except Exception as exc:
-        _fail("dutch recall", exc)
+        _fail("telegram inbound", exc)
+        return
+    if config.LESSON_RATING_ENABLED and inbound["ratings"]:
+        applied = sum(record_lesson_rating(memory, d, n) for d, n in inbound["ratings"])
+        if applied:
+            save_memory(memory)
+        print(f"[rating] {len(inbound['ratings'])} rating(s), {applied} lesson(s) stamped")
+    if config.DUTCH_RECALL_ENABLED and inbound["recall"]:
+        try:
+            dmem = load_dutch_memory()
+            applied = sum(record_dutch_recall(dmem, d, marks) for d, marks in inbound["recall"])
+            if applied:
+                save_dutch_memory(dmem)
+            print(f"[dutch] recall: {len(inbound['recall'])} report(s), {applied} word(s) updated")
+        except Exception as exc:
+            _fail("dutch recall", exc)
 
 
 def _build_dutch(today_skill: str | None) -> tuple[dict | None, dict | None]:
@@ -180,8 +198,9 @@ def _build_dutch(today_skill: str | None) -> tuple[dict | None, dict | None]:
         return None, None
     try:
         today = date.today()
+        # Recall reports were already folded in by _ingest_inbound (and saved), so
+        # this load sees the reset due dates before word selection.
         dmem = load_dutch_memory()
-        _ingest_dutch_recall(dmem)  # BEFORE selection: a failed word becomes due now
         bank = dutch_wordlist.load()
         theme = dutch_wordlist.theme_for(today)
         new_w, review_w = dutch_wordlist.select_for_today(
@@ -242,6 +261,11 @@ def _build_dutch(today_skill: str | None) -> tuple[dict | None, dict | None]:
 def _run() -> None:
     config.validate()
     memory = load_memory()
+
+    # Fold in yesterday's deep-link feedback (lesson ratings + Dutch trainer recall)
+    # before anything else: ratings land in memory ahead of the saves below, and
+    # recall resets are on disk before the Dutch branch selects today's words.
+    _ingest_inbound(memory)
 
     # Weekly personalization-waitlist CTA to the channel (fires only on its
     # configured weekday; runs before the early-return so a quiet day still posts).

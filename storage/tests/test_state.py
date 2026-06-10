@@ -83,6 +83,21 @@ def test_slugify_makes_unique_safe_names():
     assert a != b
 
 
+def test_record_lesson_rating_stamps_by_date_and_supersedes():
+    memory = {"skills": {
+        "Kafka": {"lessons": [{"date": "2026-06-08", "title": "Kafka"}]},
+        "Rust": {"lessons": [{"date": "2026-06-07", "title": "Rust"}]},
+    }}
+    assert state.record_lesson_rating(memory, "2026-06-08", 4) == 1
+    assert memory["skills"]["Kafka"]["lessons"][0]["rating"] == 4
+    assert "rating" not in memory["skills"]["Rust"]["lessons"][0]
+    # a re-tap is an opinion change — the new rating overwrites the old one
+    assert state.record_lesson_rating(memory, "2026-06-08", 2) == 1
+    assert memory["skills"]["Kafka"]["lessons"][0]["rating"] == 2
+    # no lesson on that date -> nothing stamped
+    assert state.record_lesson_rating(memory, "2026-06-01", 5) == 0
+
+
 def test_previous_lesson_none_when_empty():
     assert state.previous_lesson({"version": 1, "skills": {}}) is None
 
