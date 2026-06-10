@@ -20,7 +20,13 @@ jobs:
           cache: pip
 
       - name: Install ffmpeg (edge-tts assembly)
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg libcairo2-dev pkg-config
+        # The runner image ships Microsoft apt repos (azure-cli, prod) that this
+        # job never uses; when packages.microsoft.com intermittently 403s, they
+        # turn apt-get update into exit 100 — drop them before updating.
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/azure-cli* /etc/apt/sources.list.d/microsoft-prod*
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg libcairo2-dev pkg-config
 
       - run: pip install -r requirements.txt
 
