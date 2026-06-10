@@ -48,6 +48,7 @@ jobs:
           cp dashboard/podcast.xml _site/podcast.xml
           cp dashboard/privacy.html _site/privacy.html
           cp dashboard/dutch.html _site/dutch.html         # Delft trainer page (v9)
+          cp dashboard/favicon.svg _site/favicon.svg       # browser-tab icon (all pages)
           cp storage/dutch_lesson.json _site/dutch_lesson.json 2>/dev/null || true  # today's lesson for the trainer
           # Lesson archive (dated JSONs + index.json): the trainer's lesson list.
           # Past days play their audio straight from the release CDN (it supports

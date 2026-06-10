@@ -459,6 +459,7 @@ def _page(title: str, body: str) -> str:
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{_esc(title)}</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <meta name="description" content="{_esc(_OG_DESC)}">
 <meta property="og:type" content="website">
 <meta property="og:url" content="{_esc(config.SITE_URL)}">
