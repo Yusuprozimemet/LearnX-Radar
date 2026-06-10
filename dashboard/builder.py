@@ -479,7 +479,8 @@ def _page(title: str, body: str) -> str:
   body {{ font-family:"Nunito","Segoe UI",-apple-system,Roboto,sans-serif;
          background:var(--bg); max-width:880px; margin:0 auto 4rem;
          padding:0 1rem; color:var(--ink); line-height:1.55; }}
-  header.bar {{ display:flex; align-items:center; gap:.7rem; padding:1.1rem 0 .6rem; flex-wrap:wrap; }}
+  header.bar {{ display:flex; align-items:center; gap:.7rem; padding:1.1rem 0 .6rem;
+                flex-wrap:wrap; }}
   header.bar .owl {{ font-size:1.9rem; }}
   header.bar h1 {{ font-size:1.25rem; margin:0; font-weight:800; }}
   header.bar .meta {{ color:var(--grey); font-size:.85rem; font-weight:700;
@@ -493,13 +494,15 @@ def _page(title: str, body: str) -> str:
         letter-spacing:.05em; color:var(--grey); margin-bottom:.8rem; border:0; padding:0; }}
   table {{ width:100%; border-collapse:collapse; }}
   th,td {{ text-align:left; padding:.4rem .6rem; border-bottom:1px solid var(--border); }}
-  th {{ color:var(--grey); font-size:.82rem; text-transform:uppercase; letter-spacing:.03em; font-weight:800; }}
+  th {{ color:var(--grey); font-size:.82rem; text-transform:uppercase; letter-spacing:.03em;
+        font-weight:800; }}
   .muted {{ color:var(--grey); }}
   .card {{ background:var(--card); border:2px solid var(--border); border-radius:16px;
            padding:.8rem 1rem; margin:.6rem 0; }}
   .card .meta {{ color:var(--grey); font-size:.8rem; font-weight:700; }}
   .card .title {{ font-weight:800; color:var(--ink); }}
-  .ctrl {{ display:inline-block; color:var(--grey); font-size:.9rem; margin-bottom:.8rem; font-weight:700; }}
+  .ctrl {{ display:inline-block; color:var(--grey); font-size:.9rem; margin-bottom:.8rem;
+           font-weight:700; }}
   .ctrl select {{ font:inherit; margin-left:.3rem; padding:.15rem .3rem;
                   border:2px solid var(--border); border-radius:8px; }}
   details > summary {{ cursor:pointer; color:var(--blue); margin:.6rem 0; font-weight:700; }}
@@ -513,8 +516,10 @@ def _page(title: str, body: str) -> str:
                   font-size:.82rem; padding:.55rem; cursor:pointer;
                   border:2px solid var(--border); border-bottom-width:4px; border-radius:14px; }}
   .tabs button:active {{ transform:translateY(2px); border-bottom-width:2px; }}
-  .tabs button.active {{ background:var(--green-soft); color:var(--green-edge); border-color:var(--green); }}
-  .stats {{ display:flex; flex-wrap:wrap; gap:1.2rem; color:var(--grey); font-size:.95rem; font-weight:700; }}
+  .tabs button.active {{ background:var(--green-soft); color:var(--green-edge);
+                         border-color:var(--green); }}
+  .stats {{ display:flex; flex-wrap:wrap; gap:1.2rem; color:var(--grey); font-size:.95rem;
+            font-weight:700; }}
   .stats strong {{ color:var(--ink); }}
   audio {{ outline:none; width:100%; margin-top:.5rem; }}
   .cta {{ margin:.9rem 0 1.2rem; display:flex; align-items:center; flex-wrap:wrap; gap:.5rem; }}

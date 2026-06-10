@@ -5,20 +5,44 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>LearnRadar — Privacy Policy</title>
   <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-           max-width: 720px; margin: 40px auto; padding: 0 18px; line-height: 1.6;
-           color: #1a1a1a; }
-    h1 { font-size: 1.6rem; }
-    h2 { font-size: 1.15rem; margin-top: 1.6em; }
-    code { background: #f2f4f7; padding: 1px 4px; border-radius: 3px; }
-    a { color: #06c; }
-    .muted { color: #777; font-size: .9rem; }
-    footer { margin-top: 2.5em; color: #999; font-size: .85rem;
-             border-top: 1px solid #eee; padding-top: 1em; }
+    /* Same playful look as the rest of the site: candy palette, Nunito,
+       rounded cards (see dutch.html / the generated index page). */
+    :root {
+      --green:#5fbf38; --green-edge:#48992a;
+      --blue:#2bb3f0; --blue-edge:#1f93c7;
+      --ink:#3d4350; --grey:#8a909c; --border:#e6e8ec; --bg:#f7f8f5; --card:#fff;
+    }
+    * { box-sizing: border-box; }
+    body { font-family: "Nunito","Segoe UI",-apple-system,Roboto,sans-serif;
+           background: var(--bg); max-width: 720px; margin: 0 auto 4rem;
+           padding: 0 18px; line-height: 1.6; color: var(--ink); }
+    header.bar { display: flex; align-items: center; gap: .7rem;
+                 padding: 1.1rem 0 .6rem; flex-wrap: wrap; }
+    header.bar .owl { font-size: 1.9rem; }
+    header.bar h1 { font-size: 1.25rem; margin: 0; font-weight: 800; }
+    header.bar a { margin-left: auto; color: var(--blue); text-decoration: none;
+                   font-weight: 800; font-size: .9rem; }
+    h2 { font-size: .95rem; font-weight: 800; text-transform: uppercase;
+         letter-spacing: .05em; color: var(--grey); margin-top: 1.8em; }
+    p, ul { background: var(--card); border: 2px solid var(--border);
+            border-radius: 16px; padding: .7rem 1rem; }
+    ul { padding-left: 2rem; }
+    li { margin: .3rem 0; }
+    code { background: #f2f4f7; padding: 1px 4px; border-radius: 6px; }
+    a { color: var(--blue); font-weight: 700; }
+    .muted { color: var(--grey); font-size: .9rem; font-weight: 700;
+             background: none; border: 0; padding: 0; }
+    footer { margin-top: 2.5em; color: var(--grey); font-size: .85rem;
+             font-weight: 700; border-top: 2px solid var(--border);
+             padding-top: 1em; }
   </style>
 </head>
 <body>
-  <h1>LearnRadar — Privacy Policy</h1>
+  <header class="bar">
+    <span class="owl">📡</span>
+    <h1>LearnRadar — Privacy Policy</h1>
+    <a href="index.html">← Dashboard</a>
+  </header>
   <p class="muted">Last updated: 6 June 2026</p>
 
   <p>LearnRadar is a free daily developer-learning project (a Telegram channel,
