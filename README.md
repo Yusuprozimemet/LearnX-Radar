@@ -20,9 +20,6 @@ lesson, a spoken Dutch MP3 with built-in repeat pauses, an interactive trainer
 page, and spaced repetition driven by **measured recall** — what you can
 produce, not just what you were sent. See [Dutch coach](#dutch-coach).
 
-<div align="center">
-  <img src="image.png" alt="LearnX-Radar overview" width="600" />
-</div>
 
 <table align="center">
   <tr>
@@ -47,13 +44,7 @@ produce, not just what you were sent. See [Dutch coach](#dutch-coach).
        early access to lessons matched to your stack & goals (individuals & teams). A
        reminder CTA is also posted to the channel weekly; we store only what you submit
        (see [Privacy](#data-and-privacy)).
-- **Live dashboard — <https://yusuprozimemet.github.io/LearnX-Radar/>:** the
-       public skill radar (trending skills, coverage map, lesson archive) with a
-       🇳🇱 Dutch progress tab — rebuilt after every daily run, no login needed.
-- **Dutch trainer — <https://yusuprozimemet.github.io/LearnX-Radar/dutch.html>:**
-       today's Dutch lesson as an interactive Delft trainer — tap-to-play sentences,
-       fill-in-the-blanks, the one-chance listening test, one-tap saving of your
-       scores back to the bot, and a lesson archive to reopen any past day.
+
 
 ## What it does
 
@@ -393,3 +384,6 @@ beyond the workflow's built-in `GITHUB_TOKEN`.
 pytest
 ruff check .
 ```
+<div align="center">
+  <img src="image.png" alt="LearnX-Radar overview" width="600" />
+</div>
