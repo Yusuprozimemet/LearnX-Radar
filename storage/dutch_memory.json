@@ -1,19 +1,19 @@
 {
   "version": 1,
   "cefr": "A2",
-  "streak": 6,
-  "last_run": "2026-06-10",
+  "streak": 7,
+  "last_run": "2026-06-11",
   "last_words": [
-    "rekening",
-    "trein",
-    "bus",
-    "fiets",
-    "afspraak",
-    "vergadering",
-    "werk",
-    "baan",
-    "collega",
-    "winkel"
+    "knop",
+    "link",
+    "pagina",
+    "gegevens",
+    "boodschappen",
+    "geld",
+    "gebruiker",
+    "gebruikersnaam",
+    "email",
+    "bericht"
   ],
   "words": {
     "bestand": {
@@ -126,39 +126,39 @@
     },
     "boodschappen": {
       "introduced": "2026-06-08",
-      "reps": 1,
-      "last_review": "2026-06-08",
-      "due": "2026-06-09"
+      "reps": 2,
+      "last_review": "2026-06-11",
+      "due": "2026-06-13"
     },
     "geld": {
       "introduced": "2026-06-08",
-      "reps": 1,
-      "last_review": "2026-06-08",
-      "due": "2026-06-09"
+      "reps": 2,
+      "last_review": "2026-06-11",
+      "due": "2026-06-13"
     },
     "gebruiker": {
       "introduced": "2026-06-09",
-      "reps": 1,
-      "last_review": "2026-06-09",
-      "due": "2026-06-10"
+      "reps": 2,
+      "last_review": "2026-06-11",
+      "due": "2026-06-13"
     },
     "gebruikersnaam": {
       "introduced": "2026-06-09",
-      "reps": 1,
-      "last_review": "2026-06-09",
-      "due": "2026-06-10"
+      "reps": 2,
+      "last_review": "2026-06-11",
+      "due": "2026-06-13"
     },
     "email": {
       "introduced": "2026-06-09",
-      "reps": 1,
-      "last_review": "2026-06-09",
-      "due": "2026-06-10"
+      "reps": 2,
+      "last_review": "2026-06-11",
+      "due": "2026-06-13"
     },
     "bericht": {
       "introduced": "2026-06-09",
-      "reps": 1,
-      "last_review": "2026-06-09",
-      "due": "2026-06-10"
+      "reps": 2,
+      "last_review": "2026-06-11",
+      "due": "2026-06-13"
     },
     "rekening": {
       "introduced": "2026-06-10",
@@ -183,6 +183,30 @@
       "reps": 1,
       "last_review": "2026-06-10",
       "due": "2026-06-11"
+    },
+    "knop": {
+      "introduced": "2026-06-11",
+      "reps": 1,
+      "last_review": "2026-06-11",
+      "due": "2026-06-12"
+    },
+    "link": {
+      "introduced": "2026-06-11",
+      "reps": 1,
+      "last_review": "2026-06-11",
+      "due": "2026-06-12"
+    },
+    "pagina": {
+      "introduced": "2026-06-11",
+      "reps": 1,
+      "last_review": "2026-06-11",
+      "due": "2026-06-12"
+    },
+    "gegevens": {
+      "introduced": "2026-06-11",
+      "reps": 1,
+      "last_review": "2026-06-11",
+      "due": "2026-06-12"
     }
   },
   "lessons": [
@@ -287,6 +311,24 @@
         "winkel"
       ],
       "summary": "Dutch (everyday): bill, train, bus, bicycle"
+    },
+    {
+      "date": "2026-06-11",
+      "theme": "tech",
+      "audio": "dutch-20260611.mp3",
+      "words": [
+        "knop",
+        "link",
+        "pagina",
+        "gegevens",
+        "boodschappen",
+        "geld",
+        "gebruiker",
+        "gebruikersnaam",
+        "email",
+        "bericht"
+      ],
+      "summary": "Dutch (tech): button, link, page, data"
     }
   ],
   "recall": []

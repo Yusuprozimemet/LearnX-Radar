@@ -96,12 +96,28 @@
       ],
       "last_taught": "2026-06-10",
       "summary": "Rust projects trending"
+    },
+    "Agentic coding": {
+      "times_taught": 1,
+      "first_taught": "2026-06-11",
+      "lessons": [
+        {
+          "date": "2026-06-11",
+          "title": "Agentic coding",
+          "difficulty": "beginner",
+          "summary": "Agent-based software development",
+          "audio": "lesson-20260611-agentic-coding.mp3",
+          "brief": "20260611-agentic-coding.md"
+        }
+      ],
+      "last_taught": "2026-06-11",
+      "summary": "Agent-based software development"
     }
   },
   "so_counts": {
-    "python": 2205806,
-    "rust": 43950,
-    "kubernetes": 59806,
+    "python": 2205811,
+    "rust": 43951,
+    "kubernetes": 59805,
     "langchain": 1983,
     "duckdb": 504
   }

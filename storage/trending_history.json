@@ -3735,5 +3735,369 @@
         "score": 1.35
       }
     ]
+  },
+  "2026-06-11": {
+    "today_skill": "Agentic coding",
+    "scored": [
+      {
+        "skill": "Agentic coding",
+        "sources": [
+          "GitHub Trending",
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "Agent-based software development",
+        "frequency": 3,
+        "demand_weight": 3.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.3636363636363638,
+        "canonical": "agentic coding",
+        "suggested_difficulty": "beginner",
+        "score": 4.772727272727273
+      },
+      {
+        "skill": "Distributed systems",
+        "sources": [
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "Job posting at ParadeDB",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": true,
+        "momentum": 1.0454545454545454,
+        "canonical": "distributed systems",
+        "suggested_difficulty": "beginner",
+        "score": 3.9204545454545454
+      },
+      {
+        "skill": "React Server Components",
+        "sources": [
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "Server-side rendering for React",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.4545454545454546,
+        "canonical": "react server components",
+        "suggested_difficulty": "beginner",
+        "score": 3.6363636363636367
+      },
+      {
+        "skill": "Kafka consumer groups",
+        "sources": [
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "Distributed messaging system",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.3181818181818181,
+        "canonical": "kafka consumer groups",
+        "suggested_difficulty": "beginner",
+        "score": 3.2954545454545454
+      },
+      {
+        "skill": "AWS Lambda cold starts",
+        "sources": [
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "Serverless computing on AWS",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.1818181818181819,
+        "canonical": "aws lambda cold starts",
+        "suggested_difficulty": "beginner",
+        "score": 2.9545454545454546
+      },
+      {
+        "skill": "ClickHouse",
+        "sources": [
+          "HN Hiring",
+          "Reddit"
+        ],
+        "evidence": "Column-store database for real-time analytics",
+        "frequency": 2,
+        "demand_weight": 2.75,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.0454545454545454,
+        "canonical": "clickhouse",
+        "suggested_difficulty": "beginner",
+        "score": 2.875
+      },
+      {
+        "skill": "DuckDB",
+        "sources": [
+          "HN Hiring",
+          "Reddit",
+          "Stack Overflow",
+          "dev.to"
+        ],
+        "evidence": "In-memory columnar database",
+        "frequency": 4,
+        "demand_weight": 4.75,
+        "novelty": 0.42857142857142855,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.4090909090909092,
+        "canonical": "duckdb",
+        "suggested_difficulty": "advanced",
+        "score": 2.8685064935064934
+      },
+      {
+        "skill": "Foundry",
+        "sources": [
+          "GitHub Trending",
+          "HN Hiring"
+        ],
+        "evidence": "Ethereum application development toolkit in Rust",
+        "frequency": 2,
+        "demand_weight": 3.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "foundry",
+        "suggested_difficulty": "beginner",
+        "score": 2.7
+      },
+      {
+        "skill": "LangChain",
+        "sources": [
+          "HN Hiring",
+          "Stack Overflow",
+          "dev.to"
+        ],
+        "evidence": "Rising questions on Stack Overflow",
+        "frequency": 3,
+        "demand_weight": 4.0,
+        "novelty": 0.42857142857142855,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.4545454545454546,
+        "canonical": "langchain",
+        "suggested_difficulty": "intermediate",
+        "score": 2.4935064935064934
+      },
+      {
+        "skill": "ParadeDB",
+        "sources": [
+          "HN Hiring",
+          "Reddit"
+        ],
+        "evidence": "Full-text and vector search extension for Postgres",
+        "frequency": 2,
+        "demand_weight": 2.75,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "paradedb",
+        "suggested_difficulty": "beginner",
+        "score": 2.475
+      },
+      {
+        "skill": "Real-time streaming",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "Job posting at Forward",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.1363636363636362,
+        "canonical": "real-time streaming",
+        "suggested_difficulty": "beginner",
+        "score": 2.2727272727272725
+      },
+      {
+        "skill": "Physical AI",
+        "sources": [
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "Multiple articles and job postings",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "physical ai",
+        "suggested_difficulty": "beginner",
+        "score": 2.25
+      },
+      {
+        "skill": "AI control plane",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "Job posting at Speakeasy",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.0454545454545454,
+        "canonical": "ai control plane",
+        "suggested_difficulty": "beginner",
+        "score": 2.090909090909091
+      },
+      {
+        "skill": "LLM training",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "IBM Research job posting",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.0227272727272727,
+        "canonical": "llm training",
+        "suggested_difficulty": "beginner",
+        "score": 2.0454545454545454
+      },
+      {
+        "skill": "Vector embeddings",
+        "sources": [
+          "GitHub Trending",
+          "dev.to"
+        ],
+        "evidence": "High-dimensional vector representations",
+        "frequency": 2,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.2727272727272727,
+        "canonical": "vector embeddings",
+        "suggested_difficulty": "beginner",
+        "score": 1.9090909090909092
+      },
+      {
+        "skill": "Python asyncio",
+        "sources": [
+          "GitHub Trending",
+          "dev.to"
+        ],
+        "evidence": "Asynchronous I/O in Python",
+        "frequency": 2,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.2272727272727273,
+        "canonical": "python asyncio",
+        "suggested_difficulty": "beginner",
+        "score": 1.8409090909090908
+      },
+      {
+        "skill": "Causal AI",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "Job posting at Alembic",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "causal ai",
+        "suggested_difficulty": "beginner",
+        "score": 1.8
+      },
+      {
+        "skill": "Postgres extensions",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "Job posting at ParadeDB",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "postgres extensions",
+        "suggested_difficulty": "beginner",
+        "score": 1.8
+      },
+      {
+        "skill": "WebGPU",
+        "sources": [
+          "GitHub Trending",
+          "Reddit"
+        ],
+        "evidence": "WebGPU usage in production",
+        "frequency": 2,
+        "demand_weight": 1.75,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.0227272727272727,
+        "canonical": "webgpu",
+        "suggested_difficulty": "beginner",
+        "score": 1.7897727272727273
+      },
+      {
+        "skill": "HTTP/2",
+        "sources": [
+          "Reddit",
+          "dev.to"
+        ],
+        "evidence": "HTTP/2 usage in production",
+        "frequency": 2,
+        "demand_weight": 1.25,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "http/2",
+        "suggested_difficulty": "beginner",
+        "score": 1.125
+      }
+    ]
   }
 }
