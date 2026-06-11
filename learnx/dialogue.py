@@ -10,7 +10,7 @@ import re
 from concurrent.futures import ThreadPoolExecutor
 
 from learnx import sanitizer
-from learnx.constants import DIALOGUE_MAX_WORKERS
+from learnx.constants import DEFAULT_DIFFICULTY, DIALOGUE_MAX_WORKERS, DIFFICULTY_CONTEXT
 from learnx.llm import chat
 from learnx.models import DialogueLine, TeachingUnit
 from learnx.prompt_loader import load_prompt
@@ -21,21 +21,29 @@ _LINE_RE = re.compile(r"^(ALEX|MAYA)\s*[:\-]\s*(.+)", re.IGNORECASE)
 
 
 def generate(
-    units: list[TeachingUnit], title: str, hook: str = "", action: str = "", chat_fn=chat
+    units: list[TeachingUnit],
+    title: str,
+    hook: str = "",
+    action: str = "",
+    difficulty: str = DEFAULT_DIFFICULTY,
+    chat_fn=chat,
 ) -> list[DialogueLine]:
     """Return ordered dialogue lines: intro (0) -> units (1..N) -> outro (-1).
 
     `action` (v4) is the brief's "Do this in 5 minutes" step; when given, the outro
-    closes by voicing it as a quick call to action.
+    closes by voicing it as a quick call to action. `difficulty` pitches the spoken
+    lines to the listener's level (advanced -> skip definitions/analogies, lead with
+    mechanics and gotchas); it mirrors the level used to plan the curriculum.
     """
     if not units:
         return []
 
+    context = DIFFICULTY_CONTEXT.get(difficulty, DIFFICULTY_CONTEXT[DEFAULT_DIFFICULTY])
     hooks = " ".join(u.memory_hook for u in units if u.memory_hook)
     # Each task is (unit_number, prompt). Run them all concurrently.
-    tasks: list[tuple[int, str]] = [(0, _intro_prompt(title, hook or units[0].concept))]
-    tasks += [(u.unit, _unit_prompt(u, title)) for u in units]
-    tasks.append((-1, _outro_prompt(title, hooks, action)))
+    tasks: list[tuple[int, str]] = [(0, _intro_prompt(title, hook or units[0].concept, context))]
+    tasks += [(u.unit, _unit_prompt(u, title, context)) for u in units]
+    tasks.append((-1, _outro_prompt(title, hooks, action, context)))
 
     def run(task: tuple[int, str]) -> tuple[int, str]:
         unit_no, prompt = task
@@ -68,8 +76,12 @@ def _parse(raw: str, unit_number: int) -> list[DialogueLine]:
     return lines
 
 
-def _unit_prompt(u: TeachingUnit, title: str) -> str:
+_DEFAULT_CONTEXT = DIFFICULTY_CONTEXT[DEFAULT_DIFFICULTY]
+
+
+def _unit_prompt(u: TeachingUnit, title: str, difficulty_context: str = _DEFAULT_CONTEXT) -> str:
     return load_prompt("dialogue.txt").format(
+        difficulty_context=difficulty_context,
         title=title,
         concept=u.concept,
         word_budget=u.word_budget,
@@ -80,11 +92,18 @@ def _unit_prompt(u: TeachingUnit, title: str) -> str:
     )
 
 
-def _intro_prompt(title: str, hook: str) -> str:
-    return load_prompt("intro.txt").format(title=title, hook=hook)
+def _intro_prompt(title: str, hook: str, difficulty_context: str = _DEFAULT_CONTEXT) -> str:
+    return load_prompt("intro.txt").format(
+        difficulty_context=difficulty_context, title=title, hook=hook
+    )
 
 
-def _outro_prompt(title: str, hooks: str, action: str = "") -> str:
+def _outro_prompt(
+    title: str, hooks: str, action: str = "", difficulty_context: str = _DEFAULT_CONTEXT
+) -> str:
     return load_prompt("outro.txt").format(
-        title=title, hooks=hooks or "(none)", action=action or "(none)"
+        difficulty_context=difficulty_context,
+        title=title,
+        hooks=hooks or "(none)",
+        action=action or "(none)",
     )
