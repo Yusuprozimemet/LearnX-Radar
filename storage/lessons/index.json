@@ -1,6 +1,11 @@
 {
   "lessons": [
     {
+      "date": "2026-06-10",
+      "theme": "everyday",
+      "cefr": "A2"
+    },
+    {
       "date": "2026-06-11",
       "theme": "tech",
       "cefr": "A2"
