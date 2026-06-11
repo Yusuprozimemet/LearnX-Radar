@@ -143,7 +143,11 @@ Each accuracy feature sits behind its own config flag for clean rollback:
   `## Sources` list authored in code — the LLM never writes URLs. Read budget
   chosen by experiment ([scripts/exp_grounding.py](scripts/exp_grounding.py)).
   The grounding helpers in [radar/research/](radar/research/) are vendored from
-  the sibling LearnX-Search.
+  the sibling LearnX-Search. Grounding biases toward **recent discourse** over
+  evergreen "what is X" explainers (`GROUNDING_RECENCY_DAYS` + a stable re-rank
+  that sinks explainer URLs and floats discussion sources), and the brief carries
+  a `## What's being discussed` section so the lesson names the real tools,
+  techniques, and debates — not just the abstract concept.
 - **Cross-day momentum** (`MOMENTUM_ENABLED`). Scoring looks back over
   `trending_history` (matched by canonical name) and boosts skills sustained and
   accelerating across days, while damping one-day spikes — orthogonal to the
