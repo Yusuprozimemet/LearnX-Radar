@@ -47,49 +47,28 @@ def chat(
     temperature: float = 0.7,
     max_tokens: int = 2000,
 ) -> str:
-    """One chat completion, with retry/backoff and fallback across models.
-
-    Tries each model in config.NVIDIA_MODELS in order; only raises if every one
-    is unresponsive. This rides out the free-tier NIM endpoint hangs that have
-    knocked out one model at a time (see config.NVIDIA_MODELS).
-    """
-    last_exc: Exception | None = None
-    for model in config.NVIDIA_MODELS:
-        for attempt in range(_RETRY_COUNT):
-            try:
-                resp = _get_client().chat.completions.create(
-                    model=model,
-                    messages=messages,  # type: ignore[arg-type]
-                    temperature=temperature,
-                    max_tokens=max_tokens,
-                )
-                content = resp.choices[0].message.content
-                assert content is not None, "LLM returned empty content"
-                return content
-            except Exception as exc:
-                status = getattr(exc, "status_code", None)
-                if status in (400, 401, 403):
-                    # Bad key or malformed request: another model won't help.
-                    raise RuntimeError(f"Auth/request error ({status}): {exc}") from exc
-                last_exc = exc
-                if status == 404:
-                    # Model decommissioned: retrying is pointless, skip to next.
-                    log.warning("model %s unavailable (404), falling back to next", model)
-                    break
-                if attempt < _RETRY_COUNT - 1:
-                    log.warning(
-                        "LLM call failed on %s (%s), retrying in %.1fs",
-                        model, exc, _RETRY_DELAY_S,
-                    )
-                    time.sleep(_RETRY_DELAY_S)
-                    continue
-                log.warning(
-                    "model %s failed after %d attempts (%s), falling back to next",
-                    model, _RETRY_COUNT, exc,
-                )
-    raise RuntimeError(
-        f"All LLM models failed ({config.NVIDIA_MODELS}). Last error: {last_exc}"
-    ) from last_exc
+    """One chat completion against config.NVIDIA_MODEL, with retry/backoff."""
+    for attempt in range(_RETRY_COUNT):
+        try:
+            resp = _get_client().chat.completions.create(
+                model=config.NVIDIA_MODEL,
+                messages=messages,  # type: ignore[arg-type]
+                temperature=temperature,
+                max_tokens=max_tokens,
+            )
+            content = resp.choices[0].message.content
+            assert content is not None, "LLM returned empty content"
+            return content
+        except Exception as exc:
+            status = getattr(exc, "status_code", None)
+            if status in (400, 401, 403):
+                raise RuntimeError(f"Auth/request error ({status}): {exc}") from exc
+            if attempt < _RETRY_COUNT - 1:
+                log.warning("LLM call failed (%s), retrying in %.1fs", exc, _RETRY_DELAY_S)
+                time.sleep(_RETRY_DELAY_S)
+                continue
+            raise RuntimeError(f"LLM call failed after {_RETRY_COUNT} attempts: {exc}") from exc
+    raise RuntimeError("unreachable")
 
 
 def parse_json_response(raw: str) -> object:
