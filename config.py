@@ -60,7 +60,7 @@ RUN_REPORT_ENABLED = True
 # A recurring call-to-action posted to the channel inviting subscribers to a hosted
 # waitlist form (we store NO data — the form provider does). Piggybacks the daily
 # cron: posts only on WAITLIST_POST_WEEKDAY, channel-only.
-WAITLIST_ENABLED = True
+WAITLIST_ENABLED = False  # paused: no channel CTA while debugging NIM timeouts
 WAITLIST_URL = os.getenv("WAITLIST_URL", "")  # Tally/Forms PUBLIC link; empty -> skip
 WAITLIST_POST_WEEKDAY = 3  # date.weekday(): Mon=0 … Thu=3 … Sun=6
 WAITLIST_MESSAGE = (
