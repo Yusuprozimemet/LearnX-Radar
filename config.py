@@ -4,8 +4,8 @@ Loads .env locally; in CI the vars come from GitHub secrets. Fails loudly if a
 required key is missing, so local and CI behave the same.
 
 Single LLM provider by design: every LLM task in the pipeline goes through the
-NVIDIA NIM API (OpenAI-compatible). If the model name changes, the one constant
-NVIDIA_MODEL below is the only edit needed (see plan/plan.md).
+NVIDIA NIM API (OpenAI-compatible). Models live in the NVIDIA_MODELS fallback
+list below — edit that one constant to change or reorder them (see plan/plan.md).
 """
 import os
 
@@ -22,12 +22,17 @@ except ModuleNotFoundError:
 # --- LLM: NVIDIA NIM (OpenAI-compatible, free tier, 40 RPM) ---
 NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY")
 NVIDIA_BASE_URL = "https://integrate.api.nvidia.com/v1"
-# Was z-ai/glm-5.1 (plan's original pick) but its inference endpoint hangs
-# intermittently on the free tier — even a 10-token call times out at 90s, while
-# every other model on the same key responds in <1s. Switched to llama-3.3-70b:
-# ~6s for a brief, reliable, plenty capable for extraction/brief/curriculum.
-# Swapping the model is a one-line change by design (see plan/plan.md).
-NVIDIA_MODEL = "meta/llama-3.3-70b-instruct"
+# Free-tier NIM inference endpoints hang intermittently per-model: a trivial
+# 5-token call can time out at 30s+ while the catalog GET on the same key returns
+# in <1s. It has bitten three picks in a row (z-ai/glm-5.1 -> llama-3.3-70b ->
+# llama-3.1-70b), so rather than a single model we keep an ordered fallback list:
+# chat() tries each in turn and only fails if every one is unresponsive. Primary
+# is a 70B for quality; the 8B is smaller but very responsive, a last resort so
+# the pipeline still produces output when the big endpoints are degraded.
+NVIDIA_MODELS = [
+    "meta/llama-3.1-70b-instruct",  # primary: 70B, ~2.5s, reliable
+    "meta/llama-3.1-8b-instruct",   # fallback: smaller, ~0.3s, always responsive
+]
 
 # --- Telegram delivery ---
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")

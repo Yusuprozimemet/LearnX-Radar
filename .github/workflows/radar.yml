@@ -11,6 +11,10 @@ permissions:
 jobs:
   radar:
     runs-on: ubuntu-latest
+    # Hard cap so a hung LLM endpoint can't keep the cron running for hours
+    # (each NIM call can stall ~120s x retries). GitHub cancels the job at this
+    # limit and marks it failed; the next scheduled run starts clean.
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
