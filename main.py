@@ -318,11 +318,14 @@ def _run() -> None:
     brief_file = save_brief(skill["skill"], brief_md)  # committed; linked for Perplexity Q&A
 
     # 3. Learnx: brief -> curriculum -> dialogue -> audio.
-    difficulty = skill.get("suggested_difficulty", config.LESSON_DIFFICULTY_DEFAULT)
+    difficulty = config.LESSON_DIFFICULTY_OVERRIDE or skill.get(
+        "suggested_difficulty", config.LESSON_DIFFICULTY_DEFAULT
+    )
     units = curriculum.plan(brief_md, skill["skill"], difficulty=difficulty)
     action = brief_writer.action_step(brief_md)  # voiced in the outro as a call to action
     lines = dialogue.generate(
-        units, skill["skill"], hook=skill.get("evidence", ""), action=action
+        units, skill["skill"], hook=skill.get("evidence", ""), action=action,
+        difficulty=difficulty,
     )
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)

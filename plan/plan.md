@@ -131,7 +131,9 @@ LinkedIn, Indeed, and Glassdoor are excluded — APIs are locked or ToS-restrict
 - Lesson briefs reference prior context: "Last week we covered async I/O — today's
   lesson connects that to Kafka consumer groups"
 - Difficulty auto-scales: beginner on first encounter, intermediate on second, advanced
-  on third
+  on third — with a global `LESSON_DIFFICULTY_OVERRIDE` (default `advanced`) to pin the
+  level past the ramp, threaded through both curriculum planning *and* the spoken
+  dialogue (see `specs/v10/day35-insightful-lessons.md`)
 - Follow-up Q&A: each lesson links to a Perplexity thread pre-loaded with the committed
   brief (replaced the original `/recap` Telegram bot — see the v2 day-7 spec's
   superseded note and `specs/v3/day9-followup-and-privacy.md`)
@@ -338,6 +340,11 @@ proved the loop; v7 sharpens its judgement. Four slices, each a self-contained s
    real `## Sources` list **authored in code** (the LLM never writes URLs — it
    fabricates them). Grounding helpers are vendored from the sibling LearnX-Search
    into `radar/research/`. Read budget chosen by experiment (`scripts/exp_grounding.py`).
+   *Later (`specs/v10/day35`):* grounding biases toward **recent discourse** over
+   evergreen "what is X" explainers (recency filter + a stable re-rank that sinks
+   explainer URLs and floats discussion sources), and the brief gains a `## What's
+   being discussed` section so lessons name real tools/techniques/debates, not just
+   the abstract concept.
 
 3. **Map-reduce extraction (`day25-mapreduce-extraction.md`)** — replace the
    single-pass extractor (which capped recall and rested the demand weight on the LLM
