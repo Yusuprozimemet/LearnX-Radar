@@ -1,6 +1,8 @@
 Write a SHORT spoken outro (about 50-70 words) for an audio lesson, as two
 co-hosts ALEX (male) and MAYA (female) closing the episode together.
 
+LISTENER LEVEL: {difficulty_context}
+
 TOPIC: {title}
 MEMORY HOOKS FROM THE LESSON: {hooks}
 TRY-THIS ACTION: {action}

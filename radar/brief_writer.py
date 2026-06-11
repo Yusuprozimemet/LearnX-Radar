@@ -9,6 +9,7 @@ v2 hook: when skill_memory holds prior lessons, the prompt gains a
 """
 import logging
 import re
+from datetime import date, timedelta
 
 import config
 from learnx.llm import chat
@@ -16,6 +17,38 @@ from radar import privacy, research
 from radar.prompt_loader import load_prompt
 
 log = logging.getLogger(__name__)
+
+# Evergreen "what is X" explainer URLs read like an encyclopedia, so a brief
+# grounded on them comes out generic. Bias grounding toward dated discourse — the
+# threads and posts that actually made the skill trend — so the lesson names real
+# projects, techniques, and debates instead of textbook definitions.
+_EVERGREEN_URL_RE = re.compile(
+    r"/what-is|/discover/|/think/|/topics?/|/glossary|/wiki/|/learn/", re.IGNORECASE
+)
+_DISCOURSE_HOSTS = (
+    "news.ycombinator.com", "reddit.com", "lobste.rs", "dev.to",
+    "substack.com", "github.com", "lobsters",
+)
+
+
+def _discourse_bias(item: dict) -> int:
+    """Rank nudge: sink evergreen explainers, float live discussion + day items.
+
+    Applied as a *stable* re-sort over the lexically-ranked candidates, so it only
+    breaks ties between similarly-relevant sources — it never promotes an
+    off-topic source over an on-topic one.
+    """
+    url = (item.get("url") or "").lower()
+    score = 0
+    if _EVERGREEN_URL_RE.search(url):
+        score -= 2
+    if any(h in url for h in _DISCOURSE_HOSTS):
+        score += 1
+    # Day-scraped items carry a real channel label (HN/Reddit/...); Exa results
+    # are tagged "Exa Web". The day's own items ARE the trend, so prefer them.
+    if item.get("source") and item.get("source") != "Exa Web":
+        score += 1
+    return score
 
 _NO_GROUNDING = (
     "(none retrieved — write from general knowledge; "
@@ -92,12 +125,23 @@ def _select_sources(skill: dict, items: list[dict], reader=None) -> list[dict]:
 
     pool = list(items or [])
     try:
-        pool += research.exa.search(name, limit=config.GROUNDING_READ_TOP_N)
+        # Discourse-flavored query + recency window: pull the current conversation
+        # (new techniques, tooling, debates), not evergreen "what is X" pages.
+        recent = None
+        if config.GROUNDING_RECENCY_DAYS:
+            recent = (date.today() - timedelta(days=config.GROUNDING_RECENCY_DAYS)).isoformat()
+        pool += research.exa.search(
+            f"{name}: latest tools, techniques, and debate among developers",
+            limit=config.GROUNDING_READ_TOP_N,
+            start_published_date=recent,
+        )
     except Exception as exc:  # never let a search outage sink the brief
         log.warning("Exa search failed for %s: %s", name, exc)
 
     pool = _dedup_by_url(pool)
     ranked = research.filter_relevant(query, pool, keep=config.GROUNDING_CANDIDATES)
+    # Stable re-rank: keep lexical relevance, but float discourse over explainers.
+    ranked = sorted(ranked, key=_discourse_bias, reverse=True)
     to_read = ranked[: config.GROUNDING_READ_TOP_N]
 
     selected: list[dict] = []

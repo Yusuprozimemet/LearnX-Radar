@@ -282,6 +282,12 @@ MOMENTUM_SPIKE_DAMP = 0.9         # multiplier for a skill seen only today (mild
 # --- Lesson generation ---
 LESSON_DURATION_MIN = 5  # target audio length for a daily lesson
 LESSON_DIFFICULTY_DEFAULT = "beginner"  # auto-scales in v2 from skill_memory
+# LESSON_DIFFICULTY_OVERRIDE: pin every lesson to one level, bypassing the
+# per-skill spaced-repetition suggestion (gap_scorer's beginner→intermediate→
+# advanced ramp). New skills surface daily, so without this almost every lesson
+# lands on "beginner". Set to None to restore the auto-scaling ramp; otherwise
+# one of "beginner" | "intermediate" | "advanced".
+LESSON_DIFFICULTY_OVERRIDE = "advanced"
 
 # --- Brief grounding (v7 Day 24) ---
 # Ground the brief in the REAL text of the sources that surfaced the skill (+ fresh
@@ -300,6 +306,12 @@ GROUNDING_CANDIDATES = 12       # candidate sources ranked before deciding what 
 GROUNDING_READ_TOP_N = 5
 GROUNDING_TEXT_CHARS = 1500     # per-source text cap fed into the brief prompt
 GROUNDING_HTTP_TIMEOUT_S = 20   # per Jina/Exa request
+# GROUNDING_RECENCY_DAYS: Exa results older than this are excluded so grounding
+# leans on current discourse (the threads/posts that made the skill trend now),
+# not evergreen "what is X" explainers that read like an encyclopedia. The brief
+# inherits whatever grounds it, so freshness here is what makes lessons feel
+# current and specific rather than generic. None -> no recency filter.
+GROUNDING_RECENCY_DAYS = 120
 
 # --- Dutch coach (v5) ---
 # A second learning track that rides the same daily run: a small A2 Dutch lesson

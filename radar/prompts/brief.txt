@@ -13,7 +13,15 @@ using their numbers where a claim rests on one. NEVER invent a URL or a source n
 listed here, and do NOT write a Sources list yourself — it is appended for you:
 {grounding}
 
-Write the brief in Markdown, roughly 550-750 words, with EXACTLY these sections:
+INSIGHT BAR — this is what separates a real briefing from an encyclopedia entry:
+name the SPECIFIC tools, projects, techniques, people, and debates the sources are
+actually talking about (concrete library/product names, named workflows or
+patterns, competing approaches and the tension between them), not just the abstract
+concept. Prefer what is NEW or CONTESTED right now over textbook definitions a
+reader could get anywhere. If the sources mention specific named things, the brief
+MUST surface them.
+
+Write the brief in Markdown, roughly 600-800 words, with EXACTLY these sections:
 
 # {skill}
 
@@ -21,13 +29,22 @@ Write the brief in Markdown, roughly 550-750 words, with EXACTLY these sections:
 Two or three sentences grounding the skill in why it showed up now (use the
 evidence and the sources it appeared in). Concrete, no hype.
 
+## What's being discussed
+3-5 sentences (or tight bullets) on the SPECIFIC current conversation: the named
+tools, projects, techniques, and disagreements practitioners are weighing right
+now, drawn from the grounding sources with [n] citations. This is where the brief
+earns its keep — be concrete and current, name names, surface the live tensions.
+If the sources genuinely offer no specifics, say briefly what's driving interest
+instead of padding with generalities.
+
 ## What you'll learn
 A bullet list of 3-5 concrete things the lesson will cover.
 
 ## Core ideas
-The actual teaching content: explain the key concepts in clear prose, with one
-or two short, correct examples or analogies. This is the heart of the lesson —
-make it genuinely instructive, not a summary.
+The actual teaching content: explain the key concepts in clear prose, grounded in
+the specific tools and techniques named above (not a generic overview), with one
+or two short, correct examples. This is the heart of the lesson — make it
+genuinely instructive, not a summary.
 
 ## Where it fits
 How this connects to the broader stack and when a developer would reach for it.

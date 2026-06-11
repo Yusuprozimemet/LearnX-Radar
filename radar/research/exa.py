@@ -24,15 +24,28 @@ class ExaChannel(Channel):
     def can_handle(self, url: str) -> bool:
         return False  # search-only
 
-    def search(self, query: str, limit: int = 5) -> list[Item]:
+    def search(
+        self,
+        query: str,
+        limit: int = 5,
+        start_published_date: str | None = None,
+        category: str | None = None,
+    ) -> list[Item]:
         if not config.EXA_API_KEY or limit < 1:
             return []  # Exa rejects numResults<1 with HTTP 400
         # type="auto" + highlights per the canonical Exa guide: query-relevant
         # excerpts, token-efficient, ideal for downstream synthesis.
-        body = json.dumps(
-            {"query": query, "type": "auto", "numResults": limit,
-             "contents": {"highlights": True}}
-        ).encode("utf-8")
+        # start_published_date (ISO) biases toward fresh discourse over evergreen
+        # explainers; category (e.g. "news") narrows to discussion-shaped sources.
+        payload: dict = {
+            "query": query, "type": "auto", "numResults": limit,
+            "contents": {"highlights": True},
+        }
+        if start_published_date:
+            payload["startPublishedDate"] = start_published_date
+        if category:
+            payload["category"] = category
+        body = json.dumps(payload).encode("utf-8")
         req = urllib.request.Request(
             _ENDPOINT,
             data=body,
@@ -70,5 +83,10 @@ class ExaChannel(Channel):
 _CHANNEL = ExaChannel()
 
 
-def search(query: str, limit: int = 5) -> list[Item]:
-    return _CHANNEL.search(query, limit)
+def search(
+    query: str,
+    limit: int = 5,
+    start_published_date: str | None = None,
+    category: str | None = None,
+) -> list[Item]:
+    return _CHANNEL.search(query, limit, start_published_date, category)
