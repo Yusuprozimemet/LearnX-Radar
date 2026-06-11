@@ -640,7 +640,9 @@
         .then(function (r) { if (!r.ok) throw 0; return r.blob(); });
     };
     (lesson.date === latestDate
-      ? fetch("dutch_audio.mp3")
+      // ?v=<date> busts the CDN edge per day (same filename, new content daily)
+      // without re-downloading the multi-MB blob on every load within a day.
+      ? fetch("dutch_audio.mp3?v=" + latestDate)
           .then(function (r) { if (!r.ok) throw 0; return r.blob(); })
           .catch(fromUrl)
       : fromUrl())
@@ -658,7 +660,7 @@
   // Reopen an archived day from the lessen list: fetch its dated JSON and render
   // it as the current lesson (leren step 1, like a fresh open).
   function openLesson(d) {
-    fetch("lessons/dutch-" + d + ".json", { cache: "no-store" })
+    fetch("lessons/dutch-" + d + ".json?v=" + Date.now(), { cache: "no-store" })
       .then(function (r) { if (!r.ok) throw 0; return r.json(); })
       .then(render)
       .catch(function () {
@@ -720,12 +722,16 @@
 
   // The archive manifest first (missing on day one — fine, the list just shows
   // on-device results only), then today's lesson.
-  fetch("lessons/index.json", { cache: "no-store" })
+  // Cache-bust the JSON fetches: cache:"no-store" stops the browser cache, but
+  // GitHub Pages' CDN edge serves these with max-age=600, so a phone on a
+  // different edge can keep showing yesterday's lesson for ~10min after a deploy.
+  // A unique query string forces an edge cache MISS -> fresh fetch from origin.
+  fetch("lessons/index.json?v=" + Date.now(), { cache: "no-store" })
     .then(function (r) { return r.ok ? r.json() : {}; })
     .catch(function () { return {}; })
     .then(function (idx) {
       manifest = (idx && idx.lessons) || [];
-      return fetch("dutch_lesson.json", { cache: "no-store" });
+      return fetch("dutch_lesson.json?v=" + Date.now(), { cache: "no-store" });
     })
     .then(function (resp) {
       if (!resp.ok) throw new Error("HTTP " + resp.status);
