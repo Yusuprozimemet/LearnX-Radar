@@ -1,19 +1,19 @@
 {
   "version": 1,
   "cefr": "A2",
-  "streak": 7,
-  "last_run": "2026-06-11",
+  "streak": 8,
+  "last_run": "2026-06-12",
   "last_words": [
-    "knop",
-    "link",
-    "pagina",
-    "gegevens",
-    "boodschappen",
-    "geld",
-    "gebruiker",
-    "gebruikersnaam",
-    "email",
-    "bericht"
+    "auto",
+    "station",
+    "kaartje",
+    "straat",
+    "map",
+    "update",
+    "website",
+    "app",
+    "winkel",
+    "rekening"
   ],
   "words": {
     "bestand": {
@@ -68,19 +68,22 @@
       "introduced": "2026-06-06",
       "reps": 3,
       "last_review": "2026-06-10",
-      "due": "2026-06-15"
+      "due": "2026-06-15",
+      "recall_right": 1
     },
     "vergadering": {
       "introduced": "2026-06-06",
       "reps": 3,
       "last_review": "2026-06-10",
-      "due": "2026-06-15"
+      "due": "2026-06-15",
+      "recall_right": 1
     },
     "werk": {
       "introduced": "2026-06-06",
       "reps": 3,
       "last_review": "2026-06-10",
-      "due": "2026-06-15"
+      "due": "2026-06-15",
+      "recall_right": 1
     },
     "baan": {
       "introduced": "2026-06-06",
@@ -90,45 +93,48 @@
     },
     "map": {
       "introduced": "2026-06-07",
-      "reps": 2,
-      "last_review": "2026-06-09",
-      "due": "2026-06-11"
+      "reps": 3,
+      "last_review": "2026-06-12",
+      "due": "2026-06-17"
     },
     "update": {
       "introduced": "2026-06-07",
-      "reps": 2,
-      "last_review": "2026-06-09",
-      "due": "2026-06-11"
+      "reps": 3,
+      "last_review": "2026-06-12",
+      "due": "2026-06-17"
     },
     "website": {
       "introduced": "2026-06-07",
-      "reps": 2,
-      "last_review": "2026-06-09",
-      "due": "2026-06-11"
+      "reps": 3,
+      "last_review": "2026-06-12",
+      "due": "2026-06-17"
     },
     "app": {
       "introduced": "2026-06-07",
-      "reps": 2,
-      "last_review": "2026-06-09",
-      "due": "2026-06-11"
+      "reps": 3,
+      "last_review": "2026-06-12",
+      "due": "2026-06-17"
     },
     "collega": {
       "introduced": "2026-06-08",
       "reps": 2,
       "last_review": "2026-06-10",
-      "due": "2026-06-12"
+      "due": "2026-06-12",
+      "recall_right": 1
     },
     "winkel": {
       "introduced": "2026-06-08",
       "reps": 2,
-      "last_review": "2026-06-10",
-      "due": "2026-06-12"
+      "last_review": "2026-06-12",
+      "due": "2026-06-14",
+      "recall_wrong": 1
     },
     "boodschappen": {
       "introduced": "2026-06-08",
       "reps": 2,
       "last_review": "2026-06-11",
-      "due": "2026-06-13"
+      "due": "2026-06-13",
+      "recall_right": 1
     },
     "geld": {
       "introduced": "2026-06-08",
@@ -138,9 +144,10 @@
     },
     "gebruiker": {
       "introduced": "2026-06-09",
-      "reps": 2,
+      "reps": 1,
       "last_review": "2026-06-11",
-      "due": "2026-06-13"
+      "due": "2026-06-12",
+      "recall_wrong": 1
     },
     "gebruikersnaam": {
       "introduced": "2026-06-09",
@@ -150,33 +157,38 @@
     },
     "email": {
       "introduced": "2026-06-09",
-      "reps": 2,
+      "reps": 1,
       "last_review": "2026-06-11",
-      "due": "2026-06-13"
+      "due": "2026-06-12",
+      "recall_wrong": 1
     },
     "bericht": {
       "introduced": "2026-06-09",
       "reps": 2,
       "last_review": "2026-06-11",
-      "due": "2026-06-13"
+      "due": "2026-06-13",
+      "recall_right": 1
     },
     "rekening": {
       "introduced": "2026-06-10",
-      "reps": 1,
-      "last_review": "2026-06-10",
-      "due": "2026-06-11"
+      "reps": 2,
+      "last_review": "2026-06-12",
+      "due": "2026-06-14",
+      "recall_right": 1
     },
     "trein": {
       "introduced": "2026-06-10",
       "reps": 1,
       "last_review": "2026-06-10",
-      "due": "2026-06-11"
+      "due": "2026-06-11",
+      "recall_wrong": 1
     },
     "bus": {
       "introduced": "2026-06-10",
       "reps": 1,
       "last_review": "2026-06-10",
-      "due": "2026-06-11"
+      "due": "2026-06-11",
+      "recall_right": 1
     },
     "fiets": {
       "introduced": "2026-06-10",
@@ -188,7 +200,8 @@
       "introduced": "2026-06-11",
       "reps": 1,
       "last_review": "2026-06-11",
-      "due": "2026-06-12"
+      "due": "2026-06-12",
+      "recall_right": 1
     },
     "link": {
       "introduced": "2026-06-11",
@@ -206,7 +219,32 @@
       "introduced": "2026-06-11",
       "reps": 1,
       "last_review": "2026-06-11",
-      "due": "2026-06-12"
+      "due": "2026-06-12",
+      "recall_right": 1
+    },
+    "auto": {
+      "introduced": "2026-06-12",
+      "reps": 1,
+      "last_review": "2026-06-12",
+      "due": "2026-06-13"
+    },
+    "station": {
+      "introduced": "2026-06-12",
+      "reps": 1,
+      "last_review": "2026-06-12",
+      "due": "2026-06-13"
+    },
+    "kaartje": {
+      "introduced": "2026-06-12",
+      "reps": 1,
+      "last_review": "2026-06-12",
+      "due": "2026-06-13"
+    },
+    "straat": {
+      "introduced": "2026-06-12",
+      "reps": 1,
+      "last_review": "2026-06-12",
+      "due": "2026-06-13"
     }
   },
   "lessons": [
@@ -329,7 +367,56 @@
         "bericht"
       ],
       "summary": "Dutch (tech): button, link, page, data"
+    },
+    {
+      "date": "2026-06-12",
+      "theme": "everyday",
+      "audio": "dutch-20260612.mp3",
+      "words": [
+        "auto",
+        "station",
+        "kaartje",
+        "straat",
+        "map",
+        "update",
+        "website",
+        "app",
+        "winkel",
+        "rekening"
+      ],
+      "summary": "Dutch (everyday): car, station, ticket, street"
     }
   ],
-  "recall": []
+  "recall": [
+    {
+      "date": "2026-06-10",
+      "reported": "2026-06-12",
+      "right": [
+        "rekening",
+        "bus",
+        "afspraak",
+        "vergadering",
+        "werk",
+        "collega"
+      ],
+      "wrong": [
+        "trein",
+        "winkel"
+      ]
+    },
+    {
+      "date": "2026-06-11",
+      "reported": "2026-06-12",
+      "right": [
+        "knop",
+        "gegevens",
+        "boodschappen",
+        "bericht"
+      ],
+      "wrong": [
+        "gebruiker",
+        "email"
+      ]
+    }
+  ]
 }

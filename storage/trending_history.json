@@ -4099,5 +4099,368 @@
         "score": 1.125
       }
     ]
+  },
+  "2026-06-12": {
+    "today_skill": "React Server Components",
+    "scored": [
+      {
+        "skill": "React Server Components",
+        "sources": [
+          "GitHub Trending",
+          "HN Hiring"
+        ],
+        "evidence": "A collection of libraries and tools that help you build adaptive, accessible, and robust user experiences.",
+        "frequency": 2,
+        "demand_weight": 3.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.4583333333333333,
+        "canonical": "react server components",
+        "suggested_difficulty": "beginner",
+        "score": 4.375
+      },
+      {
+        "skill": "Kafka consumer groups",
+        "sources": [
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "Conductor lets builders run teams of coding agents.",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.3333333333333333,
+        "canonical": "kafka consumer groups",
+        "suggested_difficulty": "beginner",
+        "score": 3.333333333333333
+      },
+      {
+        "skill": "DuckDB",
+        "sources": [
+          "GitHub Trending",
+          "HN Hiring",
+          "Stack Overflow"
+        ],
+        "evidence": "A curated collection of practical AI projects implementing OCR systems, RAG, AI agents, and other AI use cases.",
+        "frequency": 3,
+        "demand_weight": 4.5,
+        "novelty": 0.5,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.4166666666666667,
+        "canonical": "duckdb",
+        "suggested_difficulty": "advanced",
+        "score": 3.1875
+      },
+      {
+        "skill": "LangChain",
+        "sources": [
+          "HN Hiring",
+          "Stack Overflow"
+        ],
+        "evidence": "Rising questions on Stack Overflow",
+        "frequency": 2,
+        "demand_weight": 3.5,
+        "novelty": 0.5714285714285714,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.4583333333333333,
+        "canonical": "langchain",
+        "suggested_difficulty": "intermediate",
+        "score": 2.9166666666666665
+      },
+      {
+        "skill": "Data engineering",
+        "sources": [
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "How to hire AI developers for your next AI project",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.0833333333333333,
+        "canonical": "data engineering",
+        "suggested_difficulty": "beginner",
+        "score": 2.708333333333333
+      },
+      {
+        "skill": "LLM APIs",
+        "sources": [
+          "GitHub Trending",
+          "HN Hiring"
+        ],
+        "evidence": "BerriAI/litellm :: Python SDK, Proxy Server (AI Gateway) to call 100+ LLM APIs in OpenAI (or native) format, with cost tracking, guardrails, loadbalancing and logging.",
+        "frequency": 2,
+        "demand_weight": 3.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "llm apis",
+        "suggested_difficulty": "beginner",
+        "score": 2.7
+      },
+      {
+        "skill": "Agentic AI",
+        "sources": [
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "Multiple companies hiring for agentic AI roles",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.0416666666666665,
+        "canonical": "agentic ai",
+        "suggested_difficulty": "beginner",
+        "score": 2.604166666666666
+      },
+      {
+        "skill": "Machine learning",
+        "sources": [
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "How to hire AI developers for your next AI project",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.0208333333333335,
+        "canonical": "machine learning",
+        "suggested_difficulty": "beginner",
+        "score": 2.552083333333334
+      },
+      {
+        "skill": "Physical AI",
+        "sources": [
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "Nvidia is the only candidate for Physical AI platform layer",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.0208333333333335,
+        "canonical": "physical ai",
+        "suggested_difficulty": "beginner",
+        "score": 2.552083333333334
+      },
+      {
+        "skill": "AWS Lambda cold starts",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "We The Flywheel | Remote (Worldwide) / Ho Chi Minh City (Hybrid) | Part-time |",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.2083333333333333,
+        "canonical": "aws lambda cold starts",
+        "suggested_difficulty": "beginner",
+        "score": 2.4166666666666665
+      },
+      {
+        "skill": "Platform Engineering",
+        "sources": [
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "Building an internal developer platform without Kubernetes in 2026",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "platform engineering",
+        "suggested_difficulty": "beginner",
+        "score": 2.25
+      },
+      {
+        "skill": "System design",
+        "sources": [
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "Why every developer needs to understand system design in 2026",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "system design",
+        "suggested_difficulty": "beginner",
+        "score": 2.25
+      },
+      {
+        "skill": "LLM training",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "IBM Research hiring Senior Scientist for LLM training and inference stack",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.0416666666666665,
+        "canonical": "llm training",
+        "suggested_difficulty": "beginner",
+        "score": 2.083333333333333
+      },
+      {
+        "skill": "Autonomous underwriting",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "Shepherd is an AI-native commercial insurance company.",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.0208333333333335,
+        "canonical": "autonomous underwriting",
+        "suggested_difficulty": "beginner",
+        "score": 2.041666666666667
+      },
+      {
+        "skill": "Vector embeddings",
+        "sources": [
+          "GitHub Trending",
+          "dev.to"
+        ],
+        "evidence": "Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search",
+        "frequency": 2,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.2916666666666667,
+        "canonical": "vector embeddings",
+        "suggested_difficulty": "beginner",
+        "score": 1.9375
+      },
+      {
+        "skill": "Homebrew 6.0.0",
+        "sources": [
+          "HN Front Page",
+          "Lobste.rs"
+        ],
+        "evidence": "Release of Homebrew 6.0.0",
+        "frequency": 2,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "homebrew 6.0.0",
+        "suggested_difficulty": "beginner",
+        "score": 1.8
+      },
+      {
+        "skill": "NeoHuman",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "Emergences Labs hiring AI/Systems Engineer for NeoHuman",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "neohuman",
+        "suggested_difficulty": "beginner",
+        "score": 1.8
+      },
+      {
+        "skill": "Postgres extension",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "ParadeDB hiring Database Internals Engineers for Postgres extension",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "postgres extension",
+        "suggested_difficulty": "beginner",
+        "score": 1.8
+      },
+      {
+        "skill": "Rust async/await",
+        "sources": [
+          "GitHub Trending",
+          "HN Hiring",
+          "Lobste.rs",
+          "dev.to"
+        ],
+        "evidence": "A minimal, secure Python interpreter written in Rust for use by AI",
+        "frequency": 4,
+        "demand_weight": 4.5,
+        "novelty": 0.2857142857142857,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.375,
+        "canonical": "rust async/await",
+        "suggested_difficulty": "intermediate",
+        "score": 1.7678571428571428
+      },
+      {
+        "skill": "Tauri",
+        "sources": [
+          "GitHub Trending",
+          "dev.to"
+        ],
+        "evidence": "Tutorials and discussions on building desktop apps with Tauri",
+        "frequency": 2,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.125,
+        "canonical": "tauri",
+        "suggested_difficulty": "beginner",
+        "score": 1.6875
+      }
+    ]
   }
 }

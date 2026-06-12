@@ -1,61 +1,24 @@
 {
-  "updated": "2026-06-11",
-  "today_skill": "Agentic coding",
+  "updated": "2026-06-12",
+  "today_skill": "React Server Components",
   "scored": [
-    {
-      "skill": "Agentic coding",
-      "sources": [
-        "GitHub Trending",
-        "HN Hiring",
-        "dev.to"
-      ],
-      "evidence": "Agent-based software development",
-      "frequency": 3,
-      "demand_weight": 3.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.3636363636363638,
-      "canonical": "agentic coding",
-      "suggested_difficulty": "beginner",
-      "score": 4.772727272727273
-    },
-    {
-      "skill": "Distributed systems",
-      "sources": [
-        "HN Hiring",
-        "dev.to"
-      ],
-      "evidence": "Job posting at ParadeDB",
-      "frequency": 2,
-      "demand_weight": 2.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": true,
-      "momentum": 1.0454545454545454,
-      "canonical": "distributed systems",
-      "suggested_difficulty": "beginner",
-      "score": 3.9204545454545454
-    },
     {
       "skill": "React Server Components",
       "sources": [
-        "HN Hiring",
-        "dev.to"
+        "GitHub Trending",
+        "HN Hiring"
       ],
-      "evidence": "Server-side rendering for React",
+      "evidence": "A collection of libraries and tools that help you build adaptive, accessible, and robust user experiences.",
       "frequency": 2,
-      "demand_weight": 2.5,
+      "demand_weight": 3.0,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 1.4545454545454546,
+      "momentum": 1.4583333333333333,
       "canonical": "react server components",
       "suggested_difficulty": "beginner",
-      "score": 3.6363636363636367
+      "score": 4.375
     },
     {
       "skill": "Kafka consumer groups",
@@ -63,81 +26,80 @@
         "HN Hiring",
         "dev.to"
       ],
-      "evidence": "Distributed messaging system",
+      "evidence": "Conductor lets builders run teams of coding agents.",
       "frequency": 2,
       "demand_weight": 2.5,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 1.3181818181818181,
+      "momentum": 1.3333333333333333,
       "canonical": "kafka consumer groups",
       "suggested_difficulty": "beginner",
-      "score": 3.2954545454545454
-    },
-    {
-      "skill": "AWS Lambda cold starts",
-      "sources": [
-        "HN Hiring",
-        "dev.to"
-      ],
-      "evidence": "Serverless computing on AWS",
-      "frequency": 2,
-      "demand_weight": 2.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.1818181818181819,
-      "canonical": "aws lambda cold starts",
-      "suggested_difficulty": "beginner",
-      "score": 2.9545454545454546
-    },
-    {
-      "skill": "ClickHouse",
-      "sources": [
-        "HN Hiring",
-        "Reddit"
-      ],
-      "evidence": "Column-store database for real-time analytics",
-      "frequency": 2,
-      "demand_weight": 2.75,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.0454545454545454,
-      "canonical": "clickhouse",
-      "suggested_difficulty": "beginner",
-      "score": 2.875
+      "score": 3.333333333333333
     },
     {
       "skill": "DuckDB",
       "sources": [
+        "GitHub Trending",
         "HN Hiring",
-        "Reddit",
-        "Stack Overflow",
-        "dev.to"
+        "Stack Overflow"
       ],
-      "evidence": "In-memory columnar database",
-      "frequency": 4,
-      "demand_weight": 4.75,
-      "novelty": 0.42857142857142855,
+      "evidence": "A curated collection of practical AI projects implementing OCR systems, RAG, AI agents, and other AI use cases.",
+      "frequency": 3,
+      "demand_weight": 4.5,
+      "novelty": 0.5,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 1.4090909090909092,
+      "momentum": 1.4166666666666667,
       "canonical": "duckdb",
       "suggested_difficulty": "advanced",
-      "score": 2.8685064935064934
+      "score": 3.1875
     },
     {
-      "skill": "Foundry",
+      "skill": "LangChain",
+      "sources": [
+        "HN Hiring",
+        "Stack Overflow"
+      ],
+      "evidence": "Rising questions on Stack Overflow",
+      "frequency": 2,
+      "demand_weight": 3.5,
+      "novelty": 0.5714285714285714,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.4583333333333333,
+      "canonical": "langchain",
+      "suggested_difficulty": "intermediate",
+      "score": 2.9166666666666665
+    },
+    {
+      "skill": "Data engineering",
+      "sources": [
+        "HN Hiring",
+        "dev.to"
+      ],
+      "evidence": "How to hire AI developers for your next AI project",
+      "frequency": 2,
+      "demand_weight": 2.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.0833333333333333,
+      "canonical": "data engineering",
+      "suggested_difficulty": "beginner",
+      "score": 2.708333333333333
+    },
+    {
+      "skill": "LLM APIs",
       "sources": [
         "GitHub Trending",
         "HN Hiring"
       ],
-      "evidence": "Ethereum application development toolkit in Rust",
+      "evidence": "BerriAI/litellm :: Python SDK, Proxy Server (AI Gateway) to call 100+ LLM APIs in OpenAI (or native) format, with cost tracking, guardrails, loadbalancing and logging.",
       "frequency": 2,
       "demand_weight": 3.0,
       "novelty": 1.0,
@@ -145,63 +107,45 @@
       "known": false,
       "goal_match": false,
       "momentum": 0.9,
-      "canonical": "foundry",
+      "canonical": "llm apis",
       "suggested_difficulty": "beginner",
       "score": 2.7
     },
     {
-      "skill": "LangChain",
+      "skill": "Agentic AI",
       "sources": [
         "HN Hiring",
-        "Stack Overflow",
         "dev.to"
       ],
-      "evidence": "Rising questions on Stack Overflow",
-      "frequency": 3,
-      "demand_weight": 4.0,
-      "novelty": 0.42857142857142855,
+      "evidence": "Multiple companies hiring for agentic AI roles",
+      "frequency": 2,
+      "demand_weight": 2.5,
+      "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 1.4545454545454546,
-      "canonical": "langchain",
-      "suggested_difficulty": "intermediate",
-      "score": 2.4935064935064934
+      "momentum": 1.0416666666666665,
+      "canonical": "agentic ai",
+      "suggested_difficulty": "beginner",
+      "score": 2.604166666666666
     },
     {
-      "skill": "ParadeDB",
+      "skill": "Machine learning",
       "sources": [
         "HN Hiring",
-        "Reddit"
+        "dev.to"
       ],
-      "evidence": "Full-text and vector search extension for Postgres",
+      "evidence": "How to hire AI developers for your next AI project",
       "frequency": 2,
-      "demand_weight": 2.75,
+      "demand_weight": 2.5,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "paradedb",
+      "momentum": 1.0208333333333335,
+      "canonical": "machine learning",
       "suggested_difficulty": "beginner",
-      "score": 2.475
-    },
-    {
-      "skill": "Real-time streaming",
-      "sources": [
-        "HN Hiring"
-      ],
-      "evidence": "Job posting at Forward",
-      "frequency": 1,
-      "demand_weight": 2.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.1363636363636362,
-      "canonical": "real-time streaming",
-      "suggested_difficulty": "beginner",
-      "score": 2.2727272727272725
+      "score": 2.552083333333334
     },
     {
       "skill": "Physical AI",
@@ -209,7 +153,42 @@
         "HN Hiring",
         "dev.to"
       ],
-      "evidence": "Multiple articles and job postings",
+      "evidence": "Nvidia is the only candidate for Physical AI platform layer",
+      "frequency": 2,
+      "demand_weight": 2.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.0208333333333335,
+      "canonical": "physical ai",
+      "suggested_difficulty": "beginner",
+      "score": 2.552083333333334
+    },
+    {
+      "skill": "AWS Lambda cold starts",
+      "sources": [
+        "HN Hiring"
+      ],
+      "evidence": "We The Flywheel | Remote (Worldwide) / Ho Chi Minh City (Hybrid) | Part-time |",
+      "frequency": 1,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.2083333333333333,
+      "canonical": "aws lambda cold starts",
+      "suggested_difficulty": "beginner",
+      "score": 2.4166666666666665
+    },
+    {
+      "skill": "Platform Engineering",
+      "sources": [
+        "HN Hiring",
+        "dev.to"
+      ],
+      "evidence": "Building an internal developer platform without Kubernetes in 2026",
       "frequency": 2,
       "demand_weight": 2.5,
       "novelty": 1.0,
@@ -217,43 +196,61 @@
       "known": false,
       "goal_match": false,
       "momentum": 0.9,
-      "canonical": "physical ai",
+      "canonical": "platform engineering",
       "suggested_difficulty": "beginner",
       "score": 2.25
     },
     {
-      "skill": "AI control plane",
+      "skill": "System design",
       "sources": [
-        "HN Hiring"
+        "HN Hiring",
+        "dev.to"
       ],
-      "evidence": "Job posting at Speakeasy",
-      "frequency": 1,
-      "demand_weight": 2.0,
+      "evidence": "Why every developer needs to understand system design in 2026",
+      "frequency": 2,
+      "demand_weight": 2.5,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 1.0454545454545454,
-      "canonical": "ai control plane",
+      "momentum": 0.9,
+      "canonical": "system design",
       "suggested_difficulty": "beginner",
-      "score": 2.090909090909091
+      "score": 2.25
     },
     {
       "skill": "LLM training",
       "sources": [
         "HN Hiring"
       ],
-      "evidence": "IBM Research job posting",
+      "evidence": "IBM Research hiring Senior Scientist for LLM training and inference stack",
       "frequency": 1,
       "demand_weight": 2.0,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 1.0227272727272727,
+      "momentum": 1.0416666666666665,
       "canonical": "llm training",
       "suggested_difficulty": "beginner",
-      "score": 2.0454545454545454
+      "score": 2.083333333333333
+    },
+    {
+      "skill": "Autonomous underwriting",
+      "sources": [
+        "HN Hiring"
+      ],
+      "evidence": "Shepherd is an AI-native commercial insurance company.",
+      "frequency": 1,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.0208333333333335,
+      "canonical": "autonomous underwriting",
+      "suggested_difficulty": "beginner",
+      "score": 2.041666666666667
     },
     {
       "skill": "Vector embeddings",
@@ -261,105 +258,107 @@
         "GitHub Trending",
         "dev.to"
       ],
-      "evidence": "High-dimensional vector representations",
+      "evidence": "Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search",
       "frequency": 2,
       "demand_weight": 1.5,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 1.2727272727272727,
+      "momentum": 1.2916666666666667,
       "canonical": "vector embeddings",
       "suggested_difficulty": "beginner",
-      "score": 1.9090909090909092
+      "score": 1.9375
     },
     {
-      "skill": "Python asyncio",
+      "skill": "Homebrew 6.0.0",
+      "sources": [
+        "HN Front Page",
+        "Lobste.rs"
+      ],
+      "evidence": "Release of Homebrew 6.0.0",
+      "frequency": 2,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 0.9,
+      "canonical": "homebrew 6.0.0",
+      "suggested_difficulty": "beginner",
+      "score": 1.8
+    },
+    {
+      "skill": "NeoHuman",
+      "sources": [
+        "HN Hiring"
+      ],
+      "evidence": "Emergences Labs hiring AI/Systems Engineer for NeoHuman",
+      "frequency": 1,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 0.9,
+      "canonical": "neohuman",
+      "suggested_difficulty": "beginner",
+      "score": 1.8
+    },
+    {
+      "skill": "Postgres extension",
+      "sources": [
+        "HN Hiring"
+      ],
+      "evidence": "ParadeDB hiring Database Internals Engineers for Postgres extension",
+      "frequency": 1,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 0.9,
+      "canonical": "postgres extension",
+      "suggested_difficulty": "beginner",
+      "score": 1.8
+    },
+    {
+      "skill": "Rust async/await",
+      "sources": [
+        "GitHub Trending",
+        "HN Hiring",
+        "Lobste.rs",
+        "dev.to"
+      ],
+      "evidence": "A minimal, secure Python interpreter written in Rust for use by AI",
+      "frequency": 4,
+      "demand_weight": 4.5,
+      "novelty": 0.2857142857142857,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.375,
+      "canonical": "rust async/await",
+      "suggested_difficulty": "intermediate",
+      "score": 1.7678571428571428
+    },
+    {
+      "skill": "Tauri",
       "sources": [
         "GitHub Trending",
         "dev.to"
       ],
-      "evidence": "Asynchronous I/O in Python",
+      "evidence": "Tutorials and discussions on building desktop apps with Tauri",
       "frequency": 2,
       "demand_weight": 1.5,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 1.2272727272727273,
-      "canonical": "python asyncio",
+      "momentum": 1.125,
+      "canonical": "tauri",
       "suggested_difficulty": "beginner",
-      "score": 1.8409090909090908
-    },
-    {
-      "skill": "Causal AI",
-      "sources": [
-        "HN Hiring"
-      ],
-      "evidence": "Job posting at Alembic",
-      "frequency": 1,
-      "demand_weight": 2.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "causal ai",
-      "suggested_difficulty": "beginner",
-      "score": 1.8
-    },
-    {
-      "skill": "Postgres extensions",
-      "sources": [
-        "HN Hiring"
-      ],
-      "evidence": "Job posting at ParadeDB",
-      "frequency": 1,
-      "demand_weight": 2.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "postgres extensions",
-      "suggested_difficulty": "beginner",
-      "score": 1.8
-    },
-    {
-      "skill": "WebGPU",
-      "sources": [
-        "GitHub Trending",
-        "Reddit"
-      ],
-      "evidence": "WebGPU usage in production",
-      "frequency": 2,
-      "demand_weight": 1.75,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.0227272727272727,
-      "canonical": "webgpu",
-      "suggested_difficulty": "beginner",
-      "score": 1.7897727272727273
-    },
-    {
-      "skill": "HTTP/2",
-      "sources": [
-        "Reddit",
-        "dev.to"
-      ],
-      "evidence": "HTTP/2 usage in production",
-      "frequency": 2,
-      "demand_weight": 1.25,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "http/2",
-      "suggested_difficulty": "beginner",
-      "score": 1.125
+      "score": 1.6875
     }
   ]
 }
