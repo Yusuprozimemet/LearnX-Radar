@@ -1,19 +1,19 @@
 {
   "version": 1,
   "cefr": "A2",
-  "streak": 8,
-  "last_run": "2026-06-12",
+  "streak": 9,
+  "last_run": "2026-06-13",
   "last_words": [
-    "auto",
-    "station",
-    "kaartje",
-    "straat",
-    "map",
-    "update",
-    "website",
-    "app",
-    "winkel",
-    "rekening"
+    "systeem",
+    "server",
+    "verbinding",
+    "internet",
+    "trein",
+    "bus",
+    "fiets",
+    "collega",
+    "gebruiker",
+    "email"
   ],
   "words": {
     "bestand": {
@@ -101,25 +101,28 @@
       "introduced": "2026-06-07",
       "reps": 3,
       "last_review": "2026-06-12",
-      "due": "2026-06-17"
+      "due": "2026-06-17",
+      "recall_right": 1
     },
     "website": {
       "introduced": "2026-06-07",
       "reps": 3,
       "last_review": "2026-06-12",
-      "due": "2026-06-17"
+      "due": "2026-06-17",
+      "recall_right": 1
     },
     "app": {
       "introduced": "2026-06-07",
       "reps": 3,
       "last_review": "2026-06-12",
-      "due": "2026-06-17"
+      "due": "2026-06-17",
+      "recall_right": 1
     },
     "collega": {
       "introduced": "2026-06-08",
-      "reps": 2,
-      "last_review": "2026-06-10",
-      "due": "2026-06-12",
+      "reps": 3,
+      "last_review": "2026-06-13",
+      "due": "2026-06-18",
       "recall_right": 1
     },
     "winkel": {
@@ -127,7 +130,8 @@
       "reps": 2,
       "last_review": "2026-06-12",
       "due": "2026-06-14",
-      "recall_wrong": 1
+      "recall_wrong": 1,
+      "recall_right": 1
     },
     "boodschappen": {
       "introduced": "2026-06-08",
@@ -144,9 +148,9 @@
     },
     "gebruiker": {
       "introduced": "2026-06-09",
-      "reps": 1,
-      "last_review": "2026-06-11",
-      "due": "2026-06-12",
+      "reps": 2,
+      "last_review": "2026-06-13",
+      "due": "2026-06-15",
       "recall_wrong": 1
     },
     "gebruikersnaam": {
@@ -157,9 +161,9 @@
     },
     "email": {
       "introduced": "2026-06-09",
-      "reps": 1,
-      "last_review": "2026-06-11",
-      "due": "2026-06-12",
+      "reps": 2,
+      "last_review": "2026-06-13",
+      "due": "2026-06-15",
       "recall_wrong": 1
     },
     "bericht": {
@@ -174,27 +178,27 @@
       "reps": 2,
       "last_review": "2026-06-12",
       "due": "2026-06-14",
-      "recall_right": 1
+      "recall_right": 2
     },
     "trein": {
       "introduced": "2026-06-10",
-      "reps": 1,
-      "last_review": "2026-06-10",
-      "due": "2026-06-11",
+      "reps": 2,
+      "last_review": "2026-06-13",
+      "due": "2026-06-15",
       "recall_wrong": 1
     },
     "bus": {
       "introduced": "2026-06-10",
-      "reps": 1,
-      "last_review": "2026-06-10",
-      "due": "2026-06-11",
+      "reps": 2,
+      "last_review": "2026-06-13",
+      "due": "2026-06-15",
       "recall_right": 1
     },
     "fiets": {
       "introduced": "2026-06-10",
-      "reps": 1,
-      "last_review": "2026-06-10",
-      "due": "2026-06-11"
+      "reps": 2,
+      "last_review": "2026-06-13",
+      "due": "2026-06-15"
     },
     "knop": {
       "introduced": "2026-06-11",
@@ -226,25 +230,53 @@
       "introduced": "2026-06-12",
       "reps": 1,
       "last_review": "2026-06-12",
-      "due": "2026-06-13"
+      "due": "2026-06-13",
+      "recall_right": 1
     },
     "station": {
       "introduced": "2026-06-12",
       "reps": 1,
       "last_review": "2026-06-12",
-      "due": "2026-06-13"
+      "due": "2026-06-13",
+      "recall_right": 1
     },
     "kaartje": {
       "introduced": "2026-06-12",
       "reps": 1,
       "last_review": "2026-06-12",
-      "due": "2026-06-13"
+      "due": "2026-06-13",
+      "recall_right": 1
     },
     "straat": {
       "introduced": "2026-06-12",
       "reps": 1,
       "last_review": "2026-06-12",
-      "due": "2026-06-13"
+      "due": "2026-06-13",
+      "recall_right": 1
+    },
+    "systeem": {
+      "introduced": "2026-06-13",
+      "reps": 1,
+      "last_review": "2026-06-13",
+      "due": "2026-06-14"
+    },
+    "server": {
+      "introduced": "2026-06-13",
+      "reps": 1,
+      "last_review": "2026-06-13",
+      "due": "2026-06-14"
+    },
+    "verbinding": {
+      "introduced": "2026-06-13",
+      "reps": 1,
+      "last_review": "2026-06-13",
+      "due": "2026-06-14"
+    },
+    "internet": {
+      "introduced": "2026-06-13",
+      "reps": 1,
+      "last_review": "2026-06-13",
+      "due": "2026-06-14"
     }
   },
   "lessons": [
@@ -385,6 +417,24 @@
         "rekening"
       ],
       "summary": "Dutch (everyday): car, station, ticket, street"
+    },
+    {
+      "date": "2026-06-13",
+      "theme": "tech",
+      "audio": "dutch-20260613.mp3",
+      "words": [
+        "systeem",
+        "server",
+        "verbinding",
+        "internet",
+        "trein",
+        "bus",
+        "fiets",
+        "collega",
+        "gebruiker",
+        "email"
+      ],
+      "summary": "Dutch (tech): system, server, connection, internet"
     }
   ],
   "recall": [
@@ -417,6 +467,22 @@
         "gebruiker",
         "email"
       ]
+    },
+    {
+      "date": "2026-06-12",
+      "reported": "2026-06-13",
+      "right": [
+        "auto",
+        "station",
+        "kaartje",
+        "straat",
+        "update",
+        "website",
+        "app",
+        "winkel",
+        "rekening"
+      ],
+      "wrong": []
     }
   ]
 }

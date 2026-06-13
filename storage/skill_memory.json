@@ -128,13 +128,29 @@
       ],
       "last_taught": "2026-06-12",
       "summary": "A collection of libraries and tools that help you build adaptive, accessible, and robust user experiences."
+    },
+    "LLM": {
+      "times_taught": 1,
+      "first_taught": "2026-06-13",
+      "lessons": [
+        {
+          "date": "2026-06-13",
+          "title": "LLM",
+          "difficulty": "advanced",
+          "summary": "Multiple projects and job posts related to LLMs",
+          "audio": "lesson-20260613-llm.mp3",
+          "brief": "20260613-llm.md"
+        }
+      ],
+      "last_taught": "2026-06-13",
+      "summary": "Multiple projects and job posts related to LLMs"
     }
   },
   "so_counts": {
-    "python": 2205823,
-    "rust": 43952,
-    "kubernetes": 59805,
-    "langchain": 1983,
-    "duckdb": 505
+    "python": 2205714,
+    "rust": 43946,
+    "kubernetes": 59803,
+    "langchain": 1982,
+    "duckdb": 503
   }
 }
