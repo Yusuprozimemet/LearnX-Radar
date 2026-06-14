@@ -1,369 +1,357 @@
 {
-  "updated": "2026-06-13",
-  "today_skill": "LLM",
+  "updated": "2026-06-14",
+  "today_skill": "DuckDB",
   "scored": [
-    {
-      "skill": "LLM",
-      "sources": [
-        "GitHub Trending",
-        "HN Front Page",
-        "HN Hiring",
-        "Lobste.rs",
-        "Reddit",
-        "dev.to"
-      ],
-      "evidence": "Multiple projects and job posts related to LLMs",
-      "frequency": 6,
-      "demand_weight": 6.25,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": true,
-      "momentum": 1.0384615384615385,
-      "canonical": "llm",
-      "suggested_difficulty": "beginner",
-      "score": 9.735576923076923
-    },
-    {
-      "skill": "AI agents",
-      "sources": [
-        "GitHub Trending",
-        "HN Front Page",
-        "HN Hiring",
-        "Reddit",
-        "dev.to"
-      ],
-      "evidence": "Job posts and articles on AI agents",
-      "frequency": 5,
-      "demand_weight": 5.25,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.0384615384615385,
-      "canonical": "ai agents",
-      "suggested_difficulty": "beginner",
-      "score": 5.4519230769230775
-    },
-    {
-      "skill": "LangChain",
-      "sources": [
-        "GitHub Trending",
-        "HN Hiring",
-        "Stack Overflow"
-      ],
-      "evidence": "Rising Stack Overflow questions",
-      "frequency": 3,
-      "demand_weight": 4.5,
-      "novelty": 0.7142857142857143,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.4615384615384617,
-      "canonical": "langchain",
-      "suggested_difficulty": "intermediate",
-      "score": 4.697802197802198
-    },
     {
       "skill": "DuckDB",
       "sources": [
-        "HN Front Page",
+        "GitHub Trending",
         "HN Hiring",
         "Stack Overflow"
       ],
-      "evidence": "In-memory database for analytics and machine learning",
+      "evidence": "LMCache uses DuckDB for caching",
       "frequency": 3,
       "demand_weight": 4.5,
-      "novelty": 0.5714285714285714,
+      "novelty": 0.6428571428571429,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 1.4230769230769231,
+      "momentum": 1.4285714285714286,
       "canonical": "duckdb",
       "suggested_difficulty": "advanced",
-      "score": 3.659340659340659
+      "score": 4.132653061224491
     },
     {
-      "skill": "Terragrunt",
+      "skill": "Terraform",
       "sources": [
         "GitHub Trending",
         "HN Hiring"
       ],
-      "evidence": "Flexible orchestration tool for Infrastructure as Code",
+      "evidence": "hashicorp/terraform enables infrastructure management",
       "frequency": 2,
       "demand_weight": 3.0,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 1.0192307692307692,
-      "canonical": "terragrunt",
+      "momentum": 1.0178571428571428,
+      "canonical": "terraform",
       "suggested_difficulty": "beginner",
-      "score": 3.0576923076923075
+      "score": 3.0535714285714284
+    },
+    {
+      "skill": "Ansible",
+      "sources": [
+        "GitHub Trending",
+        "HN Hiring"
+      ],
+      "evidence": "ansible/ansible is a radically simple IT automation platform",
+      "frequency": 2,
+      "demand_weight": 3.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 0.9,
+      "canonical": "ansible",
+      "suggested_difficulty": "beginner",
+      "score": 2.7
+    },
+    {
+      "skill": "Vector embeddings",
+      "sources": [
+        "HN Hiring"
+      ],
+      "evidence": "Job post for August Health mentions multiple engineering roles and operating platform for senior care",
+      "frequency": 1,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.3214285714285714,
+      "canonical": "vector embeddings",
+      "suggested_difficulty": "beginner",
+      "score": 2.642857142857143
     },
     {
       "skill": "AWS Lambda cold starts",
       "sources": [
         "HN Hiring"
       ],
-      "evidence": "Optimizing AWS Lambda functions for cold start performance",
+      "evidence": "Job post for Caplight mentions AWS Lambda and equity-heavy compensation",
       "frequency": 1,
       "demand_weight": 2.0,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 1.2307692307692308,
+      "momentum": 1.25,
       "canonical": "aws lambda cold starts",
       "suggested_difficulty": "beginner",
-      "score": 2.4615384615384617
+      "score": 2.5
     },
     {
-      "skill": "AI infrastructure",
+      "skill": "Python asyncio",
       "sources": [
-        "HN Hiring",
-        "dev.to"
+        "HN Hiring"
       ],
-      "evidence": "Article on AI infrastructure",
-      "frequency": 2,
-      "demand_weight": 2.5,
+      "evidence": "Job post for Fusionbox mentions Python and TypeScript engineers",
+      "frequency": 1,
+      "demand_weight": 2.0,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "ai infrastructure",
+      "momentum": 1.25,
+      "canonical": "python asyncio",
       "suggested_difficulty": "beginner",
-      "score": 2.25
+      "score": 2.5
+    },
+    {
+      "skill": "Kafka consumer groups",
+      "sources": [
+        "HN Hiring"
+      ],
+      "evidence": "Job post for Datadog mentions monitoring and tracing system",
+      "frequency": 1,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.1785714285714286,
+      "canonical": "kafka consumer groups",
+      "suggested_difficulty": "beginner",
+      "score": 2.357142857142857
+    },
+    {
+      "skill": "Agent-based systems",
+      "sources": [
+        "HN Hiring"
+      ],
+      "evidence": "Job post for Logenta.ai mentions agent-based system design",
+      "frequency": 1,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.0535714285714286,
+      "canonical": "agent-based systems",
+      "suggested_difficulty": "beginner",
+      "score": 2.107142857142857
+    },
+    {
+      "skill": "LLM training",
+      "sources": [
+        "HN Hiring"
+      ],
+      "evidence": "Job post for IBM Research mentions LLM training and inference stack",
+      "frequency": 1,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.0535714285714286,
+      "canonical": "llm training",
+      "suggested_difficulty": "beginner",
+      "score": 2.107142857142857
+    },
+    {
+      "skill": "Autonomous underwriting",
+      "sources": [
+        "HN Hiring"
+      ],
+      "evidence": "Shepherd is an AI-native commercial insurance company",
+      "frequency": 1,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.0357142857142856,
+      "canonical": "autonomous underwriting",
+      "suggested_difficulty": "beginner",
+      "score": 2.071428571428571
     },
     {
       "skill": "Agentic coding",
       "sources": [
         "GitHub Trending",
-        "HN Front Page",
         "HN Hiring",
-        "Lobste.rs",
         "dev.to"
       ],
-      "evidence": "Agent-based coding tools and platforms",
-      "frequency": 5,
-      "demand_weight": 5.5,
-      "novelty": 0.2857142857142857,
+      "evidence": "github/gh-aw uses agentic workflows",
+      "frequency": 3,
+      "demand_weight": 3.5,
+      "novelty": 0.42857142857142855,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 1.3461538461538463,
+      "momentum": 1.3571428571428572,
       "canonical": "agentic coding",
       "suggested_difficulty": "intermediate",
-      "score": 2.1153846153846154
+      "score": 2.0357142857142856
     },
     {
-      "skill": "Vector embeddings",
-      "sources": [
-        "GitHub Trending",
-        "dev.to"
-      ],
-      "evidence": "Projects using vector embeddings for AI and machine learning",
-      "frequency": 2,
-      "demand_weight": 1.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.3076923076923077,
-      "canonical": "vector embeddings",
-      "suggested_difficulty": "beginner",
-      "score": 1.9615384615384617
-    },
-    {
-      "skill": "LLM training and inference stack",
+      "skill": "Agentic Operating System",
       "sources": [
         "HN Hiring"
       ],
-      "evidence": "Job post on LLM training and inference stack",
+      "evidence": "Pango is building the world's first Agentic Operating System",
       "frequency": 1,
       "demand_weight": 2.0,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
+      "momentum": 1.0178571428571428,
+      "canonical": "agentic operating system",
+      "suggested_difficulty": "beginner",
+      "score": 2.0357142857142856
+    },
+    {
+      "skill": "Causal AI",
+      "sources": [
+        "HN Hiring"
+      ],
+      "evidence": "Job post for Alembic mentions Causal AI and private supercomputer",
+      "frequency": 1,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.0178571428571428,
+      "canonical": "causal ai",
+      "suggested_difficulty": "beginner",
+      "score": 2.0357142857142856
+    },
+    {
+      "skill": "Postgres extension",
+      "sources": [
+        "HN Hiring"
+      ],
+      "evidence": "Job post for ParadeDB mentions Postgres extension and distributed systems engineers",
+      "frequency": 1,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.0178571428571428,
+      "canonical": "postgres extension",
+      "suggested_difficulty": "beginner",
+      "score": 2.0357142857142856
+    },
+    {
+      "skill": "Spatial computing",
+      "sources": [
+        "HN Hiring"
+      ],
+      "evidence": "Twindo works on spatial computing",
+      "frequency": 1,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.0178571428571428,
+      "canonical": "spatial computing",
+      "suggested_difficulty": "beginner",
+      "score": 2.0357142857142856
+    },
+    {
+      "skill": "Pyodide 314.0",
+      "sources": [
+        "HN Front Page",
+        "Lobste.rs"
+      ],
+      "evidence": "Mentioned in a HN Front Page and Lobste.rs post",
+      "frequency": 2,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
       "momentum": 0.9,
-      "canonical": "llm training and inference stack",
+      "canonical": "pyodide 314.0",
       "suggested_difficulty": "beginner",
       "score": 1.8
     },
     {
-      "skill": "Temporal Technologies",
+      "skill": "ReactOS",
       "sources": [
-        "HN Hiring"
+        "HN Front Page",
+        "Lobste.rs"
       ],
-      "evidence": "Platform for building scalable and reliable applications",
-      "frequency": 1,
+      "evidence": "Mentioned in a HN Front Page and Lobste.rs post",
+      "frequency": 2,
       "demand_weight": 2.0,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
       "momentum": 0.9,
-      "canonical": "temporal technologies",
+      "canonical": "reactos",
+      "suggested_difficulty": "beginner",
+      "score": 1.8
+    },
+    {
+      "skill": "WebAssembly wheels",
+      "sources": [
+        "HN Front Page",
+        "Lobste.rs"
+      ],
+      "evidence": "Mentioned in a HN Front Page and Lobste.rs post",
+      "frequency": 2,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 0.9,
+      "canonical": "webassembly wheels",
       "suggested_difficulty": "beginner",
       "score": 1.8
     },
     {
       "skill": "Rust async/await",
       "sources": [
-        "GitHub Trending",
-        "HN Hiring"
+        "HN Hiring",
+        "dev.to"
       ],
-      "evidence": "Rust projects utilizing async/await for concurrency",
+      "evidence": "Job post for yeet mentions Rust developers and Backend Engineers",
       "frequency": 2,
-      "demand_weight": 3.0,
-      "novelty": 0.42857142857142855,
+      "demand_weight": 2.5,
+      "novelty": 0.5714285714285714,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 1.3846153846153846,
+      "momentum": 1.1964285714285714,
       "canonical": "rust async/await",
       "suggested_difficulty": "intermediate",
-      "score": 1.78021978021978
+      "score": 1.7091836734693875
     },
     {
-      "skill": "Kafka consumer groups",
+      "skill": "AI coding tools",
       "sources": [
         "GitHub Trending",
         "dev.to"
       ],
-      "evidence": "Apache Kafka projects using consumer groups for message processing",
+      "evidence": "Multiple blog posts on dev.to discuss AI coding tools and their applications",
       "frequency": 2,
       "demand_weight": 1.5,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 1.1730769230769231,
-      "canonical": "kafka consumer groups",
-      "suggested_difficulty": "beginner",
-      "score": 1.7596153846153846
-    },
-    {
-      "skill": "Tauri",
-      "sources": [
-        "GitHub Trending",
-        "dev.to"
-      ],
-      "evidence": "Popular framework for building desktop apps",
-      "frequency": 2,
-      "demand_weight": 1.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.1538461538461537,
-      "canonical": "tauri",
-      "suggested_difficulty": "beginner",
-      "score": 1.7307692307692306
-    },
-    {
-      "skill": "Python asyncio",
-      "sources": [
-        "GitHub Trending"
-      ],
-      "evidence": "Python projects using asyncio for asynchronous programming",
-      "frequency": 1,
-      "demand_weight": 1.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.1153846153846154,
-      "canonical": "python asyncio",
-      "suggested_difficulty": "beginner",
-      "score": 1.1153846153846154
-    },
-    {
-      "skill": "OpenTelemetry",
-      "sources": [
-        "GitHub Trending"
-      ],
-      "evidence": "Observability platform for logs, traces, and metrics",
-      "frequency": 1,
-      "demand_weight": 1.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.0576923076923077,
-      "canonical": "opentelemetry",
-      "suggested_difficulty": "beginner",
-      "score": 1.0576923076923077
-    },
-    {
-      "skill": "APLR(1) Algorithm",
-      "sources": [
-        "Lobste.rs"
-      ],
-      "evidence": "Simpler and more capable than IELR(1)",
-      "frequency": 1,
-      "demand_weight": 1.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
       "momentum": 0.9,
-      "canonical": "aplr(1) algorithm",
+      "canonical": "ai coding tools",
       "suggested_difficulty": "beginner",
-      "score": 0.9
-    },
-    {
-      "skill": "Cube Core",
-      "sources": [
-        "GitHub Trending"
-      ],
-      "evidence": "Open-source semantic layer for AI, BI, and embedded analytics",
-      "frequency": 1,
-      "demand_weight": 1.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "cube core",
-      "suggested_difficulty": "beginner",
-      "score": 0.9
-    },
-    {
-      "skill": "Ethereum protocol",
-      "sources": [
-        "GitHub Trending"
-      ],
-      "evidence": "Implementation of the Ethereum protocol in Rust",
-      "frequency": 1,
-      "demand_weight": 1.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "ethereum protocol",
-      "suggested_difficulty": "beginner",
-      "score": 0.9
-    },
-    {
-      "skill": "GPU-accelerated terminal",
-      "sources": [
-        "GitHub Trending"
-      ],
-      "evidence": "Cross-platform terminal emulator and multiplexer written in Rust",
-      "frequency": 1,
-      "demand_weight": 1.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "gpu-accelerated terminal",
-      "suggested_difficulty": "beginner",
-      "score": 0.9
+      "score": 1.35
     }
   ]
 }

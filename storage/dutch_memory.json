@@ -1,32 +1,32 @@
 {
   "version": 1,
   "cefr": "A2",
-  "streak": 9,
-  "last_run": "2026-06-13",
+  "streak": 10,
+  "last_run": "2026-06-14",
   "last_words": [
-    "systeem",
-    "server",
-    "verbinding",
-    "internet",
-    "trein",
-    "bus",
-    "fiets",
-    "collega",
-    "gebruiker",
-    "email"
+    "huis",
+    "buurt",
+    "sleutel",
+    "deur",
+    "knop",
+    "link",
+    "pagina",
+    "gegevens",
+    "bestand",
+    "wachtwoord"
   ],
   "words": {
     "bestand": {
       "introduced": "2026-06-05",
-      "reps": 3,
-      "last_review": "2026-06-08",
-      "due": "2026-06-13"
+      "reps": 4,
+      "last_review": "2026-06-14",
+      "due": "2026-06-25"
     },
     "wachtwoord": {
       "introduced": "2026-06-05",
-      "reps": 3,
-      "last_review": "2026-06-08",
-      "due": "2026-06-13"
+      "reps": 4,
+      "last_review": "2026-06-14",
+      "due": "2026-06-25"
     },
     "netwerk": {
       "introduced": "2026-06-05",
@@ -202,28 +202,28 @@
     },
     "knop": {
       "introduced": "2026-06-11",
-      "reps": 1,
-      "last_review": "2026-06-11",
-      "due": "2026-06-12",
+      "reps": 2,
+      "last_review": "2026-06-14",
+      "due": "2026-06-16",
       "recall_right": 1
     },
     "link": {
       "introduced": "2026-06-11",
-      "reps": 1,
-      "last_review": "2026-06-11",
-      "due": "2026-06-12"
+      "reps": 2,
+      "last_review": "2026-06-14",
+      "due": "2026-06-16"
     },
     "pagina": {
       "introduced": "2026-06-11",
-      "reps": 1,
-      "last_review": "2026-06-11",
-      "due": "2026-06-12"
+      "reps": 2,
+      "last_review": "2026-06-14",
+      "due": "2026-06-16"
     },
     "gegevens": {
       "introduced": "2026-06-11",
-      "reps": 1,
-      "last_review": "2026-06-11",
-      "due": "2026-06-12",
+      "reps": 2,
+      "last_review": "2026-06-14",
+      "due": "2026-06-16",
       "recall_right": 1
     },
     "auto": {
@@ -277,6 +277,30 @@
       "reps": 1,
       "last_review": "2026-06-13",
       "due": "2026-06-14"
+    },
+    "huis": {
+      "introduced": "2026-06-14",
+      "reps": 1,
+      "last_review": "2026-06-14",
+      "due": "2026-06-15"
+    },
+    "buurt": {
+      "introduced": "2026-06-14",
+      "reps": 1,
+      "last_review": "2026-06-14",
+      "due": "2026-06-15"
+    },
+    "sleutel": {
+      "introduced": "2026-06-14",
+      "reps": 1,
+      "last_review": "2026-06-14",
+      "due": "2026-06-15"
+    },
+    "deur": {
+      "introduced": "2026-06-14",
+      "reps": 1,
+      "last_review": "2026-06-14",
+      "due": "2026-06-15"
     }
   },
   "lessons": [
@@ -435,6 +459,24 @@
         "email"
       ],
       "summary": "Dutch (tech): system, server, connection, internet"
+    },
+    {
+      "date": "2026-06-14",
+      "theme": "everyday",
+      "audio": "dutch-20260614.mp3",
+      "words": [
+        "huis",
+        "buurt",
+        "sleutel",
+        "deur",
+        "knop",
+        "link",
+        "pagina",
+        "gegevens",
+        "bestand",
+        "wachtwoord"
+      ],
+      "summary": "Dutch (everyday): house, neighbourhood, key, door"
     }
   ],
   "recall": [

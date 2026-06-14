@@ -2,7 +2,7 @@
   "version": 1,
   "skills": {
     "DuckDB": {
-      "times_taught": 2,
+      "times_taught": 3,
       "first_taught": "2026-05-30",
       "lessons": [
         {
@@ -12,10 +12,18 @@
           "summary": "Lakehouse Format",
           "audio": "lesson-20260605-duckdb.mp3",
           "brief": "20260605-duckdb.md"
+        },
+        {
+          "date": "2026-06-14",
+          "title": "DuckDB",
+          "difficulty": "advanced",
+          "summary": "LMCache uses DuckDB for caching",
+          "audio": "lesson-20260614-duckdb.mp3",
+          "brief": "20260614-duckdb.md"
         }
       ],
-      "last_taught": "2026-06-05",
-      "summary": "Lakehouse Format"
+      "last_taught": "2026-06-14",
+      "summary": "LMCache uses DuckDB for caching"
     },
     "Claude": {
       "times_taught": 1,
@@ -147,8 +155,8 @@
     }
   },
   "so_counts": {
-    "python": 2205714,
-    "rust": 43946,
+    "python": 2205713,
+    "rust": 43947,
     "kubernetes": 59803,
     "langchain": 1982,
     "duckdb": 503
