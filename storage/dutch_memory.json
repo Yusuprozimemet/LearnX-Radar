@@ -1,19 +1,19 @@
 {
   "version": 1,
   "cefr": "A2",
-  "streak": 10,
-  "last_run": "2026-06-14",
+  "streak": 11,
+  "last_run": "2026-06-15",
   "last_words": [
-    "huis",
-    "buurt",
-    "sleutel",
-    "deur",
-    "knop",
-    "link",
-    "pagina",
-    "gegevens",
-    "bestand",
-    "wachtwoord"
+    "telefoon",
+    "instelling",
+    "beveiliging",
+    "fout",
+    "netwerk",
+    "computer",
+    "laptop",
+    "scherm",
+    "boodschappen",
+    "geld"
   ],
   "words": {
     "bestand": {
@@ -30,27 +30,27 @@
     },
     "netwerk": {
       "introduced": "2026-06-05",
-      "reps": 3,
-      "last_review": "2026-06-08",
-      "due": "2026-06-13"
+      "reps": 4,
+      "last_review": "2026-06-15",
+      "due": "2026-06-26"
     },
     "computer": {
       "introduced": "2026-06-05",
-      "reps": 3,
-      "last_review": "2026-06-08",
-      "due": "2026-06-13"
+      "reps": 4,
+      "last_review": "2026-06-15",
+      "due": "2026-06-26"
     },
     "laptop": {
       "introduced": "2026-06-05",
-      "reps": 3,
-      "last_review": "2026-06-08",
-      "due": "2026-06-13"
+      "reps": 4,
+      "last_review": "2026-06-15",
+      "due": "2026-06-26"
     },
     "scherm": {
       "introduced": "2026-06-05",
-      "reps": 3,
-      "last_review": "2026-06-08",
-      "due": "2026-06-13"
+      "reps": 4,
+      "last_review": "2026-06-15",
+      "due": "2026-06-26"
     },
     "toetsenbord": {
       "introduced": "2026-06-05",
@@ -135,16 +135,16 @@
     },
     "boodschappen": {
       "introduced": "2026-06-08",
-      "reps": 2,
-      "last_review": "2026-06-11",
-      "due": "2026-06-13",
+      "reps": 3,
+      "last_review": "2026-06-15",
+      "due": "2026-06-20",
       "recall_right": 1
     },
     "geld": {
       "introduced": "2026-06-08",
-      "reps": 2,
-      "last_review": "2026-06-11",
-      "due": "2026-06-13"
+      "reps": 3,
+      "last_review": "2026-06-15",
+      "due": "2026-06-20"
     },
     "gebruiker": {
       "introduced": "2026-06-09",
@@ -301,6 +301,30 @@
       "reps": 1,
       "last_review": "2026-06-14",
       "due": "2026-06-15"
+    },
+    "telefoon": {
+      "introduced": "2026-06-15",
+      "reps": 1,
+      "last_review": "2026-06-15",
+      "due": "2026-06-16"
+    },
+    "instelling": {
+      "introduced": "2026-06-15",
+      "reps": 1,
+      "last_review": "2026-06-15",
+      "due": "2026-06-16"
+    },
+    "beveiliging": {
+      "introduced": "2026-06-15",
+      "reps": 1,
+      "last_review": "2026-06-15",
+      "due": "2026-06-16"
+    },
+    "fout": {
+      "introduced": "2026-06-15",
+      "reps": 1,
+      "last_review": "2026-06-15",
+      "due": "2026-06-16"
     }
   },
   "lessons": [
@@ -477,6 +501,24 @@
         "wachtwoord"
       ],
       "summary": "Dutch (everyday): house, neighbourhood, key, door"
+    },
+    {
+      "date": "2026-06-15",
+      "theme": "tech",
+      "audio": "dutch-20260615.mp3",
+      "words": [
+        "telefoon",
+        "instelling",
+        "beveiliging",
+        "fout",
+        "netwerk",
+        "computer",
+        "laptop",
+        "scherm",
+        "boodschappen",
+        "geld"
+      ],
+      "summary": "Dutch (tech): telephone, setting, security, error"
     }
   ],
   "recall": [

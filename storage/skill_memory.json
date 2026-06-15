@@ -42,7 +42,7 @@
       "summary": "Claude mentioned as AI model"
     },
     "Langchain": {
-      "times_taught": 1,
+      "times_taught": 2,
       "first_taught": "2026-06-07",
       "lessons": [
         {
@@ -52,10 +52,18 @@
           "summary": "Rising questions",
           "audio": "lesson-20260607-langchain.mp3",
           "brief": "20260607-langchain.md"
+        },
+        {
+          "date": "2026-06-15",
+          "title": "Langchain",
+          "difficulty": "advanced",
+          "summary": "Stack Overflow questions tagged langchain",
+          "audio": "lesson-20260615-langchain.mp3",
+          "brief": "20260615-langchain.md"
         }
       ],
-      "last_taught": "2026-06-07",
-      "summary": "Rising questions"
+      "last_taught": "2026-06-15",
+      "summary": "Stack Overflow questions tagged langchain"
     },
     "LangChain": {
       "times_taught": 1,
@@ -155,7 +163,7 @@
     }
   },
   "so_counts": {
-    "python": 2205713,
+    "python": 2205709,
     "rust": 43947,
     "kubernetes": 59803,
     "langchain": 1982,
