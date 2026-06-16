@@ -1,19 +1,19 @@
 {
   "version": 1,
   "cefr": "A2",
-  "streak": 11,
-  "last_run": "2026-06-15",
+  "streak": 12,
+  "last_run": "2026-06-16",
   "last_words": [
-    "telefoon",
-    "instelling",
-    "beveiliging",
-    "fout",
-    "netwerk",
-    "computer",
-    "laptop",
-    "scherm",
-    "boodschappen",
-    "geld"
+    "tafel",
+    "stoel",
+    "bed",
+    "tijd",
+    "gebruikersnaam",
+    "bericht",
+    "auto",
+    "station",
+    "kaartje",
+    "straat"
   ],
   "words": {
     "bestand": {
@@ -155,9 +155,9 @@
     },
     "gebruikersnaam": {
       "introduced": "2026-06-09",
-      "reps": 2,
-      "last_review": "2026-06-11",
-      "due": "2026-06-13"
+      "reps": 3,
+      "last_review": "2026-06-16",
+      "due": "2026-06-21"
     },
     "email": {
       "introduced": "2026-06-09",
@@ -168,9 +168,9 @@
     },
     "bericht": {
       "introduced": "2026-06-09",
-      "reps": 2,
-      "last_review": "2026-06-11",
-      "due": "2026-06-13",
+      "reps": 3,
+      "last_review": "2026-06-16",
+      "due": "2026-06-21",
       "recall_right": 1
     },
     "rekening": {
@@ -228,30 +228,30 @@
     },
     "auto": {
       "introduced": "2026-06-12",
-      "reps": 1,
-      "last_review": "2026-06-12",
-      "due": "2026-06-13",
+      "reps": 2,
+      "last_review": "2026-06-16",
+      "due": "2026-06-18",
       "recall_right": 1
     },
     "station": {
       "introduced": "2026-06-12",
-      "reps": 1,
-      "last_review": "2026-06-12",
-      "due": "2026-06-13",
+      "reps": 2,
+      "last_review": "2026-06-16",
+      "due": "2026-06-18",
       "recall_right": 1
     },
     "kaartje": {
       "introduced": "2026-06-12",
-      "reps": 1,
-      "last_review": "2026-06-12",
-      "due": "2026-06-13",
+      "reps": 2,
+      "last_review": "2026-06-16",
+      "due": "2026-06-18",
       "recall_right": 1
     },
     "straat": {
       "introduced": "2026-06-12",
-      "reps": 1,
-      "last_review": "2026-06-12",
-      "due": "2026-06-13",
+      "reps": 2,
+      "last_review": "2026-06-16",
+      "due": "2026-06-18",
       "recall_right": 1
     },
     "systeem": {
@@ -325,6 +325,30 @@
       "reps": 1,
       "last_review": "2026-06-15",
       "due": "2026-06-16"
+    },
+    "tafel": {
+      "introduced": "2026-06-16",
+      "reps": 1,
+      "last_review": "2026-06-16",
+      "due": "2026-06-17"
+    },
+    "stoel": {
+      "introduced": "2026-06-16",
+      "reps": 1,
+      "last_review": "2026-06-16",
+      "due": "2026-06-17"
+    },
+    "bed": {
+      "introduced": "2026-06-16",
+      "reps": 1,
+      "last_review": "2026-06-16",
+      "due": "2026-06-17"
+    },
+    "tijd": {
+      "introduced": "2026-06-16",
+      "reps": 1,
+      "last_review": "2026-06-16",
+      "due": "2026-06-17"
     }
   },
   "lessons": [
@@ -519,6 +543,24 @@
         "geld"
       ],
       "summary": "Dutch (tech): telephone, setting, security, error"
+    },
+    {
+      "date": "2026-06-16",
+      "theme": "everyday",
+      "audio": "dutch-20260616.mp3",
+      "words": [
+        "tafel",
+        "stoel",
+        "bed",
+        "tijd",
+        "gebruikersnaam",
+        "bericht",
+        "auto",
+        "station",
+        "kaartje",
+        "straat"
+      ],
+      "summary": "Dutch (everyday): table, chair, bed, time"
     }
   ],
   "recall": [

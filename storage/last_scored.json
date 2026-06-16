@@ -1,17 +1,36 @@
 {
-  "updated": "2026-06-15",
-  "today_skill": "Langchain",
+  "updated": "2026-06-16",
+  "today_skill": "Rust async/await",
   "scored": [
     {
-      "skill": "Langchain",
+      "skill": "Rust async/await",
       "sources": [
+        "GitHub Trending",
         "HN Hiring",
-        "Stack Overflow",
+        "Lobste.rs",
         "dev.to"
       ],
-      "evidence": "Stack Overflow questions tagged langchain",
-      "frequency": 3,
-      "demand_weight": 4.0,
+      "evidence": "Rust-based projects like swc-project/swc and leptos-rs/leptos",
+      "frequency": 4,
+      "demand_weight": 4.5,
+      "novelty": 0.8571428571428571,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.3928571428571428,
+      "canonical": "rust async/await",
+      "suggested_difficulty": "intermediate",
+      "score": 5.3724489795918355
+    },
+    {
+      "skill": "LangChain",
+      "sources": [
+        "HN Hiring",
+        "Stack Overflow"
+      ],
+      "evidence": "Rising Stack Overflow questions",
+      "frequency": 2,
+      "demand_weight": 3.5,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
@@ -19,282 +38,298 @@
       "momentum": 1.4285714285714286,
       "canonical": "langchain",
       "suggested_difficulty": "intermediate",
-      "score": 5.714285714285714
-    },
-    {
-      "skill": "Postgres",
-      "sources": [
-        "GitHub Trending",
-        "HN Front Page",
-        "HN Hiring",
-        "Lobste.rs",
-        "dev.to"
-      ],
-      "evidence": "PrairieLearn uses Postgres",
-      "frequency": 5,
-      "demand_weight": 5.5,
-      "novelty": 0.8571428571428571,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.1785714285714286,
-      "canonical": "postgresql",
-      "suggested_difficulty": "intermediate",
-      "score": 5.556122448979592
-    },
-    {
-      "skill": "Wasmtime",
-      "sources": [
-        "GitHub Trending",
-        "HN Hiring"
-      ],
-      "evidence": "WebAssembly runtime",
-      "frequency": 2,
-      "demand_weight": 3.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": true,
-      "momentum": 0.9,
-      "canonical": "wasmtime",
-      "suggested_difficulty": "beginner",
-      "score": 4.05
-    },
-    {
-      "skill": "Claude Code",
-      "sources": [
-        "GitHub Trending",
-        "HN Hiring",
-        "dev.to"
-      ],
-      "evidence": "Apple Foundation Models SDK with Claude Code",
-      "frequency": 3,
-      "demand_weight": 3.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.1071428571428572,
-      "canonical": "claude code",
-      "suggested_difficulty": "beginner",
-      "score": 3.875
-    },
-    {
-      "skill": "Deno",
-      "sources": [
-        "GitHub Trending",
-        "HN Hiring"
-      ],
-      "evidence": "Rust runtime for JavaScript and TypeScript",
-      "frequency": 2,
-      "demand_weight": 3.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.0357142857142856,
-      "canonical": "deno",
-      "suggested_difficulty": "beginner",
-      "score": 3.1071428571428568
-    },
-    {
-      "skill": "LLMs",
-      "sources": [
-        "HN Hiring",
-        "dev.to"
-      ],
-      "evidence": "fedit uses LLMs",
-      "frequency": 2,
-      "demand_weight": 2.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.0357142857142856,
-      "canonical": "llms",
-      "suggested_difficulty": "beginner",
-      "score": 2.589285714285714
-    },
-    {
-      "skill": "Kafka consumer groups",
-      "sources": [
-        "HN Hiring"
-      ],
-      "evidence": "Datadog uses Kafka consumer groups",
-      "frequency": 1,
-      "demand_weight": 2.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.1964285714285714,
-      "canonical": "kafka consumer groups",
-      "suggested_difficulty": "beginner",
-      "score": 2.392857142857143
-    },
-    {
-      "skill": "Rust async/await",
-      "sources": [
-        "HN Hiring",
-        "dev.to"
-      ],
-      "evidence": "yeet uses Rust async/await",
-      "frequency": 2,
-      "demand_weight": 2.5,
-      "novelty": 0.7142857142857143,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.1964285714285714,
-      "canonical": "rust async/await",
-      "suggested_difficulty": "intermediate",
-      "score": 2.1364795918367347
-    },
-    {
-      "skill": "Postgres extension",
-      "sources": [
-        "HN Hiring"
-      ],
-      "evidence": "ParadeDB is a Postgres extension",
-      "frequency": 1,
-      "demand_weight": 2.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.0357142857142856,
-      "canonical": "postgres extension",
-      "suggested_difficulty": "beginner",
-      "score": 2.071428571428571
-    },
-    {
-      "skill": "Temporal",
-      "sources": [
-        "HN Hiring"
-      ],
-      "evidence": "Workload automation platform",
-      "frequency": 1,
-      "demand_weight": 2.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.0178571428571428,
-      "canonical": "temporal",
-      "suggested_difficulty": "beginner",
-      "score": 2.0357142857142856
+      "score": 5.0
     },
     {
       "skill": "Agentic coding",
       "sources": [
-        "GitHub Trending",
-        "HN Hiring"
+        "HN Hiring",
+        "Lobste.rs",
+        "Reddit"
       ],
-      "evidence": "AI agent skills, agent-based system",
-      "frequency": 2,
-      "demand_weight": 3.0,
-      "novelty": 0.5714285714285714,
+      "evidence": "Multiple job posts mention agentic coding",
+      "frequency": 3,
+      "demand_weight": 3.75,
+      "novelty": 0.7142857142857143,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 1.1785714285714286,
+      "momentum": 1.3571428571428572,
       "canonical": "agentic coding",
       "suggested_difficulty": "intermediate",
-      "score": 2.020408163265306
+      "score": 3.6352040816326534
     },
     {
-      "skill": "Miri",
+      "skill": "Kafka consumer groups",
+      "sources": [
+        "HN Hiring",
+        "dev.to"
+      ],
+      "evidence": "Job posts mention Kafka experience",
+      "frequency": 2,
+      "demand_weight": 2.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.3928571428571428,
+      "canonical": "kafka consumer groups",
+      "suggested_difficulty": "beginner",
+      "score": 3.4821428571428568
+    },
+    {
+      "skill": "LLMOps",
       "sources": [
         "GitHub Trending",
-        "Lobste.rs"
+        "HN Hiring"
       ],
-      "evidence": "Rust interpreter for mid-level intermediate representation",
+      "evidence": "TensorZero repository for LLMOps platform",
       "frequency": 2,
-      "demand_weight": 2.0,
+      "demand_weight": 3.0,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
       "momentum": 0.9,
-      "canonical": "miri",
+      "canonical": "llmops",
       "suggested_difficulty": "beginner",
-      "score": 1.8
+      "score": 2.7
     },
     {
-      "skill": "AI-powered revenue intelligence",
+      "skill": "Robotics",
+      "sources": [
+        "GitHub Trending",
+        "HN Hiring"
+      ],
+      "evidence": "Skydio job post for robotics engineers",
+      "frequency": 2,
+      "demand_weight": 3.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 0.9,
+      "canonical": "robotics",
+      "suggested_difficulty": "beginner",
+      "score": 2.7
+    },
+    {
+      "skill": "Agentic AI",
+      "sources": [
+        "HN Hiring",
+        "dev.to"
+      ],
+      "evidence": "Multiple job posts and articles mention Agentic AI",
+      "frequency": 2,
+      "demand_weight": 2.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.0535714285714286,
+      "canonical": "agentic ai",
+      "suggested_difficulty": "beginner",
+      "score": 2.6339285714285716
+    },
+    {
+      "skill": "ClickHouse",
+      "sources": [
+        "HN Hiring",
+        "dev.to"
+      ],
+      "evidence": "Article discusses audit trails in ClickHouse",
+      "frequency": 2,
+      "demand_weight": 2.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.0357142857142856,
+      "canonical": "clickhouse",
+      "suggested_difficulty": "beginner",
+      "score": 2.589285714285714
+    },
+    {
+      "skill": "Autonomous underwriting",
       "sources": [
         "HN Hiring"
       ],
-      "evidence": "Lantern uses AI-powered revenue intelligence",
+      "evidence": "Shepherd job post for autonomous underwriting engineers",
       "frequency": 1,
       "demand_weight": 2.0,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "ai-powered revenue intelligence",
+      "momentum": 1.0535714285714286,
+      "canonical": "autonomous underwriting",
       "suggested_difficulty": "beginner",
-      "score": 1.8
+      "score": 2.107142857142857
     },
     {
-      "skill": "Autonomous agents",
+      "skill": "Spatial computing",
       "sources": [
         "HN Hiring"
       ],
-      "evidence": "Kinelo uses autonomous agents",
+      "evidence": "Twindo job post for spatial computing engineers",
       "frequency": 1,
       "demand_weight": 2.0,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "autonomous agents",
+      "momentum": 1.0357142857142856,
+      "canonical": "spatial computing",
       "suggested_difficulty": "beginner",
-      "score": 1.8
+      "score": 2.071428571428571
     },
     {
-      "skill": "Qdrant",
+      "skill": "Vector embeddings",
       "sources": [
         "GitHub Trending",
         "dev.to"
       ],
-      "evidence": "Vector Database and Vector Search Engine",
+      "evidence": "Qdrant repository for Vector Database and Vector Search Engine",
       "frequency": 2,
       "demand_weight": 1.5,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 1.0178571428571428,
-      "canonical": "qdrant",
+      "momentum": 1.2857142857142856,
+      "canonical": "vector embeddings",
       "suggested_difficulty": "beginner",
-      "score": 1.5267857142857142
+      "score": 1.9285714285714284
     },
     {
-      "skill": "React Server Components",
+      "skill": "Iroh",
+      "sources": [
+        "HN Front Page",
+        "Lobste.rs"
+      ],
+      "evidence": "Released version 1.0",
+      "frequency": 2,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 0.9,
+      "canonical": "iroh",
+      "suggested_difficulty": "beginner",
+      "score": 1.8
+    },
+    {
+      "skill": "Computer vision",
       "sources": [
         "HN Hiring"
       ],
-      "evidence": "Forward uses React Server Components",
+      "evidence": "Twindo job post for computer vision engineers",
       "frequency": 1,
       "demand_weight": 2.0,
-      "novelty": 0.42857142857142855,
+      "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 1.3928571428571428,
-      "canonical": "react server components",
-      "suggested_difficulty": "intermediate",
-      "score": 1.193877551020408
+      "momentum": 0.9,
+      "canonical": "computer vision",
+      "suggested_difficulty": "beginner",
+      "score": 1.8
     },
     {
-      "skill": "Bevy",
+      "skill": "NLP",
+      "sources": [
+        "HN Hiring"
+      ],
+      "evidence": "Multiple job posts mention NLP experience",
+      "frequency": 1,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 0.9,
+      "canonical": "nlp",
+      "suggested_difficulty": "beginner",
+      "score": 1.8
+    },
+    {
+      "skill": "WebGL",
+      "sources": [
+        "HN Hiring"
+      ],
+      "evidence": "pascalorg/editor repository for 3D architectural projects",
+      "frequency": 1,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 0.9,
+      "canonical": "webgl",
+      "suggested_difficulty": "beginner",
+      "score": 1.8
+    },
+    {
+      "skill": "Tauri",
+      "sources": [
+        "GitHub Trending",
+        "dev.to"
+      ],
+      "evidence": "Used in desktop bookmark manager",
+      "frequency": 2,
+      "demand_weight": 1.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.1428571428571428,
+      "canonical": "tauri",
+      "suggested_difficulty": "beginner",
+      "score": 1.7142857142857142
+    },
+    {
+      "skill": "Event-Driven Architecture",
+      "sources": [
+        "GitHub Trending",
+        "dev.to"
+      ],
+      "evidence": "Used in art auction system",
+      "frequency": 2,
+      "demand_weight": 1.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 0.9,
+      "canonical": "event-driven architecture",
+      "suggested_difficulty": "beginner",
+      "score": 1.35
+    },
+    {
+      "skill": "LLM Gateway",
+      "sources": [
+        "GitHub Trending",
+        "dev.to"
+      ],
+      "evidence": "Articles discuss LLM gateway alternatives",
+      "frequency": 2,
+      "demand_weight": 1.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 0.9,
+      "canonical": "llm gateway",
+      "suggested_difficulty": "beginner",
+      "score": 1.35
+    },
+    {
+      "skill": "Cloud native manager",
       "sources": [
         "GitHub Trending"
       ],
-      "evidence": "Rust game engine",
+      "evidence": "meshery/meshery repository",
       "frequency": 1,
       "demand_weight": 1.0,
       "novelty": 1.0,
@@ -302,16 +337,16 @@
       "known": false,
       "goal_match": false,
       "momentum": 0.9,
-      "canonical": "bevy",
+      "canonical": "cloud native manager",
       "suggested_difficulty": "beginner",
       "score": 0.9
     },
     {
-      "skill": "C++26 static reflection",
+      "skill": "Deconstructing Datalog",
       "sources": [
         "Lobste.rs"
       ],
-      "evidence": "Parsing JSON at compile time with C++26 static reflection",
+      "evidence": "Article on logic languages",
       "frequency": 1,
       "demand_weight": 1.0,
       "novelty": 1.0,
@@ -319,41 +354,7 @@
       "known": false,
       "goal_match": false,
       "momentum": 0.9,
-      "canonical": "c++26 static reflection",
-      "suggested_difficulty": "beginner",
-      "score": 0.9
-    },
-    {
-      "skill": "Datalog",
-      "sources": [
-        "Lobste.rs"
-      ],
-      "evidence": "Deconstructing Datalog",
-      "frequency": 1,
-      "demand_weight": 1.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "datalog",
-      "suggested_difficulty": "beginner",
-      "score": 0.9
-    },
-    {
-      "skill": "FFI in Miri",
-      "sources": [
-        "Lobste.rs"
-      ],
-      "evidence": "FFI in Miri at 8000 segfaults per second",
-      "frequency": 1,
-      "demand_weight": 1.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "ffi in miri",
+      "canonical": "deconstructing datalog",
       "suggested_difficulty": "beginner",
       "score": 0.9
     }

@@ -98,7 +98,7 @@
       "summary": "Durable workflows and vector search"
     },
     "Rust async/await": {
-      "times_taught": 1,
+      "times_taught": 2,
       "first_taught": "2026-06-10",
       "lessons": [
         {
@@ -108,10 +108,18 @@
           "summary": "Rust projects trending",
           "audio": "lesson-20260610-rust-async-await.mp3",
           "brief": "20260610-rust-async-await.md"
+        },
+        {
+          "date": "2026-06-16",
+          "title": "Rust async/await",
+          "difficulty": "advanced",
+          "summary": "Rust-based projects like swc-project/swc and leptos-rs/leptos",
+          "audio": "lesson-20260616-rust-async-await.mp3",
+          "brief": "20260616-rust-async-await.md"
         }
       ],
-      "last_taught": "2026-06-10",
-      "summary": "Rust projects trending"
+      "last_taught": "2026-06-16",
+      "summary": "Rust-based projects like swc-project/swc and leptos-rs/leptos"
     },
     "Agentic coding": {
       "times_taught": 1,
@@ -163,8 +171,8 @@
     }
   },
   "so_counts": {
-    "python": 2205709,
-    "rust": 43947,
+    "python": 2205721,
+    "rust": 43945,
     "kubernetes": 59803,
     "langchain": 1982,
     "duckdb": 503

@@ -5546,5 +5546,366 @@
         "score": 0.9
       }
     ]
+  },
+  "2026-06-16": {
+    "today_skill": "Rust async/await",
+    "scored": [
+      {
+        "skill": "Rust async/await",
+        "sources": [
+          "GitHub Trending",
+          "HN Hiring",
+          "Lobste.rs",
+          "dev.to"
+        ],
+        "evidence": "Rust-based projects like swc-project/swc and leptos-rs/leptos",
+        "frequency": 4,
+        "demand_weight": 4.5,
+        "novelty": 0.8571428571428571,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.3928571428571428,
+        "canonical": "rust async/await",
+        "suggested_difficulty": "intermediate",
+        "score": 5.3724489795918355
+      },
+      {
+        "skill": "LangChain",
+        "sources": [
+          "HN Hiring",
+          "Stack Overflow"
+        ],
+        "evidence": "Rising Stack Overflow questions",
+        "frequency": 2,
+        "demand_weight": 3.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.4285714285714286,
+        "canonical": "langchain",
+        "suggested_difficulty": "intermediate",
+        "score": 5.0
+      },
+      {
+        "skill": "Agentic coding",
+        "sources": [
+          "HN Hiring",
+          "Lobste.rs",
+          "Reddit"
+        ],
+        "evidence": "Multiple job posts mention agentic coding",
+        "frequency": 3,
+        "demand_weight": 3.75,
+        "novelty": 0.7142857142857143,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.3571428571428572,
+        "canonical": "agentic coding",
+        "suggested_difficulty": "intermediate",
+        "score": 3.6352040816326534
+      },
+      {
+        "skill": "Kafka consumer groups",
+        "sources": [
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "Job posts mention Kafka experience",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.3928571428571428,
+        "canonical": "kafka consumer groups",
+        "suggested_difficulty": "beginner",
+        "score": 3.4821428571428568
+      },
+      {
+        "skill": "LLMOps",
+        "sources": [
+          "GitHub Trending",
+          "HN Hiring"
+        ],
+        "evidence": "TensorZero repository for LLMOps platform",
+        "frequency": 2,
+        "demand_weight": 3.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "llmops",
+        "suggested_difficulty": "beginner",
+        "score": 2.7
+      },
+      {
+        "skill": "Robotics",
+        "sources": [
+          "GitHub Trending",
+          "HN Hiring"
+        ],
+        "evidence": "Skydio job post for robotics engineers",
+        "frequency": 2,
+        "demand_weight": 3.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "robotics",
+        "suggested_difficulty": "beginner",
+        "score": 2.7
+      },
+      {
+        "skill": "Agentic AI",
+        "sources": [
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "Multiple job posts and articles mention Agentic AI",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.0535714285714286,
+        "canonical": "agentic ai",
+        "suggested_difficulty": "beginner",
+        "score": 2.6339285714285716
+      },
+      {
+        "skill": "ClickHouse",
+        "sources": [
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "Article discusses audit trails in ClickHouse",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.0357142857142856,
+        "canonical": "clickhouse",
+        "suggested_difficulty": "beginner",
+        "score": 2.589285714285714
+      },
+      {
+        "skill": "Autonomous underwriting",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "Shepherd job post for autonomous underwriting engineers",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.0535714285714286,
+        "canonical": "autonomous underwriting",
+        "suggested_difficulty": "beginner",
+        "score": 2.107142857142857
+      },
+      {
+        "skill": "Spatial computing",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "Twindo job post for spatial computing engineers",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.0357142857142856,
+        "canonical": "spatial computing",
+        "suggested_difficulty": "beginner",
+        "score": 2.071428571428571
+      },
+      {
+        "skill": "Vector embeddings",
+        "sources": [
+          "GitHub Trending",
+          "dev.to"
+        ],
+        "evidence": "Qdrant repository for Vector Database and Vector Search Engine",
+        "frequency": 2,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.2857142857142856,
+        "canonical": "vector embeddings",
+        "suggested_difficulty": "beginner",
+        "score": 1.9285714285714284
+      },
+      {
+        "skill": "Iroh",
+        "sources": [
+          "HN Front Page",
+          "Lobste.rs"
+        ],
+        "evidence": "Released version 1.0",
+        "frequency": 2,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "iroh",
+        "suggested_difficulty": "beginner",
+        "score": 1.8
+      },
+      {
+        "skill": "Computer vision",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "Twindo job post for computer vision engineers",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "computer vision",
+        "suggested_difficulty": "beginner",
+        "score": 1.8
+      },
+      {
+        "skill": "NLP",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "Multiple job posts mention NLP experience",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "nlp",
+        "suggested_difficulty": "beginner",
+        "score": 1.8
+      },
+      {
+        "skill": "WebGL",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "pascalorg/editor repository for 3D architectural projects",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "webgl",
+        "suggested_difficulty": "beginner",
+        "score": 1.8
+      },
+      {
+        "skill": "Tauri",
+        "sources": [
+          "GitHub Trending",
+          "dev.to"
+        ],
+        "evidence": "Used in desktop bookmark manager",
+        "frequency": 2,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.1428571428571428,
+        "canonical": "tauri",
+        "suggested_difficulty": "beginner",
+        "score": 1.7142857142857142
+      },
+      {
+        "skill": "Event-Driven Architecture",
+        "sources": [
+          "GitHub Trending",
+          "dev.to"
+        ],
+        "evidence": "Used in art auction system",
+        "frequency": 2,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "event-driven architecture",
+        "suggested_difficulty": "beginner",
+        "score": 1.35
+      },
+      {
+        "skill": "LLM Gateway",
+        "sources": [
+          "GitHub Trending",
+          "dev.to"
+        ],
+        "evidence": "Articles discuss LLM gateway alternatives",
+        "frequency": 2,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "llm gateway",
+        "suggested_difficulty": "beginner",
+        "score": 1.35
+      },
+      {
+        "skill": "Cloud native manager",
+        "sources": [
+          "GitHub Trending"
+        ],
+        "evidence": "meshery/meshery repository",
+        "frequency": 1,
+        "demand_weight": 1.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "cloud native manager",
+        "suggested_difficulty": "beginner",
+        "score": 0.9
+      },
+      {
+        "skill": "Deconstructing Datalog",
+        "sources": [
+          "Lobste.rs"
+        ],
+        "evidence": "Article on logic languages",
+        "frequency": 1,
+        "demand_weight": 1.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "deconstructing datalog",
+        "suggested_difficulty": "beginner",
+        "score": 0.9
+      }
+    ]
   }
 }
