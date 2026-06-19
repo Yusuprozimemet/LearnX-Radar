@@ -1,19 +1,19 @@
 {
   "version": 1,
   "cefr": "A2",
-  "streak": 12,
-  "last_run": "2026-06-16",
+  "streak": 1,
+  "last_run": "2026-06-19",
   "last_words": [
-    "tafel",
-    "stoel",
-    "bed",
-    "tijd",
-    "gebruikersnaam",
-    "bericht",
-    "auto",
-    "station",
-    "kaartje",
-    "straat"
+    "versie",
+    "programma",
+    "downloaden",
+    "installeren",
+    "toetsenbord",
+    "muis",
+    "winkel",
+    "rekening",
+    "systeem",
+    "server"
   ],
   "words": {
     "bestand": {
@@ -54,15 +54,15 @@
     },
     "toetsenbord": {
       "introduced": "2026-06-05",
-      "reps": 3,
-      "last_review": "2026-06-09",
-      "due": "2026-06-14"
+      "reps": 4,
+      "last_review": "2026-06-19",
+      "due": "2026-06-30"
     },
     "muis": {
       "introduced": "2026-06-05",
-      "reps": 3,
-      "last_review": "2026-06-09",
-      "due": "2026-06-14"
+      "reps": 4,
+      "last_review": "2026-06-19",
+      "due": "2026-06-30"
     },
     "afspraak": {
       "introduced": "2026-06-06",
@@ -127,9 +127,9 @@
     },
     "winkel": {
       "introduced": "2026-06-08",
-      "reps": 2,
-      "last_review": "2026-06-12",
-      "due": "2026-06-14",
+      "reps": 3,
+      "last_review": "2026-06-19",
+      "due": "2026-06-24",
       "recall_wrong": 1,
       "recall_right": 1
     },
@@ -175,9 +175,9 @@
     },
     "rekening": {
       "introduced": "2026-06-10",
-      "reps": 2,
-      "last_review": "2026-06-12",
-      "due": "2026-06-14",
+      "reps": 3,
+      "last_review": "2026-06-19",
+      "due": "2026-06-24",
       "recall_right": 2
     },
     "trein": {
@@ -256,15 +256,15 @@
     },
     "systeem": {
       "introduced": "2026-06-13",
-      "reps": 1,
-      "last_review": "2026-06-13",
-      "due": "2026-06-14"
+      "reps": 2,
+      "last_review": "2026-06-19",
+      "due": "2026-06-21"
     },
     "server": {
       "introduced": "2026-06-13",
-      "reps": 1,
-      "last_review": "2026-06-13",
-      "due": "2026-06-14"
+      "reps": 2,
+      "last_review": "2026-06-19",
+      "due": "2026-06-21"
     },
     "verbinding": {
       "introduced": "2026-06-13",
@@ -349,6 +349,30 @@
       "reps": 1,
       "last_review": "2026-06-16",
       "due": "2026-06-17"
+    },
+    "versie": {
+      "introduced": "2026-06-19",
+      "reps": 1,
+      "last_review": "2026-06-19",
+      "due": "2026-06-20"
+    },
+    "programma": {
+      "introduced": "2026-06-19",
+      "reps": 1,
+      "last_review": "2026-06-19",
+      "due": "2026-06-20"
+    },
+    "downloaden": {
+      "introduced": "2026-06-19",
+      "reps": 1,
+      "last_review": "2026-06-19",
+      "due": "2026-06-20"
+    },
+    "installeren": {
+      "introduced": "2026-06-19",
+      "reps": 1,
+      "last_review": "2026-06-19",
+      "due": "2026-06-20"
     }
   },
   "lessons": [
@@ -561,6 +585,24 @@
         "straat"
       ],
       "summary": "Dutch (everyday): table, chair, bed, time"
+    },
+    {
+      "date": "2026-06-19",
+      "theme": "tech",
+      "audio": "dutch-20260619.mp3",
+      "words": [
+        "versie",
+        "programma",
+        "downloaden",
+        "installeren",
+        "toetsenbord",
+        "muis",
+        "winkel",
+        "rekening",
+        "systeem",
+        "server"
+      ],
+      "summary": "Dutch (tech): version, program, to download, to install"
     }
   ],
   "recall": [
