@@ -12,6 +12,7 @@ from storage.state import (
     apply_learned_aliases,
     dutch_due_words,
     filter_new,
+    load_alias_denylist,
     load_brief,
     load_dutch_memory,
     load_last_scored,
@@ -25,6 +26,7 @@ from storage.state import (
     record_dutch_recall,
     record_lesson,
     record_lesson_rating,
+    save_alias_denylist,
     save_brief,
     save_dutch_lesson,
     save_dutch_memory,
@@ -62,4 +64,6 @@ __all__ = [
     "load_learned_aliases",
     "save_learned_aliases",
     "apply_learned_aliases",
+    "load_alias_denylist",
+    "save_alias_denylist",
 ]

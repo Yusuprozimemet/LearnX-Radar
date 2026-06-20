@@ -30,6 +30,14 @@ def test_learned_aliases_missing_file_is_empty(tmp_path, monkeypatch):
     assert state.apply_learned_aliases() == 0
 
 
+def test_alias_denylist_roundtrip(tmp_path, monkeypatch):
+    monkeypatch.setattr(state, "ALIAS_DENYLIST_FILE", tmp_path / "deny.json")
+    assert state.load_alias_denylist() == set()        # missing file -> empty
+    pairs = {frozenset(("claude code", "claude")), frozenset(("a", "b"))}
+    state.save_alias_denylist(pairs)
+    assert state.load_alias_denylist() == pairs        # survives the roundtrip
+
+
 def test_load_seen_migrates_legacy_list_to_empty_map(tmp_path, monkeypatch):
     # Pre-windowing files were a bare list of IDs with no dates; nothing to window
     # on, so they migrate to an empty map (a safe one-time reset — see load_seen).
