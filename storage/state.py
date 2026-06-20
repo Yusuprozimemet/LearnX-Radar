@@ -20,6 +20,10 @@ LAST_SCORED_FILE = _DIR / "last_scored.json"  # v3: this run's ranking for the d
 HISTORY_FILE = _DIR / "trending_history.json"
 BRIEFS_DIR = _DIR.parent / "briefs"  # committed briefs, linked from lessons for Perplexity Q&A
 DUTCH_MEMORY_FILE = _DIR / "dutch_memory.json"  # v5: Dutch vocab spaced-repetition state
+# v7 day26 vectordb: skill-name aliases LEARNED autonomously by alias_curator
+# (embeddings shortlist -> LLM judge), merged into config.SKILL_ALIASES at startup
+# so the scorer/extractor collapse the same variants the hand-written map does.
+LEARNED_ALIASES_FILE = _DIR / "skill_aliases.json"
 # v9 day 32: today's full Dutch lesson (text + cloze + audio seek map) for the
 # Delft trainer page — committed by the workflow, copied to Pages, fetched by JS.
 DUTCH_LESSON_FILE = _DIR / "dutch_lesson.json"
@@ -120,6 +124,40 @@ def save_memory(memory: dict) -> None:
     MEMORY_FILE.write_text(
         json.dumps(memory, ensure_ascii=False, indent=2), encoding="utf-8"
     )
+
+
+# --- skill_aliases.json : aliases learned by alias_curator (v7 day26) ---------
+
+def load_learned_aliases() -> dict[str, str]:
+    """{variant -> canonical} aliases the curator has accepted so far. Empty when
+    the file is missing/corrupt — the radar then runs on the hand-written map only."""
+    if not LEARNED_ALIASES_FILE.exists():
+        return {}
+    try:
+        data = json.loads(LEARNED_ALIASES_FILE.read_text(encoding="utf-8"))
+        return {str(k): str(v) for k, v in data.items()} if isinstance(data, dict) else {}
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def save_learned_aliases(aliases: dict[str, str]) -> None:
+    LEARNED_ALIASES_FILE.write_text(
+        json.dumps(aliases, ensure_ascii=False, indent=2, sort_keys=True),
+        encoding="utf-8",
+    )
+
+
+def apply_learned_aliases() -> int:
+    """Merge learned aliases into the live config.SKILL_ALIASES so _canonical sees
+    them everywhere. Hand-written entries win on conflict. Returns how many learned
+    aliases were added. Call once at startup, before any scoring."""
+    learned = load_learned_aliases()
+    added = 0
+    for variant, canon in learned.items():
+        if variant not in config.SKILL_ALIASES:
+            config.SKILL_ALIASES[variant] = canon
+            added += 1
+    return added
 
 
 # --- last_scored.json : this run's ranking, so the dashboard can rebuild from

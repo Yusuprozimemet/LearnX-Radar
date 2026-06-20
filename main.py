@@ -31,6 +31,7 @@ from dutch import wordlist as dutch_wordlist
 from learnx import audio_builder, curriculum, dialogue
 from radar import brief_writer, gap_scorer, privacy, skill_extractor
 from storage import (
+    apply_learned_aliases,
     filter_new,
     load_brief,
     load_dutch_memory,
@@ -260,6 +261,9 @@ def _build_dutch(today_skill: str | None) -> tuple[dict | None, dict | None]:
 
 def _run() -> None:
     config.validate()
+    # Merge autonomously-learned skill aliases into config.SKILL_ALIASES before any
+    # scoring, so _canonical collapses the variants the curator has accepted (v7 day26).
+    apply_learned_aliases()
     memory = load_memory()
 
     # Fold in yesterday's deep-link feedback (lesson ratings + Dutch trainer recall)

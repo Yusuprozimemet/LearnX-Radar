@@ -9,11 +9,13 @@ so state survives across daily runs without external storage):
 - briefs/           — full lesson brief text, linked from lessons for Perplexity Q&A
 """
 from storage.state import (
+    apply_learned_aliases,
     dutch_due_words,
     filter_new,
     load_brief,
     load_dutch_memory,
     load_last_scored,
+    load_learned_aliases,
     load_memory,
     load_seen,
     load_trending_history,
@@ -27,6 +29,7 @@ from storage.state import (
     save_dutch_lesson,
     save_dutch_memory,
     save_last_scored,
+    save_learned_aliases,
     save_memory,
     save_seen,
     save_trending_history,
@@ -56,4 +59,7 @@ __all__ = [
     "dutch_due_words",
     "record_dutch_lesson",
     "record_dutch_recall",
+    "load_learned_aliases",
+    "save_learned_aliases",
+    "apply_learned_aliases",
 ]
