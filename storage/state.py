@@ -24,6 +24,9 @@ DUTCH_MEMORY_FILE = _DIR / "dutch_memory.json"  # v5: Dutch vocab spaced-repetit
 # (embeddings shortlist -> LLM judge), merged into config.SKILL_ALIASES at startup
 # so the scorer/extractor collapse the same variants the hand-written map does.
 LEARNED_ALIASES_FILE = _DIR / "skill_aliases.json"
+# Pairs a human reverted ("keep separate"); the curator skips them forever so the
+# weekly loop can't re-merge a decision you've already overruled.
+ALIAS_DENYLIST_FILE = _DIR / "skill_aliases_denylist.json"
 # v9 day 32: today's full Dutch lesson (text + cloze + audio seek map) for the
 # Delft trainer page — committed by the workflow, copied to Pages, fetched by JS.
 DUTCH_LESSON_FILE = _DIR / "dutch_lesson.json"
@@ -158,6 +161,26 @@ def apply_learned_aliases() -> int:
             config.SKILL_ALIASES[variant] = canon
             added += 1
     return added
+
+
+def load_alias_denylist() -> set[frozenset[str]]:
+    """Canonical name-pairs a human ruled 'keep separate'. The curator skips these
+    so a reverted merge is never re-proposed (the loop can't undo your override).
+    Stored as a list of [a, b] pairs; returned as a set of frozensets for lookup."""
+    if not ALIAS_DENYLIST_FILE.exists():
+        return set()
+    try:
+        data = json.loads(ALIAS_DENYLIST_FILE.read_text(encoding="utf-8"))
+        return {frozenset((str(a), str(b))) for a, b in data}
+    except (json.JSONDecodeError, OSError, ValueError):
+        return set()
+
+
+def save_alias_denylist(pairs: set[frozenset[str]]) -> None:
+    ALIAS_DENYLIST_FILE.write_text(
+        json.dumps(sorted(sorted(p) for p in pairs), ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
 
 
 # --- last_scored.json : this run's ranking, so the dashboard can rebuild from
