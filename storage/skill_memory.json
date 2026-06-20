@@ -184,13 +184,29 @@
       ],
       "last_taught": "2026-06-19",
       "summary": "Rising questions on Stack Overflow"
+    },
+    "ClickHouse": {
+      "times_taught": 1,
+      "first_taught": "2026-06-20",
+      "lessons": [
+        {
+          "date": "2026-06-20",
+          "title": "ClickHouse",
+          "difficulty": "advanced",
+          "summary": "10 years of ClickHouse in open source",
+          "audio": "lesson-20260620-clickhouse.mp3",
+          "brief": "20260620-clickhouse.md"
+        }
+      ],
+      "last_taught": "2026-06-20",
+      "summary": "10 years of ClickHouse in open source"
     }
   },
   "so_counts": {
-    "python": 2205746,
-    "rust": 43948,
-    "kubernetes": 59807,
-    "langchain": 1984,
+    "python": 2205607,
+    "rust": 43947,
+    "kubernetes": 59803,
+    "langchain": 1985,
     "duckdb": 503
   }
 }

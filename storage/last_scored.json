@@ -1,179 +1,210 @@
 {
-  "updated": "2026-06-19",
-  "today_skill": "langchain",
+  "updated": "2026-06-20",
+  "today_skill": "ClickHouse",
   "scored": [
     {
-      "skill": "langchain",
+      "skill": "ClickHouse",
       "sources": [
-        "HN Hiring",
-        "Stack Overflow",
-        "dev.to"
+        "HN Front Page",
+        "HN Hiring"
       ],
-      "evidence": "Rising questions on Stack Overflow",
-      "frequency": 3,
-      "demand_weight": 4.0,
+      "evidence": "10 years of ClickHouse in open source",
+      "frequency": 2,
+      "demand_weight": 3.0,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 1.4285714285714286,
-      "canonical": "langchain",
+      "momentum": 1.1071428571428572,
+      "canonical": "clickhouse",
       "suggested_difficulty": "beginner",
-      "score": 5.714285714285714
+      "score": 3.3214285714285716
     },
     {
-      "skill": "Postgres",
+      "skill": "Real-time streaming",
       "sources": [
-        "GitHub Trending",
         "HN Hiring",
         "dev.to"
       ],
-      "evidence": "Database Internals Engineers",
-      "frequency": 3,
-      "demand_weight": 3.5,
+      "evidence": "Forward uses modern TypeScript stack with real-time streaming",
+      "frequency": 2,
+      "demand_weight": 2.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.2857142857142856,
+      "canonical": "real-time streaming",
+      "suggested_difficulty": "beginner",
+      "score": 3.214285714285714
+    },
+    {
+      "skill": "Knowledge Graphs",
+      "sources": [
+        "GitHub Trending",
+        "HN Hiring"
+      ],
+      "evidence": "Used in LLM-powered knowledge curation system",
+      "frequency": 2,
+      "demand_weight": 3.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 0.9,
+      "canonical": "knowledge graphs",
+      "suggested_difficulty": "beginner",
+      "score": 2.7
+    },
+    {
+      "skill": "Kafka consumer groups",
+      "sources": [
+        "HN Hiring"
+      ],
+      "evidence": "Mentioned as a skill required",
+      "frequency": 1,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.1785714285714286,
+      "canonical": "kafka consumer groups",
+      "suggested_difficulty": "beginner",
+      "score": 2.357142857142857
+    },
+    {
+      "skill": "React Server Components",
+      "sources": [
+        "HN Hiring"
+      ],
+      "evidence": "Mentioned as a skill required",
+      "frequency": 1,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.1607142857142856,
+      "canonical": "react server components",
+      "suggested_difficulty": "intermediate",
+      "score": 2.321428571428571
+    },
+    {
+      "skill": "Vector databases",
+      "sources": [
+        "HN Hiring",
+        "dev.to"
+      ],
+      "evidence": "Stores both objects and vectors",
+      "frequency": 2,
+      "demand_weight": 2.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 0.9,
+      "canonical": "vector databases",
+      "suggested_difficulty": "beginner",
+      "score": 2.25
+    },
+    {
+      "skill": "AWS Lambda cold starts",
+      "sources": [
+        "HN Hiring"
+      ],
+      "evidence": "Mentioned as a skill required",
+      "frequency": 1,
+      "demand_weight": 2.0,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
       "momentum": 1.0892857142857144,
-      "canonical": "postgresql",
-      "suggested_difficulty": "intermediate",
-      "score": 3.8125000000000004
+      "canonical": "aws lambda cold starts",
+      "suggested_difficulty": "beginner",
+      "score": 2.178571428571429
     },
     {
-      "skill": "Supabase",
+      "skill": "AI control plane",
+      "sources": [
+        "HN Hiring"
+      ],
+      "evidence": "Speakeasy builds AI control plane product",
+      "frequency": 1,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.0535714285714286,
+      "canonical": "ai control plane",
+      "suggested_difficulty": "beginner",
+      "score": 2.107142857142857
+    },
+    {
+      "skill": "Project Valhalla",
+      "sources": [
+        "HN Front Page",
+        "Lobste.rs"
+      ],
+      "evidence": "Java project explained",
+      "frequency": 2,
+      "demand_weight": 2.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 0.9,
+      "canonical": "project valhalla",
+      "suggested_difficulty": "beginner",
+      "score": 1.8
+    },
+    {
+      "skill": "Vector embeddings",
+      "sources": [
+        "GitHub Trending",
+        "dev.to"
+      ],
+      "evidence": "Used in vector database",
+      "frequency": 2,
+      "demand_weight": 1.5,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 1.1428571428571428,
+      "canonical": "vector embeddings",
+      "suggested_difficulty": "beginner",
+      "score": 1.7142857142857142
+    },
+    {
+      "skill": "Rust async/await",
       "sources": [
         "GitHub Trending",
         "HN Hiring",
         "dev.to"
       ],
-      "evidence": "Python coding challenge platform",
+      "evidence": "Used in modular networking stack",
       "frequency": 3,
       "demand_weight": 3.5,
-      "novelty": 1.0,
+      "novelty": 0.2857142857142857,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 1.0178571428571428,
-      "canonical": "supabase",
-      "suggested_difficulty": "beginner",
-      "score": 3.5625
-    },
-    {
-      "skill": "Nix",
-      "sources": [
-        "HN Hiring",
-        "Lobste.rs"
-      ],
-      "evidence": "Static builds for Haskell",
-      "frequency": 2,
-      "demand_weight": 3.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.0357142857142856,
-      "canonical": "nix",
-      "suggested_difficulty": "beginner",
-      "score": 3.1071428571428568
-    },
-    {
-      "skill": "agentic testing",
-      "sources": [
-        "HN Front Page",
-        "HN Hiring"
-      ],
-      "evidence": "TesterArmy uses agentic testing",
-      "frequency": 2,
-      "demand_weight": 3.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "agentic testing",
-      "suggested_difficulty": "beginner",
-      "score": 2.7
-    },
-    {
-      "skill": "GitHub Actions",
-      "sources": [
-        "HN Hiring",
-        "dev.to"
-      ],
-      "evidence": "Read-only GitHub Action to flag risky PRs",
-      "frequency": 2,
-      "demand_weight": 2.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "github actions",
-      "suggested_difficulty": "beginner",
-      "score": 2.25
-    },
-    {
-      "skill": "Groq",
-      "sources": [
-        "HN Hiring",
-        "dev.to"
-      ],
-      "evidence": "Free Python practice platform with zero server costs",
-      "frequency": 2,
-      "demand_weight": 2.5,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "groq",
-      "suggested_difficulty": "beginner",
-      "score": 2.25
-    },
-    {
-      "skill": "Real-time streaming",
-      "sources": [
-        "HN Hiring"
-      ],
-      "evidence": "Modern TypeScript stack",
-      "frequency": 1,
-      "demand_weight": 2.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.125,
-      "canonical": "real-time streaming",
-      "suggested_difficulty": "beginner",
-      "score": 2.25
-    },
-    {
-      "skill": "LLM training",
-      "sources": [
-        "HN Hiring"
-      ],
-      "evidence": "Intersection of LLM training and inference stack",
-      "frequency": 1,
-      "demand_weight": 2.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.0714285714285714,
-      "canonical": "llm training",
-      "suggested_difficulty": "beginner",
-      "score": 2.142857142857143
+      "momentum": 1.3571428571428572,
+      "canonical": "rust async/await",
+      "suggested_difficulty": "advanced",
+      "score": 1.3571428571428572
     },
     {
       "skill": "Agentic coding",
       "sources": [
-        "GitHub Trending",
-        "dev.to"
+        "GitHub Trending"
       ],
-      "evidence": "World's first open-source, agentic video production system",
-      "frequency": 2,
-      "demand_weight": 1.5,
+      "evidence": "Used in multiple AI projects",
+      "frequency": 1,
+      "demand_weight": 1.0,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
@@ -181,120 +212,65 @@
       "momentum": 1.1785714285714286,
       "canonical": "agentic coding",
       "suggested_difficulty": "intermediate",
-      "score": 1.7678571428571428
+      "score": 1.1785714285714286
     },
     {
-      "skill": "SQLite",
+      "skill": "Python asyncio",
       "sources": [
-        "Lobste.rs",
-        "dev.to"
+        "GitHub Trending"
       ],
-      "evidence": "Creator of SQLite discusses pull requests",
-      "frequency": 2,
-      "demand_weight": 1.5,
+      "evidence": "Used in inference and LoRA trainer package",
+      "frequency": 1,
+      "demand_weight": 1.0,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "sqlite",
+      "momentum": 1.0892857142857144,
+      "canonical": "python asyncio",
       "suggested_difficulty": "beginner",
-      "score": 1.35
-    },
-    {
-      "skill": "DuckDB",
-      "sources": [
-        "HN Front Page",
-        "HN Hiring",
-        "Stack Overflow",
-        "dev.to"
-      ],
-      "evidence": "The Postgres development platform",
-      "frequency": 4,
-      "demand_weight": 5.0,
-      "novelty": 0.17857142857142858,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 1.3571428571428572,
-      "canonical": "duckdb",
-      "suggested_difficulty": "advanced",
-      "score": 1.211734693877551
+      "score": 1.0892857142857144
     },
     {
       "skill": "Apache DataFusion SQL Query Engine",
       "sources": [
         "GitHub Trending"
       ],
-      "evidence": "Apache DataFusion SQL Query Engine",
+      "evidence": "High-performance SQL query engine",
       "frequency": 1,
       "demand_weight": 1.0,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 0.9,
+      "momentum": 1.0178571428571428,
       "canonical": "apache datafusion sql query engine",
       "suggested_difficulty": "beginner",
-      "score": 0.9
+      "score": 1.0178571428571428
     },
     {
-      "skill": "Asynq simple distributed task queue",
+      "skill": "Bevy",
       "sources": [
-        "GitHub Trending"
+        "Lobste.rs"
       ],
-      "evidence": "Simple, reliable, and efficient distributed task queue in Go",
+      "evidence": "Game engine release",
       "frequency": 1,
       "demand_weight": 1.0,
       "novelty": 1.0,
       "table_stakes": false,
       "known": false,
       "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "asynq simple distributed task queue",
+      "momentum": 1.0178571428571428,
+      "canonical": "bevy",
       "suggested_difficulty": "beginner",
-      "score": 0.9
+      "score": 1.0178571428571428
     },
     {
-      "skill": "Cilium eBPF-based Networking",
-      "sources": [
-        "GitHub Trending"
-      ],
-      "evidence": "eBPF-based Networking, Security, and Observability",
-      "frequency": 1,
-      "demand_weight": 1.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "cilium ebpf-based networking",
-      "suggested_difficulty": "beginner",
-      "score": 0.9
-    },
-    {
-      "skill": "Cube Core semantic layer",
-      "sources": [
-        "GitHub Trending"
-      ],
-      "evidence": "Open-source semantic layer for AI, BI and embedded analytics",
-      "frequency": 1,
-      "demand_weight": 1.0,
-      "novelty": 1.0,
-      "table_stakes": false,
-      "known": false,
-      "goal_match": false,
-      "momentum": 0.9,
-      "canonical": "cube core semantic layer",
-      "suggested_difficulty": "beginner",
-      "score": 0.9
-    },
-    {
-      "skill": "Datasette",
+      "skill": "ATProto",
       "sources": [
         "HN Front Page"
       ],
-      "evidence": "Custom HTML applications inside Datasette",
+      "evidence": "No instances in ATProto",
       "frequency": 1,
       "demand_weight": 1.0,
       "novelty": 1.0,
@@ -302,16 +278,16 @@
       "known": false,
       "goal_match": false,
       "momentum": 0.9,
-      "canonical": "datasette",
+      "canonical": "atproto",
       "suggested_difficulty": "beginner",
       "score": 0.9
     },
     {
-      "skill": "FastGPT knowledge-based platform",
+      "skill": "DiffsHub",
       "sources": [
-        "GitHub Trending"
+        "Lobste.rs"
       ],
-      "evidence": "Built on LLMs, offers data processing, RAG retrieval, and visual AI workflow orchestration",
+      "evidence": "Version control system",
       "frequency": 1,
       "demand_weight": 1.0,
       "novelty": 1.0,
@@ -319,16 +295,16 @@
       "known": false,
       "goal_match": false,
       "momentum": 0.9,
-      "canonical": "fastgpt knowledge-based platform",
+      "canonical": "diffshub",
       "suggested_difficulty": "beginner",
       "score": 0.9
     },
     {
-      "skill": "Glamour stylesheet-based markdown rendering",
+      "skill": "Godot",
       "sources": [
-        "GitHub Trending"
+        "Lobste.rs"
       ],
-      "evidence": "Stylesheet-based markdown rendering for your CLI apps",
+      "evidence": "Game engine release",
       "frequency": 1,
       "demand_weight": 1.0,
       "novelty": 1.0,
@@ -336,16 +312,16 @@
       "known": false,
       "goal_match": false,
       "momentum": 0.9,
-      "canonical": "glamour stylesheet-based markdown rendering",
+      "canonical": "godot",
       "suggested_difficulty": "beginner",
       "score": 0.9
     },
     {
-      "skill": "Go-git highly extensible Git implementation",
+      "skill": "LLM-powered knowledge curation",
       "sources": [
         "GitHub Trending"
       ],
-      "evidence": "A highly extensible Git implementation in pure Go",
+      "evidence": "Generates full-length reports with citations",
       "frequency": 1,
       "demand_weight": 1.0,
       "novelty": 1.0,
@@ -353,7 +329,24 @@
       "known": false,
       "goal_match": false,
       "momentum": 0.9,
-      "canonical": "go-git highly extensible git implementation",
+      "canonical": "llm-powered knowledge curation",
+      "suggested_difficulty": "beginner",
+      "score": 0.9
+    },
+    {
+      "skill": "Move programming language",
+      "sources": [
+        "GitHub Trending"
+      ],
+      "evidence": "Used in next-generation smart contract platform",
+      "frequency": 1,
+      "demand_weight": 1.0,
+      "novelty": 1.0,
+      "table_stakes": false,
+      "known": false,
+      "goal_match": false,
+      "momentum": 0.9,
+      "canonical": "move programming language",
       "suggested_difficulty": "beginner",
       "score": 0.9
     }

@@ -6267,5 +6267,358 @@
         "score": 0.9
       }
     ]
+  },
+  "2026-06-20": {
+    "today_skill": "ClickHouse",
+    "scored": [
+      {
+        "skill": "ClickHouse",
+        "sources": [
+          "HN Front Page",
+          "HN Hiring"
+        ],
+        "evidence": "10 years of ClickHouse in open source",
+        "frequency": 2,
+        "demand_weight": 3.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.1071428571428572,
+        "canonical": "clickhouse",
+        "suggested_difficulty": "beginner",
+        "score": 3.3214285714285716
+      },
+      {
+        "skill": "Real-time streaming",
+        "sources": [
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "Forward uses modern TypeScript stack with real-time streaming",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.2857142857142856,
+        "canonical": "real-time streaming",
+        "suggested_difficulty": "beginner",
+        "score": 3.214285714285714
+      },
+      {
+        "skill": "Knowledge Graphs",
+        "sources": [
+          "GitHub Trending",
+          "HN Hiring"
+        ],
+        "evidence": "Used in LLM-powered knowledge curation system",
+        "frequency": 2,
+        "demand_weight": 3.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "knowledge graphs",
+        "suggested_difficulty": "beginner",
+        "score": 2.7
+      },
+      {
+        "skill": "Kafka consumer groups",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "Mentioned as a skill required",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.1785714285714286,
+        "canonical": "kafka consumer groups",
+        "suggested_difficulty": "beginner",
+        "score": 2.357142857142857
+      },
+      {
+        "skill": "React Server Components",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "Mentioned as a skill required",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.1607142857142856,
+        "canonical": "react server components",
+        "suggested_difficulty": "intermediate",
+        "score": 2.321428571428571
+      },
+      {
+        "skill": "Vector databases",
+        "sources": [
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "Stores both objects and vectors",
+        "frequency": 2,
+        "demand_weight": 2.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "vector databases",
+        "suggested_difficulty": "beginner",
+        "score": 2.25
+      },
+      {
+        "skill": "AWS Lambda cold starts",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "Mentioned as a skill required",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.0892857142857144,
+        "canonical": "aws lambda cold starts",
+        "suggested_difficulty": "beginner",
+        "score": 2.178571428571429
+      },
+      {
+        "skill": "AI control plane",
+        "sources": [
+          "HN Hiring"
+        ],
+        "evidence": "Speakeasy builds AI control plane product",
+        "frequency": 1,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.0535714285714286,
+        "canonical": "ai control plane",
+        "suggested_difficulty": "beginner",
+        "score": 2.107142857142857
+      },
+      {
+        "skill": "Project Valhalla",
+        "sources": [
+          "HN Front Page",
+          "Lobste.rs"
+        ],
+        "evidence": "Java project explained",
+        "frequency": 2,
+        "demand_weight": 2.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "project valhalla",
+        "suggested_difficulty": "beginner",
+        "score": 1.8
+      },
+      {
+        "skill": "Vector embeddings",
+        "sources": [
+          "GitHub Trending",
+          "dev.to"
+        ],
+        "evidence": "Used in vector database",
+        "frequency": 2,
+        "demand_weight": 1.5,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.1428571428571428,
+        "canonical": "vector embeddings",
+        "suggested_difficulty": "beginner",
+        "score": 1.7142857142857142
+      },
+      {
+        "skill": "Rust async/await",
+        "sources": [
+          "GitHub Trending",
+          "HN Hiring",
+          "dev.to"
+        ],
+        "evidence": "Used in modular networking stack",
+        "frequency": 3,
+        "demand_weight": 3.5,
+        "novelty": 0.2857142857142857,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.3571428571428572,
+        "canonical": "rust async/await",
+        "suggested_difficulty": "advanced",
+        "score": 1.3571428571428572
+      },
+      {
+        "skill": "Agentic coding",
+        "sources": [
+          "GitHub Trending"
+        ],
+        "evidence": "Used in multiple AI projects",
+        "frequency": 1,
+        "demand_weight": 1.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.1785714285714286,
+        "canonical": "agentic coding",
+        "suggested_difficulty": "intermediate",
+        "score": 1.1785714285714286
+      },
+      {
+        "skill": "Python asyncio",
+        "sources": [
+          "GitHub Trending"
+        ],
+        "evidence": "Used in inference and LoRA trainer package",
+        "frequency": 1,
+        "demand_weight": 1.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.0892857142857144,
+        "canonical": "python asyncio",
+        "suggested_difficulty": "beginner",
+        "score": 1.0892857142857144
+      },
+      {
+        "skill": "Apache DataFusion SQL Query Engine",
+        "sources": [
+          "GitHub Trending"
+        ],
+        "evidence": "High-performance SQL query engine",
+        "frequency": 1,
+        "demand_weight": 1.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.0178571428571428,
+        "canonical": "apache datafusion sql query engine",
+        "suggested_difficulty": "beginner",
+        "score": 1.0178571428571428
+      },
+      {
+        "skill": "Bevy",
+        "sources": [
+          "Lobste.rs"
+        ],
+        "evidence": "Game engine release",
+        "frequency": 1,
+        "demand_weight": 1.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 1.0178571428571428,
+        "canonical": "bevy",
+        "suggested_difficulty": "beginner",
+        "score": 1.0178571428571428
+      },
+      {
+        "skill": "ATProto",
+        "sources": [
+          "HN Front Page"
+        ],
+        "evidence": "No instances in ATProto",
+        "frequency": 1,
+        "demand_weight": 1.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "atproto",
+        "suggested_difficulty": "beginner",
+        "score": 0.9
+      },
+      {
+        "skill": "DiffsHub",
+        "sources": [
+          "Lobste.rs"
+        ],
+        "evidence": "Version control system",
+        "frequency": 1,
+        "demand_weight": 1.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "diffshub",
+        "suggested_difficulty": "beginner",
+        "score": 0.9
+      },
+      {
+        "skill": "Godot",
+        "sources": [
+          "Lobste.rs"
+        ],
+        "evidence": "Game engine release",
+        "frequency": 1,
+        "demand_weight": 1.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "godot",
+        "suggested_difficulty": "beginner",
+        "score": 0.9
+      },
+      {
+        "skill": "LLM-powered knowledge curation",
+        "sources": [
+          "GitHub Trending"
+        ],
+        "evidence": "Generates full-length reports with citations",
+        "frequency": 1,
+        "demand_weight": 1.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "llm-powered knowledge curation",
+        "suggested_difficulty": "beginner",
+        "score": 0.9
+      },
+      {
+        "skill": "Move programming language",
+        "sources": [
+          "GitHub Trending"
+        ],
+        "evidence": "Used in next-generation smart contract platform",
+        "frequency": 1,
+        "demand_weight": 1.0,
+        "novelty": 1.0,
+        "table_stakes": false,
+        "known": false,
+        "goal_match": false,
+        "momentum": 0.9,
+        "canonical": "move programming language",
+        "suggested_difficulty": "beginner",
+        "score": 0.9
+      }
+    ]
   }
 }

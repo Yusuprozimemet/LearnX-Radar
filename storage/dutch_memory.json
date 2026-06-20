@@ -1,19 +1,19 @@
 {
   "version": 1,
   "cefr": "A2",
-  "streak": 1,
-  "last_run": "2026-06-19",
+  "streak": 2,
+  "last_run": "2026-06-20",
   "last_words": [
-    "versie",
-    "programma",
-    "downloaden",
-    "installeren",
-    "toetsenbord",
-    "muis",
-    "winkel",
-    "rekening",
-    "systeem",
-    "server"
+    "uur",
+    "week",
+    "maand",
+    "jaar",
+    "verbinding",
+    "internet",
+    "afspraak",
+    "vergadering",
+    "werk",
+    "baan"
   ],
   "words": {
     "bestand": {
@@ -66,30 +66,30 @@
     },
     "afspraak": {
       "introduced": "2026-06-06",
-      "reps": 3,
-      "last_review": "2026-06-10",
-      "due": "2026-06-15",
+      "reps": 4,
+      "last_review": "2026-06-20",
+      "due": "2026-07-01",
       "recall_right": 1
     },
     "vergadering": {
       "introduced": "2026-06-06",
-      "reps": 3,
-      "last_review": "2026-06-10",
-      "due": "2026-06-15",
+      "reps": 4,
+      "last_review": "2026-06-20",
+      "due": "2026-07-01",
       "recall_right": 1
     },
     "werk": {
       "introduced": "2026-06-06",
-      "reps": 3,
-      "last_review": "2026-06-10",
-      "due": "2026-06-15",
+      "reps": 4,
+      "last_review": "2026-06-20",
+      "due": "2026-07-01",
       "recall_right": 1
     },
     "baan": {
       "introduced": "2026-06-06",
-      "reps": 3,
-      "last_review": "2026-06-10",
-      "due": "2026-06-15"
+      "reps": 4,
+      "last_review": "2026-06-20",
+      "due": "2026-07-01"
     },
     "map": {
       "introduced": "2026-06-07",
@@ -268,15 +268,15 @@
     },
     "verbinding": {
       "introduced": "2026-06-13",
-      "reps": 1,
-      "last_review": "2026-06-13",
-      "due": "2026-06-14"
+      "reps": 2,
+      "last_review": "2026-06-20",
+      "due": "2026-06-22"
     },
     "internet": {
       "introduced": "2026-06-13",
-      "reps": 1,
-      "last_review": "2026-06-13",
-      "due": "2026-06-14"
+      "reps": 2,
+      "last_review": "2026-06-20",
+      "due": "2026-06-22"
     },
     "huis": {
       "introduced": "2026-06-14",
@@ -373,6 +373,30 @@
       "reps": 1,
       "last_review": "2026-06-19",
       "due": "2026-06-20"
+    },
+    "uur": {
+      "introduced": "2026-06-20",
+      "reps": 1,
+      "last_review": "2026-06-20",
+      "due": "2026-06-21"
+    },
+    "week": {
+      "introduced": "2026-06-20",
+      "reps": 1,
+      "last_review": "2026-06-20",
+      "due": "2026-06-21"
+    },
+    "maand": {
+      "introduced": "2026-06-20",
+      "reps": 1,
+      "last_review": "2026-06-20",
+      "due": "2026-06-21"
+    },
+    "jaar": {
+      "introduced": "2026-06-20",
+      "reps": 1,
+      "last_review": "2026-06-20",
+      "due": "2026-06-21"
     }
   },
   "lessons": [
@@ -603,6 +627,24 @@
         "server"
       ],
       "summary": "Dutch (tech): version, program, to download, to install"
+    },
+    {
+      "date": "2026-06-20",
+      "theme": "everyday",
+      "audio": "dutch-20260620.mp3",
+      "words": [
+        "uur",
+        "week",
+        "maand",
+        "jaar",
+        "verbinding",
+        "internet",
+        "afspraak",
+        "vergadering",
+        "werk",
+        "baan"
+      ],
+      "summary": "Dutch (everyday): hour, week, month, year"
     }
   ],
   "recall": [
