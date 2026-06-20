@@ -31,6 +31,24 @@ def test_candidate_pairs_shortlists_near_duplicates():
     assert frozenset(("duckdb", "ai agents")) not in flat             # unrelated excluded
 
 
+def test_denylist_pairs_are_never_proposed():
+    h = _history((1, ["AI agents", "Autonomous AI agents"]))
+    deny = {frozenset(("ai agents", "autonomous ai agents"))}
+    pairs = alias_curator.candidate_pairs(h, threshold=0.6, denylist=deny)
+    assert pairs == []   # the one close pair is denylisted -> nothing to judge
+
+
+def test_curate_skips_denylisted_pair():
+    h = _history((1, ["AI agents", "Autonomous AI agents"]), (2, ["AI agents"]))
+    deny = {frozenset(("ai agents", "autonomous ai agents"))}
+    # Even if the judge would say merge, a denylisted pair never reaches it.
+    chat = _canned([{"a": "ai agents", "b": "autonomous ai agents", "merge": True,
+                     "canonical": "ai agents", "reason": "x"}])
+    out = alias_curator.curate(h, chat_fn=chat, threshold=0.6, denylist=deny)
+    assert out["aliases"] == {}
+    assert out["decisions"] == []
+
+
 def _canned(decisions):
     """A chat_fn that ignores the prompt and returns a fixed decision list as JSON."""
     return lambda messages, **kw: json.dumps(decisions)
