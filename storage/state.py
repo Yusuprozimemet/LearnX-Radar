@@ -421,6 +421,23 @@ def dutch_due_words(memory: dict, today: date | None = None) -> list[str]:
     return [wid for wid, _ in due]
 
 
+def dutch_unsubmitted_streak(memory: dict) -> int:
+    """How many of the most recent delivered lessons have no recall report yet.
+
+    A lesson counts as finished once a recall report for its date exists — i.e. the
+    learner practiced and saved at least one word (an all-'x' report logs nothing,
+    so it doesn't count). Counting newest-first until the first finished lesson, this
+    is the run of consecutive lessons the learner hasn't completed: the backlog the
+    daily run uses to decide whether to pause new generation (v10 day 37)."""
+    reported = {r.get("date") for r in memory.get("recall", [])}
+    streak = 0
+    for lesson in reversed(memory.get("lessons", [])):
+        if lesson.get("date") in reported:
+            break
+        streak += 1
+    return streak
+
+
 def _dutch_interval_days(reps: int) -> int:
     """Spacing interval (days) after `reps` exposures: widens with each rep."""
     base = config.DUTCH_SR_BASE_INTERVAL_DAYS

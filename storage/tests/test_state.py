@@ -246,6 +246,37 @@ def test_record_dutch_recall_unknown_date_and_duplicate_noop():
     assert len(memory["recall"]) == 1
 
 
+def test_dutch_unsubmitted_streak_counts_newest_unfinished():
+    memory = state._default_dutch_memory()
+    for day in range(1, 6):  # 5 lessons delivered, none practiced yet
+        state.record_dutch_lesson(memory, word_ids=["a"], theme="everyday",
+                                  when=date(2026, 6, day))
+    assert state.dutch_unsubmitted_streak(memory) == 5
+
+    # Practice the most recent one -> streak resets to 0 (caught up at the top)
+    state.record_dutch_recall(memory, "2026-06-05", "1", when=date(2026, 6, 6))
+    assert state.dutch_unsubmitted_streak(memory) == 0
+
+    # A new unfinished lesson on top -> counts only the consecutive run from newest
+    state.record_dutch_lesson(memory, word_ids=["a"], theme="everyday",
+                              when=date(2026, 6, 6))
+    assert state.dutch_unsubmitted_streak(memory) == 1
+
+
+def test_dutch_unsubmitted_streak_stops_at_first_finished():
+    memory = state._default_dutch_memory()
+    for day in range(1, 5):
+        state.record_dutch_lesson(memory, word_ids=["a"], theme="everyday",
+                                  when=date(2026, 6, day))
+    # Finish an OLDER lesson (day 2); days 3 and 4 remain unfinished above it
+    state.record_dutch_recall(memory, "2026-06-02", "1", when=date(2026, 6, 5))
+    assert state.dutch_unsubmitted_streak(memory) == 2  # days 4 and 3, stops at day 2
+
+
+def test_dutch_unsubmitted_streak_empty_when_no_lessons():
+    assert state.dutch_unsubmitted_streak(state._default_dutch_memory()) == 0
+
+
 def test_save_dutch_lesson_archives_dated_copy_and_index(tmp_path, monkeypatch):
     monkeypatch.setattr(state, "DUTCH_LESSON_FILE", tmp_path / "dutch_lesson.json")
     monkeypatch.setattr(state, "DUTCH_LESSONS_DIR", tmp_path / "lessons")
