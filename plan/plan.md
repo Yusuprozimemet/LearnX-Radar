@@ -357,8 +357,14 @@ proved the loop; v7 sharpens its judgement. Four slices, each a self-contained s
    multiplier** into scoring: look back over `trending_history` (matched by canonical
    name) and boost skills *sustained and accelerating* across days while damping
    one-day spikes. Orthogonal to the spaced-repetition novelty signal (that's "have
-   *we* taught it"; momentum is "is the *world* rising"). A vector-DB phase (3b) is
-   named but gated as optional.
+   *we* taught it"; momentum is "is the *world* rising"). Window tuned to 10 days by
+   experiment once history accrued. Phase 3b (semantic cross-day linking) *was* built,
+   but not as the speculated vector DB: the vocabulary is tiny, so an **in-memory**
+   matcher shortlists near-duplicate skill names and a **conservative LLM judge**
+   decides which are the same skill (no cosine threshold safely separates real
+   variants from related-but-distinct skills like PostgreSQL/SQLite). Accepted merges
+   become learned `SKILL_ALIASES`; a weekly Actions workflow runs it autonomously,
+   with a human-revertible denylist. See the spec's "Result" section.
 
 **Output:** the daily topic is more often a skill genuinely rising in the world, and
 the brief that teaches it is grounded in and cites real sources rather than the
@@ -434,11 +440,12 @@ LearnX-Radar/
   dutch/                   # Dutch coach: curated wordlist + lesson + audio (v5)
   delivery/                # Telegram (DM + channel), email, PDF, waitlist, dev.to (v8)
   storage/                 # seen_skills.json, skill_memory.json, dutch_memory.json,
-                           # trending_history.json (powers momentum), last_scored.json
+                           # trending_history.json (powers momentum), last_scored.json,
+                           # skill_aliases.json + denylist + log (learned by the curator)
   dashboard/               # static site (Radar/Dutch tabs) + podcast feed (v4/v8)
   specs/                   # day-by-day specs (written before code, LearnX-CLI style)
   plan/                    # this file and future phase plans
-  .github/workflows/       # cron job + CI + GitHub Pages deploy
+  .github/workflows/       # daily radar cron + CI + Pages deploy + weekly alias curation
   config.py                # sources, limits, topic filters
   main.py                  # entry point
   requirements.txt
@@ -478,6 +485,14 @@ stops a skill being re-taught.
 carry contact PII. `radar/privacy.py` scrubs emails, phone numbers, and `@handles` in
 `main._scrape()`, before anything is deduped, sent to the LLM, persisted, delivered, or
 linked to Perplexity. One choke point keeps PII out of every downstream sink.
+
+**Embeddings advise, an LLM decides, a human overrules** — for collapsing variant
+skill names, cosine similarity (in-memory, no vector DB at this scale) only *shortlists*
+candidates; a conservative LLM judge makes the same-skill call, because no similarity
+threshold separates real variants from related-but-distinct skills. Decisions are logged
+and a reverted pair is denylisted forever, so the weekly autonomous curation never undoes
+a human override. The human is *on* the loop (audit + revert), not *in* it (nothing blocks
+the daily run). See `specs/v7/day26-momentum-and-vectordb.md`.
 
 ---
 
