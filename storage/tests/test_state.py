@@ -9,6 +9,27 @@ def _iso(days_ago: int) -> str:
     return (date.today() - timedelta(days=days_ago)).isoformat()
 
 
+def test_learned_aliases_roundtrip_and_merge(tmp_path, monkeypatch):
+    import config
+    f = tmp_path / "skill_aliases.json"
+    monkeypatch.setattr(state, "LEARNED_ALIASES_FILE", f)
+    state.save_learned_aliases({"autonomous ai agents": "ai agents"})
+    assert state.load_learned_aliases() == {"autonomous ai agents": "ai agents"}
+
+    # apply_learned_aliases merges into config without clobbering hand-written entries.
+    monkeypatch.setattr(config, "SKILL_ALIASES", {"k8s": "kubernetes"})
+    added = state.apply_learned_aliases()
+    assert added == 1
+    assert config.SKILL_ALIASES["autonomous ai agents"] == "ai agents"
+    assert config.SKILL_ALIASES["k8s"] == "kubernetes"
+
+
+def test_learned_aliases_missing_file_is_empty(tmp_path, monkeypatch):
+    monkeypatch.setattr(state, "LEARNED_ALIASES_FILE", tmp_path / "nope.json")
+    assert state.load_learned_aliases() == {}
+    assert state.apply_learned_aliases() == 0
+
+
 def test_load_seen_migrates_legacy_list_to_empty_map(tmp_path, monkeypatch):
     # Pre-windowing files were a bare list of IDs with no dates; nothing to window
     # on, so they migrate to an empty map (a safe one-time reset — see load_seen).
