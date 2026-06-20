@@ -54,12 +54,19 @@ def _vocabulary(history: dict) -> tuple[list[str], dict[str, int]]:
 
 
 def candidate_pairs(
-    history: dict, *, embedder: Embedder = lexical_embedder, threshold: float = 0.6
+    history: dict,
+    *,
+    embedder: Embedder = lexical_embedder,
+    threshold: float = 0.6,
+    denylist: set[frozenset[str]] | None = None,
 ) -> list[tuple[float, str, str]]:
     """Name pairs whose embeddings are within `threshold` — the judge's shortlist.
 
     Sorted most-similar first. This is a recall step: it should over-include
-    (the LLM rejects the false ones), not try to be precise on its own."""
+    (the LLM rejects the false ones), not try to be precise on its own. Pairs in
+    `denylist` (human-reverted "keep separate") are dropped so the loop can never
+    re-propose a merge you've already overruled."""
+    deny = denylist or set()
     vocab, _ = _vocabulary(history)
     vectors = {}
     for i in range(0, len(vocab), 32):
@@ -70,6 +77,8 @@ def candidate_pairs(
     for i in range(len(vocab)):
         for j in range(i + 1, len(vocab)):
             a, b = vocab[i], vocab[j]
+            if frozenset((a, b)) in deny:
+                continue
             score = cosine(vectors[a], vectors[b])
             if score >= threshold:
                 pairs.append((score, a, b))
@@ -154,12 +163,16 @@ def curate(
     chat_fn: ChatFn,
     embedder: Embedder = lexical_embedder,
     threshold: float = 0.6,
+    denylist: set[frozenset[str]] | None = None,
 ) -> dict:
     """Full pipeline (no IO): shortlist -> judge -> learned aliases + decision log.
 
-    Returns {"decisions": [...], "aliases": {variant: canonical}}. The caller
-    persists the aliases, appends the decisions to the audit log, and notifies."""
+    `denylist` is human-reverted pairs to never re-propose. Returns {"decisions":
+    [...], "aliases": {variant: canonical}}. The caller persists the aliases,
+    appends the decisions to the audit log, and notifies."""
     _vocab, freq = _vocabulary(history)
-    pairs = candidate_pairs(history, embedder=embedder, threshold=threshold)
+    pairs = candidate_pairs(
+        history, embedder=embedder, threshold=threshold, denylist=denylist
+    )
     decisions = judge(pairs, freq, chat_fn=chat_fn)
     return {"decisions": decisions, "aliases": aliases_from(decisions)}
