@@ -128,13 +128,20 @@
   .lt-row button.play:disabled { background:#cfd4dc; border-bottom-color:#b9bfc9;
           cursor:not-allowed; }
   .lt-row .cloze-line { border:0; padding:0; margin:0; background:none; }
-  .les-row { display:flex; align-items:center; gap:.8rem; background:var(--card);
+  .les-row { display:flex; align-items:center; gap:.6rem; background:var(--card);
              border:2px solid var(--border); border-radius:14px; padding:.6rem .9rem;
              margin:.45rem 0; }
-  .les-row .les { color:var(--blue); font-weight:800; min-width:6.2rem; }
-  .les-row .title { font-weight:700; color:var(--grey); }
-  .les-row .pct { margin-left:auto; color:var(--green-edge); font-weight:800; }
-  .les-row .check { background:var(--green); color:#fff; border-radius:50%;
+  .les-row .les { color:var(--blue); font-weight:800; flex:none;
+                  min-width:5.4rem; white-space:nowrap; }
+  .les-row .title { font-weight:700; color:var(--grey); flex:1 1 auto; min-width:0;
+                    overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  /* result cluster: attempts + pct + check stay together, pinned right, never shrink
+     so the check can't be pushed off the edge on narrow phones */
+  .les-row .meta { margin-left:auto; flex:none; display:flex; align-items:center;
+                   gap:.5rem; }
+  .les-row .meta .attempts { margin-left:0; }
+  .les-row .pct { color:var(--green-edge); font-weight:800; }
+  .les-row .check { background:var(--green); color:#fff; border-radius:50%; flex:none;
                     width:1.5rem; height:1.5rem; display:flex; align-items:center;
                     justify-content:center; font-size:.8rem; }
   .les-row.open { border-color:var(--green); background:var(--green-soft); }
@@ -604,17 +611,19 @@
         right += (kinds[k].right || []).length;
         total += (kinds[k].right || []).length + (kinds[k].wrong || []).length;
       });
+      var meta = el("span", "meta");
       var used = Math.max(attemptsUsed(d, "gatentekst"), attemptsUsed(d, "luistertoets"));
       if (used) {
-        row.appendChild(el("span", "attempts",
+        meta.appendChild(el("span", "attempts",
           used >= MAX_ATTEMPTS ? "klaar" : "poging " + used + "/" + MAX_ATTEMPTS));
       }
       if (total) {
-        row.appendChild(el("span", "pct", Math.round(100 * right / total) + "%"));
-        row.appendChild(el("span", "check", "✔"));
+        meta.appendChild(el("span", "pct", Math.round(100 * right / total) + "%"));
+        meta.appendChild(el("span", "check", "✔"));
       } else {
-        row.appendChild(el("span", "pct muted", "—"));
+        meta.appendChild(el("span", "pct muted", "—"));
       }
+      row.appendChild(meta);
       wrap.appendChild(row);
     });
     return wrap;
