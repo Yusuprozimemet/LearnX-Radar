@@ -384,6 +384,25 @@ LESSON_RATING_ENABLED = True    # False -> no star buttons, ratings ignored
 DUTCH_SR_BASE_INTERVAL_DAYS = 1
 DUTCH_SR_SPACING_FACTOR = 2.2
 
+# Mistake-driven coaching (v10 day 36): the recall data above only retimes spaced
+# repetition; the coach lets it change WHAT gets taught. A small LLM reads the
+# accrued misses and picks today's focus — which struggling words to pull forward
+# and a directive the lesson prompt emphasizes. Detection is deterministic; the one
+# LLM call is skipped entirely on a cold start (no struggling words). The coach
+# only selects/emphasizes within the frozen bank — it never invents vocabulary.
+# See specs/v10/day36-mistake-driven-dutch-coach.md.
+DUTCH_COACH_ENABLED    = True   # False -> mechanical selection only (rollback)
+DUTCH_COACH_MIN_MISSES = 2      # misses before a word counts as "struggling"
+DUTCH_COACH_MAX_FOCUS  = 3      # cap on focus words per lesson (targeted, not a dump)
+
+# Backlog backpressure (v10 day 37): a lesson with no recall report wasn't finished.
+# Letting unfinished lessons pile up while still generating new ones buries the
+# learner and lets spaced repetition drift (delivery alone counts a word as "seen").
+# After this many consecutive UNSUBMITTED lessons, pause new generation and nudge
+# instead; one saved result breaks the streak and resumes it next run. 0 disables
+# (always generate). See specs/v10/day37-backlog-backpressure.md.
+DUTCH_BACKLOG_PAUSE_AFTER = 5
+
 # Dutch TTS voices (edge-tts, no API key) — two co-hosts, slower than native so an
 # A2 learner can follow. Speakers reuse the ALEX/MAYA labels of the dev dialogue so
 # audio_builder's voice map keys line up.

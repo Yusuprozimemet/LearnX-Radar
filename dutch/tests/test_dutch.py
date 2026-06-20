@@ -5,6 +5,7 @@ from datetime import date
 import config
 from dutch import audio as dutch_audio
 from dutch import cloze, wordlist
+from dutch import coach as dutch_coach
 from dutch import lesson as dutch_lesson
 
 # --- wordlist ----------------------------------------------------------------
@@ -346,6 +347,128 @@ def test_trainer_payload_report_bot_empty_when_recall_disabled(monkeypatch):
     monkeypatch.setattr(config, "TELEGRAM_BOT_USERNAME", "LearnXBot")
     payload = trainer.build_payload(_delft_lesson(), [], "x.mp3")
     assert payload["report"]["bot"] == ""  # the page then hides the Save button
+
+
+# --- mistake-driven coach (v10 day 36) ----------------------------------------
+
+_COACH_BANK = [
+    {"id": "a", "nl": "de a", "en": "the a", "theme": "everyday"},
+    {"id": "b", "nl": "de b", "en": "the b", "theme": "everyday"},
+    {"id": "c", "nl": "het c", "en": "the c", "theme": "tech"},
+]
+
+
+def _canned(payload: dict):
+    """A chat_fn that ignores the prompt and returns fixed JSON (accepts any kwargs
+    the coach passes — temperature, max_tokens)."""
+    return lambda *a, **k: json.dumps(payload)
+
+
+def test_detect_struggling_needs_net_misses_above_min():
+    memory = {"words": {
+        "a": {"recall_wrong": 3, "recall_right": 1},  # 3>1 and >=2 -> struggling
+        "b": {"recall_wrong": 1, "recall_right": 0},  # one slip (<min) -> not
+        "c": {},                                       # no recall data -> not
+    }}
+    out = dutch_coach.detect_struggling(memory, _COACH_BANK, min_misses=2)
+    assert [w["id"] for w in out] == ["a"]
+    assert out[0]["nl"] == "de a" and out[0]["wrong"] == 3 and out[0]["right"] == 1
+
+
+def test_detect_struggling_excludes_when_not_net_failing():
+    memory = {"words": {"a": {"recall_wrong": 2, "recall_right": 2}}}  # tied, not failing
+    assert dutch_coach.detect_struggling(memory, _COACH_BANK, min_misses=2) == []
+
+
+def test_detect_struggling_ranked_by_miss_rate_then_count():
+    memory = {"words": {
+        "a": {"recall_wrong": 2, "recall_right": 0},  # rate 1.0
+        "b": {"recall_wrong": 5, "recall_right": 4},  # rate ~0.56, more misses
+    }}
+    out = dutch_coach.detect_struggling(memory, _COACH_BANK, min_misses=2)
+    assert [w["id"] for w in out] == ["a", "b"]  # higher miss-rate first
+
+
+def test_plan_skips_llm_on_cold_start():
+    def boom(*a, **k):
+        raise AssertionError("coach must not call the LLM with no struggling words")
+    assert dutch_coach.plan([], chat_fn=boom) == {"focus_ids": [], "directive": "", "reason": ""}
+
+
+def test_plan_caps_focus_and_drops_hallucinated_ids():
+    struggling = [{"id": i, "nl": f"de {i}", "en": "", "wrong": 2, "right": 0}
+                  for i in ("a", "b", "c", "d")]
+    payload = {"focus_ids": ["a", "b", "c", "d", "ghost"],
+               "directive": "Emphasize de/het gender", "reason": "het taken as de"}
+    out = dutch_coach.plan(struggling, max_focus=3, chat_fn=_canned(payload))
+    assert out["focus_ids"] == ["a", "b", "c"]   # capped to MAX_FOCUS, ghost dropped
+    assert out["directive"] == "Emphasize de/het gender"
+    assert out["reason"] == "het taken as de"
+
+
+def test_plan_drops_directive_when_no_valid_focus():
+    struggling = [{"id": "a", "nl": "de a", "en": "", "wrong": 2, "right": 0}]
+    payload = {"focus_ids": ["ghost"], "directive": "drill x", "reason": "y"}
+    out = dutch_coach.plan(struggling, chat_fn=_canned(payload))
+    assert out["focus_ids"] == [] and out["directive"] == ""  # no focus -> no directive
+
+
+def test_plan_degrades_to_empty_on_llm_failure():
+    struggling = [{"id": "a", "nl": "de a", "en": "", "wrong": 2, "right": 0}]
+
+    def boom(*a, **k):
+        raise RuntimeError("NIM down")
+
+    assert dutch_coach.plan(struggling, chat_fn=boom) == {
+        "focus_ids": [], "directive": "", "reason": ""}
+
+
+def test_force_review_ids_pulls_a_non_due_word_ahead_of_the_cap():
+    today = date(2026, 6, 5)
+    memory = {"words": {
+        "a": {"introduced": "2026-06-01", "reps": 3, "due": "2026-12-01"},  # NOT due
+    }}
+    _new, review = wordlist.select_for_today(
+        _COACH_BANK, memory, today, theme="everyday",
+        new_count=1, review_max=6, force_review_ids=["a"],
+    )
+    assert "a" in [w["id"] for w in review]  # forced in despite not being due
+
+
+def test_force_review_ids_ignores_unknown_or_uintroduced():
+    today = date(2026, 6, 5)
+    _new, review = wordlist.select_for_today(
+        _COACH_BANK, {"words": {}}, today, theme="everyday",
+        new_count=1, review_max=6, force_review_ids=["a", "ghost"],
+    )
+    assert review == []  # 'a' never introduced, 'ghost' not in bank -> nothing forced
+
+
+def test_empty_directive_leaves_lesson_prompt_unchanged():
+    captured = {}
+
+    def capture(messages, max_tokens=1400):
+        captured.setdefault("prompts", []).append(messages[0]["content"])
+        return json.dumps({"sentences": [], "dialogue": []})
+
+    word = [{"id": "a", "nl": "de a", "en": "the a", "theme": "everyday"}]
+    dutch_lesson.build(word, [], theme="everyday", chat_fn=capture)              # default ""
+    dutch_lesson.build(word, [], theme="everyday", directive="", chat_fn=capture)
+    dutch_lesson.build(word, [], theme="everyday",
+                       directive="Contrast de/het", chat_fn=capture)
+    base, also_empty, with_dir = captured["prompts"]
+    assert base == also_empty                       # empty directive -> identical prompt
+    assert with_dir != base and "Contrast de/het" in with_dir
+
+
+def test_append_log_records_focus_and_struggling(tmp_path):
+    log = tmp_path / "dutch_coach_log.md"
+    struggling = [{"id": "a", "nl": "de a", "en": "", "wrong": 3, "right": 1}]
+    plan_result = {"focus_ids": ["a"], "directive": "de/het gender", "reason": "het as de"}
+    dutch_coach.append_log(plan_result, struggling, when=date(2026, 6, 20), path=log)
+    text = log.read_text(encoding="utf-8")
+    assert "2026-06-20" in text and "focus: a" in text
+    assert "a(3/1)" in text and "de/het gender" in text
 
 
 def test_cloze_sentence_blanks_every_occurrence_numbered_per_line():
