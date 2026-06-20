@@ -151,7 +151,18 @@ Each accuracy feature sits behind its own config flag for clean rollback:
 - **Cross-day momentum** (`MOMENTUM_ENABLED`). Scoring looks back over
   `trending_history` (matched by canonical name) and boosts skills sustained and
   accelerating across days, while damping one-day spikes — orthogonal to the
-  spaced-repetition novelty signal.
+  spaced-repetition novelty signal. The window was tuned to 10 days by experiment
+  ([scripts/exp_momentum.py](scripts/exp_momentum.py)) once enough history accrued.
+- **Autonomous skill-alias curation.** One rising skill can appear under several
+  names (`AI agents` / `Autonomous AI agents`), splitting its momentum. Cosine
+  similarity over an in-memory vector of the skill vocabulary
+  ([radar/semantic_match.py](radar/semantic_match.py)) *shortlists* near-duplicate
+  pairs; a conservative LLM judge ([radar/alias_curator.py](radar/alias_curator.py))
+  decides which are truly the same skill — because no similarity threshold separates
+  real variants from related-but-distinct skills (`PostgreSQL`/`SQLite`). Accepted
+  merges become learned `SKILL_ALIASES`; a [weekly workflow](.github/workflows/curate.yml)
+  runs it autonomously. The human stays *on* the loop: every verdict is logged and a
+  reverted pair is denylisted forever (`--reject`), so the loop never undoes an override.
 
 ## Quality signals (closing the loop)
 
@@ -249,6 +260,9 @@ The roadmap (KNM, reading, grammar, adaptive pacing toward B1) lives in
   `python -m dashboard` and publishes the static HTML.
 - **CI:** [.github/workflows/ci.yml](.github/workflows/ci.yml) runs
   `ruff check .` and `pytest` on every push and pull request.
+- **Alias curation:** [.github/workflows/curate.yml](.github/workflows/curate.yml)
+  runs `python -m scripts.curate_aliases` weekly (Mon 08:00 UTC) + on manual
+  dispatch — proposes and judges new skill-name merges, committing any it accepts.
 
 ## Podcast feed
 
@@ -334,7 +348,9 @@ GitHub repo secrets (see [.github/workflows/radar.yml](.github/workflows/radar.y
   toggles); `DUTCH_ENABLED = True` by default.
 
 Each accuracy feature sits behind its own flag for clean rollback:
-`EXTRACTION_MAPREDUCE`, `GROUNDING_ENABLED`, `MOMENTUM_ENABLED`.
+`EXTRACTION_MAPREDUCE`, `GROUNDING_ENABLED`, `MOMENTUM_ENABLED`. `MOMENTUM_SEMANTIC_MATCH`
+is intentionally off — variant merges go through the curator (logged, human-revertible),
+not live cosine matching, which can't tell same-skill from merely-related.
 
 </details>
 
@@ -366,6 +382,10 @@ Each accuracy feature sits behind its own flag for clean rollback:
 - [storage/trending_history.json](storage/trending_history.json): one ranking
   per day (kept ~60 days). Powers the dashboard's date replay **and** the
   cross-day momentum signal (prior days matched by canonical skill name).
+- [storage/skill_aliases.json](storage/skill_aliases.json): skill-name aliases
+  *learned* by the curator (`variant -> canonical`), merged into `SKILL_ALIASES`
+  at startup. `skill_aliases_denylist.json` holds pairs a human ruled "keep
+  separate" (never re-merged); `skill_aliases_log.md` is the decision audit trail.
 - [briefs/](briefs): full lesson briefs, linked from each lesson for
   Perplexity Q&A.
 - [output/](output): generated MP3 lessons — the developer lesson
