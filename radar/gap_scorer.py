@@ -17,6 +17,7 @@ The world-wants-but-you-lack signal is exactly the gap the radar exists to find.
 from datetime import date
 
 import config
+from radar import semantic_match
 
 # Reuse the SAME canonicalization extraction used to merge variants, so cross-day
 # matching links the same skill across days (e.g. k8s <-> Kubernetes).
@@ -103,10 +104,20 @@ def _momentum(skill: str, demand_weight: float, history: dict | None) -> float:
     if not days:
         return 1.0  # no prior history to judge against
 
+    # A prior-day row counts as "the same skill" by exact canonical name, or — when
+    # semantic matching is on — by embedding similarity, so variants the alias map
+    # never caught ("Autonomous AI agents" <-> "AI agents") still feed one momentum.
+    def _same_skill(other: str) -> bool:
+        if config.MOMENTUM_SEMANTIC_MATCH:
+            return semantic_match.similar(
+                other, skill, threshold=config.MOMENTUM_SEMANTIC_THRESHOLD
+            )
+        return _canonical(other) == canon
+
     prior_demand: list[float] = []
     for d in days:
         for row in history[d].get("scored", []):
-            if _canonical(str(row.get("skill", ""))) == canon:
+            if _same_skill(str(row.get("skill", ""))):
                 dw = row.get("demand_weight")
                 if isinstance(dw, (int, float)):
                     prior_demand.append(dw)

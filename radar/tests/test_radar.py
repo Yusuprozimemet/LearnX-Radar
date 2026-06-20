@@ -276,6 +276,27 @@ def test_score_without_history_is_unchanged():
     assert s["score"] == 2.0  # demand 2.0 x novelty 1.0, untouched
 
 
+def test_momentum_folds_semantic_variant(monkeypatch):
+    """With semantic matching on, a skill named differently across days still
+    feeds one momentum signal (the alias map never had to know the variant)."""
+    monkeypatch.setattr(config, "MOMENTUM_ENABLED", True)
+    monkeypatch.setattr(config, "MOMENTUM_SEMANTIC_MATCH", True)
+    monkeypatch.setattr(config, "MOMENTUM_SEMANTIC_THRESHOLD", 0.75)
+    # Prior days call it "Autonomous AI agents"; today it's "AI agents".
+    h = _hist((1, [{"skill": "Autonomous AI agents", "demand_weight": 1.0}]),
+              (2, [{"skill": "Autonomous AI agents", "demand_weight": 1.0}]))
+    assert gap_scorer._momentum("AI agents", 2.0, h) > 1.0  # boosted, not spike-damped
+
+
+def test_momentum_semantic_off_falls_back_to_exact(monkeypatch):
+    """Flag off -> exact-name only, so the same variant looks like a one-day spike."""
+    monkeypatch.setattr(config, "MOMENTUM_ENABLED", True)
+    monkeypatch.setattr(config, "MOMENTUM_SEMANTIC_MATCH", False)
+    h = _hist((1, [{"skill": "Autonomous AI agents", "demand_weight": 1.0}]),
+              (2, [{"skill": "Autonomous AI agents", "demand_weight": 1.0}]))
+    assert gap_scorer._momentum("AI agents", 2.0, h) == config.MOMENTUM_SPIKE_DAMP
+
+
 # --- skill_extractor ---------------------------------------------------------
 
 def test_build_digest_caps_text():
