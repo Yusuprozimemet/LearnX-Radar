@@ -45,10 +45,16 @@ def build(
     theme: str,
     topic: str | None = None,
     cefr: str = "A2",
+    directive: str = "",
     chat_fn=chat,
 ) -> DutchLesson:
     """Return a DutchLesson for the given words. The LLM only writes sentences and a
-    dialogue around these exact words; vocabulary is never invented."""
+    dialogue around these exact words; vocabulary is never invented.
+
+    `directive` (the coach's focus instruction, v10 day 36) is appended to the prompt
+    so the sentences emphasize the failing words and the pattern behind them. Empty
+    -> a byte-identical prompt to the mechanical lesson.
+    """
     review_words = review_words or []
     all_words = new_words + review_words
     lesson = DutchLesson(
@@ -64,6 +70,12 @@ def build(
         topic_line=_topic_line(theme, topic),
         words=_format_words(all_words),
     )
+    if directive:
+        prompt += (
+            f"\n\nTODAY'S FOCUS (from the learner's own recurring mistakes): {directive}\n"
+            "Make the example sentences and dialogue especially practice this, while "
+            "still using only the given words and keeping each article (de/het) as given."
+        )
     try:
         raw = chat_fn([{"role": "user", "content": prompt}], max_tokens=1400)
         data = parse_json_response(raw)

@@ -70,6 +70,7 @@ jobs:
           git add storage/seen_skills.json storage/skill_memory.json storage/last_scored.json storage/trending_history.json briefs/
           git add storage/dutch_memory.json 2>/dev/null || true   # v5: present once Dutch has run
           git add storage/dutch_lesson.json 2>/dev/null || true   # v9: Delft trainer lesson JSON
+          git add storage/dutch_coach_log.md 2>/dev/null || true  # v10 day36: coach plan audit log
           git add storage/lessons 2>/dev/null || true             # v9: dated lesson archive + index (trainer's lesson list)
           git diff --staged --quiet || git commit -m "chore: update radar state [skip ci]"
           git push
