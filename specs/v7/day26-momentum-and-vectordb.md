@@ -156,6 +156,45 @@ match by canonical name; if that count is high, escalate).
    GitHub Release asset (like the audio).
 3. Similarity threshold — experiment-driven (precision/recall of cross-day links).
 
+### Result (built 2026-06-20) — landed differently than the speculative design
+
+3a's exact-canonical matching did miss cross-day variants (`AI agents` /
+`Autonomous AI agents`, `Rust/Tokio` / `Tokio`), fragmenting one rising skill into
+several thinner ones — so 3b was warranted. But two of the design guesses above
+were overturned by experiment:
+
+- **No vector store needed (decisions 1 & 2 moot).** The skill vocabulary is ~tens
+  of names, so an **in-memory** dict + cosine ([radar/semantic_match.py](../../radar/semantic_match.py))
+  beats any sqlite-vec/LanceDB/Release-asset store — no infra, no git bloat. A real
+  store only earns its place if the vocabulary grows by orders of magnitude.
+- **No similarity threshold is safe (decision 3 has no answer).** A sweep over both
+  the offline lexical embedder and NIM (`nvidia/nv-embedqa-e5-v5`) showed embeddings
+  rate genuinely *different* skills as close as true variants — NIM puts
+  `PostgreSQL`~`SQLite` (0.71) and `machine learning`~`deep learning` (0.84) above
+  real variants like `temporal`~`temporal technologies` (0.78). Cosine measures
+  *relatedness*, not *same-skill identity*; no cutoff separates the two.
+
+So the design pivoted from "embed + threshold extends `_recurrence` at lookup" to
+**embeddings shortlist, an LLM judges**:
+
+- [radar/alias_curator.py](../../radar/alias_curator.py) — cosine shortlists
+  near-duplicate name pairs (recall); a conservative LLM judge (the NIM model)
+  decides which are truly the same skill (precision). Accepted merges persist to
+  `storage/skill_aliases.json` and merge into `config.SKILL_ALIASES` at startup
+  (`apply_learned_aliases`), so the existing exact-canonical momentum path collapses
+  them — `MOMENTUM_SEMANTIC_MATCH` stays **off** (live cosine auto-merge is unsafe).
+- **Human stays on the loop, not in it.** Every verdict is logged
+  (`skill_aliases_log.md`); a reverted pair goes on a denylist
+  (`skill_aliases_denylist.json`, via `--reject`) the curator skips forever, so the
+  loop can't undo an override. Nothing blocks the daily lesson.
+- **Autonomy:** [.github/workflows/curate.yml](../../.github/workflows/curate.yml)
+  runs `scripts/curate_aliases.py` weekly (has the NIM + Telegram secrets, commits
+  results) — not a Claude cloud routine, which lacks the repo secrets the judge needs.
+
+Exploration tool: [scripts/exp_semantic_match.py](../../scripts/exp_semantic_match.py)
+(offline suggestion explorer). Seeded first run: 4 aliases accepted, `claude code`/
+`claude` reverted and denylisted.
+
 ---
 
 ## Testing (3a)
@@ -180,8 +219,10 @@ Offline, fixture `trending_history`:
 
 ## Out of scope
 
-- **Phase 3b vector DB** unless 3a proves canonical matching insufficient (gated
-  above).
+- **A real vector DB / hosted store** — the in-memory matcher built for 3b is
+  enough at this scale; revisit only if the vocabulary grows by orders of magnitude.
+- **Live cosine auto-merge** (`MOMENTUM_SEMANTIC_MATCH`) — left off by design; the
+  LLM judge makes the same-skill call instead (no safe threshold exists).
 - Changing demand weights / novelty / table-stakes formulas — momentum is an
   additional multiplier only.
 - Semantic dedup of the *item corpus* (vs skills) — different, larger effort.
