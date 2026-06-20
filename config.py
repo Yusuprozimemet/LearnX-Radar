@@ -279,6 +279,18 @@ MOMENTUM_ENABLED = True            # False (or no history) -> multiplier 1.0 (ro
 MOMENTUM_WINDOW_DAYS = 10
 MOMENTUM_MAX_BOOST = 1.5           # cap for a sustained, accelerating skill
 MOMENTUM_SPIKE_DAMP = 0.9         # multiplier for a skill seen only today (mild)
+# MOMENTUM_SEMANTIC_MATCH (v7 day26 vectordb): when True, _momentum links a skill
+# to its prior days by embedding-cosine, not just exact canonical name. LEFT OFF
+# by design: a 2026-06-20 experiment (scripts/exp_semantic_match.py, lexical and
+# NVIDIA-NIM backends) showed no cosine threshold safely separates real variants
+# ("AI agents"~"Autonomous AI agents") from related-but-distinct skills NIM rates
+# just as close ("PostgreSQL"~"SQLite", "machine learning"~"deep learning"). So
+# embeddings advise, humans decide: the live scorer stays on exact name + the
+# curated SKILL_ALIASES below, and the matcher runs offline to PROPOSE new alias
+# entries for review. Flip True only if you accept some wrong auto-merges.
+MOMENTUM_SEMANTIC_MATCH = False
+# Cutoff used both by the (off-by-default) live path and as the suggestion floor.
+MOMENTUM_SEMANTIC_THRESHOLD = 0.75
 
 # --- Lesson generation ---
 LESSON_DURATION_MIN = 5  # target audio length for a daily lesson
