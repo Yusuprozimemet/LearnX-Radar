@@ -272,10 +272,11 @@ GOAL_BOOST = 1.5      # multiplier when a skill matches a LEARNING_GOALS entry
 # Orthogonal to novelty (that's "have WE taught it"; this is "is the WORLD rising").
 # See specs/v7/day26-momentum-and-vectordb.md.
 MOMENTUM_ENABLED = True            # False (or no history) -> multiplier 1.0 (rollback)
-# MOMENTUM_WINDOW_DAYS: lookback window. PROVISIONAL — the tuning sweep
-# (scripts/exp_momentum.py) needs ~14+ days of post-Phase-2 history to be
-# meaningful; revisit once the cron has accrued it.
-MOMENTUM_WINDOW_DAYS = 14
+# MOMENTUM_WINDOW_DAYS: lookback window. Tuned 2026-06-20 from 18 days of history
+# (exp_momentum.py sweep over {7,10,14,21}d): 7d damps real sustained skills;
+# 10d reaches the stable 8-boosted/12-damped regime; 14d and 21d add no new
+# separation and start over-smoothing. Knee = 10d.
+MOMENTUM_WINDOW_DAYS = 10
 MOMENTUM_MAX_BOOST = 1.5           # cap for a sustained, accelerating skill
 MOMENTUM_SPIKE_DAMP = 0.9         # multiplier for a skill seen only today (mild)
 

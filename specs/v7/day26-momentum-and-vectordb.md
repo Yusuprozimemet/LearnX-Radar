@@ -105,17 +105,23 @@ first, or backfilling from the per-day archive):
   the chosen window + rationale here and in config. **NB:** this experiment is only
   meaningful once enough history exists — gate it on accrued data.
 
-### Result (partial, run 2026-06-05 — 6 days of history)
+### Result (final, run 2026-06-20 — 18 days of history)
 
-Ran `scripts/exp_momentum.py` on the 6 days accrued so far. The momentum *logic*
-is validated on real data (LangChain, present all 5 prior days → max boost 1.5;
-Agentic coding → 1.25; 12 skills boosted, 7 damped). **But the window sweep is
-degenerate**: with <7 days of data, every window ∈ {7,10,14,21} sees the same
-prior days, so all produce identical rankings. Window tuning is therefore
-**deferred until ~14+ days of post-Phase-2 history accrue**; `MOMENTUM_WINDOW_DAYS`
-stays at the provisional **14** until then. The feature ships gated and improving
-with data; re-run the sweep in ~2 weeks to set the window from a non-degenerate
-range.
+Re-ran `scripts/exp_momentum.py` with 18 days of history (2026-05-31 → 2026-06-19).
+Sweep is now non-degenerate. **Chosen window: 10 days.**
+
+| window | boosted | damped | DuckDB momentum | langchain momentum | Supabase momentum | Nix momentum |
+|--------|---------|--------|-----------------|-------------------|-------------------|--------------|
+| 7d     | 6       | 14     | 1.357           | 1.429             | 0.900 (damped)    | 0.900 (damped) |
+| **10d**| **8**   | **12** | **1.350**       | **1.400**         | **1.025**         | **1.050**    |
+| 14d    | 8       | 12     | 1.357           | 1.429             | 1.018             | 1.036        |
+| 21d    | 10      | 10     | 1.382           | 1.441             | 1.015             | 1.029        |
+
+**Rationale:** 7d is too narrow — it damps Supabase and Nix (sustained across 8–10 days) as
+spikes. 10d is the first window that correctly flips them to boosted and reaches the stable
+8/12 regime. 14d reproduces 10d almost exactly (same count, ≤0.02 delta on every value) —
+no new information. 21d starts over-smoothing (10 boosted vs 8), pulling marginal skills up.
+Knee = **10d**; `MOMENTUM_WINDOW_DAYS` set to 10 (no longer provisional).
 
 ---
 
