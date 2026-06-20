@@ -51,6 +51,7 @@ def select_for_today(
     theme: str,
     new_count: int,
     review_max: int,
+    force_review_ids=(),
 ) -> tuple[list[dict], list[dict]]:
     """Return (new_words, review_words) for today.
 
@@ -58,11 +59,18 @@ def select_for_today(
     first), capped at review_max. new_words: the first `new_count` words of `theme`
     that have never been introduced (id absent from memory['words']). When the theme
     is exhausted, falls back to any never-introduced word so a lesson still ships.
+
+    `force_review_ids` (the coach's focus words, v10 day 36) are merged into the
+    review set AHEAD of the due words so they survive the cap and are guaranteed
+    taught even when not strictly due. Only already-introduced ids in the bank are
+    honored. Default empty -> identical selection to the mechanical lesson.
     """
     by_id = _by_id(words)
     introduced = set(memory.get("words", {}))
 
-    review_ids = [wid for wid in dutch_due_words(memory, today) if wid in by_id][:review_max]
+    forced = [wid for wid in force_review_ids if wid in by_id and wid in introduced]
+    due = [wid for wid in dutch_due_words(memory, today) if wid in by_id and wid not in forced]
+    review_ids = (forced + due)[:review_max]
     review_words = [by_id[wid] for wid in review_ids]
 
     fresh = [w for w in words if w["id"] not in introduced]

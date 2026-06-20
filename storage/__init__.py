@@ -11,6 +11,7 @@ so state survives across daily runs without external storage):
 from storage.state import (
     apply_learned_aliases,
     dutch_due_words,
+    dutch_unsubmitted_streak,
     filter_new,
     load_alias_denylist,
     load_brief,
@@ -59,6 +60,7 @@ __all__ = [
     "save_dutch_memory",
     "save_dutch_lesson",
     "dutch_due_words",
+    "dutch_unsubmitted_streak",
     "record_dutch_lesson",
     "record_dutch_recall",
     "load_learned_aliases",

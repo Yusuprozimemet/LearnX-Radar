@@ -25,6 +25,7 @@ from agents import (
 from dashboard import builder as dashboard
 from delivery import devto_publisher, email_sender, telegram_recall, telegram_sender
 from dutch import audio as dutch_audio
+from dutch import coach as dutch_coach
 from dutch import lesson as dutch_lesson
 from dutch import trainer as dutch_trainer
 from dutch import wordlist as dutch_wordlist
@@ -32,6 +33,7 @@ from learnx import audio_builder, curriculum, dialogue
 from radar import brief_writer, gap_scorer, privacy, skill_extractor
 from storage import (
     apply_learned_aliases,
+    dutch_unsubmitted_streak,
     filter_new,
     load_brief,
     load_dutch_memory,
@@ -188,6 +190,25 @@ def _ingest_inbound(memory: dict) -> None:
             _fail("dutch recall", exc)
 
 
+def _dutch_pause_payload(backlog: int) -> dict:
+    """Nudge shown instead of a new lesson while the learner is behind (v10 day 37).
+
+    No audio, no quiz — just a short note pointing back to the trainer, where the
+    unfinished lessons still live (dutch_lesson.json is the last one generated). The
+    delivery layer renders any payload with `markdown`, so this rides the normal DM
+    and email; an empty quiz_words means no quiz button."""
+    md = (
+        "## 🇳🇱 Dutch — even pauze (paused)\n\n"
+        f"_Je hebt **{backlog}** lessen nog niet afgerond._ "
+        f"_(You have {backlog} lessons you haven't finished yet.)_\n\n"
+        "No new words today — finish one and **save your results** to pick the loop "
+        "back up where you left off."
+    )
+    if config.DUTCH_TRAINER_ENABLED:
+        md += f"\n\n🎧 _Maak er één af (finish one):_ {config.TRAINER_URL}"
+    return {"markdown": md, "mp3_path": None, "quiz_words": []}
+
+
 def _build_dutch(today_skill: str | None) -> tuple[dict | None, dict | None]:
     """Build the daily Dutch lesson: (delivery_payload, persist_state).
 
@@ -202,8 +223,34 @@ def _build_dutch(today_skill: str | None) -> tuple[dict | None, dict | None]:
         # Recall reports were already folded in by _ingest_inbound (and saved), so
         # this load sees the reset due dates before word selection.
         dmem = load_dutch_memory()
+        # Backlog backpressure (v10 day 37): if recent lessons keep going unfinished
+        # (no recall report), don't pile on a new one — that just buries the learner
+        # and lets SR drift. Pause and nudge instead; one saved result resumes it.
+        # No state returned, so the paused day isn't itself logged as a backlog item.
+        if config.DUTCH_BACKLOG_PAUSE_AFTER:
+            backlog = dutch_unsubmitted_streak(dmem)
+            if backlog >= config.DUTCH_BACKLOG_PAUSE_AFTER:
+                print(f"[dutch] paused: {backlog} unfinished lesson(s) — awaiting a result")
+                return _dutch_pause_payload(backlog), None
         bank = dutch_wordlist.load()
         theme = dutch_wordlist.theme_for(today)
+        # Mistake-driven coach (v10 day 36): detect words the learner keeps failing
+        # and, if any, let one LLM call pick today's focus. Fully guarded — any
+        # failure falls back to mechanical selection so the lesson always ships.
+        force_ids: list[str] = []
+        directive = ""
+        if config.DUTCH_COACH_ENABLED:
+            try:
+                struggling = dutch_coach.detect_struggling(dmem, bank)
+                if struggling:
+                    cplan = dutch_coach.plan(struggling)
+                    force_ids = cplan["focus_ids"]
+                    directive = cplan["directive"]
+                    dutch_coach.append_log(cplan, struggling, when=today)
+                    print(f"[dutch] coach: {len(struggling)} struggling, "
+                          f"focus {force_ids or '(none)'}")
+            except Exception as exc:
+                _fail("dutch coach", exc)
         new_w, review_w = dutch_wordlist.select_for_today(
             bank,
             dmem,
@@ -211,6 +258,7 @@ def _build_dutch(today_skill: str | None) -> tuple[dict | None, dict | None]:
             theme=theme,
             new_count=config.DUTCH_NEW_WORDS_PER_DAY,
             review_max=config.DUTCH_REVIEW_WORDS_MAX,
+            force_review_ids=force_ids,
         )
         if not new_w and not review_w:
             print("[dutch] no words to teach today")
@@ -222,6 +270,7 @@ def _build_dutch(today_skill: str | None) -> tuple[dict | None, dict | None]:
             theme=theme,
             topic=topic,
             cefr=dmem.get("cefr", config.DUTCH_CEFR_START),
+            directive=directive,
         )
         dutch_mp3: str | None = str(OUTPUT_DIR / f"dutch-{today:%Y%m%d}.mp3")
         timings: list[dict] = []
