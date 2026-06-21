@@ -1,6 +1,7 @@
 """Offline tests for the Dutch coach (v5). Mocked LLM; no network, no TTS."""
 import json
 from datetime import date
+from pathlib import Path
 
 import config
 from dutch import audio as dutch_audio
@@ -8,11 +9,15 @@ from dutch import cloze, wordlist
 from dutch import coach as dutch_coach
 from dutch import lesson as dutch_lesson
 
+# The real word bank lives in the private state repo, so tests validate the loader
+# against a committed fixture rather than depending on production data.
+FIXTURE_WORDLIST = Path(__file__).parent / "fixtures" / "wordlist.json"
+
 # --- wordlist ----------------------------------------------------------------
 
-def test_load_real_wordlist_is_valid():
-    words = wordlist.load()
-    assert len(words) > 50
+def test_load_wordlist_validates_structure():
+    words = wordlist.load(path=FIXTURE_WORDLIST)
+    assert len(words) >= 4
     ids = [w["id"] for w in words]
     assert len(ids) == len(set(ids))  # unique ids
     assert all(w.get("nl") and w.get("theme") in wordlist.THEMES for w in words)

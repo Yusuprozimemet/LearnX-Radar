@@ -1,0 +1,8 @@
+{
+  "words": [
+    {"id": "afspraak", "nl": "de afspraak", "en": "the appointment", "theme": "everyday"},
+    {"id": "bestand", "nl": "het bestand", "en": "the file", "theme": "tech"},
+    {"id": "woord", "nl": "het woord", "en": "the word", "theme": "everyday"},
+    {"id": "netwerk", "nl": "het netwerk", "en": "the network", "theme": "tech"}
+  ]
+}

@@ -188,7 +188,13 @@ def test_tabs_render_with_radar_default(tmp_path):
     assert "id='tab-dutch' style='display:none'" in html
 
 
-def test_dutch_tab_shows_progress_words_and_archive(tmp_path):
+def test_dutch_tab_shows_progress_words_and_archive(tmp_path, monkeypatch):
+    # The word bank is private (loaded via STATE_DIR), so stub it for the nl/en join.
+    bank = [
+        {"id": "afspraak", "nl": "de afspraak", "en": "the appointment", "theme": "everyday"},
+        {"id": "bestand", "nl": "het bestand", "en": "the file", "theme": "tech"},
+    ]
+    monkeypatch.setattr("dutch.wordlist.load", lambda *a, **k: bank)
     html = builder.build(
         _memory(), _scored(), out_path=tmp_path / "d.html", dutch=_dutch_memory()
     ).read_text("utf-8")
@@ -196,7 +202,7 @@ def test_dutch_tab_shows_progress_words_and_archive(tmp_path):
     assert "Words learned" in html and "Streak" in html
     # one of the two words is overdue → "Due for review today" count is at least 1
     assert "Due for review today" in html
-    # recent-words table joins the SR memory with the committed bank for nl/en text
+    # recent-words table joins the SR memory with the stubbed bank for nl/en text
     assert "de afspraak" in html and "the appointment" in html
     # Dutch lesson archive streams its MP3 from the Release asset
     assert f"{config.RELEASES_AUDIO_BASE}/dutch-20260605.mp3" in html
