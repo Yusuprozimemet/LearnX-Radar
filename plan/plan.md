@@ -22,7 +22,14 @@ This is a standalone app. No external platform integration.
 
 ## LLM Stack
 
-All LLM calls go through the **NVIDIA NIM API** (`build.nvidia.com`).
+LLM calls go through the **NVIDIA NIM API** (`build.nvidia.com`) as the primary
+provider, with a **Groq fallback** (`llama-3.3-70b-versatile`) when `GROQ_API_KEY`
+is set. Both sit behind one OpenAI-compatible client ([learnx/llm.py](../learnx/llm.py))
+that retries with backoff and runs a **per-run circuit breaker**: a degraded-slow
+NVIDIA recovers within retries so the plain fallback never engages, yet each timeout
+burns ~120s and can blow the job's wall-clock cap — so after 2 NVIDIA timeouts in a
+run it writes NVIDIA off and serves the rest from Groq. With no Groq key the
+behaviour is NVIDIA-only, unchanged.
 
 | Model | Use | Why |
 |---|---|---|
@@ -86,6 +93,12 @@ GitHub Actions (cron 06:00 UTC, every day)
        ├── seen_skills.json            → dedup: id→last-seen-date map, expires after 14 days
        └── skill_memory.json           → knowledge state: concepts covered, dates, scores
 ```
+
+> **State storage (2026-06-21):** the state JSON above (plus Dutch memory, the
+> lesson archive, and the word bank) now lives in a separate **private** repo,
+> `LearnX-Radar-state`. `storage/` holds only the I/O code; the data location is
+> resolved from `STATE_DIR` (local `storage/` by default, a private-repo checkout
+> in CI). Keeps personal data off the public repo. See [specs/v10/day38](../specs/v10/day38-private-state-repo-and-llm-resilience.md).
 
 ---
 

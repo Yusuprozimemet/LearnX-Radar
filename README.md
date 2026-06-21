@@ -18,9 +18,10 @@ scrape (7 sources) -> extract skills -> score gaps -> grounded brief
    -> curriculum -> dialogue -> audio -> deliver -> dashboard + podcast feed
 ```
 
-There is no server anywhere: committed JSON is the database, GitHub Releases is
-the audio CDN, GitHub Pages is the frontend, and feedback comes back through
-Telegram deep links. Full detail in [Architecture](#architecture) below.
+There is no server anywhere: committed JSON is the database — personal state
+lives in a separate **private** repo so nothing personal sits in this public one
+— GitHub Releases is the audio CDN, GitHub Pages is the frontend, and feedback
+comes back through Telegram deep links. Full detail in [Architecture](#architecture) below.
 
 <table align="center">
   <tr>
@@ -65,8 +66,10 @@ The interesting part isn't that an LLM writes lessons — it's where the LLM is
   before the LLM, before anything is persisted or delivered. The channel and
   waitlist store no subscriber data in this repo.
 - **Graceful degradation.** Every optional secret degrades cleanly, the Dutch
-  branch is guarded so the dev lesson always ships, and stage failures are
-  DM'd to the owner instead of hiding in Actions logs.
+  branch is guarded so the dev lesson always ships, the LLM falls back from a
+  slow NVIDIA to Groq mid-run (a circuit breaker writes off a stalling primary so
+  the cron can't time out waiting on it), and stage failures are DM'd to the
+  owner instead of hiding in Actions logs.
 
 ## The Dutch track
 
@@ -214,13 +217,14 @@ Each run it:
   release CDN.
 - Closes the loop with **measured recall** (see Quality signals above) and mixes
   in words due for spaced-repetition review, tracking a streak + CEFR level in
-  [storage/dutch_memory.json](storage/dutch_memory.json).
+  `dutch_memory.json` (in the private state repo — see [State and outputs](#state-and-outputs)).
 - Appends a 🇳🇱 section to the email, sends a separate Dutch message/audio to
   Telegram (with a "Train this lesson" button), and adds a "Quiz me in Dutch"
   Perplexity link covering *yesterday's* words.
 
 **Correct by design:** vocabulary is anchored to a frozen, human-reviewed word
-bank ([dutch/wordlist.json](dutch/wordlist.json)). The LLM only writes sentences
+bank (`wordlist.json`, kept in the private state repo and loaded via `STATE_DIR`;
+loader in [dutch/wordlist.py](dutch/wordlist.py)). The LLM only writes sentences
 around fixed words and never invents vocabulary — any generated word that isn't
 in the bank is dropped, so a bad generation falls back to the verified gloss
 rather than a wrong word. Grow the bank with the one-time generator (reviewed
@@ -237,8 +241,11 @@ The roadmap (KNM, reading, grammar, adaptive pacing toward B1) lives in
 
 ## Stack
 
-- **LLM:** NVIDIA NIM (OpenAI-compatible) using `meta/llama-3.3-70b-instruct`,
-  configured in [config.py](config.py).
+- **LLM:** NVIDIA NIM (OpenAI-compatible) as primary, with a **Groq fallback**
+  (`llama-3.3-70b-versatile`) when `GROQ_API_KEY` is set — both behind one client
+  ([learnx/llm.py](learnx/llm.py)) that retries with backoff and, via a per-run
+  **circuit breaker**, writes off a slow NVIDIA after repeated timeouts and serves
+  the rest of the run from Groq so the cron can't stall out. Models in [config.py](config.py).
 - **Grounding:** keyless Jina Reader (`r.jina.ai`) for page reads + optional Exa
   neural web search (`EXA_API_KEY`) for fresh sources.
 - **TTS:** edge-tts plus pydub (English co-host voices for dev lessons, `nl-NL`
@@ -255,14 +262,18 @@ The roadmap (KNM, reading, grammar, adaptive pacing toward B1) lives in
 ## Workflows
 
 - **Radar run:** [.github/workflows/radar.yml](.github/workflows/radar.yml)
-  runs `python main.py` and commits updated state files and briefs.
+  runs `python main.py`, commits briefs to this repo, and pushes updated state to
+  the **private** state repo (checked out at `STATE_DIR`). State is committed even
+  when the run fails, so already-folded feedback is never lost.
 - **Pages:** [.github/workflows/pages.yml](.github/workflows/pages.yml) runs
-  `python -m dashboard` and publishes the static HTML.
+  `python -m dashboard` (reading state from the private repo via `STATE_DIR`) and
+  publishes the static HTML + podcast feed.
 - **CI:** [.github/workflows/ci.yml](.github/workflows/ci.yml) runs
   `ruff check .` and `pytest` on every push and pull request.
 - **Alias curation:** [.github/workflows/curate.yml](.github/workflows/curate.yml)
   runs `python -m scripts.curate_aliases` weekly (Mon 08:00 UTC) + on manual
-  dispatch — proposes and judges new skill-name merges, committing any it accepts.
+  dispatch — proposes and judges new skill-name merges, pushing any it accepts to
+  the private state repo.
 
 ## Podcast feed
 
@@ -293,8 +304,9 @@ radar/      map-reduce skill extraction, gap scoring (+ momentum), grounded
 radar/research/  brief-grounding helpers vendored from LearnX-Search: Jina
             reader (keyless), Exa search (key-gated), relevance filter
 learnx/     curriculum, dialogue, audio_builder, LLM client
-dutch/      Dutch coach: curated wordlist, lesson builder, Delft audio layout,
-            cloze exercises (cloze.py), trainer lesson JSON (trainer.py)
+dutch/      Dutch coach: wordlist loader (the bank itself is private), lesson
+            builder, Delft audio layout, cloze exercises (cloze.py),
+            trainer lesson JSON (trainer.py)
 delivery/   Telegram (DM + channel) & email delivery, full-lesson PDF (pdf.py),
             Perplexity follow-up links, deep-link feedback ingestion
             (telegram_recall.py: recall reports + lesson ratings), weekly
@@ -302,13 +314,14 @@ delivery/   Telegram (DM + channel) & email delivery, full-lesson PDF (pdf.py),
 dashboard/  static dashboard builder (Radar / Dutch tabs), the interactive
             Delft trainer page (dutch.html), podcast feed (feed.py),
             Open Graph preview + privacy.html
-storage/    state files (seen_skills.json, skill_memory.json, last_scored.json,
-            trending_history.json, dutch_memory.json, dutch_lesson.json,
-            lessons/ — the per-day Dutch lesson archive + index.json)
-briefs/     full lesson briefs (linked from lessons for Perplexity Q&A)
+storage/    state I/O code (state.py) + tests. The state JSON itself
+            (seen_skills, skill_memory, last_scored, trending_history,
+            dutch_memory, dutch_lesson, lessons/, aliases) lives in the private
+            state repo, read/written via STATE_DIR — see State and outputs
+briefs/     full lesson briefs (linked from lessons for Perplexity Q&A) — public
 scripts/    one-off experiment harnesses (chunk size, grounding read budget,
             momentum window) — deletable, not part of the cron
-specs/      per-day specs driving each slice (v1..v9)
+specs/      per-day specs driving each slice (v1..v10)
 output/     generated MP3 files and sample outputs
 config.py   central configuration and model selection
 main.py     daily pipeline entry point
@@ -326,7 +339,13 @@ GitHub repo secrets (see [.github/workflows/radar.yml](.github/workflows/radar.y
 
 - **Required:** `NVIDIA_API_KEY`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`,
   `GMAIL_APP_PASSWORD`, `EMAIL_FROM`, `EMAIL_TO`.
-- **Optional:** `GITHUB_TOKEN` (higher GitHub API rate limits); `EXA_API_KEY`
+- **State location:** `STATE_DIR` points at the per-user state directory. Unset
+  (local default) it resolves to `storage/`; in CI it's set to a checkout of the
+  private `LearnX-Radar-state` repo. That checkout is authorized by the
+  `STATE_REPO_TOKEN` secret (a fine-grained PAT with Contents read/write on the
+  state repo) — required for the radar, pages, and curate workflows.
+- **Optional:** `GROQ_API_KEY` (enables the Groq LLM fallback + circuit breaker;
+  unset means NVIDIA-only); `GITHUB_TOKEN` (higher GitHub API rate limits); `EXA_API_KEY`
   (free at exa.ai — enables Exa web results in brief grounding; without it
   grounding falls back to reading the day's own source URLs via Jina).
 - **Optional (public channel + waitlist):** `TELEGRAM_CHANNEL_ID` (e.g.
@@ -359,35 +378,43 @@ not live cosine matching, which can't tell same-skill from merely-related.
 <details>
 <summary>Every state file and what it holds</summary>
 
-- [storage/seen_skills.json](storage/seen_skills.json): dedup of source items
-  already processed — a map of `id -> last-seen date`. A sighting expires after
-  `SEEN_TTL_DAYS` (14) so trend sources (a repo still trending, a tag still hot)
-  re-enter as fresh signal instead of being suppressed forever.
-- [storage/skill_memory.json](storage/skill_memory.json): lesson history,
-  spaced-repetition data, and per-lesson owner ratings.
-- [storage/dutch_memory.json](storage/dutch_memory.json): Dutch vocab
-  spaced-repetition state — per-word due dates, recall counters, streak, CEFR
-  level, a Dutch lesson archive, and the trainer recall-report log. Created on
-  the first Dutch run and committed by the workflow.
-- `storage/dutch_lesson.json`: today's full Dutch lesson (text + translations +
-  cloze + audio seek map + recall-report contract) for the trainer page —
-  overwritten each run, copied to Pages by the deploy.
-- `storage/lessons/`: the Dutch lesson archive — a dated JSON copy of every
-  trainer lesson plus an `index.json` manifest, committed by the daily run and
-  copied to Pages so the trainer can reopen any past day. Grows from the day the
-  archive shipped; earlier lessons exist as audio only.
-- [storage/last_scored.json](storage/last_scored.json): latest scoring for
-  the dashboard. Scored from the full scrape each run (not just post-dedup
-  items), so the board always shows the complete demand picture.
-- [storage/trending_history.json](storage/trending_history.json): one ranking
-  per day (kept ~60 days). Powers the dashboard's date replay **and** the
-  cross-day momentum signal (prior days matched by canonical skill name).
-- [storage/skill_aliases.json](storage/skill_aliases.json): skill-name aliases
-  *learned* by the curator (`variant -> canonical`), merged into `SKILL_ALIASES`
-  at startup. `skill_aliases_denylist.json` holds pairs a human ruled "keep
-  separate" (never re-merged); `skill_aliases_log.md` is the decision audit trail.
+All state JSON below lives in the **private `LearnX-Radar-state` repo**, not in
+this public repo — the code reads/writes it via `STATE_DIR` (which defaults to the
+local `storage/` folder for development). The radar/curate workflows push it there;
+the pages build reads it to render. This keeps personal data (Dutch progress, the
+word bank) off the public repo while the public site still renders it.
+
+- `seen_skills.json`: dedup of source items already processed — a map of
+  `id -> last-seen date`. A sighting expires after `SEEN_TTL_DAYS` (14) so trend
+  sources (a repo still trending, a tag still hot) re-enter as fresh signal
+  instead of being suppressed forever.
+- `skill_memory.json`: lesson history, spaced-repetition data, and per-lesson
+  owner ratings.
+- `dutch_memory.json`: Dutch vocab spaced-repetition state — per-word due dates,
+  recall counters, streak, CEFR level, a Dutch lesson archive, and the trainer
+  recall-report log. Created on the first Dutch run.
+- `dutch_lesson.json`: today's full Dutch lesson (text + translations + cloze +
+  audio seek map + recall-report contract) for the trainer page — overwritten
+  each run, copied to Pages by the deploy.
+- `lessons/`: the Dutch lesson archive — a dated JSON copy of every trainer
+  lesson plus an `index.json` manifest, copied to Pages so the trainer can reopen
+  any past day. Grows from the day the archive shipped; earlier lessons exist as
+  audio only.
+- `wordlist.json`: the frozen, human-reviewed Dutch word bank (loaded by
+  [dutch/wordlist.py](dutch/wordlist.py); the LLM only writes sentences around its
+  fixed words).
+- `last_scored.json`: latest scoring for the dashboard. Scored from the full
+  scrape each run (not just post-dedup items), so the board always shows the
+  complete demand picture.
+- `trending_history.json`: one ranking per day (kept ~60 days). Powers the
+  dashboard's date replay **and** the cross-day momentum signal (prior days
+  matched by canonical skill name).
+- `skill_aliases.json`: skill-name aliases *learned* by the curator
+  (`variant -> canonical`), merged into `SKILL_ALIASES` at startup.
+  `skill_aliases_denylist.json` holds pairs a human ruled "keep separate" (never
+  re-merged); `skill_aliases_log.md` is the decision audit trail.
 - [briefs/](briefs): full lesson briefs, linked from each lesson for
-  Perplexity Q&A.
+  Perplexity Q&A — these stay **public** (fetched by raw URL).
 - [output/](output): generated MP3 lessons — the developer lesson
   (`lesson-YYYYMMDD-<slug>.mp3`) and the Dutch lesson (`dutch-YYYYMMDD.mp3`).
 - `dashboard/index.html`: generated static dashboard (not committed — rebuilt
@@ -412,10 +439,13 @@ not live cosine matching, which can't tell same-skill from merely-related.
 - PII (emails, phone numbers, @handles) is redacted from collected text at
   ingestion in [radar/privacy.py](radar/privacy.py) — before dedup, before
   the LLM, and before anything is persisted, delivered, or linked to Perplexity.
-  Only `hn:<id>`-style keys (no source text) are persisted to
-  [storage/seen_skills.json](storage/seen_skills.json).
-- Text is processed by the NVIDIA NIM LLM, and each lesson links out to
-  Perplexity — treat both as third parties.
+  Only `hn:<id>`-style keys (no source text) are persisted to `seen_skills.json`.
+- Text is processed by the NVIDIA NIM LLM (or the Groq fallback), and each lesson
+  links out to Perplexity — treat all three as third parties.
+- **Personal state is private.** Dutch progress, radar state, and the word bank
+  live in a separate **private** repo (read/written via `STATE_DIR`), not in this
+  public repo — so personal data is never browsable here, though the public
+  dashboard still renders it.
 - Dedup state expires after 14 days and is capped (5000 entries) so it does not
   grow without bound.
 - **Dutch trainer:** progress stays in the browser's localStorage; recall
