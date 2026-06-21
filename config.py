@@ -30,6 +30,14 @@ NVIDIA_BASE_URL = "https://integrate.api.nvidia.com/v1"
 # responsive model — it's a one-line change by design (see plan/plan.md).
 NVIDIA_MODEL = "meta/llama-3.1-70b-instruct"
 
+# --- LLM fallback: Groq (OpenAI-compatible) ---
+# Optional safety net: when every NVIDIA retry times out (the free NIM endpoints
+# stall intermittently), learnx.llm.chat() transparently retries on Groq instead,
+# so a flaky primary can't fail the daily run. Unset -> NVIDIA only (unchanged).
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+GROQ_BASE_URL = "https://api.groq.com/openai/v1"
+GROQ_MODEL = "llama-3.3-70b-versatile"
+
 # --- Telegram delivery ---
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
