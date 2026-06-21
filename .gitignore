@@ -217,11 +217,21 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-# Generated lessons/briefs (state JSON in storage/ IS committed; output is not)
+# Generated audio output (published to GitHub Releases, never committed)
 output/*
 !output/.gitkeep
 .tts_tmp/
 .tutor_cache/
+
+# Per-user state lives in the private LearnX-Radar-state repo, read/written via
+# STATE_DIR (see storage/state.py). It must never be tracked in this public repo.
+# The package code (state.py, __init__.py, tests) stays; only the data does not.
+# briefs/ stays public — lessons link to them by raw URL.
+storage/*.json
+storage/*.md
+storage/lessons/
+# The private state repo is checked out here in CI (and may be locally); never commit it.
+/state/
 
 # Generated dashboard + podcast feed (rendered each run; published via Pages, not committed)
 dashboard/index.html

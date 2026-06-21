@@ -18,6 +18,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Personal state (Dutch SR memory, radar JSON, lesson archive) lives in a
+      # private repo so it never appears in this public repo's files or history.
+      # STATE_DIR (read by storage/state.py) points the app at this checkout.
+      - name: Check out private state repo
+        uses: actions/checkout@v4
+        with:
+          repository: Yusuprozimemet/LearnX-Radar-state
+          token: ${{ secrets.STATE_REPO_TOKEN }}
+          path: state
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -36,6 +46,7 @@ jobs:
 
       - name: Run radar
         env:
+          STATE_DIR: ${{ github.workspace }}/state   # read/write personal state in the private checkout
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           EXA_API_KEY: ${{ secrets.EXA_API_KEY }}
@@ -64,21 +75,29 @@ jobs:
             gh release create lessons -t "LearnX-Radar lessons" -n "Daily lesson audio (podcast feed enclosures)."
           gh release upload lessons "${files[@]}" --clobber
 
-      - name: Commit updated state
+      - name: Commit briefs to public repo
+        # briefs/ stays public — lessons link to them by raw URL for Perplexity Q&A.
+        if: always()
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add briefs/
+          git diff --staged --quiet || git commit -m "chore: update briefs [skip ci]"
+          git push
+
+      - name: Commit state to private repo
         # always(): run even when "Run radar" failed or timed out. _ingest_inbound
         # folds inbound Telegram feedback (recall reports, lesson ratings) to disk
         # FIRST and drops it from Telegram's queue — so if a later LLM crash skipped
         # this step, that feedback would be lost on the ephemeral runner. Committing
         # regardless guarantees already-folded results are persisted no matter how
-        # the run ended.
+        # the run ended. All personal state (Dutch SR memory, radar JSON, lesson
+        # archive) is pushed to the private repo, never the public one.
         if: always()
+        working-directory: state
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add storage/seen_skills.json storage/skill_memory.json storage/last_scored.json storage/trending_history.json briefs/
-          git add storage/dutch_memory.json 2>/dev/null || true   # v5: present once Dutch has run
-          git add storage/dutch_lesson.json 2>/dev/null || true   # v9: Delft trainer lesson JSON
-          git add storage/dutch_coach_log.md 2>/dev/null || true  # v10 day36: coach plan audit log
-          git add storage/lessons 2>/dev/null || true             # v9: dated lesson archive + index (trainer's lesson list)
-          git diff --staged --quiet || git commit -m "chore: update radar state [skip ci]"
+          git add -A
+          git diff --staged --quiet || git commit -m "chore: update radar state"
           git push

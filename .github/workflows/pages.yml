@@ -11,12 +11,9 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
+    # State now lives in the private repo, so rebuilds after a radar run come via
+    # the workflow_run trigger above; here we only rebuild on dashboard code changes.
     paths:
-      - "storage/skill_memory.json"
-      - "storage/last_scored.json"
-      - "storage/trending_history.json"
-      - "storage/dutch_lesson.json"
-      - "storage/lessons/**"
       - "dashboard/**"
 
 permissions:
@@ -37,10 +34,21 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      # Read-only checkout of the private state repo: the dashboard + podcast feed
+      # render from it (skill_memory / last_scored / dutch_memory / lessons). STATE_DIR
+      # points the build at it; nothing here is committed back.
+      - name: Check out private state repo
+        uses: actions/checkout@v4
+        with:
+          repository: Yusuprozimemet/LearnX-Radar-state
+          token: ${{ secrets.STATE_REPO_TOKEN }}
+          path: state
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - name: Build dashboard + podcast feed from committed state
+        env:
+          STATE_DIR: ${{ github.workspace }}/state
         run: |
           python -m dashboard
           mkdir -p _site
@@ -49,16 +57,16 @@ jobs:
           cp dashboard/privacy.html _site/privacy.html
           cp dashboard/dutch.html _site/dutch.html         # Delft trainer page (v9)
           cp dashboard/favicon.svg _site/favicon.svg       # browser-tab icon (all pages)
-          cp storage/dutch_lesson.json _site/dutch_lesson.json 2>/dev/null || true  # today's lesson for the trainer
+          cp state/dutch_lesson.json _site/dutch_lesson.json 2>/dev/null || true  # today's lesson for the trainer
           # Lesson archive (dated JSONs + index.json): the trainer's lesson list.
           # Past days play their audio straight from the release CDN (it supports
           # Range requests, so seeking works without the same-origin blob copy).
-          if [ -d storage/lessons ]; then mkdir -p _site/lessons && cp storage/lessons/*.json _site/lessons/; fi
+          if [ -d state/lessons ]; then mkdir -p _site/lessons && cp state/lessons/*.json _site/lessons/; fi
           # Same-origin copy of the lesson MP3: the release CDN sends no CORS header,
           # so the trainer page can't fetch it cross-origin (it needs blob-loading for
           # exact sentence seeking). Downloading here is server-side — no CORS involved.
-          if [ -f storage/dutch_lesson.json ]; then
-            url=$(python -c "import json;print(json.load(open('storage/dutch_lesson.json'))['audio_url'])")
+          if [ -f state/dutch_lesson.json ]; then
+            url=$(python -c "import json;print(json.load(open('state/dutch_lesson.json'))['audio_url'])")
             curl -sL --fail -o _site/dutch_audio.mp3 "$url" || echo "dutch audio not fetched (non-fatal)"
           fi
           cp image.png _site/og.png            # social-share preview (og:image)

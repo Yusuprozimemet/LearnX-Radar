@@ -36,9 +36,9 @@ from storage import (
     save_alias_denylist,
     save_learned_aliases,
 )
-from storage.state import _DIR, ALIAS_DENYLIST_FILE, LEARNED_ALIASES_FILE
+from storage.state import _DATA_DIR, ALIAS_DENYLIST_FILE, LEARNED_ALIASES_FILE
 
-LOG_FILE = _DIR / "skill_aliases_log.md"
+LOG_FILE = _DATA_DIR / "skill_aliases_log.md"
 
 
 def _append_log(decisions: list[dict], applied: dict[str, str]) -> None:

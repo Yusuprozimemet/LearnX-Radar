@@ -24,13 +24,13 @@ from datetime import date
 import config
 from dutch.prompt_loader import load_prompt
 from learnx.llm import chat, parse_json_response
-from storage.state import _DIR
+from storage.state import _DATA_DIR
 
 log = logging.getLogger(__name__)
 
 ChatFn = Callable[..., str]
 
-LOG_FILE = _DIR / "dutch_coach_log.md"
+LOG_FILE = _DATA_DIR / "dutch_coach_log.md"
 
 _EMPTY_PLAN = {"focus_ids": [], "directive": "", "reason": ""}
 

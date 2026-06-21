@@ -6,34 +6,40 @@ source of truth; these helpers degrade gracefully if a file is missing or
 corrupt so a single bad write never wedges the daily run.
 """
 import json
+import os
 import re
 from datetime import date, timedelta
 from pathlib import Path
 
 import config
 
-_DIR = Path(__file__).parent
-SEEN_FILE = _DIR / "seen_skills.json"
-MEMORY_FILE = _DIR / "skill_memory.json"
-LAST_SCORED_FILE = _DIR / "last_scored.json"  # v3: this run's ranking for the dashboard
+_DIR = Path(__file__).parent  # where this package's code lives (always in the public repo)
+# Where per-user state JSON/MD lives. Defaults to this package dir so local runs and
+# tests are unchanged, but CI points STATE_DIR at a checkout of the *private* state
+# repo (LearnX-Radar-state) so personal data never lands in the public repo. Briefs
+# stay public (they're fetched by raw URL), so BRIEFS_DIR keeps tracking _DIR.
+_DATA_DIR = Path(os.environ.get("STATE_DIR", _DIR))
+SEEN_FILE = _DATA_DIR / "seen_skills.json"
+MEMORY_FILE = _DATA_DIR / "skill_memory.json"
+LAST_SCORED_FILE = _DATA_DIR / "last_scored.json"  # v3: this run's ranking for the dashboard
 # v3: per-day rankings, so the dashboard date-picker can replay any day
-HISTORY_FILE = _DIR / "trending_history.json"
+HISTORY_FILE = _DATA_DIR / "trending_history.json"
 BRIEFS_DIR = _DIR.parent / "briefs"  # committed briefs, linked from lessons for Perplexity Q&A
-DUTCH_MEMORY_FILE = _DIR / "dutch_memory.json"  # v5: Dutch vocab spaced-repetition state
+DUTCH_MEMORY_FILE = _DATA_DIR / "dutch_memory.json"  # v5: Dutch vocab spaced-repetition state
 # v7 day26 vectordb: skill-name aliases LEARNED autonomously by alias_curator
 # (embeddings shortlist -> LLM judge), merged into config.SKILL_ALIASES at startup
 # so the scorer/extractor collapse the same variants the hand-written map does.
-LEARNED_ALIASES_FILE = _DIR / "skill_aliases.json"
+LEARNED_ALIASES_FILE = _DATA_DIR / "skill_aliases.json"
 # Pairs a human reverted ("keep separate"); the curator skips them forever so the
 # weekly loop can't re-merge a decision you've already overruled.
-ALIAS_DENYLIST_FILE = _DIR / "skill_aliases_denylist.json"
+ALIAS_DENYLIST_FILE = _DATA_DIR / "skill_aliases_denylist.json"
 # v9 day 32: today's full Dutch lesson (text + cloze + audio seek map) for the
 # Delft trainer page — committed by the workflow, copied to Pages, fetched by JS.
-DUTCH_LESSON_FILE = _DIR / "dutch_lesson.json"
+DUTCH_LESSON_FILE = _DATA_DIR / "dutch_lesson.json"
 # Lesson archive: a dated copy of every trainer lesson plus an index.json manifest,
 # so the trainer page can reopen any past day. Grows
 # from the day this shipped — earlier lessons were overwritten and exist as audio only.
-DUTCH_LESSONS_DIR = _DIR / "lessons"
+DUTCH_LESSONS_DIR = _DATA_DIR / "lessons"
 
 LAST_SCORED_KEEP = 20  # cap the persisted ranking; the dashboard only shows a top slice
 HISTORY_KEEP_DAYS = 60  # cap the per-day archive so the embedded page payload stays bounded
