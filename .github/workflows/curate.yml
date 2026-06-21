@@ -13,6 +13,12 @@ on:
 permissions:
   contents: write           # commit learned aliases back to main
 
+# Share the radar run's serialization lane: both push to the private state repo,
+# so a curate run and a (manually dispatched) radar run must not race the push.
+concurrency:
+  group: radar-run
+  cancel-in-progress: false
+
 jobs:
   curate:
     runs-on: ubuntu-latest
@@ -50,5 +56,9 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add skill_aliases.json skill_aliases_log.md
-          git diff --staged --quiet || git commit -m "chore(radar): learn skill aliases"
+          git diff --staged --quiet && exit 0
+          git commit -m "chore(radar): learn skill aliases"
+          # The daily radar pushes to this same repo; rebase onto anything it landed
+          # since checkout so the push stays a clean fast-forward.
+          git pull --rebase origin "$(git rev-parse --abbrev-ref HEAD)"
           git push
