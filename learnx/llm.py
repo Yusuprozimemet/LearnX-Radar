@@ -16,7 +16,7 @@ import logging
 import re
 import time
 
-from openai import OpenAI
+from openai import APITimeoutError, OpenAI
 
 import config
 
@@ -29,7 +29,24 @@ _RETRY_DELAY_S = 2.0
 # Generous enough for a long generation, short enough to fail fast and retry.
 _TIMEOUT_S = 120.0
 
+# Circuit breaker: a degraded-slow (not dead) NVIDIA is the main wall-clock risk —
+# it recovers within retries so the fallback never engages, yet each timeout burns
+# ~_TIMEOUT_S and the accumulated waiting can blow the job's wall-clock budget. Once
+# NVIDIA has timed out this many times in a run, we stop trying it and use Groq
+# directly for every remaining call. State is process-global, so it resets naturally
+# each run (one `python main.py`); reset_breaker() exists for tests.
+_NVIDIA_TRIP_AFTER = 2
+_nvidia_timeouts = 0
+_nvidia_tripped = False
+
 _clients: dict[str, OpenAI] = {}
+
+
+def reset_breaker() -> None:
+    """Reset the NVIDIA circuit breaker (for tests / explicit reuse in one process)."""
+    global _nvidia_timeouts, _nvidia_tripped
+    _nvidia_timeouts = 0
+    _nvidia_tripped = False
 
 
 def _client_for(base_url: str, api_key: str) -> OpenAI:
@@ -45,11 +62,17 @@ def _client_for(base_url: str, api_key: str) -> OpenAI:
 
 def _providers() -> list[tuple[str, str, str, str]]:
     """(label, base_url, api_key, model) in priority order. Groq is appended only
-    when configured, so an absent key leaves the NVIDIA-only path unchanged."""
-    out = [("nvidia", config.NVIDIA_BASE_URL, config.NVIDIA_API_KEY, config.NVIDIA_MODEL)]
-    if config.GROQ_API_KEY:
-        out.append(("groq", config.GROQ_BASE_URL, config.GROQ_API_KEY, config.GROQ_MODEL))
-    return out
+    when configured, so an absent key leaves the NVIDIA-only path unchanged. Once the
+    circuit breaker has tripped, NVIDIA is dropped entirely and Groq serves alone."""
+    nvidia = ("nvidia", config.NVIDIA_BASE_URL, config.NVIDIA_API_KEY, config.NVIDIA_MODEL)
+    groq = (
+        ("groq", config.GROQ_BASE_URL, config.GROQ_API_KEY, config.GROQ_MODEL)
+        if config.GROQ_API_KEY
+        else None
+    )
+    if _nvidia_tripped and groq:  # NVIDIA written off for the rest of the run
+        return [groq]
+    return [nvidia, groq] if groq else [nvidia]
 
 
 def chat(
@@ -63,6 +86,7 @@ def chat(
     Each provider gets _RETRY_COUNT attempts; if it exhausts them (timeouts,
     5xx) the next provider is tried. Only when every provider fails does this
     raise, aggregating the last error from each so the run report is diagnostic."""
+    global _nvidia_timeouts, _nvidia_tripped
     errors: list[str] = []
     for label, base_url, api_key, model in _providers():
         client = _client_for(base_url, api_key)
@@ -86,6 +110,20 @@ def chat(
                 if status in (400, 401, 403):
                     errors.append(f"{label}: auth/request error ({status}): {exc}")
                     break
+                # Circuit breaker: a slow NVIDIA is the main wall-clock risk, so count
+                # its timeouts and, once over threshold, write it off for the rest of
+                # the run (next _providers() drops it) and abandon it for this call too.
+                if label == "nvidia" and isinstance(exc, APITimeoutError):
+                    _nvidia_timeouts += 1
+                    if _nvidia_timeouts >= _NVIDIA_TRIP_AFTER and config.GROQ_API_KEY:
+                        if not _nvidia_tripped:
+                            log.warning(
+                                "NVIDIA timed out %d times — tripping circuit breaker, "
+                                "using Groq for the rest of this run", _nvidia_timeouts,
+                            )
+                        _nvidia_tripped = True
+                        errors.append(f"{label}: {exc}")
+                        break  # fall through to Groq (already in this call's provider list)
                 if attempt < _RETRY_COUNT - 1:
                     log.warning(
                         "LLM call to %s failed (%s), retrying in %.1fs",
