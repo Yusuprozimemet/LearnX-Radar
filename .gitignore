@@ -230,6 +230,8 @@ output/*
 storage/*.json
 storage/*.md
 storage/lessons/
+# The Dutch word bank is also per-user state (read via STATE_DIR, see dutch/wordlist.py).
+dutch/wordlist.json
 # The private state repo is checked out here in CI (and may be locally); never commit it.
 /state/
 

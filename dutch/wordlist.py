@@ -6,6 +6,7 @@ words (never introduced) with words due for spaced-repetition review (v5 day 17)
 """
 import json
 import logging
+import os
 from datetime import date
 from pathlib import Path
 
@@ -13,15 +14,34 @@ from storage import dutch_due_words
 
 log = logging.getLogger(__name__)
 
-WORDLIST_FILE = Path(__file__).parent / "wordlist.json"
+# The word bank is per-user state: it lives in the private LearnX-Radar-state repo
+# (checked out at STATE_DIR in CI). Prefer that copy; fall back to the bundled file
+# for local runs where STATE_DIR is unset. Same pattern as storage/state.py.
+_BUNDLED_WORDLIST = Path(__file__).parent / "wordlist.json"
+
+
+def _wordlist_path() -> Path:
+    state_dir = os.environ.get("STATE_DIR")
+    if state_dir:
+        candidate = Path(state_dir) / "wordlist.json"
+        if candidate.exists():
+            return candidate
+    return _BUNDLED_WORDLIST
+
+
+WORDLIST_FILE = _wordlist_path()
 
 THEMES = ("everyday", "tech")
 
 
-def load(path: Path = WORDLIST_FILE) -> list[dict]:
-    """Load and lightly validate the curated word bank; [] if missing/corrupt."""
+def load(path: Path | None = None) -> list[dict]:
+    """Load and lightly validate the curated word bank; [] if missing/corrupt.
+
+    Resolves STATE_DIR at call time (not import) so the private word bank is picked
+    up wherever it's mounted; pass an explicit path to override (used by tests)."""
+    path = Path(path) if path is not None else _wordlist_path()
     try:
-        data = json.loads(Path(path).read_text(encoding="utf-8"))
+        data = json.loads(path.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError) as exc:
         log.warning("Dutch wordlist load failed: %s", exc)
         return []
