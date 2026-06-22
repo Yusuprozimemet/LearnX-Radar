@@ -239,6 +239,14 @@ The roadmap (KNM, reading, grammar, adaptive pacing toward B1) lives in
 (paused audio, cloze, trainer, recall feedback, lesson archive) in
 [specs/v9](specs/v9); see [plan/plan.md](plan/plan.md).
 
+**Multi-user (Phase 1).** The same engine can serve a small known group: set
+`ALLOWED_CHAT_IDS` and each learner keeps their own spaced-repetition schedule and
+a personal **cross-day review** (the trainer's 🔁 *herhaling* tab, opened via a
+per-user `?u=<token>` link), while everyone still shares **one** generated lesson +
+audio — generation is global, only selection is per-user, so there's no extra
+LLM/TTS cost. Empty `ALLOWED_CHAT_IDS` keeps it single-user. See
+[plan/personalization.md](plan/personalization.md) and [specs/v10](specs/v10).
+
 ## Stack
 
 - **LLM:** NVIDIA NIM (OpenAI-compatible) as primary, with a **Groq fallback**
@@ -361,6 +369,12 @@ GitHub repo secrets (see [.github/workflows/radar.yml](.github/workflows/radar.y
   and the lesson-rating star buttons. Unset means the buttons simply aren't
   rendered; payloads are accepted from `TELEGRAM_CHAT_ID` only
   (`DUTCH_RECALL_ENABLED`, `LESSON_RATING_ENABLED`).
+- **Optional (multi-user Dutch, Phase 1):** `ALLOWED_CHAT_IDS` — comma-separated
+  Telegram chat ids of a small known group (~5) who each get their own
+  spaced-repetition schedule and a personal cross-day review, sharing one generated
+  lesson (the owner is always included; empty means single-user). `REVIEW_TOKEN_SECRET`
+  keys the per-learner review token that names the published `review/<token>.json`
+  (falls back to the bot token). See [plan/personalization.md](plan/personalization.md).
 - **Dutch coach:** needs **no new secrets** — it reuses the same LLM and
   edge-tts. Tune it via the `DUTCH_*` constants in [config.py](config.py)
   (enable/disable, words per day, review cap, voices, Delft pauses/cloze/trainer
@@ -393,6 +407,10 @@ word bank) off the public repo while the public site still renders it.
 - `dutch_memory.json`: Dutch vocab spaced-repetition state — per-word due dates,
   recall counters, streak, CEFR level, a Dutch lesson archive, and the trainer
   recall-report log. Created on the first Dutch run.
+- `dutch_memory_<chatid>.json` + `review/<token>.json`: **multi-user (Phase 1)** —
+  when `ALLOWED_CHAT_IDS` is set, each learner gets their own SR file plus a
+  published cross-day review list (named by an HMAC token), fetched by the trainer's
+  herhaling tab. Absent in single-user mode.
 - `dutch_lesson.json`: today's full Dutch lesson (text + translations + cloze +
   audio seek map + recall-report contract) for the trainer page — overwritten
   each run, copied to Pages by the deploy.

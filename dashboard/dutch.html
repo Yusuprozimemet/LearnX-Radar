@@ -11,6 +11,11 @@
        LESSEN per-day scores plus the lesson archive (lessons/index.json): tap ▶ on
               a past day to reopen that whole lesson — a finished lesson stays
               visitable. Archived days play audio from the release CDN.
+       HERHALING (multi-user Phase 1) — appears only when opened with ?u=<token>:
+              fetches review/<token>.json (this learner's words due across ALL past
+              days), drills each from memory with cross-day audio, and reports via a
+              t.me/<bot>?start=rv_ deep link. The published JSON is canonical;
+              localStorage caches attempts.
      Progress lives in localStorage — no backend, no accounts, no PII. -->
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -155,6 +160,7 @@
   <button data-tab="leren" class="active">🎧 leren</button>
   <button data-tab="test">✍️ test</button>
   <button data-tab="lessen">🏆 lessen</button>
+  <button data-tab="herhaling" id="tab-herhaling" style="display:none">🔁 herhaling</button>
 </div>
 <div id="app"><p class="muted" style="margin-top:1rem">Loading today's lesson…</p></div>
 
@@ -629,6 +635,147 @@
     return wrap;
   }
 
+  // --- HERHALING (multi-user Phase 1): a learner's personal cross-day review ------
+  // Active only when the page is opened with ?u=<token> (the trainer link the daily
+  // DM builds per learner). review/<token>.json is the canonical "what's due"; this
+  // localStorage cache only remembers today's attempts so a reload doesn't lose them.
+  var reviewToken = new URLSearchParams(location.search).get("u");
+  var reviewData = null;
+  var rAudio = new Audio(); rAudio.preload = "metadata"; var rStop = null;
+  // Separate watchdog: review snippets play from each word's OWN day audio (a
+  // different MP3 than today's lesson blob), so they ride a second audio element.
+  setInterval(function () {
+    if (rAudio.paused) return;
+    if (rStop !== null && rAudio.currentTime * 1000 >= rStop - 20) {
+      rAudio.pause(); rStop = null;
+    }
+  }, 40);
+  function playSpan(url, startMs, endMs) {
+    audio.pause();                       // hand off from the main lesson player
+    if (rAudio.src !== url) rAudio.src = url;   // cross-origin OK: media load needs no CORS
+    var go = function () { rAudio.currentTime = (startMs + 10) / 1000; rAudio.play(); };
+    rStop = endMs;
+    if (rAudio.readyState >= 1) { go(); return; }
+    rAudio.addEventListener("loadedmetadata", go, { once: true });
+    rAudio.load();
+  }
+  function escapeRe(str) { return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+
+  var RSTORE = "learnx-dutch-review";
+  function loadReviewMarks(date) {
+    try { return (JSON.parse(localStorage.getItem(RSTORE)) || {})[date] || {}; }
+    catch (e) { return {}; }
+  }
+  function saveReviewMark(date, id, ok) {
+    var all;
+    try { all = JSON.parse(localStorage.getItem(RSTORE)) || {}; } catch (e) { all = {}; }
+    all[date] = all[date] || {};
+    all[date][id] = ok ? 1 : 0;
+    localStorage.setItem(RSTORE, JSON.stringify(all));
+  }
+  // rv_<YYMMDD>_<marks>: one mark per review item in reviewData.ids order (the run
+  // stored that order, so positions map back to ids) - 1 right / 0 wrong / x untried.
+  function drawReviewReport(box) {
+    if (!box) return;
+    box.textContent = "";
+    var bot = currentLesson && currentLesson.report && currentLesson.report.bot;
+    if (!bot || !reviewData) return;
+    var m = loadReviewMarks(reviewData.generated);
+    var marks = reviewData.ids.map(function (id) {
+      return (id in m) ? (m[id] ? "1" : "0") : "x";
+    }).join("");
+    if (!/[01]/.test(marks)) return;     // nothing scored yet
+    var a = el("a", "score", "✅ Herhaling opslaan");
+    a.href = "https://t.me/" + bot + "?start=rv_" +
+             reviewData.generated.replace(/-/g, "").slice(2) + "_" + marks;
+    box.appendChild(a);
+    box.appendChild(el("span", "report-note",
+      "stuurt je herhaling naar de bot (sends your review to the bot)"));
+  }
+
+  function herhalingView() {
+    var wrap = el("div");
+    if (!reviewData || !(reviewData.items || []).length) {
+      wrap.appendChild(el("p", "muted",
+        "Geen herhaling vandaag - je bent bij! (Nothing due today - you're caught up.)"));
+      return wrap;
+    }
+    wrap.appendChild(el("p", "hint",
+      "Jouw woorden die vandaag herhaald moeten worden - vul in uit je geheugen. " +
+      "(Your words due for review today - fill them in from memory.)"));
+    var marks = loadReviewMarks(reviewData.generated);
+    var inputs = [];
+    reviewData.items.forEach(function (item) {
+      var row = el("div", "cloze-line");
+      if (item.audio_url && item.end_ms) {
+        var play = el("button", "play", "🔊");
+        play.style.marginRight = ".6rem";
+        play.addEventListener("click", function () {
+          playSpan(item.audio_url, item.start_ms || 0, item.end_ms);
+        });
+        row.appendChild(play);
+      }
+      var input = el("input");
+      input.autocapitalize = "none";
+      input.dataset.id = item.id;
+      input.dataset.form = item.form;
+      inputs.push(input);
+      if (item.sentence_nl) {                 // blank the word out of its own sentence
+        var parts = item.sentence_nl.split(new RegExp(escapeRe(item.form), "i"));
+        row.appendChild(document.createTextNode(parts[0] || ""));
+        row.appendChild(input);
+        row.appendChild(document.createTextNode(parts.slice(1).join(item.form) || ""));
+        if (item.sentence_en) {
+          var en = el("span", "en", " - " + item.sentence_en);
+          en.style.marginLeft = ".4rem";
+          row.appendChild(en);
+        }
+      } else {                                // gloss-only recall (no archived sentence)
+        row.appendChild(el("span", null, "„" + (item.en || "") + "” = "));
+        row.appendChild(input);
+      }
+      if (item.id in marks) {                 // restore today's cached attempt
+        if (marks[item.id]) { input.value = item.form; input.classList.add("right"); input.disabled = true; }
+        else { input.classList.add("wrong"); }
+      }
+      wrap.appendChild(row);
+    });
+    var bar = el("p");
+    var score = el("button", "score", "Score");
+    var result = el("span", "result", "");
+    var rb = el("p");
+    score.addEventListener("click", function () {
+      var right = 0;
+      inputs.forEach(function (i) {
+        var ok = norm(i.value) === norm(i.dataset.form);
+        i.classList.toggle("right", ok);
+        i.classList.toggle("wrong", !ok);
+        saveReviewMark(reviewData.generated, i.dataset.id, ok);
+        if (ok) { i.disabled = true; right += 1; }
+      });
+      result.textContent = right + "/" + inputs.length + " goed";
+      drawReviewReport(rb);
+    });
+    bar.appendChild(score); bar.appendChild(result);
+    wrap.appendChild(bar);
+    wrap.appendChild(rb);
+    drawReviewReport(rb);
+    return wrap;
+  }
+
+  function loadReview() {
+    if (!reviewToken) return;
+    fetch("review/" + reviewToken + ".json?v=" + Date.now(), { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; })
+      .then(function (data) {
+        if (!data || !(data.items || []).length) return;
+        reviewData = data;
+        var tab = document.getElementById("tab-herhaling");
+        if (tab) tab.style.display = "";
+      });
+  }
+
   // --- page assembly --------------------------------------------------------------
   var manifest = [];     // lessons/index.json entries — the archived days (oldest first)
   var latestDate = "";   // dutch_lesson.json's date — the day with a same-origin MP3 copy
@@ -691,6 +838,9 @@
       app.appendChild(lerenView(lesson, state.step));
     } else if (state.tab === "lessen") {
       app.appendChild(lessenView(lesson));
+    } else if (state.tab === "herhaling") {
+      app.appendChild(herhalingView());
+      return;   // the review tab manages its own report; skip the lesson report/stats
     } else {
       ["gatentekst", "luistertoets"].forEach(function (k) {
         var b = el("button", k === state.sub ? "active" : "", k);
@@ -710,7 +860,7 @@
 
   document.querySelectorAll("#tabs button").forEach(function (b) {
     b.addEventListener("click", function () {
-      audio.pause(); stopAt = null; onTick = null; onStop = null;
+      audio.pause(); rAudio.pause(); rStop = null; stopAt = null; onTick = null; onStop = null;
       setTab(b.dataset.tab);
       draw();
     });
@@ -749,6 +899,7 @@
     .then(function (lesson) {
       latestDate = lesson.date || "";
       render(lesson);
+      loadReview();
     })
     .catch(function () {
       document.getElementById("meta").textContent = "geen les";

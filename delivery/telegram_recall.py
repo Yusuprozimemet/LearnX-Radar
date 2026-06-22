@@ -33,6 +33,9 @@ GET_UPDATES = "https://api.telegram.org/bot{token}/getUpdates"
 _REPORT = re.compile(r"^/start\s+dr_(\d{6})_([01x]+)$")
 # /start lr_<YYMMDD>_<n>: a 1–5 quality rating for that date's dev lesson.
 _RATING = re.compile(r"^/start\s+lr_(\d{6})_([1-5])$")
+# /start rv_<YYMMDD>_<marks>: a personal cross-day REVIEW report (multi-user Phase
+# 1) — marks positional over the review list published for that date (review.build).
+_REVIEW = re.compile(r"^/start\s+rv_(\d{6})_([01x]+)$")
 
 
 def _parse_date(yymmdd: str) -> str | None:
@@ -54,7 +57,7 @@ def fetch_inbound() -> dict[str, list]:
     Every fetched update is acknowledged regardless of content, so a stray message
     can't wedge the queue.
     """
-    empty: dict[str, list] = {"recall": [], "ratings": []}
+    empty: dict = {"recall": [], "ratings": [], "recall_by_user": {}, "review_by_user": {}}
     if not (config.TELEGRAM_BOT_TOKEN and config.TELEGRAM_CHAT_ID):
         return empty
     resp = requests.get(
@@ -67,18 +70,27 @@ def fetch_inbound() -> dict[str, list]:
     if not updates:
         return empty
 
-    recall_by_date: dict[str, str] = {}
-    rating_by_date: dict[str, int] = {}
+    owner = str(config.TELEGRAM_CHAT_ID)
+    allow = set(config.dutch_user_chat_ids())  # learners whose recall/review we accept
+    recall_by_date: dict[str, str] = {}           # owner-only (backward compat)
+    rating_by_date: dict[str, int] = {}           # owner-only (dev lesson rating)
+    recall_users: dict[str, dict[str, str]] = {}  # chat_id -> {date: marks}
+    review_users: dict[str, dict[str, str]] = {}
     for u in updates:
         msg = u.get("message") or {}
-        if str((msg.get("chat") or {}).get("id", "")) != str(config.TELEGRAM_CHAT_ID):
-            continue
+        sender = str((msg.get("chat") or {}).get("id", ""))
         text = (msg.get("text") or "").strip()
         if m := _REPORT.match(text):
             if date_iso := _parse_date(m.group(1)):
-                recall_by_date[date_iso] = m.group(2)  # last report for a date wins
+                if sender == owner:
+                    recall_by_date[date_iso] = m.group(2)  # last report for a date wins
+                if sender in allow:
+                    recall_users.setdefault(sender, {})[date_iso] = m.group(2)
+        elif m := _REVIEW.match(text):
+            if (date_iso := _parse_date(m.group(1))) and sender in allow:
+                review_users.setdefault(sender, {})[date_iso] = m.group(2)
         elif m := _RATING.match(text):
-            if date_iso := _parse_date(m.group(1)):
+            if (date_iso := _parse_date(m.group(1))) and sender == owner:
                 rating_by_date[date_iso] = int(m.group(2))  # last rating wins
 
     # Acknowledge the whole batch: a confirming getUpdates with offset just past
@@ -93,6 +105,8 @@ def fetch_inbound() -> dict[str, list]:
     return {
         "recall": sorted(recall_by_date.items()),
         "ratings": sorted(rating_by_date.items()),
+        "recall_by_user": {c: sorted(v.items()) for c, v in recall_users.items()},
+        "review_by_user": {c: sorted(v.items()) for c, v in review_users.items()},
     }
 
 

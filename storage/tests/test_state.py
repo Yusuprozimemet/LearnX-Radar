@@ -303,3 +303,55 @@ def test_save_dutch_lesson_without_date_skips_archive(tmp_path, monkeypatch):
     state.save_dutch_lesson({"theme": "tech"})
     assert (tmp_path / "dutch_lesson.json").exists()
     assert not (tmp_path / "lessons").exists()
+
+
+# --- multi-user (Phase 1): per-user files, review token, review folding ---------
+
+def test_dutch_memory_file_routing(tmp_path, monkeypatch):
+    monkeypatch.setattr(state, "_DATA_DIR", tmp_path)
+    monkeypatch.setattr(state, "DUTCH_MEMORY_FILE", tmp_path / "dutch_memory.json")
+    monkeypatch.setattr(state.config, "TELEGRAM_CHAT_ID", "owner")
+    # owner (and None) keep the historical unsuffixed file; others get a suffix
+    assert state._dutch_memory_file(None) == tmp_path / "dutch_memory.json"
+    assert state._dutch_memory_file("owner") == tmp_path / "dutch_memory.json"
+    assert state._dutch_memory_file("u2") == tmp_path / "dutch_memory_u2.json"
+    state.save_dutch_memory({"version": 1, "cefr": "B1", "words": {}}, "u2")
+    assert (tmp_path / "dutch_memory_u2.json").exists()
+    assert state.load_dutch_memory("u2")["cefr"] == "B1"
+    assert state.load_dutch_memory("owner")["words"] == {}  # owner file untouched
+
+
+def test_review_token_stable_and_distinct(monkeypatch):
+    monkeypatch.setattr(state.config, "REVIEW_TOKEN_SECRET", "s3cret")
+    t1 = state.review_token("42")
+    assert t1 == state.review_token("42")          # deterministic
+    assert t1 != state.review_token("99")          # per-user
+    assert len(t1) == 16 and t1.isalnum()
+
+
+def test_save_review_writes_token_file(tmp_path, monkeypatch):
+    monkeypatch.setattr(state, "REVIEW_DIR", tmp_path / "review")
+    state.save_review("abc123", {"generated": "2026-06-05", "ids": ["a"]})
+    import json
+    data = json.loads((tmp_path / "review" / "abc123.json").read_text(encoding="utf-8"))
+    assert data["ids"] == ["a"]
+
+
+def test_record_dutch_review_positional_and_idempotent():
+    m = state._default_dutch_memory()
+    m["words"] = {"a": {"reps": 3}, "b": {"reps": 3}}
+    m["last_review"] = {"date": "2026-06-10", "ids": ["a", "b"]}
+    n = state.record_dutch_review(m, "2026-06-10", "10", when=date(2026, 6, 11))
+    assert n == 2
+    assert m["words"]["a"]["recall_right"] == 1
+    assert m["words"]["b"]["recall_wrong"] == 1 and m["words"]["b"]["reps"] == 1
+    assert m["recall"][-1]["kind"] == "review"
+    # a duplicate deep-link tap is a no-op (reported flag set)
+    assert state.record_dutch_review(m, "2026-06-10", "10") == 0
+
+
+def test_record_dutch_review_rejects_mismatched_date():
+    m = state._default_dutch_memory()
+    m["words"] = {"a": {"reps": 1}}
+    m["last_review"] = {"date": "2026-06-09", "ids": ["a"]}
+    assert state.record_dutch_review(m, "2026-06-10", "1") == 0  # not the published list

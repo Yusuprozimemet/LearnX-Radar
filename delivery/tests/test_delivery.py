@@ -461,3 +461,34 @@ def test_devto_skips_on_wrong_weekday(monkeypatch):
 
     monkeypatch.setattr(devto_publisher.requests, "post", boom)
     assert devto_publisher.publish({"brief_md": "x"}) is False
+
+
+def test_fetch_inbound_routes_recall_and_review_per_user(monkeypatch):
+    monkeypatch.setattr(telegram_recall.config, "TELEGRAM_BOT_TOKEN", "tok")
+    monkeypatch.setattr(telegram_recall.config, "TELEGRAM_CHAT_ID", "42")
+    monkeypatch.setattr(telegram_recall.config, "ALLOWED_CHAT_IDS", ["42", "99"])
+    updates = [
+        {"update_id": 1, "message": {"chat": {"id": 42}, "text": "/start dr_260608_10x"}},
+        {"update_id": 2, "message": {"chat": {"id": 99}, "text": "/start dr_260608_01"}},
+        {"update_id": 3, "message": {"chat": {"id": 99}, "text": "/start rv_260608_11"}},
+        # a non-allowlisted chat is ignored for both dr_ and rv_:
+        {"update_id": 4, "message": {"chat": {"id": 7}, "text": "/start dr_260608_00"}},
+    ]
+
+    def fake_get(url, params=None, timeout=None):
+        return _UpdatesResp([] if "offset" in (params or {}) else updates)
+
+    monkeypatch.setattr(telegram_recall.requests, "get", fake_get)
+    inbound = telegram_recall.fetch_inbound()
+    assert inbound["recall"] == [("2026-06-08", "10x")]          # owner-only legacy key
+    assert inbound["recall_by_user"]["42"] == [("2026-06-08", "10x")]
+    assert inbound["recall_by_user"]["99"] == [("2026-06-08", "01")]
+    assert "7" not in inbound["recall_by_user"]                  # not allowlisted
+    assert inbound["review_by_user"]["99"] == [("2026-06-08", "11")]
+
+
+def test_dutch_markup_per_user_review_token():
+    plain = telegram_sender._dutch_reply_markup({})
+    assert "?u=" not in json.dumps(plain)
+    tok = telegram_sender._dutch_reply_markup({}, review_tok="abc123")
+    assert "dutch.html?u=abc123" in json.dumps(tok)

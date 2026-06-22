@@ -539,3 +539,16 @@ the daily run). See `specs/v7/day26-momentum-and-vectordb.md`.
   the one-chance listening drill, and measured recall — not mere exposure — drives
   the spaced-repetition intervals. Every day's lesson is archived, so the trainer's
   lesson list can reopen any past day — a finished lesson stays visitable.
+
+---
+
+## Personalization & multi-user (planned)
+
+Letting ~5 people use the Dutch track with their own progress, mistakes, and
+review without per-user LLM/TTS cost or accounts. The key distinction:
+**generation** (LLM + TTS, done once globally) vs. **selection** (which slice of
+the shared corpus each user drills, scheduled by their own recorded mistakes —
+cheap, per-user). Spaced repetition is already the mistake-driven engine; making
+the memory file per-user (keyed by Telegram chat ID, now safe in the private
+state repo) gives per-user mistake-driven review for free. Full plan in
+[personalization.md](personalization.md).
