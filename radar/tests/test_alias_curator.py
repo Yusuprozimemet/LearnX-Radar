@@ -31,6 +31,18 @@ def test_candidate_pairs_shortlists_near_duplicates():
     assert frozenset(("duckdb", "ai agents")) not in flat             # unrelated excluded
 
 
+def test_settled_alias_is_not_reproposed(monkeypatch):
+    # Once a pair is a learned alias in the live map (curate applies it before
+    # judging, like the daily radar), _canonical collapses both names to one vocab
+    # entry, so the judge can't re-rule — and re-flip — a merge that already settled.
+    import config
+    monkeypatch.setattr(config, "SKILL_ALIASES", {"autonomous ai agents": "ai agents"})
+    h = _history((1, ["AI agents", "Autonomous AI agents"]), (2, ["AI agents"]))
+    vocab, _freq = alias_curator._vocabulary(h)
+    assert vocab == ["ai agents"]                                   # both collapsed -> one
+    assert alias_curator.candidate_pairs(h, threshold=0.6) == []   # nothing to re-judge
+
+
 def test_denylist_pairs_are_never_proposed():
     h = _history((1, ["AI agents", "Autonomous AI agents"]))
     deny = {frozenset(("ai agents", "autonomous ai agents"))}

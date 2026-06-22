@@ -30,6 +30,7 @@ from radar.alias_curator import curate
 from radar.semantic_match import lexical_embedder, nim_embedder
 from radar.skill_extractor import _canonical
 from storage import (
+    apply_learned_aliases,
     load_alias_denylist,
     load_learned_aliases,
     load_trending_history,
@@ -125,6 +126,14 @@ def main() -> None:
     if not history:
         print("no trending history yet — nothing to curate")
         return
+
+    # Fold already-learned aliases into config.SKILL_ALIASES first, exactly as the
+    # daily radar does at startup, so _vocabulary/_canonical collapse a SETTLED pair
+    # to one name. Without this the curator only sees the hand-written map, re-proposes
+    # every prior merge, and the non-deterministic judge can flip its canonical
+    # direction run-to-run — an oscillation flatten_aliases then cancels to a split.
+    # Applying them here makes a merge stick: a settled pair never reaches the judge.
+    apply_learned_aliases()
 
     denylist = load_alias_denylist()
     result = curate(history, chat_fn=llm.chat, embedder=embedder,
