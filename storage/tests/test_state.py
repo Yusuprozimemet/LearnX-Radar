@@ -24,6 +24,50 @@ def test_learned_aliases_roundtrip_and_merge(tmp_path, monkeypatch):
     assert config.SKILL_ALIASES["k8s"] == "kubernetes"
 
 
+def test_flatten_aliases_collapses_chains():
+    # The exact chain the 2026-06-22 curation run produced: independent verdicts
+    # left `agentic ai`/`llm agents -> ai agents` while `ai agents` itself merged
+    # into `autonomous ai agents`. Flattening must point them ALL at the terminal.
+    chained = {
+        "agentic ai": "ai agents",
+        "llm agents": "ai agents",
+        "ai agents": "autonomous ai agents",
+        "autonomous agents": "autonomous ai agents",
+    }
+    flat = state.flatten_aliases(chained)
+    assert flat["agentic ai"] == "autonomous ai agents"
+    assert flat["llm agents"] == "autonomous ai agents"
+    assert flat["ai agents"] == "autonomous ai agents"
+    # No value is itself a key anymore -> single-hop _canonical fully resolves.
+    assert not (set(flat.values()) & set(flat))
+
+
+def test_flatten_aliases_breaks_cycles():
+    # Contradictory verdicts (a -> b AND b -> a) must not loop; both are dropped so
+    # the names stay separate (conservative) rather than resolving arbitrarily.
+    assert state.flatten_aliases({"a": "b", "b": "a"}) == {}
+    # A chain-free map passes through untouched (idempotent).
+    assert state.flatten_aliases({"k8s": "kubernetes"}) == {"k8s": "kubernetes"}
+
+
+def test_apply_learned_aliases_resolves_chains_live(tmp_path, monkeypatch):
+    import config
+    from radar.skill_extractor import _canonical
+
+    monkeypatch.setattr(state, "LEARNED_ALIASES_FILE", tmp_path / "skill_aliases.json")
+    monkeypatch.setattr(config, "SKILL_ALIASES", {})
+    state.save_learned_aliases({
+        "agentic ai": "ai agents",
+        "ai agents": "autonomous ai agents",
+    })
+    # save_learned_aliases flattens on write, so the persisted file is already clean.
+    assert "ai agents" not in set(state.load_learned_aliases().values())
+    state.apply_learned_aliases()
+    # The live scorer's canonicalizer now collapses the variant in a single hop.
+    assert _canonical("agentic ai") == "autonomous ai agents"
+    assert _canonical("ai agents") == "autonomous ai agents"
+
+
 def test_learned_aliases_missing_file_is_empty(tmp_path, monkeypatch):
     monkeypatch.setattr(state, "LEARNED_ALIASES_FILE", tmp_path / "nope.json")
     assert state.load_learned_aliases() == {}
