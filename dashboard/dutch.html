@@ -150,14 +150,7 @@
                     width:1.5rem; height:1.5rem; display:flex; align-items:center;
                     justify-content:center; font-size:.8rem; }
   .les-row.open { border-color:var(--green); background:var(--green-soft); }
-  /* LESSEN header: hint + the refresh button that re-pulls progress.json */
-  .lessen-head { display:flex; align-items:flex-start; gap:.6rem; }
-  .lessen-head .hint { flex:1 1 auto; }
-  button.refresh { flex:none; background:var(--blue); color:#fff; border:none;
-                   border-bottom:3px solid var(--blue-edge); border-radius:12px;
-                   font-weight:800; font-size:.85rem; padding:.45rem .7rem; cursor:pointer; }
-  button.refresh:active { transform:translateY(2px); border-bottom-width:1px; }
-  button.refresh:disabled { opacity:.6; cursor:default; }
+  /* Synced-status line in the LESSEN tab (words/streak/cefr from progress.json) */
   .synced { color:var(--grey); font-weight:700; font-size:.85rem; margin:.2rem 0 .6rem; }
 </style></head><body>
 <header class="bar">
@@ -592,24 +585,11 @@
   // stays visitable — tap ▶ to reopen that day) -----------------------------------
   function lessenView(lesson) {
     var wrap = el("div");
-    var head = el("div", "lessen-head");
-    head.appendChild(el("p", "hint",
-      "Jouw lessen en eindscores. Scores van andere apparaten worden één keer per dag "
-      + "gesynchroniseerd. Tik ▶ om een eerdere les te openen. (Your lessons and final "
-      + "scores. Scores from other devices sync once a day. Tap ▶ to reopen a past lesson.)"));
-    var refresh = el("button", "refresh", "↻ ververs");
-    refresh.title = "Haal de laatst gesynchroniseerde scores op (pull the latest synced scores)";
-    refresh.addEventListener("click", function () {
-      refresh.disabled = true; refresh.textContent = "↻ …";
-      Promise.all([
-        loadProgress(),
-        fetch("lessons/index.json?v=" + Date.now(), { cache: "no-store" })
-          .then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
-          .then(function (idx) { if (idx && idx.lessons) manifest = idx.lessons; }),
-      ]).then(function () { draw(); });   // draw() rebuilds lessenView with fresh data
-    });
-    head.appendChild(refresh);
-    wrap.appendChild(head);
+    // Scores sync on page load (loadProgress in the init chain), so a reload is all it
+    // takes to pull the day's update — no refresh button needed.
+    wrap.appendChild(el("p", "hint",
+      "Jouw lessen en eindscores. Tik ▶ om een eerdere les te openen. "
+      + "(Your lessons and final scores. Tap ▶ to reopen a past lesson.)"));
     if (progress.streak || progress.cefr || progress.words) {
       wrap.appendChild(el("p", "synced",
         "Gesynchroniseerd: " + progress.words + " woorden · reeks " + progress.streak
