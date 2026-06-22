@@ -27,6 +27,7 @@ from delivery import devto_publisher, email_sender, telegram_recall, telegram_se
 from dutch import audio as dutch_audio
 from dutch import coach as dutch_coach
 from dutch import lesson as dutch_lesson
+from dutch import progress as dutch_progress
 from dutch import review as dutch_review
 from dutch import trainer as dutch_trainer
 from dutch import wordlist as dutch_wordlist
@@ -52,6 +53,7 @@ from storage import (
     save_brief,
     save_dutch_lesson,
     save_dutch_memory,
+    save_dutch_progress,
     save_last_scored,
     save_memory,
     save_review,
@@ -516,6 +518,11 @@ def _run() -> None:
                     summary=dutch_state["summary"],
                 )
                 save_dutch_memory(dutch_state["memory"])
+                # Publish the cross-device scorecard: the trainer's LESSEN scores are
+                # localStorage (per-browser), so results submitted on the phone never
+                # show on the computer. progress.json carries the server-side record to
+                # every device. Synced once per day, with this run.
+                save_dutch_progress(dutch_progress.build_progress(dutch_state["memory"]))
             except Exception as exc:
                 _fail("dutch persist", exc)
 
