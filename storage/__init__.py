@@ -13,6 +13,7 @@ from storage.state import (
     dutch_due_words,
     dutch_unsubmitted_streak,
     filter_new,
+    flatten_aliases,
     load_alias_denylist,
     load_brief,
     load_dutch_memory,
@@ -72,6 +73,7 @@ __all__ = [
     "load_learned_aliases",
     "save_learned_aliases",
     "apply_learned_aliases",
+    "flatten_aliases",
     "load_alias_denylist",
     "save_alias_denylist",
 ]
