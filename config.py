@@ -414,6 +414,24 @@ DUTCH_BACKLOG_PAUSE_AFTER = 5
 # Dutch TTS voices (edge-tts, no API key) — two co-hosts, slower than native so an
 # A2 learner can follow. Speakers reuse the ALEX/MAYA labels of the dev dialogue so
 # audio_builder's voice map keys line up.
+# --- Multi-user Dutch personalization (Phase 1) ---
+# The Dutch track is single-learner by default (the owner). Set ALLOWED_CHAT_IDS to a
+# comma-separated list of Telegram chat ids to let a small, KNOWN group (~5 people)
+# each keep their OWN spaced-repetition schedule and a personal cross-day review,
+# while still sharing ONE generated lesson + audio (no per-user LLM/TTS cost). The
+# owner (TELEGRAM_CHAT_ID) is always included. Empty -> single-user, unchanged.
+# Identity is the chat id only - no email, no accounts. See plan/personalization.md.
+ALLOWED_CHAT_IDS = [
+    c.strip() for c in os.getenv("ALLOWED_CHAT_IDS", "").split(",") if c.strip()
+]
+DUTCH_MULTIUSER_ENABLED = True   # rollback switch; effective only when ALLOWED_CHAT_IDS is set
+# Secret keying each learner's review token (an HMAC of their chat id) that names the
+# published review/<token>.json and rides the trainer URL (?u=<token>). The data is
+# low-stakes (which words are due) but the token keeps it from being enumerable by raw
+# chat id. Falls back to the bot token so it's always stable per deployment.
+REVIEW_TOKEN_SECRET = os.getenv("REVIEW_TOKEN_SECRET") or (TELEGRAM_BOT_TOKEN or "learnx-radar")
+DUTCH_REVIEW_MAX = 12            # cap on per-user cross-day review items published each run
+
 DUTCH_VOICE_ALEX = "nl-NL-MaartenNeural"
 DUTCH_VOICE_MAYA = "nl-NL-ColetteNeural"
 DUTCH_TTS_RATE = "-10%"
@@ -429,6 +447,22 @@ _REQUIRED = {
     "EMAIL_FROM": EMAIL_FROM,
     "EMAIL_TO": EMAIL_TO,
 }
+
+
+def dutch_user_chat_ids() -> list[str]:
+    """Chat ids for the Dutch track: the owner first, then any allowlisted
+    learners, de-duped. Empty ALLOWED_CHAT_IDS -> just the owner (unchanged)."""
+    ids: list[str] = []
+    for cid in [TELEGRAM_CHAT_ID, *ALLOWED_CHAT_IDS]:
+        c = str(cid).strip() if cid else ""
+        if c and c not in ids:
+            ids.append(c)
+    return ids
+
+
+def dutch_multiuser_active() -> bool:
+    """True when multi-user is on AND more than just the owner is configured."""
+    return DUTCH_MULTIUSER_ENABLED and len(dutch_user_chat_ids()) > 1
 
 
 def validate() -> None:

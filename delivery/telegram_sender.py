@@ -16,6 +16,7 @@ import requests
 
 import config
 from delivery import followup, pdf
+from storage import review_token
 
 SEND_AUDIO = "https://api.telegram.org/bot{token}/sendAudio"
 SEND_MESSAGE = "https://api.telegram.org/bot{token}/sendMessage"
@@ -50,7 +51,12 @@ def _targets() -> list[str]:
     lessons are posted to the channel so its members all receive them.
     """
     ids: list[str] = []
-    for cid in (config.TELEGRAM_CHAT_ID, getattr(config, "TELEGRAM_CHANNEL_ID", None)):
+    learners = (
+        config.dutch_user_chat_ids()
+        if config.dutch_multiuser_active()
+        else [config.TELEGRAM_CHAT_ID]
+    )
+    for cid in [*learners, getattr(config, "TELEGRAM_CHANNEL_ID", None)]:
         if cid and cid not in ids:
             ids.append(cid)
     return ids
@@ -165,12 +171,15 @@ def _dutch_html(md: str, limit: int) -> str:
     return esc.strip()
 
 
-def _dutch_reply_markup(dutch: dict) -> dict:
+def _dutch_reply_markup(dutch: dict, review_tok: str | None = None) -> dict:
     rows = []
     # Delft trainer (v9 day 32): tap-to-play sentences, checked cloze, enforced
     # one-chance listening — the interactive half of the lesson.
     if config.DUTCH_TRAINER_ENABLED:
-        rows.append([{"text": "🎧 Train this lesson (Delft)", "url": config.TRAINER_URL}])
+        # Per-learner review rides the trainer URL: ?u=<token> tells the page which
+        # published review/<token>.json to fetch (multi-user Phase 1).
+        url = f"{config.TRAINER_URL}?u={review_tok}" if review_tok else config.TRAINER_URL
+        rows.append([{"text": "🎧 Train this lesson (Delft)", "url": url}])
     words = dutch.get("quiz_words") or []
     if words:
         rows.append([{"text": "🇳🇱 Quiz me in Dutch", "url": followup.dutch_quiz_url(words)}])
@@ -179,14 +188,15 @@ def _dutch_reply_markup(dutch: dict) -> dict:
     return {"reply_markup": json.dumps({"inline_keyboard": rows})}
 
 
-def _send_dutch(chat_id: str, lesson: dict, dutch_pdf: Path | None, token: str) -> None:
+def _send_dutch(chat_id: str, lesson: dict, dutch_pdf: Path | None, token: str,
+                review_tok: str | None = None) -> None:
     """Deliver the Dutch lesson to one chat: audio (teaser caption) + full PDF, or a
     text message when there's no audio. No-op when the run produced no Dutch lesson."""
     dutch = lesson.get("dutch") or {}
     md = dutch.get("markdown")
     if not md:
         return
-    markup = _dutch_reply_markup(dutch)
+    markup = _dutch_reply_markup(dutch, review_tok)
     mp3 = dutch.get("mp3_path")
     has_audio = bool(mp3 and Path(mp3).exists())
     pdf_on = config.TELEGRAM_PDF_ENABLED and dutch_pdf is not None
@@ -248,6 +258,13 @@ def _deliver_one(chat_id: str, lesson: dict, brief_pdf: Path | None,
     """Send the full lesson bundle (dev audio + PDF, Dutch audio + PDF) to one chat."""
     token = _token_for(chat_id)
     is_owner = str(chat_id) == str(config.TELEGRAM_CHAT_ID)
+    # A per-learner review token rides the Dutch trainer link so each user opens
+    # their own cross-day review; channel/non-learners get the plain trainer URL.
+    review_tok = (
+        review_token(chat_id)
+        if config.dutch_multiuser_active() and str(chat_id) in config.dutch_user_chat_ids()
+        else None
+    )
     mp3 = Path(lesson["mp3_path"])
     with mp3.open("rb") as audio:
         _check(requests.post(
@@ -264,7 +281,7 @@ def _deliver_one(chat_id: str, lesson: dict, brief_pdf: Path | None,
         _send_document(chat_id, brief_pdf, f"📄 <b>{lesson['title']}</b> — full lesson",
                        token, markup=_reply_markup(lesson))
     print(f"[telegram] sent lesson '{lesson['title']}' -> {chat_id}")
-    _send_dutch(chat_id, lesson, dutch_pdf, token)
+    _send_dutch(chat_id, lesson, dutch_pdf, token, review_tok=review_tok)
 
 
 def post_waitlist(force: bool = False, chat_id: str | None = None) -> bool:

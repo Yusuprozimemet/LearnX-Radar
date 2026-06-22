@@ -27,6 +27,7 @@ from delivery import devto_publisher, email_sender, telegram_recall, telegram_se
 from dutch import audio as dutch_audio
 from dutch import coach as dutch_coach
 from dutch import lesson as dutch_lesson
+from dutch import review as dutch_review
 from dutch import trainer as dutch_trainer
 from dutch import wordlist as dutch_wordlist
 from learnx import audio_builder, curriculum, dialogue
@@ -44,17 +45,21 @@ from storage import (
     previous_lesson,
     record_dutch_lesson,
     record_dutch_recall,
+    record_dutch_review,
     record_lesson,
     record_lesson_rating,
+    review_token,
     save_brief,
     save_dutch_lesson,
     save_dutch_memory,
     save_last_scored,
     save_memory,
+    save_review,
     save_seen,
     save_trending_history,
     slugify,
 )
+from storage.state import DUTCH_LESSONS_DIR
 
 OUTPUT_DIR = Path(__file__).parent / "output"
 
@@ -179,7 +184,11 @@ def _ingest_inbound(memory: dict) -> None:
         if applied:
             save_memory(memory)
         print(f"[rating] {len(inbound['ratings'])} rating(s), {applied} lesson(s) stamped")
-    if config.DUTCH_RECALL_ENABLED and inbound["recall"]:
+    if not config.DUTCH_RECALL_ENABLED:
+        return
+    if config.dutch_multiuser_active():
+        _ingest_dutch_multiuser(inbound)
+    elif inbound["recall"]:
         try:
             dmem = load_dutch_memory()
             applied = sum(record_dutch_recall(dmem, d, marks) for d, marks in inbound["recall"])
@@ -188,6 +197,28 @@ def _ingest_inbound(memory: dict) -> None:
             print(f"[dutch] recall: {len(inbound['recall'])} report(s), {applied} word(s) updated")
         except Exception as exc:
             _fail("dutch recall", exc)
+
+
+def _ingest_dutch_multiuser(inbound: dict) -> None:
+    """Fold each allowlisted learner's recall (dr_) and cross-day review (rv_) into
+    their OWN dutch_memory_<chatid>.json. One getUpdates batch carried them all,
+    keyed by sender chat id; per-user failures are isolated so one bad file can't
+    drop another learner's feedback."""
+    recall = inbound.get("recall_by_user", {})
+    review = inbound.get("review_by_user", {})
+    for chat_id in sorted(set(recall) | set(review)):
+        try:
+            dmem = load_dutch_memory(chat_id)
+            applied = 0
+            for d, marks in recall.get(chat_id, []):
+                applied += record_dutch_recall(dmem, d, marks)
+            for d, marks in review.get(chat_id, []):
+                applied += record_dutch_review(dmem, d, marks)
+            if applied:
+                save_dutch_memory(dmem, chat_id)
+            print(f"[dutch] {chat_id}: folded {applied} recall/review outcome(s)")
+        except Exception as exc:
+            _fail(f"dutch recall {chat_id}", exc)
 
 
 def _dutch_pause_payload(backlog: int) -> dict:
@@ -306,6 +337,35 @@ def _build_dutch(today_skill: str | None) -> tuple[dict | None, dict | None]:
     except Exception as exc:
         _fail("dutch build", exc)
         return None, None
+
+
+def _persist_dutch_multiuser(dutch_state: dict) -> None:
+    """Record today's SHARED lesson into every learner's SR file and publish each
+    learner's personal cross-day review (review/<token>.json). Generation stayed
+    global (one lesson + audio); only SELECTION is per-user. Today's new words enter
+    each schedule due later, so they don't appear in today's review — the review is
+    genuinely the words each learner still owes. Per-user failures are isolated."""
+    bank = dutch_wordlist.load()
+    for chat_id in config.dutch_user_chat_ids():
+        try:
+            dmem = load_dutch_memory(chat_id)
+            record_dutch_lesson(
+                dmem,
+                word_ids=dutch_state["word_ids"],
+                theme=dutch_state["theme"],
+                audio=dutch_state["audio"],
+                summary=dutch_state["summary"],
+            )
+            payload = dutch_review.build(
+                dmem, DUTCH_LESSONS_DIR, bank, max_items=config.DUTCH_REVIEW_MAX
+            )
+            # Store the published order so an rv_ report's positional marks map back.
+            dmem["last_review"] = {"date": payload["generated"], "ids": payload["ids"]}
+            save_dutch_memory(dmem, chat_id)
+            save_review(review_token(chat_id), payload)
+            print(f"[dutch] {chat_id}: SR updated, {len(payload['ids'])} review item(s)")
+        except Exception as exc:
+            _fail(f"dutch persist {chat_id}", exc)
 
 
 def _run() -> None:
@@ -444,17 +504,20 @@ def _run() -> None:
 
     # 5b. Persist Dutch spaced-repetition state (separate file, separate concern).
     if dutch_state:
-        try:
-            record_dutch_lesson(
-                dutch_state["memory"],
-                word_ids=dutch_state["word_ids"],
-                theme=dutch_state["theme"],
-                audio=dutch_state["audio"],
-                summary=dutch_state["summary"],
-            )
-            save_dutch_memory(dutch_state["memory"])
-        except Exception as exc:
-            _fail("dutch persist", exc)
+        if config.dutch_multiuser_active():
+            _persist_dutch_multiuser(dutch_state)
+        else:
+            try:
+                record_dutch_lesson(
+                    dutch_state["memory"],
+                    word_ids=dutch_state["word_ids"],
+                    theme=dutch_state["theme"],
+                    audio=dutch_state["audio"],
+                    summary=dutch_state["summary"],
+                )
+                save_dutch_memory(dutch_state["memory"])
+            except Exception as exc:
+                _fail("dutch persist", exc)
 
     # 6. Regenerate the dashboard from the updated state + this run's ranking.
     _refresh_dashboard(memory, scored, skill["skill"])

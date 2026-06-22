@@ -61,6 +61,8 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
           TELEGRAM_BOT_USERNAME: ${{ secrets.TELEGRAM_BOT_USERNAME }}  # v9 day 33: Save-results deep link
+          ALLOWED_CHAT_IDS: ${{ secrets.ALLOWED_CHAT_IDS }}        # multi-user Dutch (Phase 1); empty -> single-user
+          REVIEW_TOKEN_SECRET: ${{ secrets.REVIEW_TOKEN_SECRET }}  # names per-user review/<token>.json
           TELEGRAM_CHANNEL_BOT_TOKEN: ${{ secrets.TELEGRAM_CHANNEL_BOT_TOKEN }}
           WAITLIST_URL: ${{ secrets.WAITLIST_URL }}
           DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}

@@ -5,6 +5,8 @@ adds the v2 knowledge-state file skill_memory.json. The committed JSON is the
 source of truth; these helpers degrade gracefully if a file is missing or
 corrupt so a single bad write never wedges the daily run.
 """
+import hashlib
+import hmac
 import json
 import os
 import re
@@ -40,6 +42,10 @@ DUTCH_LESSON_FILE = _DATA_DIR / "dutch_lesson.json"
 # so the trainer page can reopen any past day. Grows
 # from the day this shipped — earlier lessons were overwritten and exist as audio only.
 DUTCH_LESSONS_DIR = _DATA_DIR / "lessons"
+# Multi-user (Phase 1): per-learner cross-day review lists, named by an HMAC token
+# of the chat id (review_token). Published to Pages; the trainer page fetches
+# review/<token>.json when opened with ?u=<token>. See plan/personalization.md.
+REVIEW_DIR = _DATA_DIR / "review"
 
 LAST_SCORED_KEEP = 20  # cap the persisted ranking; the dashboard only shows a top slice
 HISTORY_KEEP_DAYS = 60  # cap the per-day archive so the embedded page payload stays bounded
@@ -359,14 +365,27 @@ def _default_dutch_memory() -> dict:
         "words": {},
         "lessons": [],
         "recall": [],
+        # Multi-user review (Phase 1): ids + date of the most recent published
+        # review list, so an rv_ report's positional marks map back to word ids.
+        "last_review": {},
     }
 
 
-def load_dutch_memory() -> dict:
-    if not DUTCH_MEMORY_FILE.exists():
+def _dutch_memory_file(chat_id=None):
+    """Path to a learner's Dutch SR file. The owner (or chat_id=None) keeps the
+    historical unsuffixed dutch_memory.json (no migration, monkeypatchable in
+    tests); every other learner gets dutch_memory_<chatid>.json beside it."""
+    if chat_id is None or str(chat_id) == str(config.TELEGRAM_CHAT_ID):
+        return DUTCH_MEMORY_FILE
+    return _DATA_DIR / f"dutch_memory_{chat_id}.json"
+
+
+def load_dutch_memory(chat_id=None) -> dict:
+    path = _dutch_memory_file(chat_id)
+    if not path.exists():
         return _default_dutch_memory()
     try:
-        data = json.loads(DUTCH_MEMORY_FILE.read_text(encoding="utf-8"))
+        data = json.loads(path.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError):
         return _default_dutch_memory()
     if not isinstance(data, dict):
@@ -377,9 +396,26 @@ def load_dutch_memory() -> dict:
     return data
 
 
-def save_dutch_memory(memory: dict) -> None:
-    DUTCH_MEMORY_FILE.write_text(
+def save_dutch_memory(memory: dict, chat_id=None) -> None:
+    _dutch_memory_file(chat_id).write_text(
         json.dumps(memory, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+
+
+def review_token(chat_id) -> str:
+    """Unguessable, stable token naming a learner's published review file. HMAC of
+    the chat id under REVIEW_TOKEN_SECRET, so review/<token>.json is not
+    enumerable by raw chat id (plan/personalization.md: public-with-a-password)."""
+    return hmac.new(
+        str(config.REVIEW_TOKEN_SECRET).encode(), str(chat_id).encode(), hashlib.sha256
+    ).hexdigest()[:16]
+
+
+def save_review(token: str, payload: dict) -> None:
+    """Publish one learner's cross-day review list (canonical \"what's due\")."""
+    REVIEW_DIR.mkdir(parents=True, exist_ok=True)
+    (REVIEW_DIR / f"{token}.json").write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
     )
 
 
@@ -503,6 +539,53 @@ def record_dutch_lesson(
         }
     )
     return memory
+
+
+def record_dutch_review(
+    memory: dict, date_iso: str, marks: str, when: date | None = None
+) -> int:
+    """Fold a personal cross-day REVIEW report into the SR state (multi-user Phase 1);
+    returns how many words it applied to (0 when it can't be used).
+
+    `marks` is positional over `memory["last_review"]["ids"]` — the exact order of the
+    review list published for `date_iso` (review_token names the file; the run stores
+    the order so positions map back to ids without sending them, like the dr_ loop).
+    Per mark: '1' recalled -> recall_right += 1; '0' failed -> recall_wrong += 1, reps
+    reset to 1, due pulled to date_iso + base interval; 'x' untrained -> untouched.
+    One report per published list: the stored `reported` flag makes a re-tap a no-op."""
+    last = memory.get("last_review") or {}
+    if last.get("date") != date_iso or last.get("reported"):
+        return 0
+    words = memory.setdefault("words", {})
+    right_ids: list[str] = []
+    wrong_ids: list[str] = []
+    for wid, mark in zip(last.get("ids", []), marks, strict=False):
+        entry = words.get(wid)
+        if entry is None or mark == "x":
+            continue
+        if mark == "1":
+            entry["recall_right"] = int(entry.get("recall_right", 0)) + 1
+            right_ids.append(wid)
+        else:
+            entry["recall_wrong"] = int(entry.get("recall_wrong", 0)) + 1
+            entry["reps"] = 1
+            entry["due"] = (
+                date.fromisoformat(date_iso) + timedelta(days=_dutch_interval_days(1))
+            ).isoformat()
+            wrong_ids.append(wid)
+    if not right_ids and not wrong_ids:
+        return 0
+    last["reported"] = True  # idempotent: a duplicate deep-link tap won't double-count
+    log = memory.setdefault("recall", [])
+    log.append({
+        "date": date_iso,
+        "reported": (when or date.today()).isoformat(),
+        "right": right_ids,
+        "wrong": wrong_ids,
+        "kind": "review",
+    })
+    del log[:-RECALL_LOG_KEEP]
+    return len(right_ids) + len(wrong_ids)
 
 
 def record_dutch_recall(
