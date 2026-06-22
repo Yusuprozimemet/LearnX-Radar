@@ -38,6 +38,10 @@ ALIAS_DENYLIST_FILE = _DATA_DIR / "skill_aliases_denylist.json"
 # v9 day 32: today's full Dutch lesson (text + cloze + audio seek map) for the
 # Delft trainer page — committed by the workflow, copied to Pages, fetched by JS.
 DUTCH_LESSON_FILE = _DATA_DIR / "dutch_lesson.json"
+# Cross-device progress scorecard: per-day recall scores distilled from dutch_memory
+# (see dutch/progress.py), published to Pages so a result submitted on one device
+# shows on every device. The trainer's own LESSEN scores are localStorage (per-browser).
+DUTCH_PROGRESS_FILE = _DATA_DIR / "dutch_progress.json"
 # Lesson archive: a dated copy of every trainer lesson plus an index.json manifest,
 # so the trainer page can reopen any past day. Grows
 # from the day this shipped — earlier lessons were overwritten and exist as audio only.
@@ -443,6 +447,15 @@ def save_review(token: str, payload: dict) -> None:
     """Publish one learner's cross-day review list (canonical \"what's due\")."""
     REVIEW_DIR.mkdir(parents=True, exist_ok=True)
     (REVIEW_DIR / f"{token}.json").write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+
+
+def save_dutch_progress(payload: dict) -> None:
+    """Write the cross-device progress scorecard (dutch/progress.build_progress).
+    Committed with the rest of the state each run and copied to Pages as progress.json
+    so every device can show the full per-day history, not just this browser's."""
+    DUTCH_PROGRESS_FILE.write_text(
         json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
     )
 

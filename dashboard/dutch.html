@@ -150,6 +150,15 @@
                     width:1.5rem; height:1.5rem; display:flex; align-items:center;
                     justify-content:center; font-size:.8rem; }
   .les-row.open { border-color:var(--green); background:var(--green-soft); }
+  /* LESSEN header: hint + the refresh button that re-pulls progress.json */
+  .lessen-head { display:flex; align-items:flex-start; gap:.6rem; }
+  .lessen-head .hint { flex:1 1 auto; }
+  button.refresh { flex:none; background:var(--blue); color:#fff; border:none;
+                   border-bottom:3px solid var(--blue-edge); border-radius:12px;
+                   font-weight:800; font-size:.85rem; padding:.45rem .7rem; cursor:pointer; }
+  button.refresh:active { transform:translateY(2px); border-bottom-width:1px; }
+  button.refresh:disabled { opacity:.6; cursor:default; }
+  .synced { color:var(--grey); font-weight:700; font-size:.85rem; margin:.2rem 0 .6rem; }
 </style></head><body>
 <header class="bar">
   <span class="owl">📻</span>
@@ -583,12 +592,38 @@
   // stays visitable — tap ▶ to reopen that day) -----------------------------------
   function lessenView(lesson) {
     var wrap = el("div");
-    wrap.appendChild(el("p", "hint",
-      "Jouw lessen en eindscores — op dit apparaat. Tik ▶ om een eerdere les te openen. (Your lessons and final scores — on this device. Tap ▶ to reopen a past lesson.)"));
+    var head = el("div", "lessen-head");
+    head.appendChild(el("p", "hint",
+      "Jouw lessen en eindscores. Scores van andere apparaten worden één keer per dag "
+      + "gesynchroniseerd. Tik ▶ om een eerdere les te openen. (Your lessons and final "
+      + "scores. Scores from other devices sync once a day. Tap ▶ to reopen a past lesson.)"));
+    var refresh = el("button", "refresh", "↻ ververs");
+    refresh.title = "Haal de laatst gesynchroniseerde scores op (pull the latest synced scores)";
+    refresh.addEventListener("click", function () {
+      refresh.disabled = true; refresh.textContent = "↻ …";
+      Promise.all([
+        loadProgress(),
+        fetch("lessons/index.json?v=" + Date.now(), { cache: "no-store" })
+          .then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
+          .then(function (idx) { if (idx && idx.lessons) manifest = idx.lessons; }),
+      ]).then(function () { draw(); });   // draw() rebuilds lessenView with fresh data
+    });
+    head.appendChild(refresh);
+    wrap.appendChild(head);
+    if (progress.streak || progress.cefr || progress.words) {
+      wrap.appendChild(el("p", "synced",
+        "Gesynchroniseerd: " + progress.words + " woorden · reeks " + progress.streak
+        + (progress.cefr ? " · " + progress.cefr : "")));
+    }
     var all = loadResults();
     var byDate = {};                                  // archive manifest, keyed by date
     manifest.forEach(function (m) { if (m.date) byDate[m.date] = m; });
     var dates = Object.keys(all);
+    // Fold in days that only exist server-side (submitted on another device) and any
+    // archived day, so the list is the full history, not just this browser's.
+    Object.keys(progress.days).forEach(function (d) {
+      if (dates.indexOf(d) === -1) dates.push(d);
+    });
     Object.keys(byDate).forEach(function (d) {
       if (dates.indexOf(d) === -1) dates.push(d);
     });
@@ -617,6 +652,12 @@
         right += (kinds[k].right || []).length;
         total += (kinds[k].right || []).length + (kinds[k].wrong || []).length;
       });
+      var synced = false;
+      if (!total && progress.days[d]) {        // no local result -> use the synced score
+        right = progress.days[d].right || 0;
+        total = right + (progress.days[d].wrong || 0);
+        synced = total > 0;
+      }
       var meta = el("span", "meta");
       var used = Math.max(attemptsUsed(d, "gatentekst"), attemptsUsed(d, "luistertoets"));
       if (used) {
@@ -625,7 +666,9 @@
       }
       if (total) {
         meta.appendChild(el("span", "pct", Math.round(100 * right / total) + "%"));
-        meta.appendChild(el("span", "check", "✔"));
+        meta.appendChild(el("span", "check", synced ? "☁" : "✔")).title =
+          synced ? "Gesynchroniseerd van een ander apparaat (synced from another device)"
+                 : "Op dit apparaat (on this device)";
       } else {
         meta.appendChild(el("span", "pct muted", "—"));
       }
@@ -780,6 +823,22 @@
   var manifest = [];     // lessons/index.json entries — the archived days (oldest first)
   var latestDate = "";   // dutch_lesson.json's date — the day with a same-origin MP3 copy
   var currentLesson = null;
+  // Cross-device scorecard published by the daily run (progress.json). The LESSEN
+  // scores below come from localStorage (this browser only), so results submitted on
+  // the phone never show on the computer. This is the server-side record, keyed by
+  // date, used as the fallback whenever a day has no local result. Synced once a day.
+  var progress = { days: {}, streak: 0, cefr: "", words: 0 };
+  function loadProgress() {
+    return fetch("progress.json?v=" + Date.now(), { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; })
+      .then(function (p) {
+        if (!p) return;
+        progress = { days: {}, streak: p.streak || 0, cefr: p.cefr || "",
+                     words: p.words_tracked || 0 };
+        (p.days || []).forEach(function (d) { if (d.date) progress.days[d.date] = d; });
+      });
+  }
   var state = { tab: "leren", step: 1, sub: "gatentekst" };
 
   // Load the lesson MP3 fully as a blob: blob URLs are instantly and exactly
@@ -900,6 +959,7 @@
       latestDate = lesson.date || "";
       render(lesson);
       loadReview();
+      loadProgress().then(function () { if (state.tab === "lessen") draw(); });
     })
     .catch(function () {
       document.getElementById("meta").textContent = "geen les";

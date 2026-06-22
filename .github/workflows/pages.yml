@@ -58,6 +58,11 @@ jobs:
           cp dashboard/dutch.html _site/dutch.html         # Delft trainer page (v9)
           cp dashboard/favicon.svg _site/favicon.svg       # browser-tab icon (all pages)
           cp state/dutch_lesson.json _site/dutch_lesson.json 2>/dev/null || true  # today's lesson for the trainer
+          # Cross-device progress scorecard (dutch/progress.py): the trainer's LESSEN
+          # scores live in localStorage (per-browser), so a phone result never shows on
+          # the computer. This server-side record, refreshed each run, lets every device
+          # show the full per-day history. Absent on day one — the copy is simply skipped.
+          cp state/dutch_progress.json _site/progress.json 2>/dev/null || true
           # Lesson archive (dated JSONs + index.json): the trainer's lesson list.
           # Past days play their audio straight from the release CDN (it supports
           # Range requests, so seeking works without the same-origin blob copy).
