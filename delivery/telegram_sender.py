@@ -258,11 +258,13 @@ def _deliver_one(chat_id: str, lesson: dict, brief_pdf: Path | None,
     """Send the full lesson bundle (dev audio + PDF, Dutch audio + PDF) to one chat."""
     token = _token_for(chat_id)
     is_owner = str(chat_id) == str(config.TELEGRAM_CHAT_ID)
-    # A per-learner review token rides the Dutch trainer link so each user opens
-    # their own cross-day review; channel/non-learners get the plain trainer URL.
+    # A per-learner token rides the Dutch trainer link so each user opens their OWN
+    # cross-day review (review/<token>.json) and their OWN cross-device scorecard
+    # (progress/<token>.json) — never anyone else's. The owner gets one too even in
+    # single-user mode; only channel/non-learners get the plain (token-less) URL.
     review_tok = (
         review_token(chat_id)
-        if config.dutch_multiuser_active() and str(chat_id) in config.dutch_user_chat_ids()
+        if str(chat_id) in config.dutch_user_chat_ids()
         else None
     )
     mp3 = Path(lesson["mp3_path"])
