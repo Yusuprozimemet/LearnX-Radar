@@ -106,3 +106,24 @@ the owner is a later phase.
   and ignores non-allowlisted chats; the trainer markup carries `?u=<token>`.
 - Existing suite unchanged: with `ALLOWED_CHAT_IDS` empty the single-user paths are
   byte-identical, so all prior tests pass.
+
+---
+
+## 8. Follow-up — cross-device scorecard (added after this day)
+
+The LESSEN tab originally showed per-day scores from `localStorage` only, so a result
+submitted on the phone never appeared on the laptop. A later change distilled each
+learner's per-day right/wrong + streak + CEFR from their `dutch_memory`
+([dutch/progress.py](../../dutch/progress.py)) and published it for the trainer to read
+back on any device.
+
+The first cut published it as a single, fixed-name `progress.json` fetched with no
+token — which made it **world-readable** and, worse, meant every learner saw the
+*owner's* scores instead of their own. It was corrected to follow this day's
+`review/<token>.json` model exactly: `progress/<token>.json`, named by the same
+`review_token`, written per learner in `_persist_dutch_multiuser` (and for the owner
+in the single-user path), fetched by `loadProgress()` only when the page is opened
+with `?u=<token>`. The owner now gets a token link even in single-user mode; opened
+without a token the page falls back to `localStorage` and fetches nothing personal. So
+the scorecard inherits the same *public-with-a-password* property as the review list —
+no global, guessable, personal file.

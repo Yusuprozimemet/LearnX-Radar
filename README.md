@@ -240,11 +240,13 @@ The roadmap (KNM, reading, grammar, adaptive pacing toward B1) lives in
 [specs/v9](specs/v9); see [plan/plan.md](plan/plan.md).
 
 **Multi-user (Phase 1).** The same engine can serve a small known group: set
-`ALLOWED_CHAT_IDS` and each learner keeps their own spaced-repetition schedule and
-a personal **cross-day review** (the trainer's 🔁 *herhaling* tab, opened via a
-per-user `?u=<token>` link), while everyone still shares **one** generated lesson +
-audio — generation is global, only selection is per-user, so there's no extra
-LLM/TTS cost. Empty `ALLOWED_CHAT_IDS` keeps it single-user. See
+`ALLOWED_CHAT_IDS` and each learner keeps their own spaced-repetition schedule, a
+personal **cross-day review** (the trainer's 🔁 *herhaling* tab) and a personal
+**cross-device scorecard** (the LESSEN tab), both opened via the same per-user
+`?u=<token>` link and stored token-gated so a learner only ever sees their own
+data — while everyone still shares **one** generated lesson + audio. Generation is
+global, only selection is per-user, so there's no extra LLM/TTS cost. Empty
+`ALLOWED_CHAT_IDS` keeps it single-user (the owner still gets a token). See
 [plan/personalization.md](plan/personalization.md) and [specs/v10](specs/v10).
 
 ## Stack
@@ -373,8 +375,9 @@ GitHub repo secrets (see [.github/workflows/radar.yml](.github/workflows/radar.y
   Telegram chat ids of a small known group (~5) who each get their own
   spaced-repetition schedule and a personal cross-day review, sharing one generated
   lesson (the owner is always included; empty means single-user). `REVIEW_TOKEN_SECRET`
-  keys the per-learner review token that names the published `review/<token>.json`
-  (falls back to the bot token). See [plan/personalization.md](plan/personalization.md).
+  keys the per-learner HMAC token that names both the published `review/<token>.json`
+  and the cross-device `progress/<token>.json` (falls back to the bot token). See
+  [plan/personalization.md](plan/personalization.md).
 - **Dutch coach:** needs **no new secrets** — it reuses the same LLM and
   edge-tts. Tune it via the `DUTCH_*` constants in [config.py](config.py)
   (enable/disable, words per day, review cap, voices, Delft pauses/cloze/trainer
@@ -411,6 +414,13 @@ word bank) off the public repo while the public site still renders it.
   when `ALLOWED_CHAT_IDS` is set, each learner gets their own SR file plus a
   published cross-day review list (named by an HMAC token), fetched by the trainer's
   herhaling tab. Absent in single-user mode.
+- `progress/<token>.json`: per-learner **cross-device scorecard** — per-day
+  recall scores (right/wrong), streak, and CEFR distilled from that learner's
+  `dutch_memory` ([dutch/progress.py](dutch/progress.py)), so a result submitted
+  on the phone shows on the laptop. Named by the **same HMAC token** as
+  `review/` and fetched only via the trainer's `?u=<token>` link, so a learner
+  sees only their own scores — never a globally readable file. Written for the
+  owner in single-user mode too (their DM link carries the token).
 - `dutch_lesson.json`: today's full Dutch lesson (text + translations + cloze +
   audio seek map + recall-report contract) for the trainer page — overwritten
   each run, copied to Pages by the deploy.
@@ -438,8 +448,10 @@ word bank) off the public repo while the public site still renders it.
 - `dashboard/index.html`: generated static dashboard (not committed — rebuilt
   from state by the Pages deploy, and locally via `python -m dashboard`).
 - [dashboard/dutch.html](dashboard/dutch.html): the static Delft trainer page
-  (hand-written, not generated) — fetches `dutch_lesson.json` on Pages; progress
-  lives in localStorage, results travel via the Telegram deep link (no backend).
+  (hand-written, not generated) — fetches `dutch_lesson.json` on Pages; per-device
+  progress lives in localStorage and results travel via the Telegram deep link (no
+  backend), while the cross-device scorecard is read from the token-gated
+  `progress/<token>.json` when the page is opened with `?u=<token>`.
 - `dashboard/podcast.xml`: generated podcast feed (lesson MP3s hosted as assets
   on the `lessons` GitHub Release; built from committed state, published via
   Pages).
@@ -466,11 +478,15 @@ word bank) off the public repo while the public site still renders it.
   dashboard still renders it.
 - Dedup state expires after 14 days and is capped (5000 entries) so it does not
   grow without bound.
-- **Dutch trainer:** progress stays in the browser's localStorage; recall
-  reports (and lesson ratings) travel as a `/start` message **from the owner's
-  own Telegram account to their own bot** (the page only builds a URL — no token
-  in the browser, no backend). The pipeline accepts feedback from the owner chat
-  only.
+- **Dutch trainer:** per-device progress stays in the browser's localStorage;
+  recall reports (and lesson ratings) travel as a `/start` message **from the
+  owner's own Telegram account to their own bot** (the page only builds a URL — no
+  token in the browser, no backend). The pipeline accepts feedback from the owner
+  chat only. The one personal thing published server-side — the cross-device
+  scorecard `progress/<token>.json` — is named by an unguessable HMAC token and
+  fetched only via the `?u=<token>` DM link, so it is *public-with-a-password*
+  (low-stakes per-day scores, never identity), not world-readable by a guessable
+  name. The full recall log (`dutch_memory.json`) never leaves the private repo.
 - **Subscribers & waitlist:** the Telegram channel stores **no** personal data
   on my side (Telegram manages membership). The early-access waitlist is a
   hosted form (Tally) that stores only the email you submit (+ optional
