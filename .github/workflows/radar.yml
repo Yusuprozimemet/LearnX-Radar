@@ -23,19 +23,19 @@ jobs:
     # limit and marks it failed; the next scheduled run starts clean.
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Personal state (Dutch SR memory, radar JSON, lesson archive) lives in a
       # private repo so it never appears in this public repo's files or history.
       # STATE_DIR (read by storage/state.py) points the app at this checkout.
       - name: Check out private state repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: Yusuprozimemet/LearnX-Radar-state
           token: ${{ secrets.STATE_REPO_TOKEN }}
           path: state
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
           cache: pip
