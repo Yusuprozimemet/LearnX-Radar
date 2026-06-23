@@ -24,17 +24,17 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Learned aliases + their audit log live in the private state repo.
       - name: Check out private state repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: Yusuprozimemet/LearnX-Radar-state
           token: ${{ secrets.STATE_REPO_TOKEN }}
           path: state
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
           cache: pip

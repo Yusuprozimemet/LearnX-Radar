@@ -33,17 +33,17 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       # Read-only checkout of the private state repo: the dashboard + podcast feed
       # render from it (skill_memory / last_scored / dutch_memory / lessons). STATE_DIR
       # points the build at it; nothing here is committed back.
       - name: Check out private state repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: Yusuprozimemet/LearnX-Radar-state
           token: ${{ secrets.STATE_REPO_TOKEN }}
           path: state
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - name: Build dashboard + podcast feed from committed state
@@ -82,8 +82,8 @@ jobs:
           fi
           cp image.png _site/og.png            # social-share preview (og:image)
           cp dashboard/cover.png _site/cover.png   # podcast artwork (itunes:image)
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: _site
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
