@@ -803,13 +803,16 @@
   var manifest = [];     // lessons/index.json entries — the archived days (oldest first)
   var latestDate = "";   // dutch_lesson.json's date — the day with a same-origin MP3 copy
   var currentLesson = null;
-  // Cross-device scorecard published by the daily run (progress.json). The LESSEN
-  // scores below come from localStorage (this browser only), so results submitted on
-  // the phone never show on the computer. This is the server-side record, keyed by
-  // date, used as the fallback whenever a day has no local result. Synced once a day.
+  // Cross-device scorecard published by the daily run (progress/<token>.json). The
+  // LESSEN scores below come from localStorage (this browser only), so results
+  // submitted on the phone never show on the computer. This is the server-side record,
+  // keyed by date, used as the fallback whenever a day has no local result. It's
+  // token-gated (same ?u=<token> as the review tab) so a learner only ever fetches
+  // their OWN scores — opened without a token, the page falls back to localStorage.
   var progress = { days: {}, streak: 0, cefr: "", words: 0 };
   function loadProgress() {
-    return fetch("progress.json?v=" + Date.now(), { cache: "no-store" })
+    if (!reviewToken) return Promise.resolve();
+    return fetch("progress/" + reviewToken + ".json?v=" + Date.now(), { cache: "no-store" })
       .then(function (r) { return r.ok ? r.json() : null; })
       .catch(function () { return null; })
       .then(function (p) {

@@ -61,8 +61,10 @@ jobs:
           # Cross-device progress scorecard (dutch/progress.py): the trainer's LESSEN
           # scores live in localStorage (per-browser), so a phone result never shows on
           # the computer. This server-side record, refreshed each run, lets every device
-          # show the full per-day history. Absent on day one — the copy is simply skipped.
-          cp state/dutch_progress.json _site/progress.json 2>/dev/null || true
+          # show the full per-day history. Token-gated (progress/<token>.json, fetched
+          # via ?u=<token>) so a learner only sees their OWN scores — never a global
+          # file readable by anyone. Absent on day one — the copy is simply skipped.
+          if [ -d state/progress ]; then mkdir -p _site/progress && cp state/progress/*.json _site/progress/; fi
           # Lesson archive (dated JSONs + index.json): the trainer's lesson list.
           # Past days play their audio straight from the release CDN (it supports
           # Range requests, so seeking works without the same-origin blob copy).

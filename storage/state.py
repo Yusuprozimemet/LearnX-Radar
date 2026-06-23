@@ -41,7 +41,9 @@ DUTCH_LESSON_FILE = _DATA_DIR / "dutch_lesson.json"
 # Cross-device progress scorecard: per-day recall scores distilled from dutch_memory
 # (see dutch/progress.py), published to Pages so a result submitted on one device
 # shows on every device. The trainer's own LESSEN scores are localStorage (per-browser).
-DUTCH_PROGRESS_FILE = _DATA_DIR / "dutch_progress.json"
+# Named by the same HMAC token as review/ (one file per learner), so a learner only
+# ever sees their OWN scores — never a guessable global file readable by anyone.
+DUTCH_PROGRESS_DIR = _DATA_DIR / "progress"
 # Lesson archive: a dated copy of every trainer lesson plus an index.json manifest,
 # so the trainer page can reopen any past day. Grows
 # from the day this shipped — earlier lessons were overwritten and exist as audio only.
@@ -451,11 +453,13 @@ def save_review(token: str, payload: dict) -> None:
     )
 
 
-def save_dutch_progress(payload: dict) -> None:
-    """Write the cross-device progress scorecard (dutch/progress.build_progress).
-    Committed with the rest of the state each run and copied to Pages as progress.json
-    so every device can show the full per-day history, not just this browser's."""
-    DUTCH_PROGRESS_FILE.write_text(
+def save_dutch_progress(payload: dict, token: str) -> None:
+    """Publish one learner's cross-device progress scorecard (dutch/progress.build_progress),
+    named by their review_token so the trainer fetches progress/<token>.json via ?u=<token>.
+    Per-learner (like save_review): a learner's scores are no longer a single global file
+    that any visitor could read — each device shows only its own learner's history."""
+    DUTCH_PROGRESS_DIR.mkdir(parents=True, exist_ok=True)
+    (DUTCH_PROGRESS_DIR / f"{token}.json").write_text(
         json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
     )
 

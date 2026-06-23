@@ -364,7 +364,11 @@ def _persist_dutch_multiuser(dutch_state: dict) -> None:
             # Store the published order so an rv_ report's positional marks map back.
             dmem["last_review"] = {"date": payload["generated"], "ids": payload["ids"]}
             save_dutch_memory(dmem, chat_id)
-            save_review(review_token(chat_id), payload)
+            tok = review_token(chat_id)
+            save_review(tok, payload)
+            # Per-learner scorecard under the same token: a learner sees only their
+            # own LESSEN history, fetched via ?u=<token> — never anyone else's.
+            save_dutch_progress(dutch_progress.build_progress(dmem), tok)
             print(f"[dutch] {chat_id}: SR updated, {len(payload['ids'])} review item(s)")
         except Exception as exc:
             _fail(f"dutch persist {chat_id}", exc)
@@ -520,9 +524,13 @@ def _run() -> None:
                 save_dutch_memory(dutch_state["memory"])
                 # Publish the cross-device scorecard: the trainer's LESSEN scores are
                 # localStorage (per-browser), so results submitted on the phone never
-                # show on the computer. progress.json carries the server-side record to
-                # every device. Synced once per day, with this run.
-                save_dutch_progress(dutch_progress.build_progress(dutch_state["memory"]))
+                # show on the computer. progress/<token>.json carries the server-side
+                # record to the owner's devices (fetched via ?u=<token> from the DM
+                # link) — token-gated, not a globally readable file. Synced once a day.
+                save_dutch_progress(
+                    dutch_progress.build_progress(dutch_state["memory"]),
+                    review_token(config.TELEGRAM_CHAT_ID),
+                )
             except Exception as exc:
                 _fail("dutch persist", exc)
 
