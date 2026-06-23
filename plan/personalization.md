@@ -175,7 +175,7 @@ drills on the page (localStorage) *and* gets Telegram-driven scheduling otherwis
 ends up with two diverging copies of "what's due," and you'll be debugging why
 phone ≠ laptop. So:
 
-> **The published `review_<token>.json` (server-side) is canonical.**
+> **The published `review/<token>.json` (server-side) is canonical.**
 > `localStorage` is a **cache** that reconciles to it on load (server state wins
 > on conflict); offline drills queue locally and fold in via the next recall
 > report.
@@ -187,12 +187,12 @@ Two levels; pick per "persist across devices?":
   never link Telegram — there's no server copy to drift from.
 - **(b) Cross-device persistent (recommended for linked users).** The run
   publishes a per-user due-list to Pages, fetched via an unguessable token in the
-  URL (`dutch.html?u=<token>` → `review_<token>.json`); the token maps to a chat ID
+  URL (`dutch.html?u=<token>` → `review/<token>.json`); the token maps to a chat ID
   server-side. ~one extra write-out step in the run.
   - **Honest security note:** this is *public-with-a-password*. The data isn't
     exposed *by chat ID*, but the token leaks via browser history, shared links,
     and `Referer` headers to any third-party asset the page loads — so treat
-    `review_<token>.json` as effectively readable by anyone who sees the URL.
+    `review/<token>.json` as effectively readable by anyone who sees the URL.
     Acceptable because the contents are low-stakes (which Dutch words are due), not
     because they're truly private.
 
@@ -205,7 +205,7 @@ Two levels; pick per "persist across devices?":
 
 - Once per day, collect the allowlist users' recent failed-word / error patterns,
   send **one batched prompt**, and attach each user's targeted snippet to their
-  DM and their `review_<token>.json`. Skip entirely when nobody has a new pattern.
+  DM and their `review/<token>.json`. Skip entirely when nobody has a new pattern.
 - Precondition it doesn't have yet: a way to detect a *new* error pattern worth
   generating for (beyond "this known word is due"), since that's the input the
   batched prompt needs.
