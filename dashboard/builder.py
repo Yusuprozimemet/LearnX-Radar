@@ -271,6 +271,16 @@ def _ops_health_html(run_history: dict) -> str:
         "</div>"
     )
 
+    # Where the run spent its time: the latest run's per-stage seconds, sorted
+    # slowest-first so the bottleneck reads at a glance (absent on older entries).
+    timings = latest.get("timings", {})
+    if timings:
+        bars = "".join(
+            f"<span>{_esc(name)} <strong>{_esc(secs)}s</strong></span>"
+            for name, secs in sorted(timings.items(), key=lambda kv: kv[1], reverse=True)
+        )
+        headline += f"<div class='stats'>{bars}</div>"
+
     # Stage rows: the latest run's stage order first, then any seen only on older runs.
     stage_names: list[str] = list(latest.get("stages", {}).keys())
     for d in recent:

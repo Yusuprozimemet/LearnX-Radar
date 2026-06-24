@@ -25,6 +25,7 @@ def build_entry(
     llm: dict | None = None,
     delivery: dict[str, bool] | None = None,
     duration_s: float = 0.0,
+    timings: dict[str, float] | None = None,
     when: date | None = None,
 ) -> dict:
     """Normalize one run into a record.
@@ -33,7 +34,9 @@ def build_entry(
     "ok"/"fail" so no error text is ever persisted. `sources` is the per-source
     item count from the scrape (a source at 0 is a health flag for the page).
     `llm` is learnx.llm.breaker_state(); `delivery` maps a channel to whether it
-    sent. `ok` is the run-level verdict: every recorded stage succeeded.
+    sent. `timings` maps a stage name to its wall-clock seconds (the heavy
+    stages only) so the page can show where a run spends its time, not just the
+    total. `ok` is the run-level verdict: every recorded stage succeeded.
     """
     llm = llm or {}
     return {
@@ -42,6 +45,7 @@ def build_entry(
         "ok": all(stages.values()) if stages else True,
         "stages": {name: ("ok" if good else "fail") for name, good in stages.items()},
         "sources": {name: int(count) for name, count in sources.items()},
+        "timings": {name: round(float(s), 1) for name, s in (timings or {}).items()},
         "llm": {
             "nvidia_timeouts": int(llm.get("nvidia_timeouts", 0)),
             "breaker_tripped": bool(llm.get("breaker_tripped", False)),
