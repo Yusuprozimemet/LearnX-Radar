@@ -210,6 +210,12 @@ Each run it:
   straight through.
 - Ends with a deterministic **fill-in-the-blanks** exercise (gatentekst) over
   today's new words — no LLM, so nothing can be wrong.
+- **Coaches your mistakes** — a small LLM reads your recall history and pulls the
+  words you keep failing into today's lesson. For a word that's *stuck* (failed
+  repeatedly, never recalled), a second, LLM-free tool adds a **contrast drill**:
+  it's paired with the word you most often confuse it with — taken from your own
+  co-failures — under a "let op het verschil" note, because re-showing a confusable
+  word doesn't fix it.
 - Publishes the lesson as JSON for the **interactive trainer page**
   ([dutch.html](https://yusuprozimemet.github.io/LearnX-Radar/dutch.html)): the
   four Delft listening steps with a real player, checked cloze, and a
@@ -219,8 +225,13 @@ Each run it:
   their final scores — reopen any earlier lesson with audio streamed from the
   release CDN.
 - Closes the loop with **measured recall** (see Quality signals above) and mixes
-  in words due for spaced-repetition review, tracking a streak + CEFR level in
-  `dutch_memory.json` (in the private state repo — see [State and outputs](#state-and-outputs)).
+  in words due for spaced-repetition review. The **CEFR level advances itself**:
+  when rolling recall *at the current level* holds high over enough reports, the
+  lesson steps up a rung toward the inburgering B1 (raising the sentence/grammar
+  complexity the prompt asks for — the frozen vocab is unchanged). The **streak**
+  measures real adherence (recall reports in a rolling window), not how many days
+  the cron fired. Both live in `dutch_memory.json` (in the private state repo —
+  see [State and outputs](#state-and-outputs)).
 - Appends a 🇳🇱 section to the email, sends a separate Dutch message/audio to
   Telegram (with a "Train this lesson" button), and adds a "Quiz me in Dutch"
   Perplexity link covering *yesterday's* words.
@@ -240,7 +251,9 @@ python -m dutch.build_wordlist --theme everyday --cefr A2 --count 40
 The roadmap (KNM, reading, grammar, adaptive pacing toward B1) lives in
 [specs/v5](specs/v5) and [specs/v6](specs/v6); the Delftse-methode slice
 (paused audio, cloze, trainer, recall feedback, lesson archive) in
-[specs/v9](specs/v9); see [plan/plan.md](plan/plan.md).
+[specs/v9](specs/v9); recall-driven CEFR progression, the stuck-word contrast
+tool, and the adherence streak in [specs/v12](specs/v12); see
+[plan/plan.md](plan/plan.md).
 
 **Multi-user (Phase 1).** The same engine can serve a small known group: set
 `ALLOWED_CHAT_IDS` and each learner keeps their own spaced-repetition schedule, a

@@ -22,6 +22,7 @@ from radar import semantic_match
 # Reuse the SAME canonicalization extraction used to merge variants, so cross-day
 # matching links the same skill across days (e.g. k8s <-> Kubernetes).
 from radar.skill_extractor import _canonical
+from storage.state import skill_entry
 
 _DIFFICULTY_BY_EXPOSURE = ("beginner", "intermediate", "advanced")
 
@@ -47,8 +48,12 @@ def _novelty(skill: str, memory: dict, today_days=_days_since) -> tuple[float, s
 
     Spaced repetition: novelty = clamp(days_since_last / interval, 0, 1), where
     the interval widens with each repetition. Unseen skills are fully novel.
+
+    The lookup is case-insensitive (skill_entry): the same topic can surface under a
+    different casing day to day ('langchain' vs 'LangChain'); a raw-key lookup would
+    miss the prior teaching, reset novelty to 1.0, and re-teach it as brand new.
     """
-    entry = memory.get("skills", {}).get(skill)
+    entry = skill_entry(memory, skill)
     times_taught = entry["times_taught"] if entry else 0
     if times_taught <= 0:
         return 1.0, _DIFFICULTY_BY_EXPOSURE[0]

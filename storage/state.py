@@ -328,6 +328,33 @@ def save_cohort(payload: dict, token: str) -> None:
     )
 
 
+def _norm_skill_key(name: str) -> str:
+    """Case/whitespace-fold a skill name for skill_memory lookups. Mirrors
+    radar.skill_extractor._canonical's fold, minus the alias map (alias-equivalent
+    variants are already merged upstream into a single display name, so only case and
+    whitespace differ between days — and that difference is what split the memory)."""
+    return re.sub(r"\s+", " ", str(name).strip().lower())
+
+
+def _existing_skill_key(skills: dict, skill: str) -> str:
+    """An existing skills key matching `skill` case-insensitively, else `skill` itself."""
+    target = _norm_skill_key(skill)
+    return next((k for k in skills if _norm_skill_key(k) == target), skill)
+
+
+def skill_entry(memory: dict, skill: str) -> dict | None:
+    """The skill_memory entry for `skill`, matched case-insensitively — the entry
+    whatever case it was first stored under, or None if never taught. Used by the
+    gap scorer's novelty so a case-variant surface form ('langchain' vs 'LangChain')
+    doesn't read as never-taught and reset the spaced-repetition suppression."""
+    skills = memory.get("skills", {})
+    entry = skills.get(skill)
+    if entry is not None:
+        return entry
+    key = _existing_skill_key(skills, skill)
+    return skills.get(key) if key in skills else None
+
+
 def record_lesson(
     memory: dict,
     skill: str,
@@ -346,8 +373,12 @@ def record_lesson(
     list them, and each lesson can link to the full brief for Perplexity Q&A.
     """
     skills = memory.setdefault("skills", {})
+    # Reuse an existing entry whatever case it was first stored under, so a topic
+    # recorded as "LangChain" isn't re-created as "langchain" on a later day — that
+    # split is what reset novelty and re-taught the same skill 5x. See skill_entry.
+    key = skill if skill in skills else _existing_skill_key(skills, skill)
     entry = skills.setdefault(
-        skill, {"times_taught": 0, "first_taught": None, "lessons": []}
+        key, {"times_taught": 0, "first_taught": None, "lessons": []}
     )
     today = date.today().isoformat()
     entry["times_taught"] += 1
@@ -438,6 +469,9 @@ def _default_dutch_memory() -> dict:
     return {
         "version": 1,
         "cefr": config.DUTCH_CEFR_START,
+        # When the current CEFR rung began (recall-driven progression only counts
+        # reports at the present level). None until the first lesson/advance.
+        "cefr_since": None,
         "streak": 0,
         "last_run": None,
         "last_words": [],
@@ -553,6 +587,27 @@ def dutch_due_words(memory: dict, today: date | None = None) -> list[str]:
     return [wid for wid, _ in due]
 
 
+def dutch_recall_adherence(
+    memory: dict,
+    today: date | None = None,
+    *,
+    window_days: int = config.DUTCH_STREAK_WINDOW_DAYS,
+) -> int:
+    """The adherence streak: how many recent lessons the learner actually completed,
+    counted as the number of distinct recall-report lesson-dates within the trailing
+    `window_days`. Replaces the old consecutive-cron-day count, which a same-day re-run
+    reset to 1 and which measured the job, not the learner — so a learner reporting
+    most days read as `streak: 2`. Distinct dates make it robust to batched reports."""
+    today = today or date.today()
+    start = (today - timedelta(days=window_days)).isoformat()
+    dates = {
+        r.get("date")
+        for r in memory.get("recall", [])
+        if r.get("date") and r["date"] >= start
+    }
+    return len(dates)
+
+
 def dutch_unsubmitted_streak(memory: dict) -> int:
     """How many of the most recent delivered lessons have no recall report yet.
 
@@ -589,12 +644,12 @@ def record_dutch_lesson(
     """Update Dutch SR state after a lesson covering `word_ids` is delivered.
 
     New words start at reps=1; re-served (review) words have their reps bumped and
-    their next `due` pushed further out. Streak increments on a consecutive day and
-    resets after a gap. `last_words` is set to today's ids (the next run's quiz
-    target), and a lessons[] entry is appended.
+    their next `due` pushed further out. The streak is recomputed as the learner's
+    recent recall-report adherence (dutch_recall_adherence), not consecutive cron days.
+    `last_words` is set to today's ids (the next run's quiz target), and a lessons[]
+    entry is appended.
     """
     today = (when or date.today()).isoformat()
-    yesterday = ((when or date.today()) - timedelta(days=1)).isoformat()
     words = memory.setdefault("words", {})
     ids = list(word_ids)
 
@@ -612,11 +667,7 @@ def record_dutch_lesson(
         entry["due"] = due
         words[wid] = entry
 
-    last_run = memory.get("last_run")
-    if last_run == yesterday:
-        memory["streak"] = int(memory.get("streak", 0)) + 1
-    else:
-        memory["streak"] = 1
+    memory["streak"] = dutch_recall_adherence(memory, when or date.today())
     memory["last_run"] = today
     memory["last_words"] = ids
     memory.setdefault("lessons", []).append(

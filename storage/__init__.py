@@ -12,6 +12,7 @@ from storage import run_history
 from storage.state import (
     apply_learned_aliases,
     dutch_due_words,
+    dutch_recall_adherence,
     dutch_unsubmitted_streak,
     filter_new,
     flatten_aliases,
@@ -45,6 +46,7 @@ from storage.state import (
     save_run_history,
     save_seen,
     save_trending_history,
+    skill_entry,
     slugify,
 )
 
@@ -57,6 +59,7 @@ __all__ = [
     "save_memory",
     "record_lesson",
     "record_lesson_rating",
+    "skill_entry",
     "previous_lesson",
     "load_last_scored",
     "save_last_scored",
@@ -72,6 +75,7 @@ __all__ = [
     "save_dutch_lesson",
     "save_dutch_progress",
     "dutch_due_words",
+    "dutch_recall_adherence",
     "dutch_unsubmitted_streak",
     "record_dutch_lesson",
     "record_dutch_recall",

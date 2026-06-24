@@ -18,6 +18,7 @@ capped tight; under-drilling just costs a little and self-heals next run.
 from __future__ import annotations
 
 import logging
+from collections import Counter
 from collections.abc import Callable
 from datetime import date
 
@@ -68,6 +69,79 @@ def detect_struggling(
         })
     out.sort(key=lambda w: (w["wrong"] / (w["wrong"] + w["right"]), w["wrong"]), reverse=True)
     return out
+
+
+def confusable_pairs(
+    memory: dict,
+    bank: list[dict],
+    *,
+    min_misses: int = config.DUTCH_COACH_STUCK_MISSES,
+    max_pairs: int = config.DUTCH_COACH_MAX_CONTRAST,
+) -> list[dict]:
+    """The coach's second tool — pure, deterministic, no LLM.
+
+    A word is STUCK when it's been recalled wrong ``>= min_misses`` times with ZERO
+    successful recalls: re-exposure isn't working, so it's almost certainly confused
+    with a neighbour rather than simply unlearned (``email`` failed x3, never right).
+    For each stuck word, the partner is the word the learner most often gets wrong IN
+    THE SAME report — their own confusion signal — so the pair is grounded in real
+    data, and both words come from the frozen bank. Returns at most ``max_pairs``
+    ``{id, nl, en, with_id, with_nl, with_en}`` dicts, most-missed first; a stuck word
+    that never co-failed with anything yields no pair (nothing to contrast it against).
+    """
+    by_id = {w["id"]: w for w in bank}
+    words = memory.get("words", {})
+    recall = memory.get("recall", [])
+    stuck = [
+        wid
+        for wid, e in words.items()
+        if int(e.get("recall_wrong", 0)) >= min_misses
+        and int(e.get("recall_right", 0)) == 0
+        and wid in by_id
+    ]
+    stuck.sort(key=lambda wid: -int(words[wid].get("recall_wrong", 0)))
+
+    pairs: list[dict] = []
+    used: set[frozenset[str]] = set()
+    for wid in stuck:
+        co: Counter[str] = Counter()
+        for r in recall:
+            wrong = r.get("wrong", [])
+            if wid in wrong:
+                co.update(o for o in wrong if o != wid and o in by_id)
+        if not co:
+            continue
+        partner = co.most_common(1)[0][0]
+        key = frozenset((wid, partner))
+        if key in used:
+            continue
+        used.add(key)
+        a, b = by_id[wid], by_id[partner]
+        pairs.append({
+            "id": wid, "nl": a.get("nl", ""), "en": a.get("en", ""),
+            "with_id": partner, "with_nl": b.get("nl", ""), "with_en": b.get("en", ""),
+        })
+        if len(pairs) >= max_pairs:
+            break
+    return pairs
+
+
+def render_contrast(pairs: list[dict]) -> str:
+    """A 'mind the difference' markdown section for the confusable pairs — gloss-only,
+    so nothing is invented (the words and meanings come straight from the frozen bank).
+    Empty string when there are no pairs, so the section simply doesn't render."""
+    if not pairs:
+        return ""
+    out = [
+        "**Let op het verschil (mind the difference)**",
+        "_Je verwart deze woorden — gebruik elk in een eigen zin._ "
+        "_(You keep mixing these up — use each in its own sentence.)_",
+    ]
+    out += [
+        f"- **{p['nl']}** _({p['en']})_ ↔ **{p['with_nl']}** _({p['with_en']})_"
+        for p in pairs
+    ]
+    return "\n".join(out)
 
 
 def _format(struggling: list[dict]) -> str:

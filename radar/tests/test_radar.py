@@ -78,6 +78,15 @@ def test_taught_but_missing_date_is_due():
     assert s["novelty"] == 1.0
 
 
+def test_novelty_lookup_is_case_insensitive():
+    """A skill recorded as 'LangChain' must suppress today's 'langchain' surface —
+    otherwise the case split resets novelty and re-teaches the same skill (the churn)."""
+    memory = {"skills": {"LangChain": {"times_taught": 1, "last_taught": _ago(0)}}}
+    s = gap_scorer.score([{"skill": "langchain", "sources": ["Stack Overflow"]}], memory)[0]
+    assert s["novelty"] == 0.0  # seen via the differently-cased prior entry
+    assert s["score"] == 0.0
+
+
 def test_unseen_skill_is_beginner_full_novelty():
     s = gap_scorer.score([{"skill": "New", "sources": ["dev.to"]}], EMPTY_MEMORY)[0]
     assert s["novelty"] == 1.0

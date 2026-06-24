@@ -146,6 +146,22 @@ def test_record_lesson_stores_audio_and_summary():
     assert entry["lessons"][-1]["audio"] == "lesson-20260530.mp3"
 
 
+def test_record_lesson_reuses_case_variant_key():
+    """A later 'langchain' lesson must append to the existing 'LangChain' entry, not
+    fork a second key — the split is what reset novelty and re-taught it repeatedly."""
+    memory = {"skills": {}}
+    state.record_lesson(memory, "LangChain", title="LangChain", difficulty="beginner")
+    state.record_lesson(memory, "langchain", title="langchain", difficulty="advanced")
+    assert list(memory["skills"]) == ["LangChain"]          # one key, not two
+    assert memory["skills"]["LangChain"]["times_taught"] == 2
+
+
+def test_skill_entry_matches_case_insensitively():
+    memory = {"skills": {"React Server Components": {"times_taught": 1}}}
+    assert state.skill_entry(memory, "react server components")["times_taught"] == 1
+    assert state.skill_entry(memory, "Vue") is None
+
+
 def test_slugify_makes_unique_safe_names():
     assert state.slugify("Kafka consumer groups") == "kafka-consumer-groups"
     assert state.slugify("C# / .NET") == "c-net"
@@ -229,7 +245,7 @@ def test_record_dutch_lesson_new_then_review_widens_interval():
     assert a["reps"] == 1
     assert a["introduced"] == "2026-06-01"
     assert a["due"] == "2026-06-02"          # base interval = 1 day after first
-    assert memory["streak"] == 1
+    assert memory["streak"] == 0             # no recall reports yet -> no adherence
     assert memory["last_words"] == ["a"]
     assert memory["lessons"][-1]["theme"] == "everyday"
 
@@ -239,14 +255,31 @@ def test_record_dutch_lesson_new_then_review_widens_interval():
     a = memory["words"]["a"]
     assert a["reps"] == 2
     assert a["due"] > "2026-06-03"           # interval widened beyond 1 day
-    assert memory["streak"] == 2             # consecutive day -> streak grows
 
 
-def test_record_dutch_lesson_streak_resets_after_gap():
+def test_dutch_recall_adherence_counts_distinct_report_days_in_window():
     memory = state._default_dutch_memory()
-    state.record_dutch_lesson(memory, word_ids=["a"], theme="everyday", when=date(2026, 6, 1))
-    state.record_dutch_lesson(memory, word_ids=["b"], theme="everyday", when=date(2026, 6, 5))
-    assert memory["streak"] == 1  # gap of >1 day resets
+    today = date(2026, 6, 30)
+    memory["recall"] = [
+        {"date": "2026-06-28", "right": ["a"], "wrong": []},   # in window
+        {"date": "2026-06-20", "right": ["b"], "wrong": []},   # in window
+        {"date": "2026-06-20", "right": ["c"], "wrong": []},   # same day -> not double
+        {"date": "2026-05-01", "right": ["d"], "wrong": []},   # older than 30d -> excluded
+    ]
+    assert state.dutch_recall_adherence(memory, today, window_days=30) == 2
+
+
+def test_record_dutch_lesson_streak_is_recall_adherence():
+    memory = state._default_dutch_memory()
+    # Two reported lesson-days, plus a batched same-day pair (counts once) -> streak 3,
+    # not the old consecutive-cron count which a re-run would have collapsed to 1.
+    memory["recall"] = [
+        {"date": "2026-06-10", "right": ["a"], "wrong": []},
+        {"date": "2026-06-11", "right": ["b"], "wrong": []},
+        {"date": "2026-06-12", "right": ["c"], "wrong": []},
+    ]
+    state.record_dutch_lesson(memory, word_ids=["x"], theme="everyday", when=date(2026, 6, 13))
+    assert memory["streak"] == 3
 
 
 # --- recall feedback into the scheduler (v9 day 33) ---------------------------

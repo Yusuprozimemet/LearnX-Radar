@@ -46,6 +46,7 @@ def build(
     topic: str | None = None,
     cefr: str = "A2",
     directive: str = "",
+    extra_sections: str = "",
     chat_fn=chat,
 ) -> DutchLesson:
     """Return a DutchLesson for the given words. The LLM only writes sentences and a
@@ -54,6 +55,10 @@ def build(
     `directive` (the coach's focus instruction, v10 day 36) is appended to the prompt
     so the sentences emphasize the failing words and the pattern behind them. Empty
     -> a byte-identical prompt to the mechanical lesson.
+
+    `extra_sections` is appended to the lesson markdown after the cloze and before the
+    trainer link — used for the coach's deterministic "mind the difference" contrast
+    drill. Empty -> the markdown is unchanged.
     """
     review_words = review_words or []
     all_words = new_words + review_words
@@ -104,6 +109,10 @@ def build(
         section = cloze.render(lesson.new_words, lesson.sentences, lesson.dialogue)
         if section:
             lesson.markdown += "\n\n" + section
+    # Coach's contrast drill for stuck words (deterministic, gloss-only), between the
+    # cloze and the trainer link so it reads as part of the lesson body.
+    if extra_sections and lesson.markdown:
+        lesson.markdown += "\n\n" + extra_sections
     # Trainer link (v9 day 32) — flows into the PDF and email; Telegram also gets
     # an inline button. The page checks answers and enforces the one-chance listen.
     if config.DUTCH_TRAINER_ENABLED and lesson.markdown:

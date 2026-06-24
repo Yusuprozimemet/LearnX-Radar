@@ -428,6 +428,58 @@ def test_plan_degrades_to_empty_on_llm_failure():
         "focus_ids": [], "directive": "", "reason": ""}
 
 
+# --- contrast drill for stuck words (the coach's second tool) -----------------
+
+_CONTRAST_BANK = [
+    {"id": "email", "nl": "de email", "en": "the email", "theme": "tech"},
+    {"id": "gebruiker", "nl": "de gebruiker", "en": "the user", "theme": "tech"},
+    {"id": "bericht", "nl": "het bericht", "en": "the message", "theme": "tech"},
+]
+
+
+def test_confusable_pairs_pairs_stuck_word_with_its_co_failed_neighbour():
+    memory = {
+        "words": {
+            "email": {"recall_wrong": 3, "recall_right": 0},      # stuck
+            "gebruiker": {"recall_wrong": 2, "recall_right": 1},  # net-failing, recalled once
+        },
+        "recall": [
+            {"date": "2026-06-11", "right": [], "wrong": ["email", "gebruiker"]},
+            {"date": "2026-06-21", "right": [], "wrong": ["email", "gebruiker"]},
+        ],
+    }
+    pairs = dutch_coach.confusable_pairs(memory, _CONTRAST_BANK, min_misses=2)
+    assert len(pairs) == 1
+    assert pairs[0]["id"] == "email" and pairs[0]["with_id"] == "gebruiker"
+    assert pairs[0]["nl"] == "de email" and pairs[0]["with_nl"] == "de gebruiker"
+
+
+def test_confusable_pairs_excludes_words_ever_recalled_right():
+    memory = {
+        "words": {"email": {"recall_wrong": 3, "recall_right": 1}},  # a right -> not stuck
+        "recall": [{"date": "2026-06-11", "right": [], "wrong": ["email", "bericht"]}],
+    }
+    assert dutch_coach.confusable_pairs(memory, _CONTRAST_BANK, min_misses=2) == []
+
+
+def test_confusable_pairs_skips_stuck_word_with_no_co_failure():
+    memory = {
+        "words": {"email": {"recall_wrong": 2, "recall_right": 0}},
+        "recall": [{"date": "2026-06-11", "right": [], "wrong": ["email"]}],  # alone
+    }
+    assert dutch_coach.confusable_pairs(memory, _CONTRAST_BANK, min_misses=2) == []
+
+
+def test_render_contrast_is_gloss_only_and_empty_without_pairs():
+    assert dutch_coach.render_contrast([]) == ""
+    md = dutch_coach.render_contrast(
+        [{"id": "email", "nl": "de email", "en": "the email",
+          "with_id": "gebruiker", "with_nl": "de gebruiker", "with_en": "the user"}]
+    )
+    assert "Let op het verschil" in md
+    assert "de email" in md and "de gebruiker" in md
+
+
 def test_force_review_ids_pulls_a_non_due_word_ahead_of_the_cap():
     today = date(2026, 6, 5)
     memory = {"words": {
