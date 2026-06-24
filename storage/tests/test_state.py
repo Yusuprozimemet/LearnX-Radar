@@ -2,7 +2,7 @@
 import json
 from datetime import date, timedelta
 
-from storage import state
+from storage import paths, state
 
 
 def _iso(days_ago: int) -> str:
@@ -12,7 +12,7 @@ def _iso(days_ago: int) -> str:
 def test_learned_aliases_roundtrip_and_merge(tmp_path, monkeypatch):
     import config
     f = tmp_path / "skill_aliases.json"
-    monkeypatch.setattr(state, "LEARNED_ALIASES_FILE", f)
+    monkeypatch.setattr(paths, "LEARNED_ALIASES_FILE", f)
     state.save_learned_aliases({"autonomous ai agents": "ai agents"})
     assert state.load_learned_aliases() == {"autonomous ai agents": "ai agents"}
 
@@ -54,7 +54,7 @@ def test_apply_learned_aliases_resolves_chains_live(tmp_path, monkeypatch):
     import config
     from radar.skill_extractor import _canonical
 
-    monkeypatch.setattr(state, "LEARNED_ALIASES_FILE", tmp_path / "skill_aliases.json")
+    monkeypatch.setattr(paths, "LEARNED_ALIASES_FILE", tmp_path / "skill_aliases.json")
     monkeypatch.setattr(config, "SKILL_ALIASES", {})
     state.save_learned_aliases({
         "agentic ai": "ai agents",
@@ -69,13 +69,13 @@ def test_apply_learned_aliases_resolves_chains_live(tmp_path, monkeypatch):
 
 
 def test_learned_aliases_missing_file_is_empty(tmp_path, monkeypatch):
-    monkeypatch.setattr(state, "LEARNED_ALIASES_FILE", tmp_path / "nope.json")
+    monkeypatch.setattr(paths, "LEARNED_ALIASES_FILE", tmp_path / "nope.json")
     assert state.load_learned_aliases() == {}
     assert state.apply_learned_aliases() == 0
 
 
 def test_alias_denylist_roundtrip(tmp_path, monkeypatch):
-    monkeypatch.setattr(state, "ALIAS_DENYLIST_FILE", tmp_path / "deny.json")
+    monkeypatch.setattr(paths, "ALIAS_DENYLIST_FILE", tmp_path / "deny.json")
     assert state.load_alias_denylist() == set()        # missing file -> empty
     pairs = {frozenset(("claude code", "claude")), frozenset(("a", "b"))}
     state.save_alias_denylist(pairs)
@@ -87,12 +87,12 @@ def test_load_seen_migrates_legacy_list_to_empty_map(tmp_path, monkeypatch):
     # on, so they migrate to an empty map (a safe one-time reset — see load_seen).
     f = tmp_path / "seen.json"
     f.write_text(json.dumps(["gh:foo/bar", "hn:1"]), encoding="utf-8")
-    monkeypatch.setattr(state, "SEEN_FILE", f)
+    monkeypatch.setattr(paths, "SEEN_FILE", f)
     assert state.load_seen() == {}
 
 
 def test_filter_new_suppresses_recent_but_lets_expired_resurface(monkeypatch):
-    monkeypatch.setattr(state, "SEEN_TTL_DAYS", 14)
+    monkeypatch.setattr(paths, "SEEN_TTL_DAYS", 14)
     seen = {"gh:recent": _iso(1), "gh:expired": _iso(15)}
     items = [{"id": "gh:recent"}, {"id": "gh:expired"}, {"id": "dev:brand-new"}]
     out = [i["id"] for i in state.filter_new(items, seen)]
@@ -109,16 +109,16 @@ def test_mark_seen_stamps_today_in_place():
 
 def test_save_seen_prunes_expired_entries(tmp_path, monkeypatch):
     f = tmp_path / "seen.json"
-    monkeypatch.setattr(state, "SEEN_FILE", f)
-    monkeypatch.setattr(state, "SEEN_TTL_DAYS", 14)
+    monkeypatch.setattr(paths, "SEEN_FILE", f)
+    monkeypatch.setattr(paths, "SEEN_TTL_DAYS", 14)
     state.save_seen({"keep": _iso(2), "drop": _iso(20)})
     written = json.loads(f.read_text(encoding="utf-8"))
     assert "keep" in written and "drop" not in written
 
 
 def test_last_scored_roundtrip_and_trim(tmp_path, monkeypatch):
-    monkeypatch.setattr(state, "LAST_SCORED_FILE", tmp_path / "ls.json")
-    monkeypatch.setattr(state, "LAST_SCORED_KEEP", 3)
+    monkeypatch.setattr(paths, "LAST_SCORED_FILE", tmp_path / "ls.json")
+    monkeypatch.setattr(paths, "LAST_SCORED_KEEP", 3)
 
     scored = [{"skill": f"S{i}", "score": float(i)} for i in range(10)]
     state.save_last_scored(scored, today_skill="S9")
@@ -130,7 +130,7 @@ def test_last_scored_roundtrip_and_trim(tmp_path, monkeypatch):
 
 
 def test_load_last_scored_missing_returns_empty(tmp_path, monkeypatch):
-    monkeypatch.setattr(state, "LAST_SCORED_FILE", tmp_path / "nope.json")
+    monkeypatch.setattr(paths, "LAST_SCORED_FILE", tmp_path / "nope.json")
     assert state.load_last_scored() == {"today_skill": None, "scored": []}
 
 
@@ -208,12 +208,12 @@ def test_previous_lesson_is_most_recent_across_skills():
 # --- dutch_memory.json : Dutch vocab spaced repetition (v5) -------------------
 
 def test_dutch_memory_roundtrip_and_default(tmp_path, monkeypatch):
-    monkeypatch.setattr(state, "DUTCH_MEMORY_FILE", tmp_path / "nope.json")
+    monkeypatch.setattr(paths, "DUTCH_MEMORY_FILE", tmp_path / "nope.json")
     fresh = state.load_dutch_memory()
     assert fresh["version"] == 1 and fresh["words"] == {} and fresh["streak"] == 0
 
     f = tmp_path / "dutch.json"
-    monkeypatch.setattr(state, "DUTCH_MEMORY_FILE", f)
+    monkeypatch.setattr(paths, "DUTCH_MEMORY_FILE", f)
     state.save_dutch_memory({"version": 1, "cefr": "A2", "words": {"a": {"reps": 1}}})
     loaded = state.load_dutch_memory()
     assert loaded["words"]["a"]["reps"] == 1
@@ -223,7 +223,7 @@ def test_dutch_memory_roundtrip_and_default(tmp_path, monkeypatch):
 def test_dutch_memory_corrupt_returns_default(tmp_path, monkeypatch):
     f = tmp_path / "dutch.json"
     f.write_text("{not json", encoding="utf-8")
-    monkeypatch.setattr(state, "DUTCH_MEMORY_FILE", f)
+    monkeypatch.setattr(paths, "DUTCH_MEMORY_FILE", f)
     assert state.load_dutch_memory()["words"] == {}
 
 
@@ -355,8 +355,8 @@ def test_dutch_unsubmitted_streak_empty_when_no_lessons():
 
 
 def test_save_dutch_lesson_archives_dated_copy_and_index(tmp_path, monkeypatch):
-    monkeypatch.setattr(state, "DUTCH_LESSON_FILE", tmp_path / "dutch_lesson.json")
-    monkeypatch.setattr(state, "DUTCH_LESSONS_DIR", tmp_path / "lessons")
+    monkeypatch.setattr(paths, "DUTCH_LESSON_FILE", tmp_path / "dutch_lesson.json")
+    monkeypatch.setattr(paths, "DUTCH_LESSONS_DIR", tmp_path / "lessons")
 
     state.save_dutch_lesson({"date": "2026-06-10", "theme": "tech", "cefr": "A2"})
     state.save_dutch_lesson({"date": "2026-06-11", "theme": "everyday", "cefr": "A2"})
@@ -375,8 +375,8 @@ def test_save_dutch_lesson_archives_dated_copy_and_index(tmp_path, monkeypatch):
 
 
 def test_save_dutch_lesson_without_date_skips_archive(tmp_path, monkeypatch):
-    monkeypatch.setattr(state, "DUTCH_LESSON_FILE", tmp_path / "dutch_lesson.json")
-    monkeypatch.setattr(state, "DUTCH_LESSONS_DIR", tmp_path / "lessons")
+    monkeypatch.setattr(paths, "DUTCH_LESSON_FILE", tmp_path / "dutch_lesson.json")
+    monkeypatch.setattr(paths, "DUTCH_LESSONS_DIR", tmp_path / "lessons")
     state.save_dutch_lesson({"theme": "tech"})
     assert (tmp_path / "dutch_lesson.json").exists()
     assert not (tmp_path / "lessons").exists()
@@ -385,8 +385,8 @@ def test_save_dutch_lesson_without_date_skips_archive(tmp_path, monkeypatch):
 # --- multi-user (Phase 1): per-user files, review token, review folding ---------
 
 def test_dutch_memory_file_routing(tmp_path, monkeypatch):
-    monkeypatch.setattr(state, "_DATA_DIR", tmp_path)
-    monkeypatch.setattr(state, "DUTCH_MEMORY_FILE", tmp_path / "dutch_memory.json")
+    monkeypatch.setattr(paths, "_DATA_DIR", tmp_path)
+    monkeypatch.setattr(paths, "DUTCH_MEMORY_FILE", tmp_path / "dutch_memory.json")
     monkeypatch.setattr(state.config, "TELEGRAM_CHAT_ID", "owner")
     # owner (and None) keep the historical unsuffixed file; others get a suffix
     assert state._dutch_memory_file(None) == tmp_path / "dutch_memory.json"
@@ -407,7 +407,7 @@ def test_review_token_stable_and_distinct(monkeypatch):
 
 
 def test_save_review_writes_token_file(tmp_path, monkeypatch):
-    monkeypatch.setattr(state, "REVIEW_DIR", tmp_path / "review")
+    monkeypatch.setattr(paths, "REVIEW_DIR", tmp_path / "review")
     state.save_review("abc123", {"generated": "2026-06-05", "ids": ["a"]})
     import json
     data = json.loads((tmp_path / "review" / "abc123.json").read_text(encoding="utf-8"))

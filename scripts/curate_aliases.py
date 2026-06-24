@@ -37,7 +37,7 @@ from storage import (
     save_alias_denylist,
     save_learned_aliases,
 )
-from storage.state import _DATA_DIR, ALIAS_DENYLIST_FILE, LEARNED_ALIASES_FILE
+from storage.paths import _DATA_DIR, ALIAS_DENYLIST_FILE, LEARNED_ALIASES_FILE
 
 LOG_FILE = _DATA_DIR / "skill_aliases_log.md"
 

@@ -80,7 +80,7 @@ def build_payload(
         "block_c": span("C"),  # the dialogue straight through (Delft steps 2/4)
         # Recall feedback (v9 day 33): what the "Save results" deep link needs. The
         # word ORDER here is the contract — it matches dutch_memory's lessons[].words
-        # for this date (both are new + review, same expression as main._build_dutch),
+        # for this date (both are new + review, same expression as dutch.build.build),
         # so the page can report one mark per position (1 right / 0 wrong / x not
         # trained) and the next run can map positions back to ids without sending the
         # ids themselves (Telegram caps /start payloads at 64 chars). `form` is the

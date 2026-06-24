@@ -1,9 +1,9 @@
-"""Build one run-history entry for the Status tab (v11 day 40).
+"""Per-run pipeline health for the Status tab (v11 day 40): build + rolling IO.
 
-Pure assembly only — a dict in, a normalized dict out, no IO. The IO (rolling
-file, capped at RUN_HISTORY_KEEP_DAYS) lives in storage/state.py
-(load_run_history / save_run_history), mirroring how dutch/progress.build_progress
-is pure while storage.save_dutch_progress does the writing.
+build_entry is pure assembly — a dict in, a normalized dict out. load/save keep
+one entry per day, keyed by date, capped at RUN_HISTORY_KEEP_DAYS (mirroring
+storage.scored.save_trending_history). dutch/progress.build_progress is pure the
+same way, with storage.dutch_state.save_dutch_progress doing its writing.
 
 The entry deliberately carries NO raw exception text — only a stage's name and an
 "ok" | "fail" verdict — so run_history.json is safe to render on the *public*
@@ -12,7 +12,10 @@ dashboard. Diagnostic detail still reaches the owner via the run-report DM
 """
 from __future__ import annotations
 
+import json
 from datetime import date
+
+from storage import paths
 
 
 def build_entry(
@@ -45,3 +48,26 @@ def build_entry(
         },
         "delivery": {name: bool(ok) for name, ok in (delivery or {}).items()},
     }
+
+
+def load_run_history() -> dict:
+    """Return {date: run-entry} or {} if missing/corrupt."""
+    if not paths.RUN_HISTORY_FILE.exists():
+        return {}
+    try:
+        data = json.loads(paths.RUN_HISTORY_FILE.read_text(encoding="utf-8"))
+        return data if isinstance(data, dict) else {}
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def save_run_history(entry: dict, when: date | None = None) -> None:
+    """Record one run entry under its date, trimming to RUN_HISTORY_KEEP_DAYS."""
+    when = when or date.today()
+    history = load_run_history()
+    history[entry.get("date") or when.isoformat()] = entry
+    for stale in sorted(history, reverse=True)[paths.RUN_HISTORY_KEEP_DAYS:]:
+        del history[stale]
+    paths.RUN_HISTORY_FILE.write_text(
+        json.dumps(history, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
