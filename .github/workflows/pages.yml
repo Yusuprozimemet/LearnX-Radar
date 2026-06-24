@@ -73,6 +73,11 @@ jobs:
           # review/<token>.json when opened with ?u=<token>. Absent on a single-user
           # deployment - the copy is skipped and the herhaling tab simply never shows.
           if [ -d state/review ]; then mkdir -p _site/review && cp state/review/*.json _site/review/; fi
+          # Cohort learning aggregate (Status tab, v11 day 40): the dashboard fetches
+          # cohort/<token>.json when opened with the owner's ?u=<token>. Anonymous
+          # group stats only (no chat id/token inside). Absent until a Dutch run has
+          # published it - the copy is skipped and the Learning view stays owner-only.
+          if [ -d state/cohort ]; then mkdir -p _site/cohort && cp state/cohort/*.json _site/cohort/; fi
           # Same-origin copy of the lesson MP3: the release CDN sends no CORS header,
           # so the trainer page can't fetch it cross-origin (it needs blob-loading for
           # exact sentence seeking). Downloading here is server-side — no CORS involved.

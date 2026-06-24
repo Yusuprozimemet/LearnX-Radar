@@ -38,6 +38,7 @@ def build(
     out_path: Path = OUTPUT,
     history: dict | None = None,
     dutch: dict | None = None,
+    run_history: dict | None = None,
 ) -> Path:
     """Render the dashboard to `out_path` and return it.
 
@@ -45,6 +46,8 @@ def build(
     picker. When absent (e.g. the live in-run build), today's `scored` is wrapped
     into a single-day history so the page still renders the current day. `dutch` is
     the Dutch SR memory (v5); when present a second tab renders the Dutch progress.
+    `run_history` is {date: run-entry} (v11 day 40) for the Status tab's pipeline
+    health; the cohort learning block on that tab is fetched client-side via ?u=.
     """
     scored = scored or []
     if not history:
@@ -58,7 +61,11 @@ def build(
             _archive_html(skills),
         ]
     )
-    body = _tabs(radar_body, _dutch_html(dutch or {}))
+    body = _tabs(
+        radar_body,
+        _dutch_html(dutch or {}),
+        _status_html(run_history or {}, dutch or {}),
+    )
     out_path = Path(out_path)
     out_path.write_text(_page("LearnX-Radar", body), encoding="utf-8")
     return out_path
@@ -82,35 +89,37 @@ def build_from_state(out_path: Path = OUTPUT) -> Path:
         out_path,
         history=storage.load_trending_history(),
         dutch=storage.load_dutch_memory(),
+        run_history=storage.load_run_history(),
     )
 
 
-def _tabs(radar_body: str, dutch_body: str) -> str:
-    """Top Radar/Dutch nav + the two tab panels. Radar shows by default; clicking a
-    button swaps panels (vanilla DOM, same technique as the trending date picker)."""
-    nav = (
-        "<div class='tabs'>"
-        "<button data-tab='radar' class='active'>📡 Radar</button>"
-        "<button data-tab='dutch'>🇳🇱 Dutch</button>"
-        "</div>"
-    )
+def _tabs(radar_body: str, dutch_body: str, status_body: str) -> str:
+    """Top Radar/Dutch/Status nav + the tab panels. Radar shows by default; clicking
+    a button swaps panels (vanilla DOM, same technique as the trending date picker).
+    Driven by a data table so adding a tab stays a one-line change."""
+    tabs = (("radar", "📡 Radar"), ("dutch", "🇳🇱 Dutch"), ("status", "📊 Status"))
+    bodies = {"radar": radar_body, "dutch": dutch_body, "status": status_body}
+    buttons = []
+    panels = []
+    for i, (key, label) in enumerate(tabs):
+        active = " class='active'" if i == 0 else ""
+        hidden = "" if i == 0 else " style='display:none'"
+        buttons.append(f"<button data-tab='{key}'{active}>{label}</button>")
+        panels.append(f"<div id='tab-{key}'{hidden}>{bodies[key]}</div>")
+    nav = "<div class='tabs'>" + "".join(buttons) + "</div>"
+    panels = "".join(panels)
     script = (
         "<script>(function(){"
         "var links=document.querySelectorAll('.tabs button');"
-        "function show(t){"
-        "document.getElementById('tab-radar').style.display=(t==='radar')?'':'none';"
-        "document.getElementById('tab-dutch').style.display=(t==='dutch')?'':'none';"
+        "var keys=['radar','dutch','status'];"
+        "function show(t){keys.forEach(function(k){"
+        "var el=document.getElementById('tab-'+k);if(el)el.style.display=(k===t)?'':'none';});"
         "links.forEach(function(a){a.classList.toggle('active',a.getAttribute('data-tab')===t);})}"
         "links.forEach(function(a){a.addEventListener('click',function(e){"
         "e.preventDefault();show(a.getAttribute('data-tab'));});});"
         "})();</script>"
     )
-    return (
-        nav
-        + f"<div id='tab-radar'>{radar_body}</div>"
-        + f"<div id='tab-dutch' style='display:none'>{dutch_body}</div>"
-        + script
-    )
+    return nav + panels + script
 
 
 def _dutch_html(dutch: dict) -> str:
@@ -222,6 +231,125 @@ def _struggling_html(words: dict, bank: dict) -> str:
         "<table><tr><th>Word</th><th>Meaning</th><th>Failed</th><th>Recalled</th>"
         "<th>Next review</th></tr>" + "".join(rows) + "</table>"
     )
+
+
+_STATUS_RUNS = 14  # runs shown in the health heatmap (one column each)
+_CELL = {"ok": "✅", "fail": "❌"}
+
+
+def _status_html(run_history: dict, dutch: dict) -> str:
+    """The Status tab (v11 day 40): pipeline health (server-rendered, no error text)
+    plus a Learning view — the owner's own progression always, and the anonymous
+    cohort aggregate fetched client-side from cohort/<token>.json only when the page
+    is opened with ?u=<token> (same owner-only gating as the LESSEN scorecard)."""
+    return "\n".join(
+        [
+            _section("📊 Pipeline health", _ops_health_html(run_history)),
+            _section("📚 Learning", _learning_html(dutch)),
+        ]
+    )
+
+
+def _ops_health_html(run_history: dict) -> str:
+    """Last-run verdict, a stage heatmap over recent runs, LLM fallback frequency,
+    and a per-source health row — all from run_history.json (verdicts only, never
+    error text), so it's safe on the public page."""
+    days = sorted(run_history)
+    if not days:
+        return "<p class='muted'>No runs recorded yet.</p>"
+    recent = days[-_STATUS_RUNS:]
+    latest = run_history[days[-1]]
+
+    ok = latest.get("ok", True)
+    badge = "✅ healthy" if ok else "❌ had failures"
+    headline = (
+        "<div class='stats'>"
+        f"<span>Last run <strong>{_esc(_date_label(days[-1]))}</strong></span>"
+        f"<span>Status <strong>{badge}</strong></span>"
+        f"<span>Duration <strong>{_esc(round(latest.get('duration_s', 0)))}s</strong></span>"
+        f"<span>Runs recorded <strong>{len(days)}</strong></span>"
+        "</div>"
+    )
+
+    # Stage rows: the latest run's stage order first, then any seen only on older runs.
+    stage_names: list[str] = list(latest.get("stages", {}).keys())
+    for d in recent:
+        for name in run_history[d].get("stages", {}):
+            if name not in stage_names:
+                stage_names.append(name)
+    head = "<tr><th>Stage</th>" + "".join(
+        f"<th title='{_esc(_date_label(d))}'>{_esc(d[5:])}</th>" for d in recent
+    ) + "</tr>"
+    rows = []
+    for name in stage_names:
+        cells = "".join(
+            f"<td>{_CELL.get(run_history[d].get('stages', {}).get(name), '·')}</td>"
+            for d in recent
+        )
+        rows.append(f"<tr><td>{_esc(name)}</td>{cells}</tr>")
+    heatmap = f"<table class='heat'>{head}{''.join(rows)}</table>"
+
+    tripped = sum(1 for d in recent if run_history[d].get("llm", {}).get("breaker_tripped"))
+    timeouts = sum(run_history[d].get("llm", {}).get("nvidia_timeouts", 0) for d in recent)
+    llm = (
+        "<div class='stats'>"
+        f"<span>LLM fallback (last {len(recent)}) <strong>{tripped} run(s)</strong></span>"
+        f"<span>NVIDIA timeouts <strong>{timeouts}</strong></span>"
+        "</div>"
+    )
+
+    sources = latest.get("sources", {})
+    chips = "".join(
+        f"<span>{_esc(name)} <strong>{count}</strong>{' ⚠️' if not count else ''}</span>"
+        for name, count in sorted(sources.items())
+    )
+    src = f"<div class='stats'>{chips}</div>" if chips else ""
+
+    return headline + heatmap + llm + src
+
+
+def _learning_html(dutch: dict) -> str:
+    """Owner progression (server-rendered from the owner's SR memory) + a cohort
+    block filled client-side from cohort/<token>.json when opened with ?u=<token>."""
+    recall = _recall_rate_html(dutch.get("recall", []))
+    owner = (
+        "<div class='stats'>"
+        f"<span>Your level <strong>{_esc(dutch.get('cefr', 'A2'))}</strong></span>"
+        f"<span>Streak <strong>{_esc(dutch.get('streak', 0))}</strong> day(s)</span>"
+        f"<span>Words <strong>{len(dutch.get('words', {}))}</strong></span>"
+        f"{recall}"
+        "</div>"
+    )
+    # The cohort summary is owner-only: fetched at view time with the ?u token, never
+    # baked into this public page. Shows a hint until a token is supplied.
+    cohort = (
+        "<div id='cohort'><p class='muted'>Open with your personal "
+        "<code>?u=</code> link to see the cohort learning summary.</p></div>"
+        "<script>(function(){"
+        "var u=new URLSearchParams(location.search).get('u');"
+        "var box=document.getElementById('cohort');if(!u||!box)return;"
+        "fetch('cohort/'+encodeURIComponent(u)+'.json').then(function(r){"
+        "if(!r.ok)throw 0;return r.json();}).then(function(c){"
+        "var rec=c.cohort_recall_30d||{};"
+        "var cefr=Object.keys(c.cefr_distribution||{}).sort().map(function(k){"
+        "return k+': '+c.cefr_distribution[k];}).join(' · ');"
+        "var hard=(c.hardest_words||[]).map(function(w){"
+        "return '<tr><td>'+(w.nl||w.id)+'</td><td>'+(w.en||'')+'</td><td>'"
+        "+w.learners_failing+'</td><td>'+w.fails+'</td></tr>';}).join('');"
+        "var html='<div class=\\'stats\\'>'"
+        "+'<span>Learners <strong>'+c.learners_total+'</strong></span>'"
+        "+'<span>Active 7d <strong>'+c.active_7d+'</strong></span>'"
+        "+'<span>Active 30d <strong>'+c.active_30d+'</strong></span>'"
+        "+(rec.pct!=null?'<span>Cohort recall (30d) <strong>'+rec.pct+'% ('"
+        "+rec.right+'/'+(rec.right+rec.wrong)+')</strong></span>':'')"
+        "+(cefr?'<span>CEFR <strong>'+cefr+'</strong></span>':'')+'</div>';"
+        "if(hard)html+='<table><tr><th>Word</th><th>Meaning</th>'"
+        "+'<th>Learners failing</th><th>Fails</th></tr>'+hard+'</table>';"
+        "box.innerHTML=html;}).catch(function(){"
+        "box.innerHTML='<p class=\\'muted\\'>No cohort data for this link yet.</p>';});"
+        "})();</script>"
+    )
+    return owner + cohort
 
 
 def _esc(text: object) -> str:
@@ -550,6 +678,9 @@ def _page(title: str, body: str) -> str:
   .stats {{ display:flex; flex-wrap:wrap; gap:1.2rem; color:var(--grey); font-size:.95rem;
             font-weight:700; }}
   .stats strong {{ color:var(--ink); }}
+  .heat {{ font-size:.8rem; }}
+  .heat th,.heat td {{ text-align:center; padding:.2rem .35rem; white-space:nowrap; }}
+  .heat td:first-child,.heat th:first-child {{ text-align:left; font-weight:700; }}
   audio {{ outline:none; width:100%; margin-top:.5rem; }}
   .cta {{ margin:.9rem 0 1.2rem; display:flex; align-items:center; flex-wrap:wrap; gap:.5rem; }}
   .cta a {{ display:inline-block; background:var(--blue); color:#fff; padding:.55rem 1rem;

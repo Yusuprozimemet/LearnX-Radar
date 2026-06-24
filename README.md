@@ -69,7 +69,10 @@ The interesting part isn't that an LLM writes lessons — it's where the LLM is
   branch is guarded so the dev lesson always ships, the LLM falls back from a
   slow NVIDIA to Groq mid-run (a circuit breaker writes off a stalling primary so
   the cron can't time out waiting on it), and stage failures are DM'd to the
-  owner instead of hiding in Actions logs.
+  owner instead of hiding in Actions logs. Each run also records its per-stage
+  health, source counts, and LLM-fallback frequency to a rolling `run_history.json`,
+  surfaced on the dashboard's **Status** tab — so a same-day DM becomes a visible
+  track record (verdicts only, no error text, so it's safe on the public page).
 
 ## The Dutch track
 
@@ -246,8 +249,12 @@ personal **cross-day review** (the trainer's 🔁 *herhaling* tab) and a persona
 `?u=<token>` link and stored token-gated so a learner only ever sees their own
 data — while everyone still shares **one** generated lesson + audio. Generation is
 global, only selection is per-user, so there's no extra LLM/TTS cost. Empty
-`ALLOWED_CHAT_IDS` keeps it single-user (the owner still gets a token). See
-[plan/personalization.md](plan/personalization.md) and [specs/v10](specs/v10).
+`ALLOWED_CHAT_IDS` keeps it single-user (the owner still gets a token). When the
+cohort is active, an **anonymous** group summary (active learners, pooled 30-day
+recall, the words the most learners are failing) is published token-gated and shown
+on the dashboard's **Status** tab — owner-only via `?u=<token>`, with no learner
+identified. See [plan/personalization.md](plan/personalization.md),
+[specs/v10](specs/v10), and [specs/v11](specs/v11).
 
 ## Stack
 
@@ -321,8 +328,8 @@ delivery/   Telegram (DM + channel) & email delivery, full-lesson PDF (pdf.py),
             Perplexity follow-up links, deep-link feedback ingestion
             (telegram_recall.py: recall reports + lesson ratings), weekly
             waitlist CTA, weekly dev.to cross-post (devto_publisher.py)
-dashboard/  static dashboard builder (Radar / Dutch tabs), the interactive
-            Delft trainer page (dutch.html), podcast feed (feed.py),
+dashboard/  static dashboard builder (Radar / Dutch / Status tabs), the
+            interactive Delft trainer page (dutch.html), podcast feed (feed.py),
             Open Graph preview + privacy.html
 storage/    state I/O code (state.py) + tests. The state JSON itself
             (seen_skills, skill_memory, last_scored, trending_history,
@@ -437,6 +444,16 @@ word bank) off the public repo while the public site still renders it.
 - `trending_history.json`: one ranking per day (kept ~60 days). Powers the
   dashboard's date replay **and** the cross-day momentum signal (prior days
   matched by canonical skill name).
+- `run_history.json`: per-run pipeline health for the dashboard **Status** tab —
+  one entry per day (rolling ~60 days): each stage's `ok`/`fail`, per-source item
+  counts, LLM circuit-breaker state, and run duration. Carries **no raw error
+  text** (only verdicts), so it renders on the public page; exception detail still
+  goes to the owner DM.
+- `cohort/<token>.json`: the **anonymous** multi-user learning aggregate (active
+  learners, pooled recall, CEFR spread, hardest words) for the Status tab. Named
+  by the owner's HMAC token and fetched only via `?u=<token>` — owner-only, with
+  no learner identified inside. Written in single-user mode too (the cohort is
+  then just the owner).
 - `skill_aliases.json`: skill-name aliases *learned* by the curator
   (`variant -> canonical`), merged into `SKILL_ALIASES` at startup.
   `skill_aliases_denylist.json` holds pairs a human ruled "keep separate" (never

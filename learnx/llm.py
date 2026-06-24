@@ -49,6 +49,13 @@ def reset_breaker() -> None:
     _nvidia_tripped = False
 
 
+def breaker_state() -> dict:
+    """Snapshot of the per-run circuit breaker for the run report (v11 day 40):
+    how many NVIDIA timeouts accrued and whether the breaker tripped to Groq. Read
+    after a run so the Status tab can show fallback frequency over time."""
+    return {"nvidia_timeouts": _nvidia_timeouts, "breaker_tripped": _nvidia_tripped}
+
+
 def _client_for(base_url: str, api_key: str) -> OpenAI:
     if base_url not in _clients:
         _clients[base_url] = OpenAI(

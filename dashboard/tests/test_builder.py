@@ -219,3 +219,45 @@ def test_build_without_dutch_still_renders_radar(tmp_path):
     # old callers that pass no dutch arg must still work (back-compat)
     html = builder.build(_memory(), _scored(), out_path=tmp_path / "d.html").read_text("utf-8")
     assert "Trending today" in html and "No Dutch lessons yet" in html
+
+
+# --- Status tab (v11 day 40) -------------------------------------------------
+
+def _run_history():
+    return {
+        "2026-06-23": {
+            "date": "2026-06-23", "ok": True, "duration_s": 434.0,
+            "stages": {"scrape": "ok", "delivery": "ok", "dutch": "ok"},
+            "sources": {"reddit": 12, "lobsters": 4},
+            "llm": {"nvidia_timeouts": 0, "breaker_tripped": False},
+        },
+        "2026-06-24": {
+            "date": "2026-06-24", "ok": False, "duration_s": 401.5,
+            "stages": {"scrape": "ok", "delivery": "fail", "dutch": "ok"},
+            "sources": {"reddit": 9, "lobsters": 0},  # a dead source flagged on the page
+            "llm": {"nvidia_timeouts": 4, "breaker_tripped": True},
+        },
+    }
+
+
+def test_status_tab_renders_health_and_learning(tmp_path):
+    html = builder.build(
+        _memory(), _scored(), out_path=tmp_path / "d.html",
+        run_history=_run_history(), dutch={"cefr": "A2", "streak": 3, "words": {}, "recall": []},
+    ).read_text("utf-8")
+    assert "data-tab='status'" in html and "📊 Status" in html
+    assert "Pipeline health" in html and "Learning" in html
+    # heatmap shows each stage, the latest run's verdict, and the fallback count
+    assert "delivery" in html and "❌ had failures" in html
+    assert "LLM fallback" in html
+    # a source at 0 items is flagged
+    assert "⚠️" in html
+    # the cohort block is fetched client-side from the token-gated file, not baked in
+    assert "cohort/" in html and "?u=" in html
+
+
+def test_status_tab_empty_state(tmp_path):
+    html = builder.build(
+        _memory(), _scored(), out_path=tmp_path / "d.html", run_history={},
+    ).read_text("utf-8")
+    assert "No runs recorded yet" in html  # no history → friendly empty state

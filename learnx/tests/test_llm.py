@@ -57,11 +57,17 @@ def test_breaker_trips_after_two_nvidia_timeouts_then_uses_groq(monkeypatch):
     counter = {"nvidia": 0, "groq": 0}
     _wire(monkeypatch, counter)
 
+    # Before any call the breaker snapshot is clean (what the Status tab reports).
+    assert llm.breaker_state() == {"nvidia_timeouts": 0, "breaker_tripped": False}
+
     # Call 1: NVIDIA times out twice -> breaker trips mid-call -> Groq serves.
     assert llm.chat([{"role": "user", "content": "hi"}]) == "groq-ok"
     assert llm._nvidia_tripped is True
     assert counter["nvidia"] == 2  # not the full 3 retries — we bailed early
     assert counter["groq"] == 1
+
+    # The snapshot now reflects the trip — this is what the run record captures.
+    assert llm.breaker_state() == {"nvidia_timeouts": 2, "breaker_tripped": True}
 
     # Call 2: NVIDIA is written off — Groq directly, NVIDIA never touched again.
     assert llm.chat([{"role": "user", "content": "again"}]) == "groq-ok"

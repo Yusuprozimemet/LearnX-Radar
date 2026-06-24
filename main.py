@@ -9,6 +9,7 @@ silent half-run; failures are collected and DM'd to the owner at the end of the
 run (see _report) so an unattended cron can't degrade silently.
 """
 import asyncio
+import time
 from datetime import date
 from pathlib import Path
 
@@ -26,12 +27,13 @@ from dashboard import builder as dashboard
 from delivery import devto_publisher, email_sender, telegram_recall, telegram_sender
 from dutch import audio as dutch_audio
 from dutch import coach as dutch_coach
+from dutch import cohort as dutch_cohort
 from dutch import lesson as dutch_lesson
 from dutch import progress as dutch_progress
 from dutch import review as dutch_review
 from dutch import trainer as dutch_trainer
 from dutch import wordlist as dutch_wordlist
-from learnx import audio_builder, curriculum, dialogue
+from learnx import audio_builder, curriculum, dialogue, llm
 from radar import brief_writer, gap_scorer, privacy, skill_extractor
 from storage import (
     apply_learned_aliases,
@@ -40,6 +42,7 @@ from storage import (
     load_brief,
     load_dutch_memory,
     load_memory,
+    load_run_history,
     load_seen,
     load_trending_history,
     mark_seen,
@@ -50,13 +53,16 @@ from storage import (
     record_lesson,
     record_lesson_rating,
     review_token,
+    run_history,
     save_brief,
+    save_cohort,
     save_dutch_lesson,
     save_dutch_memory,
     save_dutch_progress,
     save_last_scored,
     save_memory,
     save_review,
+    save_run_history,
     save_seen,
     save_trending_history,
     slugify,
@@ -68,11 +74,51 @@ OUTPUT_DIR = Path(__file__).parent / "output"
 # Stage failures collected across the run; _report() DMs them to the owner so the
 # per-stage guards (which keep the run alive) can't also hide a dying channel.
 _failures: list[str] = []
+# Per-source item counts from the scrape, captured for the Status tab's source-health
+# row (v11 day 40). A source missing here or at 0 is flagged on the dashboard.
+_source_counts: dict[str, int] = {}
+
+# Status-tab stages (v11 day 40): each maps to the _fail() prefixes that mean it
+# broke. A stage with no matching failure is "ok"; this turns the ad-hoc failure
+# list into a stable per-stage heatmap without instrumenting every call site. Stages
+# left undisplayed (the dev pipeline core — extract/score/brief/dialogue/audio) aren't
+# individually guarded: a failure there hard-crashes the run and shows up as "run".
+_STAGE_GROUPS: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ("feedback", ("telegram inbound", "dutch recall")),
+    ("scrape", ("fetch",)),
+    ("dutch", ("dutch coach", "dutch audio", "dutch trainer", "dutch build", "dutch persist")),
+    ("delivery", ("send",)),
+    ("dashboard", ("dashboard build",)),
+    ("devto", ("devto cross-post",)),
+    ("waitlist", ("waitlist post",)),
+    ("run", ("run:",)),  # a hard crash caught in main()
+)
 
 
 def _fail(stage: str, exc: Exception) -> None:
     print(f"[{stage}] failed: {exc}")
     _failures.append(f"{stage}: {exc}")
+
+
+def _record_run_history(duration_s: float) -> None:
+    """Persist one run-health entry for the Status tab (v11 day 40). Best-effort and
+    called from main()'s finally, so a crashed run is still recorded (with the
+    failing stage marked). Derives per-stage ok/fail from _failures by prefix —
+    storing stage verdicts only, never the exception text (that's the owner DM)."""
+    try:
+        stages = {
+            name: not any(p in f for f in _failures for p in prefixes)
+            for name, prefixes in _STAGE_GROUPS
+        }
+        entry = run_history.build_entry(
+            stages=stages,
+            sources=_source_counts,
+            llm=llm.breaker_state(),
+            duration_s=duration_s,
+        )
+        save_run_history(entry)
+    except Exception as exc:  # never let monitoring break the run
+        print(f"[run-history] could not record run: {exc}")
 
 
 def _report() -> None:
@@ -108,6 +154,7 @@ def _scrape(memory: dict) -> list[dict]:
         try:
             fetched = agent.fetch()
             print(f"[{name}] fetched {len(fetched)} item(s)")
+            _source_counts[name] = len(fetched)
             items.extend(fetched)
         except Exception as exc:
             _fail(f"{name} fetch", exc)
@@ -115,6 +162,7 @@ def _scrape(memory: dict) -> list[dict]:
     try:
         fetched = stackoverflow_agent.fetch(memory.get("so_counts", {}))
         print(f"[stackoverflow] fetched {len(fetched)} item(s)")
+        _source_counts["stackoverflow"] = len(fetched)
         items.extend(fetched)
     except Exception as exc:
         _fail("stackoverflow fetch", exc)
@@ -156,7 +204,10 @@ def _refresh_dashboard(memory: dict, scored=None, today_skill=None) -> None:
     """Regenerate the static dashboard; never let it fail the run."""
     try:
         dutch = load_dutch_memory() if config.DUTCH_ENABLED else None
-        path = dashboard.build(memory, scored, today_skill, dutch=dutch)
+        path = dashboard.build(
+            memory, scored, today_skill, dutch=dutch,
+            run_history=load_run_history(),
+        )
         print(f"[dashboard] wrote {path}")
     except Exception as exc:
         _fail("dashboard build", exc)
@@ -348,6 +399,7 @@ def _persist_dutch_multiuser(dutch_state: dict) -> None:
     each schedule due later, so they don't appear in today's review — the review is
     genuinely the words each learner still owes. Per-user failures are isolated."""
     bank = dutch_wordlist.load()
+    updated: list[dict] = []  # each learner's saved memory, for the cohort aggregate
     for chat_id in config.dutch_user_chat_ids():
         try:
             dmem = load_dutch_memory(chat_id)
@@ -369,9 +421,32 @@ def _persist_dutch_multiuser(dutch_state: dict) -> None:
             # Per-learner scorecard under the same token: a learner sees only their
             # own LESSEN history, fetched via ?u=<token> — never anyone else's.
             save_dutch_progress(dutch_progress.build_progress(dmem), tok)
+            updated.append(dmem)
             print(f"[dutch] {chat_id}: SR updated, {len(payload['ids'])} review item(s)")
         except Exception as exc:
             _fail(f"dutch persist {chat_id}", exc)
+    _publish_cohort(updated)
+
+
+def _publish_cohort(memories: list[dict]) -> None:
+    """Publish the anonymous cohort learning aggregate (Status tab, v11 day 40) under
+    the OWNER's token, so it's fetched only via the owner's ?u=<token> link. Built from
+    every learner's just-saved memory; in single-user mode the cohort is the owner alone.
+
+    build_cohort stays pure and id-only (no learner identity); the hardest-words ids are
+    joined to their Dutch/English text here so the published JSON is self-contained."""
+    if not memories:
+        return
+    try:
+        payload = dutch_cohort.build_cohort(memories)
+        bank = {w["id"]: w for w in dutch_wordlist.load()}
+        for word in payload.get("hardest_words", []):
+            info = bank.get(word["id"], {})
+            word["nl"] = info.get("nl", word["id"])
+            word["en"] = info.get("en", "")
+        save_cohort(payload, review_token(config.TELEGRAM_CHAT_ID))
+    except Exception as exc:
+        _fail("cohort publish", exc)
 
 
 def _run() -> None:
@@ -531,6 +606,7 @@ def _run() -> None:
                     dutch_progress.build_progress(dutch_state["memory"]),
                     review_token(config.TELEGRAM_CHAT_ID),
                 )
+                _publish_cohort([dutch_state["memory"]])
             except Exception as exc:
                 _fail("dutch persist", exc)
 
@@ -541,13 +617,17 @@ def _run() -> None:
 
 def main() -> None:
     """Run the pipeline, then DM any stage failures to the owner. A hard crash is
-    recorded and re-raised so the Actions run still goes red."""
+    recorded and re-raised so the Actions run still goes red. The Status-tab run
+    record and the failure DM both fire from finally, so a crashed run is still
+    captured (with the failing stage marked)."""
+    started = time.monotonic()
     try:
         _run()
     except Exception as exc:
         _fail("run", exc)
         raise
     finally:
+        _record_run_history(time.monotonic() - started)
         _report()
 
 
