@@ -1,0 +1,21 @@
+# Keep the image lean and secret-free.
+.git
+.github
+.claude
+.env
+.env.*
+!.env.example
+__pycache__
+**/__pycache__
+.pytest_cache
+.ruff_cache
+*.pyc
+output
+week3
+ideas
+specs
+plan
+briefs
+docs
+*.png
+image*.png
