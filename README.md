@@ -2,6 +2,7 @@
 
 > **A self-updating curriculum engine: it watches real developer signals for emerging skill gaps and ships you a grounded audio lesson every day — on zero backend.**
 
+[![CI](https://github.com/Yusuprozimemet/LearnX-Radar/actions/workflows/ci.yml/badge.svg)](https://github.com/Yusuprozimemet/LearnX-Radar/actions/workflows/ci.yml)
 [![Live dashboard](https://img.shields.io/badge/dashboard-live-brightgreen)](https://yusuprozimemet.github.io/LearnX-Radar/)
 [![Listen on Spotify](https://img.shields.io/badge/Spotify-listen-1DB954?logo=spotify&logoColor=white)](https://open.spotify.com/show/033tPjkKDj5xF09FQC0Di7)
 [![Join on Telegram](https://img.shields.io/badge/Telegram-join-26A5E4?logo=telegram&logoColor=white)](https://t.me/learnradar)
@@ -99,6 +100,19 @@ pytest && ruff check .    # tests + lint (same as CI)
 Required env vars: `NVIDIA_API_KEY`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`,
 `GMAIL_APP_PASSWORD`, `EMAIL_FROM`, `EMAIL_TO`. Everything else is optional and
 degrades gracefully — see [Configuration](#configuration).
+
+**No-secret run (Docker).** The dashboard rebuilds from committed JSON state
+alone — no API keys, no network — exactly as the Pages deploy does. From a clean
+clone:
+
+```
+docker build -t learnx-radar .
+docker run --rm -v "$PWD/dashboard:/app/dashboard" learnx-radar
+```
+
+This writes `dashboard/index.html` + `podcast.xml`. It's also the "deploy": a
+GitHub Actions cron runs `python main.py` daily and a Pages workflow rebuilds the
+dashboard from state after each run — see [Workflows](#workflows).
 
 ---
 

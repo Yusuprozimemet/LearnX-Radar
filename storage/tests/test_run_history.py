@@ -35,6 +35,15 @@ def test_build_entry_all_ok_when_every_stage_passes():
     assert entry["date"] == date.today().isoformat()
 
 
+def test_build_entry_rounds_stage_timings_and_defaults_empty():
+    entry = run_history.build_entry(
+        stages={"scrape": True}, sources={}, timings={"scrape": 1.27, "audio": 3.0}
+    )
+    assert entry["timings"] == {"scrape": 1.3, "audio": 3.0}
+    # No timings supplied -> an empty dict, never missing (page reads it directly).
+    assert run_history.build_entry(stages={}, sources={})["timings"] == {}
+
+
 def test_save_run_history_overwrites_day_and_caps(tmp_path, monkeypatch):
     monkeypatch.setattr(paths, "RUN_HISTORY_FILE", tmp_path / "run_history.json")
     monkeypatch.setattr(paths, "RUN_HISTORY_KEEP_DAYS", 3)

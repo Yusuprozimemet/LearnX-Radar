@@ -9,6 +9,7 @@ silent half-run; failures are collected and DM'd to the owner at the end of the
 run (see _report) so an unattended cron can't degrade silently.
 """
 import asyncio
+import contextlib
 import time
 from datetime import date
 from pathlib import Path
@@ -59,6 +60,10 @@ _failures: list[str] = []
 # Per-source item counts from the scrape, captured for the Status tab's source-health
 # row (v11 day 40). A source missing here or at 0 is flagged on the dashboard.
 _source_counts: dict[str, int] = {}
+# Wall-clock seconds per heavy stage, for the Status tab's timing breakdown (v12).
+# Total duration alone says "slow"; this says *which stage* — the first thing you'd
+# want when a run's duration creeps up. Only the expensive stages are timed.
+_stage_timings: dict[str, float] = {}
 
 # Status-tab stages (v11 day 40): each maps to the _fail() prefixes that mean it
 # broke. A stage with no matching failure is "ok"; this turns the ad-hoc failure
@@ -82,6 +87,17 @@ def _fail(stage: str, exc: Exception) -> None:
     _failures.append(f"{stage}: {exc}")
 
 
+@contextlib.contextmanager
+def _timed(stage: str):
+    """Record a stage's wall-clock seconds into _stage_timings. Best-effort and
+    finally-based, so a stage that raises is still timed up to the failure."""
+    start = time.monotonic()
+    try:
+        yield
+    finally:
+        _stage_timings[stage] = round(time.monotonic() - start, 1)
+
+
 def _record_run_history(duration_s: float) -> None:
     """Persist one run-health entry for the Status tab (v11 day 40). Best-effort and
     called from main()'s finally, so a crashed run is still recorded (with the
@@ -97,6 +113,7 @@ def _record_run_history(duration_s: float) -> None:
             sources=_source_counts,
             llm=llm.breaker_state(),
             duration_s=duration_s,
+            timings=_stage_timings,
         )
         save_run_history(entry)
     except Exception as exc:  # never let monitoring break the run
@@ -244,7 +261,8 @@ def _run() -> None:
         _fail("waitlist post", exc)
 
     # 1. Collect from all sources, then drop anything already taught.
-    items = _scrape(memory)
+    with _timed("scrape"):
+        items = _scrape(memory)
     seen = load_seen()
     new_items = filter_new(items, seen)
     print(f"{len(new_items)} new of {len(items)} scraped")
@@ -262,11 +280,13 @@ def _run() -> None:
     # 2. Radar: score ALL scraped items (not just new ones) so the dashboard shows
     # the full demand picture on every run; novelty already sinks recently-taught
     # skills, so top() still picks a genuine gap to teach.
-    mentions = skill_extractor.extract(items)
+    with _timed("extract"):
+        mentions = skill_extractor.extract(items)
     profile = {"known": config.KNOWN_SKILLS, "goals": config.LEARNING_GOALS}
     # Prior-day rankings power the momentum multiplier (today isn't written until
     # save_trending_history below, so this is strictly history).
-    scored = gap_scorer.score(mentions, memory, profile, history=load_trending_history())
+    with _timed("score"):
+        scored = gap_scorer.score(mentions, memory, profile, history=load_trending_history())
     # Extraction maximizes recall (many candidates); MAX_SKILL_MENTIONS trims after
     # scoring so the brief/dashboard stay focused on the top N.
     skill = gap_scorer.top(scored)
@@ -283,25 +303,28 @@ def _run() -> None:
         return
     print(f"Today's skill: {skill['skill']} (score {skill.get('score')})")
 
-    brief_md = brief_writer.write(skill, memory, items)
+    with _timed("brief"):
+        brief_md = brief_writer.write(skill, memory, items)
     brief_file = save_brief(skill["skill"], brief_md)  # committed; linked for Perplexity Q&A
 
     # 3. Learnx: brief -> curriculum -> dialogue -> audio.
     difficulty = config.LESSON_DIFFICULTY_OVERRIDE or skill.get(
         "suggested_difficulty", config.LESSON_DIFFICULTY_DEFAULT
     )
-    units = curriculum.plan(brief_md, skill["skill"], difficulty=difficulty)
-    action = brief_writer.action_step(brief_md)  # voiced in the outro as a call to action
-    lines = dialogue.generate(
-        units, skill["skill"], hook=skill.get("evidence", ""), action=action,
-        difficulty=difficulty,
-    )
+    with _timed("lesson"):
+        units = curriculum.plan(brief_md, skill["skill"], difficulty=difficulty)
+        action = brief_writer.action_step(brief_md)  # voiced in the outro as a call to action
+        lines = dialogue.generate(
+            units, skill["skill"], hook=skill.get("evidence", ""), action=action,
+            difficulty=difficulty,
+        )
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     # Per-lesson filename (date + skill slug, like the brief) so several lessons on
     # the same day get distinct files/URLs/GUIDs instead of clobbering one another.
     mp3_path = str(OUTPUT_DIR / f"lesson-{date.today():%Y%m%d}-{slugify(skill['skill'])}.mp3")
-    asyncio.run(audio_builder.build(lines, mp3_path))
+    with _timed("audio"):
+        asyncio.run(audio_builder.build(lines, mp3_path))
 
     lesson = {
         "title": skill["skill"],
@@ -332,11 +355,12 @@ def _run() -> None:
         lesson["dutch"] = dutch_payload
 
     # 4. Deliver (each channel independent).
-    for name, sender in (("telegram", telegram_sender), ("email", email_sender)):
-        try:
-            sender.send(lesson)
-        except Exception as exc:
-            _fail(f"{name} send", exc)
+    with _timed("deliver"):
+        for name, sender in (("telegram", telegram_sender), ("email", email_sender)):
+            try:
+                sender.send(lesson)
+            except Exception as exc:
+                _fail(f"{name} send", exc)
 
     # 4b. Weekly cross-post to dev.to (draft) for reach/SEO — never blocks the run.
     try:
