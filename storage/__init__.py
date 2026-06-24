@@ -9,43 +9,45 @@ so state survives across daily runs without external storage):
 - briefs/           — full lesson brief text, linked from lessons for Perplexity Q&A
 """
 from storage import run_history
-from storage.state import (
+from storage.aliases import (
     apply_learned_aliases,
+    flatten_aliases,
+    load_alias_denylist,
+    load_learned_aliases,
+    save_alias_denylist,
+    save_learned_aliases,
+)
+from storage.dutch_state import (
     dutch_due_words,
     dutch_recall_adherence,
     dutch_unsubmitted_streak,
-    filter_new,
-    flatten_aliases,
-    load_alias_denylist,
-    load_brief,
     load_dutch_memory,
-    load_last_scored,
-    load_learned_aliases,
-    load_memory,
-    load_run_history,
-    load_seen,
-    load_trending_history,
-    mark_seen,
-    previous_lesson,
     record_dutch_lesson,
     record_dutch_recall,
     record_dutch_review,
-    record_lesson,
-    record_lesson_rating,
     review_token,
-    save_alias_denylist,
-    save_brief,
-    save_cohort,
     save_dutch_lesson,
     save_dutch_memory,
     save_dutch_progress,
-    save_last_scored,
-    save_learned_aliases,
-    save_memory,
     save_review,
-    save_run_history,
-    save_seen,
+)
+from storage.run_history import load_run_history, save_run_history
+from storage.scored import (
+    load_last_scored,
+    load_trending_history,
+    save_cohort,
+    save_last_scored,
     save_trending_history,
+)
+from storage.seen import filter_new, load_seen, mark_seen, save_seen
+from storage.skills import (
+    load_brief,
+    load_memory,
+    previous_lesson,
+    record_lesson,
+    record_lesson_rating,
+    save_brief,
+    save_memory,
     skill_entry,
     slugify,
 )

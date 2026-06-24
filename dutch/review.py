@@ -17,7 +17,7 @@ from datetime import date
 from pathlib import Path
 
 from dutch import cloze
-from storage.state import dutch_due_words
+from storage.dutch_state import dutch_due_words
 
 
 def _archive_drills(lessons_dir: Path) -> dict[str, dict]:

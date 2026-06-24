@@ -2,7 +2,7 @@
 plus the rolling, capped IO (paths redirected to tmp, no real writes)."""
 from datetime import date, timedelta
 
-from storage import run_history, state
+from storage import paths, run_history, state
 
 
 def _iso(days_ago: int) -> str:
@@ -36,8 +36,8 @@ def test_build_entry_all_ok_when_every_stage_passes():
 
 
 def test_save_run_history_overwrites_day_and_caps(tmp_path, monkeypatch):
-    monkeypatch.setattr(state, "RUN_HISTORY_FILE", tmp_path / "run_history.json")
-    monkeypatch.setattr(state, "RUN_HISTORY_KEEP_DAYS", 3)
+    monkeypatch.setattr(paths, "RUN_HISTORY_FILE", tmp_path / "run_history.json")
+    monkeypatch.setattr(paths, "RUN_HISTORY_KEEP_DAYS", 3)
 
     # Five days of entries; only the newest 3 survive the cap.
     for d in range(5):
@@ -57,5 +57,5 @@ def test_save_run_history_overwrites_day_and_caps(tmp_path, monkeypatch):
 
 
 def test_load_run_history_missing_is_empty(tmp_path, monkeypatch):
-    monkeypatch.setattr(state, "RUN_HISTORY_FILE", tmp_path / "absent.json")
+    monkeypatch.setattr(paths, "RUN_HISTORY_FILE", tmp_path / "absent.json")
     assert state.load_run_history() == {}

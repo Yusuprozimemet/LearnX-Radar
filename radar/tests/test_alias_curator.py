@@ -127,12 +127,12 @@ def test_curation_loop_changes_live_momentum(tmp_path, monkeypatch):
     and applied, makes the live scorer treat a variant as the same rising skill."""
     import config
     from radar import gap_scorer
-    from storage import state
+    from storage import paths, state
 
     monkeypatch.setattr(config, "MOMENTUM_ENABLED", True)
     monkeypatch.setattr(config, "MOMENTUM_SEMANTIC_MATCH", False)  # pure alias-driven
     monkeypatch.setattr(config, "SKILL_ALIASES", {})
-    monkeypatch.setattr(state, "LEARNED_ALIASES_FILE", tmp_path / "skill_aliases.json")
+    monkeypatch.setattr(paths, "LEARNED_ALIASES_FILE", tmp_path / "skill_aliases.json")
 
     # Prior days mention only "Autonomous AI agents"; today's skill is "AI agents".
     prior = _history((1, ["Autonomous AI agents"]), (2, ["Autonomous AI agents"]))

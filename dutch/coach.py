@@ -25,7 +25,7 @@ from datetime import date
 import config
 from dutch.prompt_loader import load_prompt
 from learnx.llm import chat, parse_json_response
-from storage.state import _DATA_DIR
+from storage.paths import _DATA_DIR
 
 log = logging.getLogger(__name__)
 

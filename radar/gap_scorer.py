@@ -22,7 +22,7 @@ from radar import semantic_match
 # Reuse the SAME canonicalization extraction used to merge variants, so cross-day
 # matching links the same skill across days (e.g. k8s <-> Kubernetes).
 from radar.skill_extractor import _canonical
-from storage.state import skill_entry
+from storage.skills import skill_entry
 
 _DIFFICULTY_BY_EXPOSURE = ("beginner", "intermediate", "advanced")
 
