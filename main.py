@@ -318,11 +318,23 @@ def _build_dutch(today_skill: str | None) -> tuple[dict | None, dict | None]:
                 return _dutch_pause_payload(backlog), None
         bank = dutch_wordlist.load()
         theme = dutch_wordlist.theme_for(today)
+        # Recall-driven CEFR progression: once recall at the current rung clears the
+        # bar, advance toward the inburgering B1 (raising the complexity the lesson
+        # prompt asks for). Pure + guarded; the bumped level is on dmem, so it flows
+        # into build() below and is persisted with the SR state.
+        if config.DUTCH_CEFR_PROGRESSION:
+            try:
+                level, advanced = dutch_progress.advance_cefr(dmem, today)
+                if advanced:
+                    print(f"[dutch] CEFR advanced -> {level}")
+            except Exception as exc:
+                _fail("dutch coach", exc)
         # Mistake-driven coach (v10 day 36): detect words the learner keeps failing
         # and, if any, let one LLM call pick today's focus. Fully guarded — any
         # failure falls back to mechanical selection so the lesson always ships.
         force_ids: list[str] = []
         directive = ""
+        contrast_md = ""
         if config.DUTCH_COACH_ENABLED:
             try:
                 struggling = dutch_coach.detect_struggling(dmem, bank)
@@ -333,6 +345,15 @@ def _build_dutch(today_skill: str | None) -> tuple[dict | None, dict | None]:
                     dutch_coach.append_log(cplan, struggling, when=today)
                     print(f"[dutch] coach: {len(struggling)} struggling, "
                           f"focus {force_ids or '(none)'}")
+                # Second tool: a contrast drill for STUCK words (wrong repeatedly, never
+                # recalled) — re-exposure alone has a ceiling. Force both words of each
+                # confusable pair into review and add a "mind the difference" section.
+                pairs = dutch_coach.confusable_pairs(dmem, bank)
+                if pairs:
+                    contrast_md = dutch_coach.render_contrast(pairs)
+                    contrast_ids = [cid for p in pairs for cid in (p["id"], p["with_id"])]
+                    force_ids = contrast_ids + [i for i in force_ids if i not in contrast_ids]
+                    print(f"[dutch] coach: {len(pairs)} contrast pair(s)")
             except Exception as exc:
                 _fail("dutch coach", exc)
         new_w, review_w = dutch_wordlist.select_for_today(
@@ -355,6 +376,7 @@ def _build_dutch(today_skill: str | None) -> tuple[dict | None, dict | None]:
             topic=topic,
             cefr=dmem.get("cefr", config.DUTCH_CEFR_START),
             directive=directive,
+            extra_sections=contrast_md,
         )
         dutch_mp3: str | None = str(OUTPUT_DIR / f"dutch-{today:%Y%m%d}.mp3")
         timings: list[dict] = []
@@ -403,6 +425,10 @@ def _persist_dutch_multiuser(dutch_state: dict) -> None:
     for chat_id in config.dutch_user_chat_ids():
         try:
             dmem = load_dutch_memory(chat_id)
+            # Each learner advances on their OWN recall (generation stays global; only
+            # the per-user scorecard level changes). Guarded inline with the persist.
+            if config.DUTCH_CEFR_PROGRESSION:
+                dutch_progress.advance_cefr(dmem)
             record_dutch_lesson(
                 dmem,
                 word_ids=dutch_state["word_ids"],

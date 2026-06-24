@@ -343,10 +343,24 @@ GROUNDING_RECENCY_DAYS = 120
 # (a frozen, human-reviewed bank) — the LLM only writes sentences around fixed
 # words, never invents vocabulary. See specs/v5/ and plan/plan.md.
 DUTCH_ENABLED = True
-DUTCH_CEFR_START = "A2"              # starting level (auto-advances toward B1 in v6)
+DUTCH_CEFR_START = "A2"              # starting level (auto-advances toward B1, below)
 DUTCH_NEW_WORDS_PER_DAY = 4          # new words introduced each morning
 DUTCH_REVIEW_WORDS_MAX = 6           # cap on due-for-review words pulled into a day
 DUTCH_THEME_TECH_TIE_IN = True       # on tech days, tie the lesson to the dev topic
+
+# Recall-driven CEFR progression. The engine MEASURES recall but used to teach at a
+# fixed level forever (the owner held ~86% recall for weeks yet never left A2). This
+# closes that gap: once rolling recall AT the current level clears the bar over enough
+# reports, advance one rung — which raises the sentence/grammar complexity the lesson
+# prompt asks for (the frozen vocab bank is unchanged; only the wrapping gets harder).
+# The target is the inburgering B1, so the ladder caps there. cefr_since (in
+# dutch_memory) marks when the current rung began, so only recall at this level counts.
+DUTCH_CEFR_PROGRESSION = True        # False -> level stays fixed at DUTCH_CEFR_START
+DUTCH_CEFR_LADDER = ("A2", "A2+", "B1")  # one intermediate rung before the B1 goal
+DUTCH_CEFR_ADVANCE_RECALL = 0.85     # rolling recall fraction to clear a rung
+DUTCH_CEFR_ADVANCE_MIN_REPORTS = 6   # recall reports at this rung before it can advance
+DUTCH_CEFR_ADVANCE_MIN_WORDS = 30    # words attempted at this rung (so the rate is real)
+DUTCH_CEFR_ADVANCE_WINDOW_DAYS = 30  # rolling window the rate is measured over
 
 # --- Delftse methode (v9) ---
 # Restructure the Dutch MP3 into listen -> repeat -> listen-again blocks: every
@@ -402,6 +416,23 @@ DUTCH_SR_SPACING_FACTOR = 2.2
 DUTCH_COACH_ENABLED    = True   # False -> mechanical selection only (rollback)
 DUTCH_COACH_MIN_MISSES = 2      # misses before a word counts as "struggling"
 DUTCH_COACH_MAX_FOCUS  = 3      # cap on focus words per lesson (targeted, not a dump)
+
+# Contrast drill for STUCK words (the coach's second tool). Re-exposure alone has a
+# ceiling: some words are wrong over and over with no recall ever (email: wrong x3,
+# right x0) because they're confused with a neighbour, not unlearned. For a word that's
+# net-failing with zero successful recalls, pair it with the word the learner most often
+# fails IN THE SAME report (their own confusion signal — deterministic, no LLM, both
+# words from the frozen bank) and add a "mind the difference" section + force both into
+# review. See dutch/coach.confusable_pairs / render_contrast.
+DUTCH_COACH_STUCK_MISSES  = 2   # wrong this many times with ZERO recalls -> "stuck"
+DUTCH_COACH_MAX_CONTRAST  = 2   # cap on contrast pairs per lesson
+
+# Adherence streak (dutch_memory["streak"]): how many recent lessons the learner has
+# actually completed — counted as the distinct recall-report days within this trailing
+# window. The old metric counted consecutive CRON days (≈"did the job run"), which a
+# same-day re-run reset to 1 and which ignored the learner entirely; this measures real
+# engagement and is robust to batched reports. See storage.state.dutch_recall_adherence.
+DUTCH_STREAK_WINDOW_DAYS = 30
 
 # Backlog backpressure (v10 day 37): a lesson with no recall report wasn't finished.
 # Letting unfinished lessons pile up while still generating new ones buries the
