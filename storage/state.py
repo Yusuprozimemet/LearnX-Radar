@@ -52,9 +52,17 @@ DUTCH_LESSONS_DIR = _DATA_DIR / "lessons"
 # of the chat id (review_token). Published to Pages; the trainer page fetches
 # review/<token>.json when opened with ?u=<token>. See plan/personalization.md.
 REVIEW_DIR = _DATA_DIR / "review"
+# v11 day 40: per-run pipeline health (stages ok/fail, source counts, LLM fallback)
+# for the dashboard Status tab. One entry per day, rolling — carries no raw error
+# text (see storage/run_history.py), so it's safe on the public page.
+RUN_HISTORY_FILE = _DATA_DIR / "run_history.json"
+# v11 day 40: anonymous multi-user learning aggregate (dutch/cohort.build_cohort),
+# named by the OWNER's review_token so it's fetched only via ?u=<token> like progress/.
+COHORT_DIR = _DATA_DIR / "cohort"
 
 LAST_SCORED_KEEP = 20  # cap the persisted ranking; the dashboard only shows a top slice
 HISTORY_KEEP_DAYS = 60  # cap the per-day archive so the embedded page payload stays bounded
+RUN_HISTORY_KEEP_DAYS = 60  # match the trending archive; bounds the Status heatmap
 
 MAX_SEEN = 5000  # cap so the dedup file doesn't grow forever
 SEEN_TTL_DAYS = 14  # a sighting expires after this many days; see the seen_skills section
@@ -280,6 +288,43 @@ def save_trending_history(
         del history[stale]
     HISTORY_FILE.write_text(
         json.dumps(history, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+
+
+# --- run_history.json : per-run pipeline health for the Status tab (v11 day 40) --
+# One entry per day keyed by date (overwrites on re-run, oldest rolls off the cap),
+# mirroring trending_history. Entries are built by storage.run_history.build_entry.
+
+def load_run_history() -> dict:
+    """Return {date: run-entry} or {} if missing/corrupt."""
+    if not RUN_HISTORY_FILE.exists():
+        return {}
+    try:
+        data = json.loads(RUN_HISTORY_FILE.read_text(encoding="utf-8"))
+        return data if isinstance(data, dict) else {}
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def save_run_history(entry: dict, when: date | None = None) -> None:
+    """Record one run entry under its date, trimming to RUN_HISTORY_KEEP_DAYS."""
+    when = when or date.today()
+    history = load_run_history()
+    history[entry.get("date") or when.isoformat()] = entry
+    for stale in sorted(history, reverse=True)[RUN_HISTORY_KEEP_DAYS:]:
+        del history[stale]
+    RUN_HISTORY_FILE.write_text(
+        json.dumps(history, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+
+
+def save_cohort(payload: dict, token: str) -> None:
+    """Publish the anonymous cohort learning aggregate (dutch/cohort.build_cohort),
+    named by the owner's review_token so the Status tab fetches cohort/<token>.json
+    via ?u=<token> — owner-only, never a guessable global file."""
+    COHORT_DIR.mkdir(parents=True, exist_ok=True)
+    (COHORT_DIR / f"{token}.json").write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
     )
 
 

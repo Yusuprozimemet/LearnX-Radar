@@ -8,6 +8,7 @@ so state survives across daily runs without external storage):
 - last_scored.json  — this run's ranking, so the dashboard rebuilds from state (v3)
 - briefs/           — full lesson brief text, linked from lessons for Perplexity Q&A
 """
+from storage import run_history
 from storage.state import (
     apply_learned_aliases,
     dutch_due_words,
@@ -20,6 +21,7 @@ from storage.state import (
     load_last_scored,
     load_learned_aliases,
     load_memory,
+    load_run_history,
     load_seen,
     load_trending_history,
     mark_seen,
@@ -32,6 +34,7 @@ from storage.state import (
     review_token,
     save_alias_denylist,
     save_brief,
+    save_cohort,
     save_dutch_lesson,
     save_dutch_memory,
     save_dutch_progress,
@@ -39,6 +42,7 @@ from storage.state import (
     save_learned_aliases,
     save_memory,
     save_review,
+    save_run_history,
     save_seen,
     save_trending_history,
     slugify,
@@ -78,4 +82,8 @@ __all__ = [
     "flatten_aliases",
     "load_alias_denylist",
     "save_alias_denylist",
+    "load_run_history",
+    "save_run_history",
+    "save_cohort",
+    "run_history",
 ]
