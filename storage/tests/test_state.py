@@ -386,14 +386,16 @@ def test_save_dutch_lesson_without_date_skips_archive(tmp_path, monkeypatch):
 
 def test_dutch_memory_file_routing(tmp_path, monkeypatch):
     monkeypatch.setattr(paths, "_DATA_DIR", tmp_path)
-    monkeypatch.setattr(paths, "DUTCH_MEMORY_FILE", tmp_path / "dutch_memory.json")
+    monkeypatch.setattr(paths, "DUTCH_DIR", tmp_path / "dutch")
+    monkeypatch.setattr(paths, "DUTCH_MEMORY_FILE", tmp_path / "dutch" / "dutch_memory.json")
     monkeypatch.setattr(state.config, "TELEGRAM_CHAT_ID", "owner")
-    # owner (and None) keep the historical unsuffixed file; others get a suffix
-    assert state._dutch_memory_file(None) == tmp_path / "dutch_memory.json"
-    assert state._dutch_memory_file("owner") == tmp_path / "dutch_memory.json"
-    assert state._dutch_memory_file("u2") == tmp_path / "dutch_memory_u2.json"
+    # owner (and None) keep the historical unsuffixed file; others get a suffix —
+    # both now under the dutch/ track folder (save_dutch_memory creates it).
+    assert state._dutch_memory_file(None) == tmp_path / "dutch" / "dutch_memory.json"
+    assert state._dutch_memory_file("owner") == tmp_path / "dutch" / "dutch_memory.json"
+    assert state._dutch_memory_file("u2") == tmp_path / "dutch" / "dutch_memory_u2.json"
     state.save_dutch_memory({"version": 1, "cefr": "B1", "words": {}}, "u2")
-    assert (tmp_path / "dutch_memory_u2.json").exists()
+    assert (tmp_path / "dutch" / "dutch_memory_u2.json").exists()
     assert state.load_dutch_memory("u2")["cefr"] == "B1"
     assert state.load_dutch_memory("owner")["words"] == {}  # owner file untouched
 

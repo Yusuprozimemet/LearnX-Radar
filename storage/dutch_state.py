@@ -46,7 +46,7 @@ def _dutch_memory_file(chat_id=None):
     tests); every other learner gets dutch_memory_<chatid>.json beside it."""
     if chat_id is None or str(chat_id) == str(config.TELEGRAM_CHAT_ID):
         return paths.DUTCH_MEMORY_FILE
-    return paths._DATA_DIR / f"dutch_memory_{chat_id}.json"
+    return paths.DUTCH_DIR / f"dutch_memory_{chat_id}.json"
 
 
 def load_dutch_memory(chat_id=None) -> dict:
@@ -66,7 +66,7 @@ def load_dutch_memory(chat_id=None) -> dict:
 
 
 def save_dutch_memory(memory: dict, chat_id=None) -> None:
-    _dutch_memory_file(chat_id).write_text(
+    paths.ensure_parent(_dutch_memory_file(chat_id)).write_text(
         json.dumps(memory, ensure_ascii=False, indent=2), encoding="utf-8"
     )
 
@@ -105,11 +105,11 @@ def save_dutch_lesson(payload: dict) -> None:
     the lessons/ archive and index.json gains an entry, so the page's lesson list
     can reopen past days. Re-running the same day replaces that day's entry."""
     text = json.dumps(payload, ensure_ascii=False, indent=2)
-    paths.DUTCH_LESSON_FILE.write_text(text, encoding="utf-8")
+    paths.ensure_parent(paths.DUTCH_LESSON_FILE).write_text(text, encoding="utf-8")
     day = payload.get("date", "")
     if not day:
         return
-    paths.DUTCH_LESSONS_DIR.mkdir(exist_ok=True)
+    paths.DUTCH_LESSONS_DIR.mkdir(parents=True, exist_ok=True)
     (paths.DUTCH_LESSONS_DIR / f"dutch-{day}.json").write_text(text, encoding="utf-8")
     index_file = paths.DUTCH_LESSONS_DIR / "index.json"
     try:

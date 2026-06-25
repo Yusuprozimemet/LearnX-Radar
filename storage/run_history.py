@@ -72,6 +72,6 @@ def save_run_history(entry: dict, when: date | None = None) -> None:
     history[entry.get("date") or when.isoformat()] = entry
     for stale in sorted(history, reverse=True)[paths.RUN_HISTORY_KEEP_DAYS:]:
         del history[stale]
-    paths.RUN_HISTORY_FILE.write_text(
+    paths.ensure_parent(paths.RUN_HISTORY_FILE).write_text(
         json.dumps(history, ensure_ascii=False, indent=2), encoding="utf-8"
     )

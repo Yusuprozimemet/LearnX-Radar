@@ -49,7 +49,7 @@ def flatten_aliases(mapping: dict[str, str]) -> dict[str, str]:
 def save_learned_aliases(aliases: dict[str, str]) -> None:
     # Flatten on write so the committed file never carries a chain, even when one
     # forms across runs (run N learns `a -> b`, run N+1 learns `b -> c`).
-    paths.LEARNED_ALIASES_FILE.write_text(
+    paths.ensure_parent(paths.LEARNED_ALIASES_FILE).write_text(
         json.dumps(flatten_aliases(aliases), ensure_ascii=False, indent=2, sort_keys=True),
         encoding="utf-8",
     )
@@ -86,7 +86,7 @@ def load_alias_denylist() -> set[frozenset[str]]:
 
 
 def save_alias_denylist(pairs: set[frozenset[str]]) -> None:
-    paths.ALIAS_DENYLIST_FILE.write_text(
+    paths.ensure_parent(paths.ALIAS_DENYLIST_FILE).write_text(
         json.dumps(sorted(sorted(p) for p in pairs), ensure_ascii=False, indent=2),
         encoding="utf-8",
     )

@@ -29,7 +29,7 @@ def load_memory() -> dict:
 
 
 def save_memory(memory: dict) -> None:
-    paths.MEMORY_FILE.write_text(
+    paths.ensure_parent(paths.MEMORY_FILE).write_text(
         json.dumps(memory, ensure_ascii=False, indent=2), encoding="utf-8"
     )
 

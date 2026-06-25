@@ -27,7 +27,7 @@ def save_last_scored(scored: list[dict], today_skill: str | None) -> None:
         "today_skill": today_skill,
         "scored": scored[: paths.LAST_SCORED_KEEP],
     }
-    paths.LAST_SCORED_FILE.write_text(
+    paths.ensure_parent(paths.LAST_SCORED_FILE).write_text(
         json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
     )
 
@@ -55,7 +55,7 @@ def save_trending_history(
     }
     for stale in sorted(history, reverse=True)[paths.HISTORY_KEEP_DAYS:]:
         del history[stale]
-    paths.HISTORY_FILE.write_text(
+    paths.ensure_parent(paths.HISTORY_FILE).write_text(
         json.dumps(history, ensure_ascii=False, indent=2), encoding="utf-8"
     )
 

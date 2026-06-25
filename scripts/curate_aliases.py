@@ -2,9 +2,10 @@
 
 Pipeline (see radar/alias_curator.py): embed the accrued skill vocabulary, shortlist
 near-duplicate name pairs by cosine, let the NIM LLM judge which are truly the same
-skill (conservatively), then MERGE the accepted ones into storage/skill_aliases.json
-so the next radar run collapses them. Every decision (merge AND keep-separate, with
-the model's reason) is appended to storage/skill_aliases_log.md, and a short summary
+skill (conservatively), then MERGE the accepted ones into the state repo's
+radar/skill_aliases.json so the next radar run collapses them. Every decision (merge
+AND keep-separate, with the model's reason) is appended to radar/skill_aliases_log.md,
+and a short summary
 is DM'd to the owner on Telegram. Nothing blocks the daily lesson: this commits its
 result and moves on; the human reviews the log/commit later and reverts if wrong.
 
@@ -37,9 +38,9 @@ from storage import (
     save_alias_denylist,
     save_learned_aliases,
 )
-from storage.paths import _DATA_DIR, ALIAS_DENYLIST_FILE, LEARNED_ALIASES_FILE
+from storage.paths import ALIAS_DENYLIST_FILE, ALIAS_LOG_FILE, LEARNED_ALIASES_FILE
 
-LOG_FILE = _DATA_DIR / "skill_aliases_log.md"
+LOG_FILE = ALIAS_LOG_FILE
 
 
 def _append_log(decisions: list[dict], applied: dict[str, str]) -> None:
@@ -53,6 +54,7 @@ def _append_log(decisions: list[dict], applied: dict[str, str]) -> None:
     for d in kept:
         lines.append(f"- keep `{d['a']}` / `{d['b']}` separate "
                      f"(cos {d['cosine']}) — {d['reason']}")
+    LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
     LOG_FILE.write_text(
         (LOG_FILE.read_text(encoding="utf-8") if LOG_FILE.exists() else
          "# Learned skill aliases — autonomous curation log\n")
@@ -67,7 +69,7 @@ def _notify(applied: dict[str, str], kept: int) -> None:
     from delivery.telegram_sender import send_report
     body = "\n".join(f"• {v}  ⟵  {k}" for k, v in applied.items())
     send_report(f"🔗 Learned {len(applied)} skill alias(es) ({kept} pairs kept separate):"
-                f"\n{body}\n\nSee storage/skill_aliases_log.md")
+                f"\n{body}\n\nSee radar/skill_aliases_log.md")
 
 
 def _git_commit_push(files: list, msg: str) -> None:
@@ -165,7 +167,7 @@ def main() -> None:
     if commit:
         msg = ("chore(radar): learn skill alias(es) [skip ci]\n\n"
                + "\n".join(f"{v} <- {k}" for k, v in applied.items())
-               + "\n\nAutonomous curation pass; see storage/skill_aliases_log.md for "
+               + "\n\nAutonomous curation pass; see radar/skill_aliases_log.md for "
                  "the full verdicts.\n\nCo-Authored-By: Claude Opus 4.8 "
                  "<noreply@anthropic.com>")
         _git_commit_push([LEARNED_ALIASES_FILE, LOG_FILE], msg)

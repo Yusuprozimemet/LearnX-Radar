@@ -57,7 +57,7 @@ def save_seen(seen: dict[str, str]) -> None:
     if len(live) > paths.MAX_SEEN:
         newest = sorted(live.items(), key=lambda kv: kv[1], reverse=True)[: paths.MAX_SEEN]
         live = dict(newest)
-    paths.SEEN_FILE.write_text(
+    paths.ensure_parent(paths.SEEN_FILE).write_text(
         json.dumps(live, ensure_ascii=False, indent=2), encoding="utf-8"
     )
 
