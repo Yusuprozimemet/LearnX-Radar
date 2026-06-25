@@ -230,6 +230,10 @@ output/*
 storage/*.json
 storage/*.md
 storage/lessons/
+# Local state is grouped by track (matches the private repo's radar/ + dutch/);
+# ignore the whole subfolders so personal data never lands in the public repo.
+storage/radar/
+storage/dutch/
 # The Dutch word bank is also per-user state (read via STATE_DIR, see dutch/wordlist.py).
 dutch/wordlist.json
 # The private state repo is checked out here in CI (and may be locally); never commit it.

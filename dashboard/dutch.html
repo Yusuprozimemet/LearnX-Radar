@@ -2,10 +2,12 @@
 <!-- Delft trainer (v9 day 32) — static, client-side only. Fetches dutch_lesson.json
      (committed by the daily run, copied here by pages.yml) and mirrors the Delftse
      methode app's structure:
-       LEREN  steps 1-4 — sentence-by-sentence with translations; whole text with
+       LEREN  steps 1-5 — sentence-by-sentence with translations; whole text with
               transcript; listen-and-repeat without text (Block B's built-in pauses);
               whole text without transcript. Real player: prev / play-pause / next /
-              slider over the lesson MP3's timestamped segments.
+              slider over the lesson MP3's timestamped segments. Step 5 is a Dictee ->
+              Combineren -> Dictee drill over the day's new words (hear-and-type,
+              match, re-type) — within-session repetition that feeds the same SRS.
        TEST   gatentekst (whole text, new words blanked, checked) and luistertoets
               (hear each sentence ONCE — enforced — then fill its target words).
        LESSEN per-day scores plus the lesson archive (lessons/index.json): tap ▶ on
@@ -152,6 +154,26 @@
   .les-row.open { border-color:var(--green); background:var(--green-soft); }
   /* Synced-status line in the LESSEN tab (words/streak/cefr from progress.json) */
   .synced { color:var(--grey); font-weight:700; font-size:.85rem; margin:.2rem 0 .6rem; }
+  /* LEREN step 5: dictation rows reuse .line; inputs colour green/red like the cloze */
+  .subhint { color:var(--grey); font-weight:800; font-size:.85rem; margin:.4rem 0; }
+  .dictee .line input { font:inherit; font-weight:700; width:9rem; padding:.2rem .55rem;
+                        border:2px solid var(--border); border-radius:10px; background:#fff; }
+  .dictee .line input:focus { outline:none; border-color:var(--blue); }
+  .dictee .line input.right { border-color:var(--green); background:var(--green-soft);
+                              color:var(--green-edge); }
+  .dictee .line input.wrong { border-color:var(--red); background:var(--red-soft);
+                              color:var(--red); }
+  /* COMBINEREN: two columns of tap-to-pair chips */
+  .match-grid { display:flex; gap:.7rem; margin:.6rem 0; }
+  .match-col { flex:1; display:flex; flex-direction:column; gap:.5rem; }
+  .chip { font:inherit; font-weight:800; text-align:left; cursor:pointer; color:var(--ink);
+          background:var(--card); border:2px solid var(--border); border-bottom-width:4px;
+          border-radius:14px; padding:.6rem .8rem; }
+  .chip:active { transform:translateY(2px); border-bottom-width:2px; }
+  .chip.sel { border-color:var(--blue); background:var(--blue-soft); }
+  .chip.miss { border-color:var(--red); background:var(--red-soft); }
+  .chip.done { border-color:var(--green); background:var(--green-soft);
+               color:var(--green-edge); cursor:default; }
 </style></head><body>
 <header class="bar">
   <span class="owl">📻</span>
@@ -484,6 +506,191 @@
     } else {
       wrap.appendChild(el("p", "muted", "Geen audio voor deze stap."));
     }
+    return wrap;
+  }
+
+  // --- LEREN step 5: Dictee -> Combineren -> Dictee (within-session repetition) --
+  // Reuses step 1's block-A audio: the day's NEW words AND their example sentences,
+  // each with its own span. You HEAR and TYPE (woorden, then zinnen), a matching
+  // round breaks the echo, then you re-type with round-1 misses first. Only the WORD
+  // rows of the FINAL round are scored, under kind "dicteren", saved as the bare word
+  // form (w.id) so they norm-match report.words and ride the same wordMarks ->
+  // bot deep-link -> next-day SRS as the exams. Sentences are practised and checked
+  // but not sent (no word id to schedule). Article (de/het) and punctuation optional.
+  function dicteeItems(lesson) {
+    var segByNl = {};
+    (lesson.segments || []).forEach(function (s) {
+      if (s.block === "A" && !segByNl[s.nl]) segByNl[s.nl] = s;
+    });
+    var sentById = {};
+    (lesson.sentences || []).forEach(function (s) {
+      if (s.id && !sentById[s.id]) sentById[s.id] = s;
+    });
+    var words = [], sents = [];
+    (lesson.new_words || []).forEach(function (w) {
+      var wseg = segByNl[w.nl];
+      if (wseg) words.push({ id: w.id, nl: w.nl, en: w.en || "", kind: "word",
+                             start_ms: wseg.start_ms, end_ms: wseg.end_ms });
+      var sent = sentById[w.id], sseg = sent && segByNl[sent.nl];
+      if (sseg) sents.push({ id: w.id, nl: sent.nl, en: sent.en || "", kind: "sent",
+                             start_ms: sseg.start_ms, end_ms: sseg.end_ms });
+    });
+    return { words: words, sents: sents };
+  }
+  // Tolerant compare: lowercase, drop punctuation, collapse spaces. Words also accept
+  // the bare noun (leading de/het/een stripped) so gender is taught, not punished.
+  function clean(s) {
+    return s.toLowerCase().replace(/[.,!?;:'"]/g, "").trim().replace(/\s+/g, " ");
+  }
+  function stripArt(s) { return clean(s).replace(/^(de|het|een)\s+/, ""); }
+  function dicteeOk(val, target, isWord) {
+    var v = clean(val);
+    if (!v) return false;
+    if (v === clean(target)) return true;
+    return isWord && stripArt(val) === stripArt(target);
+  }
+  function shuffle(a) {
+    a = a.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function dicteeView(lesson) {
+    var data = dicteeItems(lesson), words = data.words, sents = data.sents;
+    var wrap = el("div");
+    if (!words.length && !sents.length) {
+      wrap.appendChild(el("p", "muted",
+        "Geen woorden om te dicteren vandaag. (No words to dictate today.)"));
+      return wrap;
+    }
+    var steps = el("p", "subhint", "");
+    var body = el("div", "dictee");
+    wrap.appendChild(steps); wrap.appendChild(body);
+    var firstMisses = [];   // nl's missed in round 1 -> surfaced first in round 2
+
+    function order(list, round2) {
+      if (!round2) return list.slice();
+      var miss = list.filter(function (it) { return firstMisses.indexOf(it.nl) >= 0; });
+      var keep = list.filter(function (it) { return firstMisses.indexOf(it.nl) < 0; });
+      return miss.concat(keep);
+    }
+
+    function dictee(round) {
+      steps.textContent = round === 1
+        ? "Stap 5 · Dictee 1 van 2 — luister en typ (listen and type)"
+        : "Stap 5 · Dictee 2 van 2 — nu uit je geheugen (now from memory)";
+      body.textContent = "";
+      body.appendChild(el("p", "hint",
+        "Tik 🔊, typ wat je hoort, en kijk het na. Lidwoord (de/het) en leestekens "
+        + "mogen weg. (Tap 🔊, type what you hear; article and punctuation optional.)"));
+      var rows = [];
+      var check = el("button", "score", "Nakijken");
+
+      function addGroup(title, list) {
+        if (!list.length) return;
+        body.appendChild(el("p", "subhint", title));
+        order(list, round === 2).forEach(function (it) {
+          var row = el("div", "line");
+          var play = el("button", "play", "🔊");
+          play.addEventListener("click", function () { playRange(it.start_ms, it.end_ms); });
+          var input = el("input");
+          input.type = "text"; input.autocapitalize = "off"; input.autocomplete = "off";
+          input.spellcheck = false;
+          input.placeholder = it.kind === "word" ? "typ het woord" : "typ de zin";
+          input.addEventListener("keydown", function (e) {
+            if (e.key === "Enter" && !check.disabled) check.click();
+          });
+          var ans = el("span", "en", "");
+          row.appendChild(play); row.appendChild(input); row.appendChild(ans);
+          body.appendChild(row);
+          rows.push({ it: it, input: input, ans: ans });
+        });
+      }
+      addGroup("Woorden (words)", words);
+      addGroup("Zinnen (sentences)", sents);
+
+      var next = el("button", "score retake", round === 1 ? "→ Combineren" : "🔁 Opnieuw");
+      next.style.display = "none";
+      var result = el("span", "result", "");
+      check.addEventListener("click", function () {
+        var right = [], wrong = [], got = 0;
+        if (round === 1) firstMisses = [];
+        rows.forEach(function (r) {
+          var isWord = r.it.kind === "word";
+          var ok = dicteeOk(r.input.value, r.it.nl, isWord);
+          r.input.disabled = true;
+          r.input.classList.add(ok ? "right" : "wrong");
+          r.ans.textContent = ok ? "✓ " + r.it.nl
+                                 : r.it.nl + (isWord ? " — " + r.it.en : "");
+          if (ok) got++;
+          if (isWord) (ok ? right : wrong).push(r.it.id);   // only words feed the SRS
+          if (!ok && round === 1) firstMisses.push(r.it.nl);
+        });
+        result.textContent = got + "/" + rows.length + " goed";
+        check.disabled = true; next.style.display = "";
+        if (round === 2 && (right.length || wrong.length))
+          saveResult(lesson.date, "dicteren", right, wrong);
+      });
+      next.addEventListener("click", function () {
+        if (round === 1) { words.length >= 2 ? combineren() : dictee(2); }
+        else { firstMisses = []; dictee(1); }
+      });
+      var bar = el("p");
+      bar.appendChild(check); bar.appendChild(next); bar.appendChild(result);
+      body.appendChild(bar);
+      if (rows.length) {
+        rows[0].input.focus();
+        playRange(rows[0].it.start_ms, rows[0].it.end_ms);
+      }
+    }
+
+    function combineren() {
+      steps.textContent =
+        "Stap 5 · Combineren — koppel woord en betekenis (match word and meaning)";
+      body.textContent = "";
+      body.appendChild(el("p", "hint",
+        "Tik een woord en dan de juiste betekenis. (Tap a word, then its meaning.)"));
+      var grid = el("div", "match-grid");
+      var leftCol = el("div", "match-col"), rightCol = el("div", "match-col");
+      grid.appendChild(leftCol); grid.appendChild(rightCol);
+      body.appendChild(grid);
+      var next = el("button", "score", "→ Dictee 2");
+      next.disabled = true;
+      var sel = null, done = 0;
+      shuffle(words).forEach(function (it) {
+        var b = el("button", "chip", it.nl);
+        b.addEventListener("click", function () {
+          if (b.classList.contains("done")) return;
+          if (sel) sel.btn.classList.remove("sel");
+          sel = { it: it, btn: b }; b.classList.add("sel");
+        });
+        leftCol.appendChild(b);
+      });
+      shuffle(words).forEach(function (it) {
+        var b = el("button", "chip", it.en);
+        b.addEventListener("click", function () {
+          if (b.classList.contains("done") || !sel) return;
+          if (sel.it.id === it.id) {
+            sel.btn.classList.remove("sel");
+            sel.btn.classList.add("done"); sel.btn.disabled = true;
+            b.classList.add("done"); b.disabled = true;
+            sel = null;
+            if (++done === words.length) next.disabled = false;
+          } else {
+            b.classList.add("miss");
+            setTimeout(function () { b.classList.remove("miss"); }, 350);
+          }
+        });
+        rightCol.appendChild(b);
+      });
+      next.addEventListener("click", function () { dictee(2); });
+      var bar = el("p"); bar.appendChild(next); body.appendChild(bar);
+    }
+
+    dictee(1);
     return wrap;
   }
 
@@ -871,13 +1078,14 @@
     app.textContent = "";
     var pills = el("div", "pills");
     if (state.tab === "leren") {
-      [1, 2, 3, 4].forEach(function (s) {
+      [1, 2, 3, 4, 5].forEach(function (s) {
         var b = el("button", s === state.step ? "active" : "", String(s));
         b.addEventListener("click", function () { state.step = s; draw(); });
         pills.appendChild(b);
       });
       app.appendChild(pills);
-      app.appendChild(lerenView(lesson, state.step));
+      app.appendChild(state.step === 5
+        ? dicteeView(lesson) : lerenView(lesson, state.step));
     } else if (state.tab === "lessen") {
       app.appendChild(lessenView(lesson));
     } else if (state.tab === "herhaling") {
