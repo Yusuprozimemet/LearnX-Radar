@@ -57,32 +57,34 @@ jobs:
           cp dashboard/privacy.html _site/privacy.html
           cp dashboard/dutch.html _site/dutch.html         # Delft trainer page (v9)
           cp dashboard/favicon.svg _site/favicon.svg       # browser-tab icon (all pages)
-          cp state/dutch_lesson.json _site/dutch_lesson.json 2>/dev/null || true  # today's lesson for the trainer
+          # State is grouped by track in the private repo (radar/ + dutch/); the
+          # published _site paths stay flat so the trainer's fetch URLs don't change.
+          cp state/dutch/dutch_lesson.json _site/dutch_lesson.json 2>/dev/null || true  # today's lesson for the trainer
           # Cross-device progress scorecard (dutch/progress.py): the trainer's LESSEN
           # scores live in localStorage (per-browser), so a phone result never shows on
           # the computer. This server-side record, refreshed each run, lets every device
           # show the full per-day history. Token-gated (progress/<token>.json, fetched
           # via ?u=<token>) so a learner only sees their OWN scores — never a global
           # file readable by anyone. Absent on day one — the copy is simply skipped.
-          if [ -d state/progress ]; then mkdir -p _site/progress && cp state/progress/*.json _site/progress/; fi
+          if [ -d state/dutch/progress ]; then mkdir -p _site/progress && cp state/dutch/progress/*.json _site/progress/; fi
           # Lesson archive (dated JSONs + index.json): the trainer's lesson list.
           # Past days play their audio straight from the release CDN (it supports
           # Range requests, so seeking works without the same-origin blob copy).
-          if [ -d state/lessons ]; then mkdir -p _site/lessons && cp state/lessons/*.json _site/lessons/; fi
+          if [ -d state/dutch/lessons ]; then mkdir -p _site/lessons && cp state/dutch/lessons/*.json _site/lessons/; fi
           # Per-user review lists (multi-user Phase 1): the trainer page fetches
           # review/<token>.json when opened with ?u=<token>. Absent on a single-user
           # deployment - the copy is skipped and the herhaling tab simply never shows.
-          if [ -d state/review ]; then mkdir -p _site/review && cp state/review/*.json _site/review/; fi
+          if [ -d state/dutch/review ]; then mkdir -p _site/review && cp state/dutch/review/*.json _site/review/; fi
           # Cohort learning aggregate (Status tab, v11 day 40): the dashboard fetches
           # cohort/<token>.json when opened with the owner's ?u=<token>. Anonymous
           # group stats only (no chat id/token inside). Absent until a Dutch run has
           # published it - the copy is skipped and the Learning view stays owner-only.
-          if [ -d state/cohort ]; then mkdir -p _site/cohort && cp state/cohort/*.json _site/cohort/; fi
+          if [ -d state/dutch/cohort ]; then mkdir -p _site/cohort && cp state/dutch/cohort/*.json _site/cohort/; fi
           # Same-origin copy of the lesson MP3: the release CDN sends no CORS header,
           # so the trainer page can't fetch it cross-origin (it needs blob-loading for
           # exact sentence seeking). Downloading here is server-side — no CORS involved.
-          if [ -f state/dutch_lesson.json ]; then
-            url=$(python -c "import json;print(json.load(open('state/dutch_lesson.json'))['audio_url'])")
+          if [ -f state/dutch/dutch_lesson.json ]; then
+            url=$(python -c "import json;print(json.load(open('state/dutch/dutch_lesson.json'))['audio_url'])")
             curl -sL --fail -o _site/dutch_audio.mp3 "$url" || echo "dutch audio not fetched (non-fatal)"
           fi
           cp image.png _site/og.png            # social-share preview (og:image)

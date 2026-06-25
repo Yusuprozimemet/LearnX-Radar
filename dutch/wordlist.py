@@ -23,7 +23,7 @@ _BUNDLED_WORDLIST = Path(__file__).parent / "wordlist.json"
 def _wordlist_path() -> Path:
     state_dir = os.environ.get("STATE_DIR")
     if state_dir:
-        candidate = Path(state_dir) / "wordlist.json"
+        candidate = Path(state_dir) / "dutch" / "wordlist.json"
         if candidate.exists():
             return candidate
     return _BUNDLED_WORDLIST

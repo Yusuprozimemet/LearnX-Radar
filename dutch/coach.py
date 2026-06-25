@@ -25,13 +25,13 @@ from datetime import date
 import config
 from dutch.prompt_loader import load_prompt
 from learnx.llm import chat, parse_json_response
-from storage.paths import _DATA_DIR
+from storage.paths import DUTCH_COACH_LOG_FILE
 
 log = logging.getLogger(__name__)
 
 ChatFn = Callable[..., str]
 
-LOG_FILE = _DATA_DIR / "dutch_coach_log.md"
+LOG_FILE = DUTCH_COACH_LOG_FILE
 
 _EMPTY_PLAN = {"focus_ids": [], "directive": "", "reason": ""}
 
@@ -208,4 +208,5 @@ def append_log(
     ]
     header = "# Mistake-driven Dutch coach — plan log\n"
     prior = path.read_text(encoding="utf-8") if path.exists() else header
+    path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(prior + "\n".join(lines) + "\n", encoding="utf-8")
