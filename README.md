@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="dashboard/logo.svg" alt="LearnX-Radar" width="440" />
+</p>
+
 # LearnX-Radar
 
 > **A self-updating curriculum engine: it watches real developer signals for emerging skill gaps and ships you a grounded audio lesson every day — on zero backend.**

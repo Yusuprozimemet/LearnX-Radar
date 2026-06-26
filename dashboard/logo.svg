@@ -1,0 +1,23 @@
+<svg width="640" height="200" viewBox="0 0 640 200" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="LearnX-Radar">
+  <!-- panel: dark navy echoes the podcast cover; keeps the green wordmark legible on light and dark README backgrounds -->
+  <rect x="0.5" y="0.5" width="639" height="199" rx="28" fill="#0A0E1A" stroke="#1B2336"/>
+  <!-- icon tile -->
+  <rect x="28" y="28" width="144" height="144" rx="32" fill="#0F1629"/>
+  <rect x="28.5" y="28.5" width="143" height="143" rx="31.5" fill="none" stroke="#1B2336"/>
+  <!-- radar mark -->
+  <g stroke="#5fbf38" stroke-width="5" fill="none" stroke-linecap="round">
+    <circle cx="100" cy="100" r="20" opacity="0.55"/>
+    <circle cx="100" cy="100" r="38" opacity="0.4"/>
+    <circle cx="100" cy="100" r="54" opacity="0.28"/>
+  </g>
+  <!-- sweep sector -->
+  <path d="M100 100 L119 48 A55 55 0 0 1 153 81 Z" fill="#5fbf38" opacity="0.16"/>
+  <!-- sweep line -->
+  <line x1="100" y1="100" x2="139" y2="61" stroke="#5fbf38" stroke-width="5" stroke-linecap="round"/>
+  <!-- blip + hub -->
+  <circle cx="127" cy="73" r="6" fill="#5fbf38"/>
+  <circle cx="100" cy="100" r="6" fill="#5fbf38"/>
+  <!-- wordmark -->
+  <text x="204" y="106" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="58" font-weight="700" fill="#5fbf38">LearnX-Radar</text>
+  <text x="206" y="142" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="500" letter-spacing="0.3" fill="#8a909c">Daily developer lessons &#183; grounded &#183; + Dutch</text>
+</svg>
