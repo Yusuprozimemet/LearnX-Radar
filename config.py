@@ -342,7 +342,7 @@ GROUNDING_RECENCY_DAYS = 120
 # to switch the track off entirely. Vocabulary is anchored to dutch/wordlist.json
 # (a frozen, human-reviewed bank) — the LLM only writes sentences around fixed
 # words, never invents vocabulary. See specs/v5/ and plan/plan.md.
-DUTCH_ENABLED = True
+DUTCH_ENABLED = False  # paused indefinitely 2026-06-26 (owner not using the Dutch track)
 DUTCH_CEFR_START = "A2"              # starting level (auto-advances toward B1, below)
 DUTCH_NEW_WORDS_PER_DAY = 4          # new words introduced each morning
 DUTCH_REVIEW_WORDS_MAX = 6           # cap on due-for-review words pulled into a day
